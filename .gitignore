@@ -1,4 +1,8 @@
-.idea
+# Gradle
 build
 *gradle*
 !build.gradle
+
+# IntelliJ
+.idea
+*.iml
