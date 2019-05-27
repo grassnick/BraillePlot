@@ -27,6 +27,7 @@ public class App {
 
         //parse the options
         CommandLine cmd = parser.parse(options, args);
+        System.out.println(cmd.getOptionValue("c"));
 
     }
 
