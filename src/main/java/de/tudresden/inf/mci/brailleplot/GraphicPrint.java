@@ -6,6 +6,7 @@ import java.io.IOException;
 
 /**
  * Placeholder.
+ * @author Andrey Ruzhanskiy
  */
 public class GraphicPrint extends AbstractDocumentBuilder {
 

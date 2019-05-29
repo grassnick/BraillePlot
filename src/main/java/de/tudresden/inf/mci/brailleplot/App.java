@@ -3,6 +3,7 @@ package de.tudresden.inf.mci.brailleplot;
 /**
  * Main class.
  * Set up the application and run it.
+ * @author Leonard Kupper
  */
 public final class App {
 

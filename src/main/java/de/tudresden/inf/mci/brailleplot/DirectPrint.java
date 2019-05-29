@@ -52,7 +52,7 @@ public class DirectPrint {
     }
 
     /**
-     * Method for printing the Document, represented as byte[];
+     * Method for printing the Document, represented as byte[].
      * @param input The Document, represented as byte[], that will be printed
      *
      */
@@ -84,7 +84,7 @@ public class DirectPrint {
     }
 
     /**
-     * Method for printing the byte[] as a byte seperated String
+     * Method for printing the byte[] as a byte seperated String.
      * @param data Data to be printed on the Command Line
      */
 
@@ -97,7 +97,7 @@ public class DirectPrint {
 
     }
 
-    public static String lookUpAcceptedTypes(){
+    public static String lookUpAcceptedTypes() {
         PrintService services =
                 PrintServiceLookup.lookupDefaultPrintService();
         StringBuilder result = new StringBuilder();
