@@ -6,6 +6,8 @@ import java.io.IOException;
 
 /**
  * Placeholder.
+ * @author Andrey Ruzhanskiy, Leonard Kupper
+ * @version 29.05.2019
  */
 
 public class FloatingDotArea extends AbstractDocumentBuilder {
