@@ -47,7 +47,9 @@
 
     <!-- Checks whether files end with a new line.                        -->
     <!-- See http://checkstyle.sf.net/config_misc.html#NewlineAtEndOfFile -->
+    <!--- no, it checks localy if its complient with the OS, have fun mac and Unix user....
     <module name="NewlineAtEndOfFile"/>
+    -->
 
     <!-- Checks that property files contain the same keys.         -->
     <!-- See http://checkstyle.sf.net/config_misc.html#Translation -->
@@ -77,6 +79,7 @@
     <!--   <property name="fileExtensions" value="java"/> -->
     <!-- </module> -->
 
+    <module name="SuppressWarningsFilter" />
     <module name="TreeWalker">
 
         <!-- Checks for Javadoc comments.                     -->
@@ -102,7 +105,9 @@
 
         <!-- Checks for imports                              -->
         <!-- See http://checkstyle.sf.net/config_import.html -->
+       <!-- Sometimes its better with a star...
         <module name="AvoidStarImport"/>
+        -->
         <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
         <module name="RedundantImport"/>
         <module name="UnusedImports">
@@ -181,6 +186,9 @@
         <module name="TodoComment"/>
 -->
         <module name="UpperEll"/>
+        <!-- Add support for SupressWarnings Annotations -->
+        <module name="SuppressWarningsHolder" />
+
 
     </module>
 
