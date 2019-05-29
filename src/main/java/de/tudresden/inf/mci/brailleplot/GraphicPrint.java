@@ -1,4 +1,4 @@
-import de.tudresden.inf.mci.brailleplot.AbstractDocumentBuilder;
+package de.tudresden.inf.mci.brailleplot;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -18,10 +18,10 @@ public class GraphicPrint extends AbstractDocumentBuilder {
     }
 
     /**
-     * Hehe Leer.
+     * Assemble the Document. Hides the Protocol from the user.
      * @return
      */
-    public byte[] assemble() {
+    public byte[] assemble(final byte[] data) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
             stream.write(mEnterIMageMode);
@@ -34,8 +34,7 @@ public class GraphicPrint extends AbstractDocumentBuilder {
         } catch (IOException e) {
             e.getMessage();
         }
-
-
+        mDocument = stream.toByteArray();
         return mDocument;
     }
 
