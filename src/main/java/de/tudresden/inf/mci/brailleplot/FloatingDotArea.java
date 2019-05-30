@@ -5,7 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * Placeholder.
+ * Class representing the FloatingDotAre-Protocol form the Braille Index Everest V4 for printing
+ * variable Areas on paper via Coordinates.
  * @author Andrey Ruzhanskiy, Leonard Kupper
  * @version 29.05.2019
  */

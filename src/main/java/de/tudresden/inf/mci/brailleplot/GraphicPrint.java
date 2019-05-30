@@ -5,7 +5,7 @@ import java.io.IOException;
 
 
 /**
- * Placeholder.
+ * Class representing the Graphic-Mode-Protocol from Braile Index Everest D4.
  * @author Andrey Ruzhanskiy
  */
 public class GraphicPrint extends AbstractDocumentBuilder {
@@ -21,6 +21,7 @@ public class GraphicPrint extends AbstractDocumentBuilder {
     /**
      * Assemble the Document. Hides the Protocol from the user.
      * @return
+     * The ready to print Document, as byte[]
      */
     public byte[] assemble(final byte[] data) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
