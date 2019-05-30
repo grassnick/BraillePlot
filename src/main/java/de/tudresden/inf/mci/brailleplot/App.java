@@ -10,11 +10,18 @@ public final class App {
     public String getGreeting() {
         return "Hello world.";
     }
-    /*
-    public static void main(final String[] args) {
-        System.out.println(new App().getGreeting());
+
+    public void dummyConfigurationReader() {
+        String workingDir = System.getProperty("user.dir");
+
+        ConfigurationReader printerConfig = new ConfigurationReader(
+                workingDir + "/dummyPrinterConfig.properties"
+        );
     }
 
-     */
+    public static void main(final String[] args) {
+        //System.out.println(new App().getGreeting());
+        new App().dummyConfigurationReader();
+    }
 
 }

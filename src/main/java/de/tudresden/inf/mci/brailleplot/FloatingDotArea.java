@@ -20,10 +20,10 @@ public class FloatingDotArea extends AbstractDocumentBuilder {
     private final byte[] mNewLine = new byte[] {0x0A};
     private final byte mColon = 0x3A;
     private final byte mComma = 0x2C;
-    private int origoX = -1;
-    private int origoY = -1;
-    private int widthX = -1;
-    private int heightY = -1;
+    private int mOrigoX = -1;
+    private int mOrigoY = -1;
+    private int mWidthX = -1;
+    private int mHeightY = -1;
 
     /**
      * Construct a floating dot area with default origin and size.
@@ -44,8 +44,8 @@ public class FloatingDotArea extends AbstractDocumentBuilder {
      * Origin y value in centimetres
      */
     public FloatingDotArea(final byte[] data, final int origoX, final int origoY) {
-        this.origoX = origoX;
-        this.origoY = origoY;
+        this.mOrigoX = origoX;
+        this.mOrigoY = origoY;
         mDocument = this.assemble(data);
     }
 
@@ -69,10 +69,10 @@ public class FloatingDotArea extends AbstractDocumentBuilder {
             final int widthX,
             final int heightY
     ) {
-        this.origoX = origoX;
-        this.origoY = origoY;
-        this.widthX = widthX;
-        this.heightY = heightY;
+        this.mOrigoX = origoX;
+        this.mOrigoY = origoY;
+        this.mWidthX = widthX;
+        this.mHeightY = heightY;
         mDocument = this.assemble(data);
     }
 
@@ -83,20 +83,20 @@ public class FloatingDotArea extends AbstractDocumentBuilder {
         try {
 
             stream.write(mActivateDotArea);
-            if ((origoX >= 0) && (origoY >= 0)) {
+            if ((mOrigoX >= 0) && (mOrigoY >= 0)) {
                 stream.write(mParameterOrigo);
                 //stream.write("(5.00, 3.00)".getBytes());
                 stream.write("5.00:0.00".getBytes());
             }
-            if (widthX >= 0) {
+            if (mWidthX >= 0) {
                 stream.write(mComma);
                 stream.write(mParameterWidth);
-                stream.write(Integer.toString(widthX).getBytes());
+                stream.write(Integer.toString(mWidthX).getBytes());
             }
-            if (heightY >= 0) {
+            if (mHeightY >= 0) {
                 stream.write(mComma);
                 stream.write(mParameterHeight);
-                stream.write(Integer.toString(heightY).getBytes());
+                stream.write(Integer.toString(mHeightY).getBytes());
             }
             stream.write(mSemicolon);
             stream.write(mNewLine);

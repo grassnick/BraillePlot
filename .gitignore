@@ -6,3 +6,6 @@ build
 # IntelliJ
 .idea
 *.iml
+
+# Application
+dummyPrinterConfig.properties
