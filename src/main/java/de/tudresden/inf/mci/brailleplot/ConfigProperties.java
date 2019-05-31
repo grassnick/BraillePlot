@@ -5,6 +5,8 @@ import java.util.Map;
 
 /**
  * ConfigProperties.
+ * @author Leonard Kupper
+ * @version 31.05.19
  */
 public abstract class ConfigProperties {
 

@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Currently a prototype class. Experimenting with java property files.
  * @author Leonard Kupper
- * @version 30.05.19
+ * @version 31.05.19
  */
 
 public abstract class ConfigurationParser {

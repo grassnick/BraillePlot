@@ -7,6 +7,8 @@ import java.util.Set;
 
 /**
  * JavaPropertiesConfigurationParser.
+ * @author Leonard Kupper
+ * @version 31.05.19
  */
 public final class JavaPropertiesConfigurationParser extends ConfigurationParser {
 
