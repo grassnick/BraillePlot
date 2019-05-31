@@ -1,8 +1,14 @@
 # Gradle
 build
+out
 *gradle*
 !build.gradle
 
 # IntelliJ
 .idea
 *.iml
+
+# Java
+*.class
+*.jar
+*.tar

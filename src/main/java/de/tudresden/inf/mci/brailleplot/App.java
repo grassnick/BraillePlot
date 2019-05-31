@@ -5,7 +5,12 @@ import org.apache.commons.cli.*;
 import java.io.IOException;
 
 
-public class App {
+/**
+ * Main class.
+ * Set up the application and run it.
+ */
+public final class App {
+
     public String getGreeting() {
         return "Hello world.";
     }
@@ -31,7 +36,7 @@ public class App {
 
     }
 
-    public static void main(String[] args) throws IOException{
+    public static void main(final String[] args) throws IOException{
         System.out.println(new App().getGreeting());
         try {
             parseCLI(args);
