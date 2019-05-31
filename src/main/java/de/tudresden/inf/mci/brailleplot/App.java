@@ -15,7 +15,7 @@ public final class App {
         return "Hello world.";
     }
 
-    public static void parseCLI(String[] args) throws ParseException {
+    public static void parseCLI(final String[] args) throws ParseException {
 
         // Creating Options object
         Options options = new Options();
@@ -25,7 +25,7 @@ public final class App {
         HelpFormatter formatter = new HelpFormatter();
         String headerForOptions = "Convert csv into braille";
         String footerForOptions = "Report Issues to Leonard Kupper";
-        formatter.printHelp("braillegraphics",headerForOptions,options,footerForOptions,true);
+        formatter.printHelp("braillegraphics", headerForOptions, options, footerForOptions, true);
 
         //Create a parser
         CommandLineParser parser = new DefaultParser();
@@ -36,7 +36,7 @@ public final class App {
 
     }
 
-    public static void main(final String[] args) throws IOException{
+    public static void main(final String[] args) throws IOException {
         System.out.println(new App().getGreeting());
         try {
             parseCLI(args);
