@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="8.17">
+<file name="/Users/richard/Documents/Studium/8. Semester/KP MMI/brailleplot/src/main/java/de/tudresden/inf/mci/brailleplot/AbstractDocumentBuilder.java">
+</file>
+<file name="/Users/richard/Documents/Studium/8. Semester/KP MMI/brailleplot/src/main/java/de/tudresden/inf/mci/brailleplot/App.java">
+</file>
+<file name="/Users/richard/Documents/Studium/8. Semester/KP MMI/brailleplot/src/main/java/de/tudresden/inf/mci/brailleplot/DirectPrint.java">
+</file>
+<file name="/Users/richard/Documents/Studium/8. Semester/KP MMI/brailleplot/src/main/java/de/tudresden/inf/mci/brailleplot/FloatingDotArea.java">
+</file>
+<file name="/Users/richard/Documents/Studium/8. Semester/KP MMI/brailleplot/src/main/java/de/tudresden/inf/mci/brailleplot/GraphicPrint.java">
+</file>
+<file name="/Users/richard/Documents/Studium/8. Semester/KP MMI/brailleplot/src/main/java/de/tudresden/inf/mci/brailleplot/NormalPrint.java">
+</file>
+<file name="/Users/richard/Documents/Studium/8. Semester/KP MMI/brailleplot/src/main/java/de/tudresden/inf/mci/brailleplot/PrintDirector.java">
+</file>
+<file name="/Users/richard/Documents/Studium/8. Semester/KP MMI/brailleplot/src/main/java/de/tudresden/inf/mci/brailleplot/package-info.java">
+</file>
+</checkstyle>

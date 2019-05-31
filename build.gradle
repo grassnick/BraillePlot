@@ -32,13 +32,11 @@ dependencies {
 }
 
 // Define the main class for the application
-/*mainClassName = 'de.tudresden.inf.mci.brailleplot.DirectPrint' */
-mainClassName = 'de.tudresden.inf.mci.brailleplot.App'
+mainClassName = 'de.tudresden.inf.mci.brailleplot.DirectPrint' 
 
 jar {
     manifest {
-        /*attributes "Main-Class": "de.tudresden.inf.mci.brailleplot.DirectPrint" */
-        attributes "Main-Class": "de.tudresden.inf.mci.brailleplot.App"
+        attributes "Main-Class": "de.tudresden.inf.mci.brailleplot.DirectPrint"
     }
 
     from {

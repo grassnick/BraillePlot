@@ -11,17 +11,9 @@ public final class App {
         return "Hello world.";
     }
 
-    public void dummyConfigurationReader() {
-        String workingDir = System.getProperty("user.dir");
-
-        ConfigurationReader printerConfig = new ConfigurationReader(
-                workingDir + "/dummyPrinterConfig.properties"
-        );
-    }
 
     public static void main(final String[] args) {
-        //System.out.println(new App().getGreeting());
-        new App().dummyConfigurationReader();
+        System.out.println(new App().getGreeting());
     }
 
 }
