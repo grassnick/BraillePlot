@@ -47,9 +47,9 @@ public abstract class ConfigurationParser {
      * Implement the parse method. It creates the representation.
      * @return
      */
-    public abstract Boolean parse();
+    protected abstract Boolean parse();
 
-    public final Boolean setConfigFile(final String filePath) {
+    private final Boolean setConfigFile(final String filePath) {
         mConfigFilePath = filePath;
         try {
             mInput = new FileInputStream(mConfigFilePath);
@@ -58,6 +58,12 @@ public abstract class ConfigurationParser {
             return false;
         }
         return true;
+    }
+
+    public final Boolean parseConfigFile(final String filePath) {
+        Boolean isConfigFileSet = setConfigFile(filePath);
+        Boolean isFileParsed = parse();
+        return (isConfigFileSet && isFileParsed);
     }
 
     public final String getConfigFile() {

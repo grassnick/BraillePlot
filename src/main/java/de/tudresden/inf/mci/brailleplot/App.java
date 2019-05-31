@@ -15,9 +15,9 @@ public final class App {
     public void dummyConfigurationParsing() {
 
         String workingDir = System.getProperty("user.dir");
-        ConfigurationParser configParser = new JavaPropertiesConfigurationParser();
-        configParser.setConfigFile(workingDir + "/dummyPrinterConfig.properties");
-        configParser.parse();
+        ConfigurationParser configParser = new JavaPropertiesConfigurationParser(
+                workingDir + "/dummyPrinterConfig.properties"
+        );
 
         Printer printerConfig = configParser.getPrinter();
         for (String property : printerConfig.getPropertyNames()) {

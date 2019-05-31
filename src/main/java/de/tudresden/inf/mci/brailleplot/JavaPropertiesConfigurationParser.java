@@ -17,12 +17,13 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
     private String mFormatPrefix = "format";
     private String mDot = ".";
 
-    public JavaPropertiesConfigurationParser() {
+    public JavaPropertiesConfigurationParser(final String filePath) {
         mPrinter = new Printer();
         mFormats = new HashMap<String, Format>();
+        parseConfigFile(filePath);
     }
 
-    public Boolean parse() {
+    protected Boolean parse() {
         try {
             mProperties.load(mInput);
         } catch (IOException e) {
