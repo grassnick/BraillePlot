@@ -11,7 +11,7 @@ import java.io.IOException;
  * @version 29.05.2019
  */
 
-public class FloatingDotArea extends AbstractDocumentBuilder {
+public class FloatingDotArea extends AbstractIndexV4Printer {
     private final byte[] mActivateDotArea = new byte[]{0x1B, 0x46};
     private final byte[] mParameterOrigo = new byte[]{0x4F, 0x52};
     private final byte[] mParameterWidth = new byte[]{0x57, 0x58};

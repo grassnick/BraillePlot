@@ -8,7 +8,7 @@ import java.io.IOException;
  * Class representing the Graphic-Mode-Protocol from Braile Index Everest D4.
  * @author Andrey Ruzhanskiy
  */
-public class GraphicPrint extends AbstractDocumentBuilder {
+public class GraphicPrint extends AbstractIndexV4Printer {
 
     private final byte[] mEnterIMageMode = new byte[] {0x1B, 0x09};
     private final byte[] mExitImageMode = new byte[] {0x1B, 0x0A};

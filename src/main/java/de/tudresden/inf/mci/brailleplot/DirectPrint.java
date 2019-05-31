@@ -56,7 +56,7 @@ public class DirectPrint {
         prettyPrintCLI(diagramData);
 
 
-        lt.printString(diagramData);
+        lt.printString(betterData);
         lookUpAcceptedTypes();
     }
 
