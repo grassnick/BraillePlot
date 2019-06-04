@@ -1,5 +1,12 @@
 package de.tudresden.inf.mci.brailleplot;
 
+import de.tudresden.inf.mci.brailleplot.CommandLine.CommandLineParser;
+import de.tudresden.inf.mci.brailleplot.CommandLine.ParsingException;
+import de.tudresden.inf.mci.brailleplot.CommandLine.SettingType;
+import de.tudresden.inf.mci.brailleplot.CommandLine.SettingsReader;
+import de.tudresden.inf.mci.brailleplot.CommandLine.SettingsWriter;
+
+import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
@@ -95,10 +102,22 @@ public final class App {
 
         try {
             // Parse command line parameters
+            CommandLineParser cliParser = new CommandLineParser();
+            SettingsWriter settings = null;
+            try {
+                settings = cliParser.parse(args);
+            } catch (ParsingException pe) {
+                terminateWithException(pe);
+            }
+            SettingsReader settingsReader = settings;
 
 
             // If requested, print help and exit
-
+            Optional<Boolean> printHelp = settingsReader.isTrue(SettingType.DISPLAY_HELP);
+            if (printHelp.isPresent() && printHelp.get()) {
+                cliParser.printHelp();
+                return EXIT_SUCCESS;
+            }
 
             // Parse csv data
 
