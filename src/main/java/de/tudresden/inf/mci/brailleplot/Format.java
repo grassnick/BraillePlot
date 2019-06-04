@@ -1,15 +1,17 @@
 package de.tudresden.inf.mci.brailleplot;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Format.
  * @author Leonard Kupper
- * @version 31.05.19
+ * @version 04.06.19
  */
-public class Format extends ConfigProperties {
+public final class Format extends Configurable {
 
-    public Format() {
-        mPropertyMap = new HashMap<String, String>();
+    public Format(final List<FormatProperty> properties) {
+        mProperties = new ArrayList<>();
+        mProperties.addAll(properties);
     }
 }

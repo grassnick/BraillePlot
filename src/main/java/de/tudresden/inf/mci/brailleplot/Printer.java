@@ -1,15 +1,17 @@
 package de.tudresden.inf.mci.brailleplot;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Printer.
  * @author Leonard Kupper
- * @version 31.05.19
+ * @version 04.06.19
  */
-public class Printer extends ConfigProperties {
+public final class Printer extends Configurable {
 
-    public Printer() {
-        mPropertyMap = new HashMap<String, String>();
+    public Printer(final List<PrinterProperty> properties) {
+        mProperties = new ArrayList<>();
+        mProperties.addAll(properties);
     }
 }

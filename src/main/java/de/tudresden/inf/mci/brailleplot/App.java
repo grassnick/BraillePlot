@@ -4,7 +4,7 @@ package de.tudresden.inf.mci.brailleplot;
  * Main class.
  * Set up the application and run it.
  * @author Leonard Kupper
- * @version 31.05.19
+ * @version 04.06.19
  */
 public final class App {
 
@@ -16,7 +16,8 @@ public final class App {
 
         String workingDir = System.getProperty("user.dir");
         ConfigurationParser configParser = new JavaPropertiesConfigurationParser(
-                workingDir + "/dummyPrinterConfig.properties"
+                workingDir + "/dummyPrinterConfig.properties",
+                new JavaPropertiesConfigurationValidator()
         );
 
         Printer printerConfig = configParser.getPrinter();
@@ -31,6 +32,7 @@ public final class App {
                 System.out.println("Property: " + property + "=" + formatConfig.getProperty(property));
             }
         }
+
     }
 
     public static void main(final String[] args) {
