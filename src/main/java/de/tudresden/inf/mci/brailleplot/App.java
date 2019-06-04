@@ -1,48 +1,116 @@
 package de.tudresden.inf.mci.brailleplot;
 
-import org.apache.commons.cli.*;
-
-import java.io.IOException;
-
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * Main class.
  * Set up the application and run it.
+ * @author Georg Graßnick
  */
 public final class App {
 
-    public String getGreeting() {
-        return "Hello world.";
+    /**
+     * Main method.
+     * Instantiate application and execute it.
+     * @param args Command line parameters.
+     */
+    public static void main(final String[] args) {
+        App app = App.getInstance();
+        System.exit(app.run(args));
     }
 
-    public static void parseCLI(final String[] args) throws ParseException {
+    private static App sInstance;
+    private static final int EXIT_SUCCESS = 0;
+    private static final int EXIT_ERROR = 1;
 
-        // Creating Options object
-        Options options = new Options();
-        options.addOption("c", "csv", true, "Path to CSV")
-                .addOption("s", "semMap", true, "Literal for semantic mapping")
-                .addOption("p", "printer", true, "Printerconfig");
-        HelpFormatter formatter = new HelpFormatter();
-        String headerForOptions = "Convert csv into braille";
-        String footerForOptions = "Report Issues to Leonard Kupper";
-        formatter.printHelp("braillegraphics", headerForOptions, options, footerForOptions, true);
+    private ConcurrentLinkedDeque<Runnable> mFinalizers;
 
-        //Create a parser
-        CommandLineParser parser = new DefaultParser();
-
-        //parse the options
-        CommandLine cmd = parser.parse(options, args);
-        System.out.println(cmd.getOptionValue("c"));
-
+    private App() {
+        sInstance = this;
+        mFinalizers = new ConcurrentLinkedDeque<>();
     }
 
-    public static void main(final String[] args) throws IOException {
-        System.out.println(new App().getGreeting());
+    /**
+     * Returns the instance of the singleton class.
+     * @return The only class instance.
+     */
+    public static App getInstance() {
+        if (sInstance == null) {
+            return new App();
+        } else {
+            return sInstance;
+        }
+    }
+
+    /**
+     * Registers a finalizer.
+     * Currently, this is an experimental feature.
+     * Finalizers are run before program termination, even after exceptions.
+     * Finalizers are run in reverse order of their insertion.
+     * A possible use would be waiting for a logger to finish flushing the logs to disk.
+     * @param r The task to perform.
+     */
+    public static void registerFinalizer(final Runnable r) {
+        getInstance().mFinalizers.add(r);
+    }
+
+    private void runFinalizers() {
+        for (Runnable r : mFinalizers) {
+            r.run();
+        }
+    }
+
+    /**
+     * Terminate the complete Application in case of an untreatable error.
+     * @param e The Exception that led to the error.
+     */
+    public static void terminateWithException(final Exception e) {
+        terminateWithException(e, "");
+    }
+
+    /**
+     * Terminate the complete Application in case of an untreatable error.
+     * @param e The Exception that led to the error.
+     * @param message An additional message to print to stderr.
+     */
+    public static void terminateWithException(final Exception e, final String message) {
+        if (!message.isEmpty()) {
+            System.err.println(message);
+        }
+        e.printStackTrace();
+        getInstance().runFinalizers();
+        System.exit(EXIT_ERROR);
+    }
+
+    /**
+     * Main loop of the application.
+     * @param args Command line parameters.
+     * @return 0 if Application exited successfully, 1 on error.
+     */
+    int run(final String[] args) {
+
+        registerFinalizer(() -> {
+            System.out.println("Application terminated.");
+        });
+
         try {
-            parseCLI(args);
-        } catch (ParseException e) {
-            e.printStackTrace();
+            // Parse command line parameters
+
+
+            // If requested, print help and exit
+
+
+            // Parse csv data
+
+            // ...
+
+        } catch (final Exception e) {
+            terminateWithException(e);
+        } finally {
+            runFinalizers();
         }
 
+        return EXIT_SUCCESS;
     }
+
 }
