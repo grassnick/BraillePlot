@@ -6,14 +6,15 @@ import java.util.List;
 /**
  * Configurable.
  * @author Leonard Kupper
- * @version 04.06.19
+ * @version 06.06.19
  */
 public abstract class Configurable {
 
+    private Configurable mFallback;
     protected List<ValidProperty> mProperties;
 
     public final HashSet<String> getPropertyNames() {
-        HashSet<String> propertyNames = new HashSet<String>();
+        HashSet<String> propertyNames = new HashSet<>();
         for (ValidProperty property : mProperties) {
             propertyNames.add(property.getName());
         }
@@ -21,18 +22,21 @@ public abstract class Configurable {
     }
 
     public final ValidProperty getProperty(final String propertyName) {
+        // look for property
         for (ValidProperty property : mProperties) {
             if (property.getName().equals(propertyName)) {
                 return property;
             }
         }
+        // use fallback if possible
+        if (mFallback != null) {
+            return mFallback.getProperty(propertyName);
+        }
         throw new RuntimeException("Property does not exist: " + propertyName);
     }
 
-    /*
-    protected final String setProperty(final String propertyName, final String propertyValue) {
-        return mProperties.put(propertyName, propertyValue);
+    protected final void setFallback(final Configurable fallback) {
+        mFallback = fallback;
     }
-     */
 
 }

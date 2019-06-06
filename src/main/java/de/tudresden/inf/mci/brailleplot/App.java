@@ -123,10 +123,21 @@ public final class App {
      */
     public static void dummyConfigurationParsing() {
 
+        JavaPropertiesConfigurationValidator configValidator = new JavaPropertiesConfigurationValidator();
         String workingDir = System.getProperty("user.dir");
-        ConfigurationParser configParser = new JavaPropertiesConfigurationParser(
-                workingDir + "/dummyPrinterConfig.properties",
-                new JavaPropertiesConfigurationValidator()
+        String defaultConfigPath = workingDir + "/defaultConfig.properties";
+        String concreteConfigPath = workingDir + "/dummyPrinterConfig.properties";
+
+        // create parser and parse default config
+        ConfigurationParser configParser = new JavaPropertiesConfigurationParser(defaultConfigPath, configValidator);
+        Printer defaultPrinter = configParser.getPrinter();
+        Format defaultFormat = configParser.getFormat("default");
+        // parse concrete configuration with set defaults
+        configParser = new JavaPropertiesConfigurationParser(
+                concreteConfigPath,
+                configValidator,
+                defaultPrinter,
+                defaultFormat
         );
 
         Printer printerConfig = configParser.getPrinter();
@@ -141,9 +152,6 @@ public final class App {
                 System.out.println("Property: " + property + "=" + formatConfig.getProperty(property));
             }
         }
-
-        Format landscapeA4 = configParser.getFormat("a4");
-        landscapeA4.getProperty("pageWidth").toInt();
 
     }
 

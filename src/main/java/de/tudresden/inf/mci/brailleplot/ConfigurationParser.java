@@ -4,7 +4,12 @@ import java.io.OutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Abstract configuration parser.
@@ -16,12 +21,14 @@ import java.util.*;
 
 public abstract class ConfigurationParser {
     private String mConfigFilePath;
-    private List<PrinterProperty> mPrinterProperties = new ArrayList<>();
+    private List<PrinterProperty> mPrinterProperties = new ArrayList<>();;
     private Map<String, List<FormatProperty>> mFormatProperties = new HashMap<>();
     protected FileInputStream mInput;
     protected Printer mPrinter;
     protected Map<String, Format> mFormats = new HashMap<>();
     protected ConfigurationValidator mValidator;
+    private Printer mDefaultPrinter;
+    private Format mDefaultFormat;
 
     /**
      * Implement the parse method by TODO.
@@ -62,12 +69,22 @@ public abstract class ConfigurationParser {
         return true;
     }
 
-    public final Boolean parseConfigFile(final String filePath) {
+    protected final Boolean parseConfigFile(final String filePath) {
+        // load and parse file
         Boolean isConfigFileSet = setConfigFile(filePath);
         Boolean isFileParsed = parse();
+        // build printer object from added properties
         mPrinter = new Printer(mPrinterProperties);
+        if (mDefaultPrinter != null) {
+            mPrinter.setFallback(mDefaultPrinter);
+        }
+        // build format objects from added properties
         for (String formatName : mFormatProperties.keySet()) {
-            mFormats.put(formatName, new Format(mFormatProperties.get(formatName)));
+            Format newFormat = new Format(mFormatProperties.get(formatName));
+            if (mDefaultFormat != null) {
+                newFormat.setFallback(mDefaultFormat);
+            }
+            mFormats.put(formatName, newFormat);
         }
         return (isConfigFileSet && isFileParsed);
     }
@@ -85,8 +102,16 @@ public abstract class ConfigurationParser {
     }
 
     public final Format getFormat(final String formatName) {
-        return Objects.requireNonNull(mFormats.get(formatName));
-        // TODO Custom exception or return default format
+        if (!mFormats.containsKey(formatName)) {
+            throw new RuntimeException("Format does not exist: " + formatName);
+        }
+        return mFormats.get(formatName);
+    }
+
+
+    protected final void setDefaults(final Printer defaultPrinter, final Format defaultFormat) {
+        mDefaultPrinter = defaultPrinter;
+        mDefaultFormat = defaultFormat;
     }
 
 

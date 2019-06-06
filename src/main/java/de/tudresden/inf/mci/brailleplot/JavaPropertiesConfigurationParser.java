@@ -20,6 +20,17 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
         parseConfigFile(filePath);
     }
 
+    public JavaPropertiesConfigurationParser(
+            final String filePath,
+            final JavaPropertiesConfigurationValidator validator,
+            final Printer defaultPrinter,
+            final Format defaultFormat
+    ) {
+        mValidator = validator;
+        setDefaults(defaultPrinter, defaultFormat);
+        parseConfigFile(filePath);
+    }
+
 
     protected Boolean parse() {
         // Load properties from the .properties file

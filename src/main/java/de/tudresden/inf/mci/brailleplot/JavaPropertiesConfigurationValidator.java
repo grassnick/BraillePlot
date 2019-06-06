@@ -32,20 +32,20 @@ public class JavaPropertiesConfigurationValidator implements ConfigurationValida
         // Definition of valid printer properties
         Map<String, Predicate<String>> p = new HashMap<>();
         p.put("name", requireNotEmpty);
-        p.put("minCharsPerLine", requireInteger.and(requirePositive));
-        p.put("maxCharsPerLine", requireInteger.and(requirePositive));
-        p.put("minLinesPerPage", requireInteger.and(requirePositive));
-        p.put("maxLinesPerPage", requireInteger.and(requirePositive));
+        p.put("min.charsPerLine", requireInteger.and(requirePositive));
+        p.put("max.charsPerLine", requireInteger.and(requirePositive));
+        p.put("min.linesPerPage", requireInteger.and(requirePositive));
+        p.put("max.linesPerPage", requireInteger.and(requirePositive));
         p.put("equidistantSupport", requireBoolean);
-        p.put("minCharacterDistance", requireFloat.and(requirePositive));
-        p.put("maxCharacterDistance", requireFloat.and(requirePositive));
-        p.put("minLineDistance", requireFloat.and(requirePositive));
-        p.put("maxLineDistance", requireFloat.and(requirePositive));
+        p.put("min.characterDistance", requireFloat.and(requirePositive));
+        p.put("max.characterDistance", requireFloat.and(requirePositive));
+        p.put("min.lineDistance", requireFloat.and(requirePositive));
+        p.put("max.lineDistance", requireFloat.and(requirePositive));
 
         // Definition of valid format properties
         Map<String, Predicate<String>> f = new HashMap<>();
-        f.put("pageWidth", requireInteger.and(requirePositive));
-        f.put("pageHeight", requireInteger.and(requirePositive));
+        f.put("page.width", requireInteger.and(requirePositive));
+        f.put("page.height", requireInteger.and(requirePositive));
 
         // Add definitions
         mValidPrinterProperties.putAll(p);
@@ -64,16 +64,25 @@ public class JavaPropertiesConfigurationValidator implements ConfigurationValida
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
 
-        int maxParts = 3;
+        final int maxParts = 3;
         String[] keyParts = key.split("\\.", maxParts);
         String prefix = keyParts[0];
 
         // Decide whether printer or format property and do lookup in respective validation table.
         if (prefix.equals("printer")) {
-            String propertyName = keyParts[1] + ((keyParts.length > 2) ? keyParts[2] : "");
+            if (keyParts.length <= 1) {
+                throw new RuntimeException("Invalid printer property key: " + key);
+            }
+            String propertyName = keyParts[1];
+            if (keyParts.length > 2) {
+                propertyName = propertyName + "." + keyParts[2];
+            }
             validationLookup(mValidPrinterProperties, propertyName, value);
             return new PrinterProperty(propertyName, value);
         } else if (prefix.equals("format")) {
+            if (keyParts.length <= 2) {
+                throw new RuntimeException("Invalid format property key: " + key);
+            }
             String formatName = keyParts[1];
             String propertyName = keyParts[2];
             validationLookup(mValidFormatProperties, propertyName, value);
@@ -83,7 +92,11 @@ public class JavaPropertiesConfigurationValidator implements ConfigurationValida
         }
     }
 
-    private void validationLookup(HashMap<String, Predicate<String>> validation, String propertyName, String value) {
+    private void validationLookup(
+            final HashMap<String, Predicate<String>> validation,
+            final String propertyName,
+            final String value
+    ) {
         // Is the property valid?
         if (!validation.containsKey(propertyName)) {
             throw new RuntimeException("Invalid property name: " + propertyName);
