@@ -33,6 +33,9 @@ public final class App {
             }
         }
 
+        Format landscapeA4 = configParser.getFormat("a4");
+        landscapeA4.getProperty("pageWidth").toInt();
+
     }
 
     public static void main(final String[] args) {

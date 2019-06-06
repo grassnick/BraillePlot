@@ -4,12 +4,7 @@ import java.io.OutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Abstract configuration parser.
@@ -90,7 +85,8 @@ public abstract class ConfigurationParser {
     }
 
     public final Format getFormat(final String formatName) {
-        return mFormats.get(formatName);
+        return Objects.requireNonNull(mFormats.get(formatName));
+        // TODO Custom exception or return default format
     }
 
 

@@ -20,10 +20,10 @@ public abstract class Configurable {
         return propertyNames;
     }
 
-    public final String getProperty(final String propertyName) {
+    public final ValidProperty getProperty(final String propertyName) {
         for (ValidProperty property : mProperties) {
             if (property.getName().equals(propertyName)) {
-                return property.getValue();
+                return property;
             }
         }
         throw new RuntimeException("Property does not exist: " + propertyName);

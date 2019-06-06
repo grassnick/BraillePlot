@@ -13,7 +13,13 @@ public abstract class ValidProperty {
         return mName;
     }
 
-    public final String getValue() {
+    public final String toString() {
         return mValue;
     }
+
+    public final Integer toInt() { return Integer.valueOf(mValue); }
+
+    public final Float toFloat() { return Float.valueOf(mValue); }
+
+    public final Boolean toBool() { return Boolean.valueOf(mValue); }
 }
