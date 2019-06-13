@@ -5,16 +5,16 @@ import java.io.IOException;
 
 
 /**
- * Class representing the Graphic-Mode-Protocol from Braile Index Everest D4.
+ * Class representing the Graphic-Mode-Protocol from Braille Index Everest D4.
  * @author Andrey Ruzhanskiy
  */
-public class GraphicPrint extends AbstractIndexV4Printer {
+public class GraphicPrintBuilder extends AbstractIndexV4Builder {
 
-    private final byte[] mEnterIMageMode = new byte[] {0x1B, 0x09};
+    private final byte[] mEnterImageMode = new byte[] {0x1B, 0x09};
     private final byte[] mExitImageMode = new byte[] {0x1B, 0x0A};
     private final byte[] mSetImageType = new byte[] {0x1B, 0x0B};
 
-    public GraphicPrint(final byte[] data) {
+    public GraphicPrintBuilder(final byte[] data) {
         this.mDocument = this.assemble(data);
     }
 
@@ -23,10 +23,11 @@ public class GraphicPrint extends AbstractIndexV4Printer {
      * @return
      * The ready to print Document, as byte[]
      */
+    @Override
     public byte[] assemble(final byte[] data) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
-            stream.write(mEnterIMageMode);
+            stream.write(mEnterImageMode);
             stream.write(mSetImageType);
 
             //

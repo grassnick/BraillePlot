@@ -11,7 +11,7 @@ package de.tudresden.inf.mci.brailleplot;
  */
 
 @SuppressWarnings("checkstyle:MagicNumber")
-public class AbstractIndexV4Printer extends AbstractDocumentBuilder {
+public class AbstractIndexV4Builder extends AbstractDocumentBuilder {
 
 
 
@@ -44,7 +44,6 @@ public class AbstractIndexV4Printer extends AbstractDocumentBuilder {
      */
 
     protected final byte[] mCharsPerLineName = new byte[] {0x43, 0x48};
-
 
     /**
      * Standard Value for Everest-V4 A4 Paper Size(30).If used, there must be also
@@ -112,7 +111,7 @@ public class AbstractIndexV4Printer extends AbstractDocumentBuilder {
      * TODO find standard value!
      */
 
-    protected byte[] mFirstLineOffsetNameValue = null;
+    protected byte[] mFirstLineOffsetValue = null;
 
     /**
      * Standard VariableName for Graphic Dot Distance (GD).
@@ -245,12 +244,19 @@ public class AbstractIndexV4Printer extends AbstractDocumentBuilder {
     /**
      * Separator for values (,).
      */
-    protected final byte[] mComa = new byte[] {0x2C};
+    protected final byte[] mComma = new byte[] {0x2C};
+
+
+    /**
+     * Colon Character.
+     */
+    protected final byte[] mColon = new byte[] {0x3A};
+
 
 
     /**
      * End of Escape Sequence (;). Must be always at the end.
      */
 
-    protected final byte[] mEndTemporaryDoc = new byte[] {0x3B};
+    protected final byte[] mSemicolon = new byte[] {0x3B};
 }

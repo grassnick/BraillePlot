@@ -11,16 +11,12 @@ import java.io.IOException;
  * @version 29.05.2019
  */
 
-public class FloatingDotArea extends AbstractIndexV4Printer {
+public class FloatingDotAreaBuilder extends AbstractIndexV4Builder {
     private final byte[] mActivateDotArea = new byte[]{0x1B, 0x46};
     private final byte[] mParameterOrigo = new byte[]{0x4F, 0x52};
     private final byte[] mParameterWidth = new byte[]{0x57, 0x58};
     private final byte[] mParameterHeight = new byte[]{0x48, 0x59};
-    private byte[] mDotList;
-    private final byte[] mSemicolon = new byte[] {0x3B};
     private final byte[] mNewLine = new byte[] {0x0A};
-    private final byte mColon = 0x3A;
-    private final byte mComma = 0x2C;
     private int mOrigoX = -1;
     private int mOrigoY = -1;
     private int mWidthX = -1;
@@ -31,7 +27,7 @@ public class FloatingDotArea extends AbstractIndexV4Printer {
      * @param data
      * A sequence of bytes containing a newline separated line of colon separated values: xxx.xx:yy.yyy
      */
-    public FloatingDotArea(final byte[] data) {
+    public FloatingDotAreaBuilder(final byte[] data) {
         mDocument = this.assemble(data);
     }
 
@@ -44,7 +40,7 @@ public class FloatingDotArea extends AbstractIndexV4Printer {
      * @param origoY
      * Origin y value in centimetres
      */
-    public FloatingDotArea(final byte[] data, final int origoX, final int origoY) {
+    public FloatingDotAreaBuilder(final byte[] data, final int origoX, final int origoY) {
         this.mOrigoX = origoX;
         this.mOrigoY = origoY;
         mDocument = this.assemble(data);
@@ -63,7 +59,7 @@ public class FloatingDotArea extends AbstractIndexV4Printer {
      * @param heightY
      * Area height in millimeters
      */
-    public FloatingDotArea(
+    public FloatingDotAreaBuilder(
             final byte[] data,
             final int origoX,
             final int origoY,
@@ -115,15 +111,5 @@ public class FloatingDotArea extends AbstractIndexV4Printer {
         return mDocument;
     }
 
-    private byte[] parseData(final byte[] data) {
-
-        for (byte b : data) {
-            if (Byte.compare(b, mColon) == 0) {
-                System.out.println("No Warning pls");
-            }
-        }
-
-        return null;
-    }
 
 }

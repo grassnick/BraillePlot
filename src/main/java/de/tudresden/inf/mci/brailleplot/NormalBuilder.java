@@ -5,6 +5,6 @@ package de.tudresden.inf.mci.brailleplot;
  * any Escapesequences.
  * @author Andrey Ruzhanskiy
  */
-public class NormalPrint extends AbstractDocumentBuilder {
+public class NormalBuilder extends AbstractDocumentBuilder {
 
 }

@@ -28,7 +28,7 @@ public abstract class AbstractDocumentBuilder {
 
     /**
      * Interface for getting the final Document.
-     * @return DOcument to be printed
+     * @return Document to be printed
      */
     public byte[] getDocument() {
         return mDocument;
