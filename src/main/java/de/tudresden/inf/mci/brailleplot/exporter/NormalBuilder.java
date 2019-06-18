@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot;
+package de.tudresden.inf.mci.brailleplot.exporter;
 
 /**
  * Class representing a normal Document (for example a .txt) to print without

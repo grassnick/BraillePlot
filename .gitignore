@@ -6,7 +6,7 @@ out
 
 # IntelliJ
 .idea
-*.iml
+brailleplot.iml
 
 # Application
 dummyPrinterConfig.properties
