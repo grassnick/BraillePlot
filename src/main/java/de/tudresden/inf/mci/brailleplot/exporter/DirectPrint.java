@@ -8,13 +8,13 @@ import java.io.ByteArrayOutputStream;
 
 /**
  * This Class provides means to print. But poorly currently. Big TODO.
- * @author Andrey Ruzhanskiy
+ * @author Andrey Ruzhanskiy, Leonard Kupper
  * @version 28.05.2019
  */
 
 public class DirectPrint {
 
-    private byte[] data;
+    private byte[] mData;
 
     public DirectPrint() {
 
@@ -27,10 +27,9 @@ public class DirectPrint {
      */
 
     public void printString(final byte[] input) {
-
-        this.data = input;
+        this.mData = input;
         DocFlavor flavor = new DocFlavor("application/octet-stream", "[B");
-        Doc braille = new SimpleDoc(this.data, flavor, null);
+        Doc braille = new SimpleDoc(this.mData, flavor, null);
         PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
         /*aset.add(new PageRanges(1, 1));
         aset.add(new Copies(1));
@@ -38,7 +37,7 @@ public class DirectPrint {
         //new copy paste
         PrintService services =
                 PrintServiceLookup.lookupDefaultPrintService();
-        System.out.println(services.toString());
+        //System.out.println(services.toString());
         DocFlavor[] array = services.getSupportedDocFlavors();
 
 
@@ -57,7 +56,7 @@ public class DirectPrint {
      * @param data Data to be printed on the Command Line
      */
 
-    public static void prettyPrintCLI(final byte[] data) {
+    public void prettyPrintCLI(final byte[] data) {
         StringBuilder sb = new StringBuilder();
         for (byte b : data) {
             sb.append(String.format("%02X ", b));
