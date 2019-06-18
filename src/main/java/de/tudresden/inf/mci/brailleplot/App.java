@@ -110,8 +110,9 @@ public final class App {
 
             // Last Step: Printing
 
-            /*
+
             DirectPrint lt = new DirectPrint();
+            /*
             byte[] data = lt.buildDemo(1);
             lt.printString(data);
             */
