@@ -22,6 +22,12 @@ public class FloatingDotAreaBuilder extends AbstractIndexV4Builder {
     private int mWidthX = -1;
     private int mHeightY = -1;
 
+
+
+
+    public FloatingDotAreaBuilder() {
+
+    }
     /**
      * Construct a floating dot area with default origin and size.
      * @param data

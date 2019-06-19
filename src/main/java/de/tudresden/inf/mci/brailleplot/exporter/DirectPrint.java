@@ -67,7 +67,7 @@ public class DirectPrint {
 
     /**
      * Method for debug and printing purposes.
-     * Prints and returns a String containing the supported Document Flavors of the default Printer
+     * Prints and returns a String containing the supported Document Flavors of the default PrinterConfiguration
      * @return String with supported Document Flavor
      */
     public static String lookUpAcceptedTypes() {

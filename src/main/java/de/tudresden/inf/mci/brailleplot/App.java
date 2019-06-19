@@ -1,6 +1,7 @@
 package de.tudresden.inf.mci.brailleplot;
 
-import de.tudresden.inf.mci.brailleplot.exporter.DirectPrint;
+import de.tudresden.inf.mci.brailleplot.exporter.PrintDirector;
+import de.tudresden.inf.mci.brailleplot.exporter.PrinterConfiguration;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -111,7 +112,13 @@ public final class App {
             // Last Step: Printing
 
 
-            DirectPrint lt = new DirectPrint();
+            if (PrintDirector.printerExists("Index Everest-D V4")) {
+                System.out.println("Ja");
+            } else {
+                System.out.println("Nein");
+            }
+
+            PrintDirector printD = new PrintDirector(PrinterConfiguration.NORMALPRINTER);
             /*
             byte[] data = lt.buildDemo(1);
             lt.printString(data);

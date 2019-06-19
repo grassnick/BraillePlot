@@ -14,10 +14,9 @@ public class GraphicPrintBuilder extends AbstractIndexV4Builder {
     private final byte[] mExitImageMode = new byte[] {0x1B, 0x0A};
     private final byte[] mSetImageType = new byte[] {0x1B, 0x0B};
 
-    public GraphicPrintBuilder(final byte[] data) {
-        this.mDocument = this.assemble(data);
-    }
+    protected GraphicPrintBuilder() {
 
+    }
     /**
      * Assemble the Document. Hides the Protocol from the user.
      * @return
