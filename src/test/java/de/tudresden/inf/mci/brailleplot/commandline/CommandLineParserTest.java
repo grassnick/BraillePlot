@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot.CommandLine;
+package de.tudresden.inf.mci.brailleplot.commandline;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

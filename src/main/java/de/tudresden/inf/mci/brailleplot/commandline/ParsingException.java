@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot.CommandLine;
+package de.tudresden.inf.mci.brailleplot.commandline;
 
 /**
  * Exception class.

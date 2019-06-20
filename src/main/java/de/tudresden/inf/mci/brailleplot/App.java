@@ -1,10 +1,10 @@
 package de.tudresden.inf.mci.brailleplot;
 
-import de.tudresden.inf.mci.brailleplot.CommandLine.CommandLineParser;
-import de.tudresden.inf.mci.brailleplot.CommandLine.ParsingException;
-import de.tudresden.inf.mci.brailleplot.CommandLine.SettingType;
-import de.tudresden.inf.mci.brailleplot.CommandLine.SettingsReader;
-import de.tudresden.inf.mci.brailleplot.CommandLine.SettingsWriter;
+import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
+import de.tudresden.inf.mci.brailleplot.commandline.ParsingException;
+import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
+import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
+import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
