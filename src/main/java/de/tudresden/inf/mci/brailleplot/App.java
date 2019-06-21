@@ -70,7 +70,7 @@ public final class App {
      * Terminate the complete Application in case of an untreatable error.
      * @param e The Exception that led to the error.
      */
-    public static void terminateWithException(final Exception e) {
+    private void terminateWithException(final Exception e) {
         terminateWithException(e, "");
     }
 
@@ -79,12 +79,12 @@ public final class App {
      * @param e The Exception that led to the error.
      * @param message An additional message to print to stderr.
      */
-    public static void terminateWithException(final Exception e, final String message) {
+    private void terminateWithException(final Exception e, final String message) {
         if (!message.isEmpty()) {
-            getInstance().mLogger.error(message);
+            mLogger.error(message);
         }
-        getInstance().mLogger.error("Application will now shut down due to an unrecoverable error", e);
-        getInstance().runFinalizers();
+        mLogger.error("Application will now shut down due to an unrecoverable error", e);
+        runFinalizers();
         System.exit(EXIT_ERROR);
     }
 
@@ -116,9 +116,9 @@ public final class App {
 
         } catch (final Exception e) {
             terminateWithException(e);
-        } finally {
-            runFinalizers();
         }
+
+        runFinalizers();
 
         return EXIT_SUCCESS;
     }
