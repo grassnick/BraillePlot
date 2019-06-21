@@ -57,7 +57,7 @@ public final class App {
      * @param r The task to perform.
      */
     public static void registerFinalizer(final Runnable r) {
-        getInstance().mFinalizers.add(r);
+        getInstance().mFinalizers.addFirst(r);
     }
 
     private void runFinalizers() {
