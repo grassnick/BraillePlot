@@ -1,6 +1,8 @@
 package de.tudresden.inf.mci.brailleplot.exporter;
 
 
+import de.tudresden.inf.mci.brailleplot.PrintableData.MatrixData;
+
 import javax.print.*;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
@@ -56,7 +58,7 @@ public class PrintDirector {
      * @param printerName
      * @throws IllegalArgumentException if the printer is not found.
      */
-    public void setPrinter(final String printerName) {
+    private void setPrinter(final String printerName) {
         if (printerExists(printerName)) {
             mPrinterName = printerName;
         } else {
@@ -65,8 +67,25 @@ public class PrintDirector {
     }
 
     /**
-     * Method for setting up the DocFlavor fir printing. Currently, not parameterised because the printer can always
-     * understand raw bytes with an octet stream.
+     * Stub.
+     * @param printerName
+     */
+
+    @SuppressWarnings("checkstyle:MagicNumber")
+    public<T> void print(final String printerName, MatrixData<T> data)  {
+        setUpDoc();
+        setPrinter(printerName);
+
+        // Building the Document
+
+        // Printing the Document
+
+        print(new byte[]{0x50});
+    }
+
+    /**
+     * Method for setting up the DocFlavor fir printing. Currently, not parameterised because the printer can (hopefully
+     * always understand raw bytes with an octet stream.
      */
     private void setUpDoc() {
         mDocflavor = new DocFlavor("application/octet-stream", "[B");
@@ -74,11 +93,10 @@ public class PrintDirector {
 
     /**
      * stub.
-     * @param docFlavor
      * @param data
      */
 
-    private void print(final DocFlavor docFlavor, final byte[] data) {
+    private void print(final byte[] data) {
         Doc doc = new SimpleDoc(data, mDocflavor, null);
         PrintRequestAttributeSet asset = new HashPrintRequestAttributeSet();
         DocPrintJob job = mService.createPrintJob();
