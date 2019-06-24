@@ -76,6 +76,7 @@ public class PrintDirector {
         setUpDoc();
         setPrinter(printerName);
 
+
         // Building the Document
 
         // Printing the Document

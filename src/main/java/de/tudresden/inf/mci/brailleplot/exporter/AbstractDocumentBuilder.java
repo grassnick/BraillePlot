@@ -1,6 +1,10 @@
 package de.tudresden.inf.mci.brailleplot.exporter;
 
 
+import de.tudresden.inf.mci.brailleplot.PrintableData.MatrixData;
+
+import java.util.Iterator;
+
 /**
  * This Class provides an Extension Point for further implementation
  * and Protocol Building for Documents that need to be send to the printer.
@@ -16,6 +20,7 @@ public abstract class AbstractDocumentBuilder {
      */
 
     protected byte[] mDocument;
+    protected Iterator<MatrixData> it;
 
     /**
      * Complex method for complex construction of an Document for the printer.
