@@ -120,9 +120,7 @@ public final class Settings implements SettingsReader, SettingsWriter {
      * @param setting {@Link SettingType} the setting to be removed.
      */
     public void deleteSettingValue(final SettingType setting) {
-        if (mSettings.containsKey(setting)) {
             mSettings.remove(setting);
-        }
     }
 
 }
