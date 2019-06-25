@@ -3,7 +3,7 @@ package de.tudresden.inf.mci.brailleplot.commandline;
 /**
  * Exception class.
  * Indicates, some error has occurred while parsing the command line parameters.
- * Most likely by created by malformed user input.
+ * Most likely created by malformed user input.
  * @author Georg Graßnick
  * @version 2019.05.31
  */
