@@ -1,7 +1,6 @@
 package de.tudresden.inf.mci.brailleplot;
 
 import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
-import de.tudresden.inf.mci.brailleplot.commandline.ParsingException;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
@@ -113,12 +112,7 @@ public final class App {
 
             // Parse command line parameters
             CommandLineParser cliParser = new CommandLineParser();
-            SettingsWriter settings = null;
-            try {
-                settings = cliParser.parse(args);
-            } catch (ParsingException pe) {
-                terminateWithException(pe);
-            }
+            SettingsWriter settings = cliParser.parse(args);
             SettingsReader settingsReader = settings;
 
 
