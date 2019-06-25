@@ -10,7 +10,7 @@ import de.tudresden.inf.mci.brailleplot.PrintableData.MatrixData;
 public class NormalBuilder extends AbstractDocumentBuilder {
 
     @Override
-    public byte[] assemble(MatrixData data) {
+    public byte[] assemble(final MatrixData data) {
         return null;
     }
 }

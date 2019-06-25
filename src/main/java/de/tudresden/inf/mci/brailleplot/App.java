@@ -129,7 +129,7 @@ public final class App {
             }
 
             PrintDirector printD = new PrintDirector(PrinterConfiguration.NORMALPRINTER);
-            printD.print("Index Everest-D V4",null);
+            printD.print("Index Everest-D V4", null);
             /*
             byte[] data = lt.buildDemo(1);
             lt.printString(data);

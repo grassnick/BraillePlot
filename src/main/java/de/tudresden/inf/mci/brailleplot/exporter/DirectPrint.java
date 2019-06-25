@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 
 /**
  * This Class provides means to print. But poorly currently. Big TODO.
+ * Deprecated, currently the PrintDirector should be used.
  * @author Andrey Ruzhanskiy, Leonard Kupper
  * @version 28.05.2019
  */

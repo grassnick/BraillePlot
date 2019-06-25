@@ -72,7 +72,7 @@ public class PrintDirector {
      */
 
     @SuppressWarnings("checkstyle:MagicNumber")
-    public<T> void print(final String printerName, MatrixData<T> data)  {
+    public <T> void print(final String printerName, final MatrixData<T> data)  {
         setUpDoc();
         setPrinter(printerName);
 
