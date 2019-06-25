@@ -1,5 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.exporter;
 
+import de.tudresden.inf.mci.brailleplot.PrintableData.MatrixData;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -21,9 +23,10 @@ public class GraphicPrintBuilder extends AbstractIndexV4Builder {
      * Assemble the Document. Hides the Protocol from the user.
      * @return
      * The ready to print Document, as byte[]
+     * @param data
      */
     @Override
-    public byte[] assemble(final byte[] data) {
+    public byte[] assemble(final MatrixData data) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
             stream.write(mEnterImageMode);

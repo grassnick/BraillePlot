@@ -1,6 +1,8 @@
 package de.tudresden.inf.mci.brailleplot.exporter;
 
 
+import de.tudresden.inf.mci.brailleplot.PrintableData.MatrixData;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -34,7 +36,7 @@ public class FloatingDotAreaBuilder extends AbstractIndexV4Builder {
      * A sequence of bytes containing a newline separated line of colon separated values: xxx.xx:yy.yyy
      */
     public FloatingDotAreaBuilder(final byte[] data) {
-        mDocument = this.assemble(data);
+       // mDocument = this.assemble(data);
     }
 
     /**
@@ -49,7 +51,7 @@ public class FloatingDotAreaBuilder extends AbstractIndexV4Builder {
     public FloatingDotAreaBuilder(final byte[] data, final int origoX, final int origoY) {
         this.mOrigoX = origoX;
         this.mOrigoY = origoY;
-        mDocument = this.assemble(data);
+        //mDocument = this.assemble(data);
     }
 
     /**
@@ -76,11 +78,11 @@ public class FloatingDotAreaBuilder extends AbstractIndexV4Builder {
         this.mOrigoY = origoY;
         this.mWidthX = widthX;
         this.mHeightY = heightY;
-        mDocument = this.assemble(data);
+        //mDocument = this.assemble(data);
     }
 
     @Override
-    public byte[] assemble(final byte[] data) {
+    public byte[] assemble(final MatrixData data) {
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
@@ -104,7 +106,7 @@ public class FloatingDotAreaBuilder extends AbstractIndexV4Builder {
             stream.write(mSemicolon);
             stream.write(mNewLine);
 
-            stream.write(data);
+            //stream.write(data);
 
             //stream.write(parseData(data));
 

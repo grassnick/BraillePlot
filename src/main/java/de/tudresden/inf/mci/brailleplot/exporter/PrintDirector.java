@@ -76,17 +76,16 @@ public class PrintDirector {
         setUpDoc();
         setPrinter(printerName);
 
-
-        // Building the Document
+        byte[] result = mBuilder.assemble(data);
 
         // Printing the Document
 
-        print(new byte[]{0x50});
+        print(result);
     }
 
     /**
      * Method for setting up the DocFlavor fir printing. Currently, not parameterised because the printer can (hopefully
-     * always understand raw bytes with an octet stream.
+     * understand raw bytes with an octet stream.
      */
     private void setUpDoc() {
         mDocflavor = new DocFlavor("application/octet-stream", "[B");

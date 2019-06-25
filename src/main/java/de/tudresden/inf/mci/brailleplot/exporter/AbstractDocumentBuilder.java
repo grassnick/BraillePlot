@@ -1,9 +1,5 @@
 package de.tudresden.inf.mci.brailleplot.exporter;
-
-
 import de.tudresden.inf.mci.brailleplot.PrintableData.MatrixData;
-
-import java.util.Iterator;
 
 /**
  * This Class provides an Extension Point for further implementation
@@ -20,14 +16,13 @@ public abstract class AbstractDocumentBuilder {
      */
 
     protected byte[] mDocument;
-    protected Iterator<MatrixData> it;
 
     /**
      * Complex method for complex construction of an Document for the printer.
      * @param data Raw Data to be printed without any escapesequences
      * @return Fully build Document as byte[]
      */
-    public byte[] assemble(final byte[] data) {
+    public byte[] assemble(final MatrixData data) {
         return null;
     }
 
