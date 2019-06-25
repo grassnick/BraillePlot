@@ -36,7 +36,7 @@ public final class Settings implements SettingsReader, SettingsWriter {
 
     /**
      * Populates the Settings class with arguments from the command line.
-     * @param cmdLine {@Link CommandLine} object to take take settings from.
+     * @param cmdLine {@link CommandLine} object to take take settings from.
      */
     private void setup(final CommandLine cmdLine) {
         for (Iterator<Option> it = cmdLine.iterator(); it.hasNext();) {
@@ -95,17 +95,17 @@ public final class Settings implements SettingsReader, SettingsWriter {
 
     /**
      * Set the value of a setting.
-     * @param setting {@Link SettingType} the setting to be changed.
-     * @param value {@Link String} The value to set.
+     * @param setting {@link SettingType} the setting to be changed.
+     * @param value {@link String} The value to set.
      */
     public void setSetting(final SettingType setting, final String value) {
         mSettings.replace(setting, value);
     }
 
     /**
-     * Set the value of a setting to a specific {@Link Boolean}.
-     * @param setting {@Link SettingType} the setting to be changed.
-     * @param isTrue {@Link String} The value to set.
+     * Set the value of a setting to a specific {@link Boolean}.
+     * @param setting {@link SettingType} the setting to be changed.
+     * @param isTrue {@link String} The value to set.
      */
     public void setSetting(final SettingType setting, final Boolean isTrue) {
         if (isTrue) {
@@ -117,7 +117,7 @@ public final class Settings implements SettingsReader, SettingsWriter {
 
     /**
      * Delete the set value of a setting, if it is set.
-     * @param setting {@Link SettingType} the setting to be removed.
+     * @param setting {@link SettingType} the setting to be removed.
      */
     public void deleteSettingValue(final SettingType setting) {
             mSettings.remove(setting);
