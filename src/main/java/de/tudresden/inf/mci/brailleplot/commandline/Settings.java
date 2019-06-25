@@ -2,6 +2,8 @@ package de.tudresden.inf.mci.brailleplot.commandline;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,6 +18,8 @@ import java.util.Optional;
 public final class Settings implements SettingsReader, SettingsWriter {
 
     private Map<SettingType, String> mSettings;
+
+    private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
 
     private static final String BOOL_TRUE = Boolean.toString(true);
     private static final String BOOL_FALSE = Boolean.toString(false);
@@ -38,9 +42,12 @@ public final class Settings implements SettingsReader, SettingsWriter {
         for (Iterator<Option> it = cmdLine.iterator(); it.hasNext();) {
             Option o = it.next();
             if (o.hasArg()) {
-                mSettings.put(SettingType.fromString(o.getLongOpt()), o.getValue());
+                SettingType type = SettingType.fromString(o.getLongOpt());
+                mSettings.put(type, o.getValue());
+                mLogger.trace("Added string \"{}\" with value \"{}\"", type, o.getValue());
             } else {
                 mSettings.put(SettingType.fromString(o.getLongOpt()), BOOL_TRUE);
+                mLogger.trace("Added flag \"{}\" set to \"{}\"", SettingType.fromString(o.getLongOpt()), BOOL_TRUE);
             }
         }
     }
