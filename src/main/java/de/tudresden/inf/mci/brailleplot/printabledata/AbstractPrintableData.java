@@ -6,7 +6,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 /**
  * Abstract parent class for all {@link PrintableData} implementations.
  */
-public abstract class AbstractPrintableData implements PrintableData {
+abstract class AbstractPrintableData implements PrintableData {
 
     private final Printer mPrinter;
     private final Format mFormat;
