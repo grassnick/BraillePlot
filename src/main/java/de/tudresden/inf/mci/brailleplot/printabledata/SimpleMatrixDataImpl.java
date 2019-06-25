@@ -22,6 +22,7 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
         mRows = rowCount;
         mColumns = columnCount;
         mData = new Vector<>(rowCount * columnCount);
+        mData.setSize(rowCount * columnCount);
     }
 
     /**
