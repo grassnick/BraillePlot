@@ -10,6 +10,8 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
  * The underlying data is represented by a {@link Vector} which makes the lookup and insertion fast, but uses lots of memory.
  * @param <T> The type used for representing the intensity. Could be set to {@link Boolean} for basic Braille support,
  *  *           but could also by set to {@link Short} if different embossing strengths are required.
+ * @author Georg Graßnick
+ * @version 2019.06.26
  */
 public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements MatrixData<T> {
 

@@ -5,6 +5,8 @@ package de.tudresden.inf.mci.brailleplot.printabledata;
  * The data is organized in a matrix structure, which can be queried for its values on integer x (row) and y (column) indices.
  * @param <T> The type used for representing the intensity. Could be set to {@link Boolean} for basic Braille support,
  *           but could also by set to {@link Short} if different embossing strengths are required.
+ * @author Georg Graßnick
+ * @version 2019.06.26
  */
 public interface MatrixData<T> extends PrintableData {
 

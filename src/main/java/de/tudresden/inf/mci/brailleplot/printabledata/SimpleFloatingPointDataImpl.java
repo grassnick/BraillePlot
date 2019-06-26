@@ -11,6 +11,8 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
  * The underlying data is organized in a {@link LinkedList}, which makes insertions fast, but slows down random access.
  * @param <T> The type used for representing the intensity. Could be set to {@link Boolean} for basic Braille support,
  *           but could also by set to {@link Short} if different embossing strengths are required.
+ * @author Georg Graßnick
+ * @version 2019.06.26
  */
 public class SimpleFloatingPointDataImpl<T> extends AbstractPrintableData implements FloatingPointData<T> {
 

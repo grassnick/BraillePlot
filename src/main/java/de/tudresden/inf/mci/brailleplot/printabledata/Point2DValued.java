@@ -8,6 +8,8 @@ import javax.measure.quantity.Length;
  * Encapsulates both the position on x and y axis, as well as a value (think of embossing intensity).
  * @param <T> The type used for representing the intensity. Could be set to {@link Boolean} for basic Braille support,
  *           but could also by set to {@link Short} if different embossing strengths are required.
+ * @author Georg Graßnick
+ * @version 2019.06.26
  */
 public class Point2DValued<T> extends Point2D {
 

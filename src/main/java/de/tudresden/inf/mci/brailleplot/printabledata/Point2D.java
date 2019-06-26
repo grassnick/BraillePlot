@@ -6,6 +6,8 @@ import javax.measure.quantity.Length;
 /**
  * Representation of a 2 dimensional point.
  * Encapsulates a position on x and y axis.
+ * @author Georg Graßnick
+ * @version 2019.06.26
  */
 public class Point2D {
 
