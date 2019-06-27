@@ -20,12 +20,15 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
     private final int mColumns;
     private final Vector<T> mData;
 
-    SimpleMatrixDataImpl(final Printer printer, final Format format, final int rowCount, final int columnCount) {
+    public SimpleMatrixDataImpl(final Printer printer, final Format format, final int rowCount, final int columnCount, final T defaultValue) {
         super(printer, format);
         mRows = rowCount;
         mColumns = columnCount;
         mData = new Vector<>(rowCount * columnCount);
         mData.setSize(rowCount * columnCount);
+        for (int i = 0; i < mData.size(); i++) {
+            mData.setElementAt(defaultValue, i);
+        }
     }
 
     /**
