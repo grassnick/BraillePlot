@@ -116,10 +116,10 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
 
         ElementIter(final int cellWidth, final int cellHeight, final SimpleMatrixDataImpl<T> matrix) {
             if (matrix.getColumnCount() % cellWidth != 0) {
-                throw new IllegalArgumentException("Cannot create requested iterator: matrix row count (" + matrix.getRowCount() + ") is not a multiple of cell width (" + cellWidth + ")");
+                throw new IllegalArgumentException("Cannot create requested iterator: matrix column count (" + matrix.getColumnCount() + ") is not a multiple of cell height (" + cellHeight + ")");
             }
             if (matrix.getRowCount() % cellHeight != 0) {
-                throw new IllegalArgumentException("Cannot create requested iterator: matrix column count (" + matrix.getColumnCount() + ") is not a multiple of cell height (" + cellHeight + ")");
+                throw new IllegalArgumentException("Cannot create requested iterator: matrix row count (" + matrix.getRowCount() + ") is not a multiple of cell width (" + cellWidth + ")");
             }
             mMatrix = matrix;
             mCellWidth = cellWidth;
