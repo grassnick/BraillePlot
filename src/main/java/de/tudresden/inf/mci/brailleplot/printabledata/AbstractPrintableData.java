@@ -14,6 +14,9 @@ abstract class AbstractPrintableData implements PrintableData {
     private final Format mFormat;
 
     AbstractPrintableData(final Printer printer, final Format format) {
+        if (printer == null || format == null) {
+            throw new NullPointerException();
+        }
         mPrinter = printer;
         mFormat = format;
     }
