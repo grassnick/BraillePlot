@@ -31,6 +31,9 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
      */
     public SimpleMatrixDataImpl(final Printer printer, final Format format, final int rowCount, final int columnCount, final T defaultValue) {
         super(printer, format);
+        if (printer == null || format == null) {
+            throw new NullPointerException();
+        }
         if (rowCount <= 0 || columnCount <= 0) {
             throw new IllegalArgumentException("rowCount and columnCount must be a non zero positive integer");
         }
