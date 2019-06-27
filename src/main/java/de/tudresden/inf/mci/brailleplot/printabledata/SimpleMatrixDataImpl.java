@@ -36,7 +36,7 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
      */
     private int calcIndex(final int row, final int column) {
         if (row >= mRows || column > mColumns) {
-            throw new IllegalArgumentException("Index (" + row + "," + column + ") out of bounds");
+            throw new IndexOutOfBoundsException("Index (" + row + "," + column + ") out of bounds");
         }
         return row * mColumns + column;
     }
