@@ -48,9 +48,10 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
      * @param row The row index of the requested index.
      * @param column The column index of the requested index.
      * @return The according index in the underlying {@link java.util.ArrayList}
+     * @throws IndexOutOfBoundsException If row or column are negative or larger than the size of the matrix.
      */
     private int calcIndex(final int row, final int column) {
-        if (row >= mRows || column > mColumns) {
+        if (row >= mRows || column > mColumns ||  row < 0 || column < 0) {
             throw new IndexOutOfBoundsException("Index (" + row + "," + column + ") out of bounds");
         }
         return row * mColumns + column;
