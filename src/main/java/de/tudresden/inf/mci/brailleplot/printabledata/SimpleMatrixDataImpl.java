@@ -20,8 +20,20 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
     private final int mColumns;
     private final Vector<T> mData;
 
+    /**
+     * Constructor.
+     * @param printer The according {@link Printer} object.
+     * @param format The according {@link Format} object.
+     * @param rowCount The height of the matrix.
+     * @param columnCount The width of the matrix.
+     * @param defaultValue The default value each element will be assigned.
+     * @throws IllegalArgumentException if rowCount < 0 or columnCount < 0
+     */
     public SimpleMatrixDataImpl(final Printer printer, final Format format, final int rowCount, final int columnCount, final T defaultValue) {
         super(printer, format);
+        if (rowCount <= 0 || columnCount <= 0) {
+            throw new IllegalArgumentException("rowCount and columnCount must be a non zero positive integer");
+        }
         mRows = rowCount;
         mColumns = columnCount;
         mData = new Vector<>(rowCount * columnCount);
