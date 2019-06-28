@@ -2,6 +2,7 @@ package de.tudresden.inf.mci.brailleplot;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import de.tudresden.inf.mci.brailleplot.configparser.*;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -9,7 +10,9 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * Main class.
  * Set up the application and run it.
  * @author Georg Graßnick
+ * @version 06.06.19
  */
+
 public final class App {
 
     /**
@@ -106,9 +109,7 @@ public final class App {
 
             // Parse command line parameters
 
-
             // If requested, print help and exit
-
 
             // Parse csv data
 
