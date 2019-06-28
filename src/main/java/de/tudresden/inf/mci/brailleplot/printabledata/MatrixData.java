@@ -24,15 +24,15 @@ public interface MatrixData<T> extends PrintableData {
     /**
      * Get an iterator which iterates all dots of the matrix.
      * Depending on the width and height parameters, the iterator will iterate the dots of Braille cells of the
-     * specified size from left to right and then top to bottom.
+     * specified size from top to bottom and then from left to right
      * Example: width = 2, height = 3; matrix size is 4x6:
      *
-     * 01  02  07  08
-     * 03  04  09  10
-     * 05  06  11  12
-     * 13  14  19  20
-     * 15  16  21  22
-     * 17  18  23  24
+     * 01  04  07  10
+     * 02  05  08  11
+     * 03  06  09  12
+     * 13  16  19  22
+     * 14  17  20  23
+     * 15  18  21  24
      *
      * @param width The width of a Braille cell
      * @param height The height of a Braille cell

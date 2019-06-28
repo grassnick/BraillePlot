@@ -139,13 +139,13 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
         public T next() {
             if (mIsFirstElem) {
                 mIsFirstElem = false;
-            } else if (mCurrentX % mCellWidth != 0) {
-                // Staying in the current cell, move to right
-                mCurrentX++;
             } else if (mCurrentY % mCellHeight != 0) {
-                // Staying in current cell, move down, set x to the left most index of the current cell
+                // Staying in the current cell, move down
                 mCurrentY++;
-                mCurrentX = (((mCurrentX / mCellWidth) - 1) * mCellWidth) + 1;
+            } else if (mCurrentX % mCellWidth != 0) {
+                // Staying in current cell, move right, set y to the top most index of the current cell
+                mCurrentX++;
+                mCurrentY = (((mCurrentY / mCellHeight) - 1) * mCellHeight) + 1;
             } else if (mCurrentX < mMatrix.getColumnCount()) { // Moving on to the next cell
                 // Right is possible
                 mCurrentX += 1;
