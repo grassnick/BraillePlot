@@ -162,6 +162,10 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
         }
     }
 
+    /**
+     * Iterator that returns {@link BrailleCell6} objects rather than the dots themselves.
+     * See {@link MatrixData#getBrailleCell6Iterator()} for details.
+     */
     class BrailleCell6Iterator implements Iterator<BrailleCell6<T>> {
 
         private final Iterator<T> mElemIter;
