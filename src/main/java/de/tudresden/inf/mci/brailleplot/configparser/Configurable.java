@@ -18,7 +18,9 @@ public abstract class Configurable {
      */
     List<ValidProperty> mProperties;
 
-    Configurable() {};
+    Configurable() {
+
+    };
 
     /**
      * Get the names of all available properties.
