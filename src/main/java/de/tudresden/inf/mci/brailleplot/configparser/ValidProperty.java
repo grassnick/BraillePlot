@@ -10,6 +10,9 @@ public abstract class ValidProperty {
     String mValue;
 
     ValidProperty(final String name, final String value) {
+        if ((name == null) || (value == null)) {
+            throw new NullPointerException("Name and value of ValidProperty cannot be null.");
+        }
         mName = name;
         mValue = value;
     }

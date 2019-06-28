@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot;
 
+import de.tudresden.inf.mci.brailleplot.configparser.PrinterProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.concurrent.ConcurrentLinkedDeque;
