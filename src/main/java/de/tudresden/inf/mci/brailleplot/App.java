@@ -100,11 +100,7 @@ public final class App {
         try {
             // Parse command line parameters
 
-
             // If requested, print help and exit
-
-            // Parse configuration
-            dummyConfigurationParsing();
 
             // Parse csv data
 
@@ -117,47 +113,6 @@ public final class App {
         }
 
         return EXIT_SUCCESS;
-    }
-
-    /**
-     * Dummy method for parser execution.
-     * Will be removed soon.
-     */
-    public static void dummyConfigurationParsing() {
-
-        String workingDir = System.getProperty("user.dir");
-        String defaultConfigPath = workingDir + "/defaultConfig.properties";
-        String concreteConfigPath = workingDir + "/dummyPrinterConfig.properties";
-
-        // create parser and parse default config
-        try {
-            ConfigurationParser configParser = new JavaPropertiesConfigurationParser(defaultConfigPath);
-            Printer defaultPrinter = configParser.getPrinter();
-            Format defaultFormat = configParser.getFormat("default");
-            // parse concrete configuration with set defaults
-            configParser = new JavaPropertiesConfigurationParser(
-                    concreteConfigPath,
-                    defaultPrinter,
-                    defaultFormat
-            );
-            Printer printerConfig = configParser.getPrinter();
-            for (String property : printerConfig.getPropertyNames()) {
-                System.out.println("Property: " + property + "=" + printerConfig.getProperty(property));
-            }
-
-            for (String formatName : configParser.getFormatNames()) {
-                System.out.println("Format: " + formatName);
-                Format formatConfig = configParser.getFormat(formatName);
-                for (String property : formatConfig.getPropertyNames()) {
-                    System.out.println("Property: " + property + "=" + formatConfig.getProperty(property));
-                }
-            }
-        } catch (ConfigurationValidationException e) {
-            System.out.println(e.getMessage());
-        } catch (ConfigurationParsingException e) {
-            System.out.println(e.getMessage());
-        }
-
     }
 
 }
