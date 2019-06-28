@@ -40,9 +40,9 @@ public abstract class Configurable {
 
     /**
      * Get the property for the given property name.
-     * If no property has the specified name a {@link NoSuchElementException} is thrown.
      * @param propertyName The name of the property.
      * @return A {@link ValidProperty} object that represents the property.
+     * @throws NoSuchElementException If no property has the specified name.
      */
     public final ValidProperty getProperty(final String propertyName) {
         // look for property
