@@ -70,22 +70,35 @@ class SimpleMatrixDataImplTest {
     }
 
     @Test
-    void defaultValuetest() {
+    void defaultValueTest() {
         MatrixData<Integer> matrixData = simpleIntMat();
         Assertions.assertEquals(matrixData.getValue(0,0), mDefaultTestInt);
     }
 
     @Test
-    void getDotIteratortest() {
+    void getDotIteratorTest() {
         MatrixData<Integer> matrixData = iteratorIntMat();
-        int referenceVaule = 0;
+        int referenceValue = 0;
         Iterator<Integer> it = matrixData.getDotIterator(2, 3);
 
         while (it.hasNext()) {
-            referenceVaule++;
             Integer current = it.next();
-            Assertions.assertEquals(current, referenceVaule);
+            Assertions.assertEquals(current, ++referenceValue);
         }
+    }
+
+    @Test
+    void getBrailleCelll6IteratorTest() {
+        MatrixData<Integer> matrixData = iteratorIntMat();
+        int referenceValue = 0;
+        Iterator<BrailleCell6<Integer>> cellIt = matrixData.getBrailleCell6Iterator();
+        while (cellIt.hasNext()) {
+            BrailleCell6<Integer> cell = cellIt.next();
+            for (int i = 0; i < BrailleCell6.DOT_COUNT; i++) {
+                Assertions.assertEquals(cell.get(i), ++referenceValue);
+            }
+        }
+
     }
 
     @Test

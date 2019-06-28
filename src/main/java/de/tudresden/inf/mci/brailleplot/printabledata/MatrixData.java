@@ -40,6 +40,24 @@ public interface MatrixData<T> extends PrintableData {
      */
     Iterator<T> getDotIterator(int width, int height);
 
+
+    /**
+     * Get an iterator which iterates over Braille cells of the matrix.
+     * The cells have a width of 2 columns and a height of 3 rows to mach a standard 6 dot Braille cell.
+     * The matrix is traversed from left to right and then top to bottom.
+     * Example: matrix size is 4x6 - The ids specify the associated Braille cell.
+     *
+     * 01  01  02  02
+     * 01  01  02  02
+     * 01  01  02  02
+     * 03  03  04  04
+     * 03  03  04  04
+     * 03  03  04  04
+     *
+     * @return The according iterator.
+     */
+    Iterator<BrailleCell6<T>> getBrailleCell6Iterator();
+
     /**
      * Set the value at a specific position.
      * Indices start at 0.
