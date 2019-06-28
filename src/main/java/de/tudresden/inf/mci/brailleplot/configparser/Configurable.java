@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
  * @author Leonard Kupper
  * @version 2019.06.26
  */
-public abstract class Configurable {
+abstract class Configurable {
 
     private Configurable mFallback;
     /**
