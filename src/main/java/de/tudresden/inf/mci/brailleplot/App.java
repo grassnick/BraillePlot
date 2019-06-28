@@ -15,7 +15,9 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * Main class.
  * Set up the application and run it.
  * @author Georg Graßnick
+ * @version 06.06.19
  */
+
 public final class App {
 
     /**
