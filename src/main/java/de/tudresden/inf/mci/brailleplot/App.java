@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot;
 
+
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.exporter.PrintDirector;
@@ -7,9 +8,16 @@ import de.tudresden.inf.mci.brailleplot.exporter.PrinterConfiguration;
 
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
+
+import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
+import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
+import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
+import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
@@ -113,10 +121,17 @@ public final class App {
             mLogger.info("Application started");
 
             // Parse command line parameters
+            CommandLineParser cliParser = new CommandLineParser();
+            SettingsWriter settings = cliParser.parse(args);
+            SettingsReader settingsReader = settings;
 
 
             // If requested, print help and exit
-
+            Optional<Boolean> printHelp = settingsReader.isTrue(SettingType.DISPLAY_HELP);
+            if (printHelp.isPresent() && printHelp.get()) {
+                cliParser.printHelp();
+                return EXIT_SUCCESS;
+            }
 
             // Parse csv data
 
