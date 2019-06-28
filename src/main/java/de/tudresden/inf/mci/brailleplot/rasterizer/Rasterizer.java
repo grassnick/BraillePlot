@@ -1,9 +1,15 @@
 package de.tudresden.inf.mci.brailleplot.rasterizer;
 
+/*
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
+ */
 
+/**
+ * Rasterizer.
+ * @param <T>
+ */
 public interface Rasterizer<T extends Number> {
 
     /*

@@ -5,7 +5,11 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
-public class UniformTextureBarChartRasterizer implements BarChartRasterizer {
+/**
+ * UniformTextureBarChartRasterizer.
+ * @param <T>
+ */
+public class UniformTextureBarChartRasterizer<T extends Number> implements BarChartRasterizer {
 
     Printer mPrinter;
     Format mFormat;
@@ -16,12 +20,12 @@ public class UniformTextureBarChartRasterizer implements BarChartRasterizer {
     }
 
     @Override
-    public MatrixData rasterize(RepresentationStub diagram) {
+    public MatrixData<T> rasterize(final RepresentationStub diagram) {
         return null;
     }
 
     @Override
-    public FloatingPointData plot(RepresentationStub diagram) {
+    public FloatingPointData<T> plot(final RepresentationStub diagram) {
         return null;
     }
 }
