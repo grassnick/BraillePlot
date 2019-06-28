@@ -1,7 +1,8 @@
 package de.tudresden.inf.mci.brailleplot;
 
 import de.tudresden.inf.mci.brailleplot.configparser.*;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
@@ -27,11 +28,14 @@ public final class App {
     private static final int EXIT_SUCCESS = 0;
     private static final int EXIT_ERROR = 1;
 
+    private final Logger mLogger;
+
     private ConcurrentLinkedDeque<Runnable> mFinalizers;
 
     private App() {
         sInstance = this;
         mFinalizers = new ConcurrentLinkedDeque<>();
+        mLogger = LoggerFactory.getLogger(this.getClass());
     }
 
     /**
@@ -55,7 +59,7 @@ public final class App {
      * @param r The task to perform.
      */
     public static void registerFinalizer(final Runnable r) {
-        getInstance().mFinalizers.add(r);
+        getInstance().mFinalizers.addFirst(r);
     }
 
     private void runFinalizers() {
@@ -68,7 +72,7 @@ public final class App {
      * Terminate the complete Application in case of an untreatable error.
      * @param e The Exception that led to the error.
      */
-    public static void terminateWithException(final Exception e) {
+    private void terminateWithException(final Exception e) {
         terminateWithException(e, "");
     }
 
@@ -77,12 +81,12 @@ public final class App {
      * @param e The Exception that led to the error.
      * @param message An additional message to print to stderr.
      */
-    public static void terminateWithException(final Exception e, final String message) {
+    private void terminateWithException(final Exception e, final String message) {
         if (!message.isEmpty()) {
-            System.err.println(message);
+            mLogger.error(message);
         }
-        e.printStackTrace();
-        getInstance().runFinalizers();
+        mLogger.error("Application will now shut down due to an unrecoverable error", e);
+        runFinalizers();
         System.exit(EXIT_ERROR);
     }
 
@@ -93,11 +97,15 @@ public final class App {
      */
     int run(final String[] args) {
 
+        // Has to be the first finalizer to be added, so that it is run last
         registerFinalizer(() -> {
-            System.out.println("Application terminated.");
+            mLogger.info("Application terminated");
         });
 
         try {
+            // Logging example
+            mLogger.info("Application started");
+
             // Parse command line parameters
 
             // If requested, print help and exit
@@ -108,9 +116,9 @@ public final class App {
 
         } catch (final Exception e) {
             terminateWithException(e);
-        } finally {
-            runFinalizers();
         }
+
+        runFinalizers();
 
         return EXIT_SUCCESS;
     }
