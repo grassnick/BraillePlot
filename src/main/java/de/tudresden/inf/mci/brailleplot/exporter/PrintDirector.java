@@ -1,14 +1,15 @@
 package de.tudresden.inf.mci.brailleplot.exporter;
 
 
-import de.tudresden.inf.mci.brailleplot.PrintableData.MatrixData;
+import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
 import javax.print.*;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 
 /**
- * Implements a variation of the GoF Design pattern Builder.
+ * Implements a variation of the GoF Design pattern Builder. This class is used for setting the printerconfiguration and
+ * for printing.
  * @author Andrey Ruzhanskiy
  */
 public class PrintDirector {
@@ -73,6 +74,9 @@ public class PrintDirector {
 
     @SuppressWarnings("checkstyle:MagicNumber")
     public <T> void print(final String printerName, final MatrixData<T> data)  {
+        if (printerName == null || data == null){
+            throw new NullPointerException();
+        }
         setUpDoc();
         setPrinter(printerName);
 
@@ -92,15 +96,17 @@ public class PrintDirector {
     }
 
     /**
-     * stub.
+     * Private Method for sendind the data to the printer.
      * @param data
      */
 
     private void print(final byte[] data) {
+        if(data == null){
+            throw new NullPointerException();
+        }
         Doc doc = new SimpleDoc(data, mDocflavor, null);
         PrintRequestAttributeSet asset = new HashPrintRequestAttributeSet();
         DocPrintJob job = mService.createPrintJob();
-        //TODO implement own Exception Class so that the hole thing is loosly coupled.
         try {
             job.print(doc, asset);
         } catch (PrintException pe) {

@@ -1,8 +1,12 @@
 package de.tudresden.inf.mci.brailleplot;
 
+import de.tudresden.inf.mci.brailleplot.configparser.Format;
+import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.exporter.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.exporter.PrinterConfiguration;
 
+import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
+import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,6 +100,7 @@ public final class App {
      * @param args Command line parameters.
      * @return 0 if Application exited successfully, 1 on error.
      */
+    @SuppressWarnings("checkstyle:MagicNumber")
     int run(final String[] args) {
 
         // Has to be the first finalizer to be added, so that it is run last
@@ -128,8 +133,10 @@ public final class App {
                 System.out.println("Nein");
             }
 
+            MatrixData<Boolean> data = new SimpleMatrixDataImpl<Boolean>(new Printer(), new Format(), 20, 18, true);
+
             PrintDirector printD = new PrintDirector(PrinterConfiguration.NORMALPRINTER);
-            printD.print("Index Everest-D V4", null);
+            printD.print("Index Everest-D V4", data);
             /*
             byte[] data = lt.buildDemo(1);
             lt.printString(data);

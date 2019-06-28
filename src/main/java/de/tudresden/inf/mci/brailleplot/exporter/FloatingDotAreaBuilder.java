@@ -1,7 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.exporter;
 
 
-import de.tudresden.inf.mci.brailleplot.PrintableData.MatrixData;
+import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

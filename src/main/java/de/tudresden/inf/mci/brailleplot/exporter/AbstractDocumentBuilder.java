@@ -1,5 +1,5 @@
 package de.tudresden.inf.mci.brailleplot.exporter;
-import de.tudresden.inf.mci.brailleplot.PrintableData.MatrixData;
+import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
 /**
  * This Class provides an Extension Point for further implementation
@@ -33,4 +33,5 @@ public abstract class AbstractDocumentBuilder {
     public byte[] getDocument() {
         return mDocument;
     }
+
 }
