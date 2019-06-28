@@ -21,6 +21,7 @@ public class UniformTextureBarChartRasterizer<T extends Number> implements BarCh
 
     @Override
     public MatrixData<T> rasterize(final RepresentationStub diagram) {
+        // just a test commit
         return null;
     }
 
