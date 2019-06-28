@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.printabledata;
 
+import java.util.Iterator;
 import java.util.Vector;
 
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
@@ -19,12 +20,27 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
     private final int mColumns;
     private final Vector<T> mData;
 
-    SimpleMatrixDataImpl(final Printer printer, final Format format, final int rowCount, final int columnCount) {
+    /**
+     * Constructor.
+     * @param printer The according {@link Printer} object.
+     * @param format The according {@link Format} object.
+     * @param rowCount The height of the matrix.
+     * @param columnCount The width of the matrix.
+     * @param defaultValue The default value each element will be assigned.
+     * @throws IllegalArgumentException if rowCount < 0 or columnCount < 0
+     */
+    public SimpleMatrixDataImpl(final Printer printer, final Format format, final int rowCount, final int columnCount, final T defaultValue) {
         super(printer, format);
+        if (rowCount <= 0 || columnCount <= 0) {
+            throw new IllegalArgumentException("rowCount and columnCount must be a non zero positive integer");
+        }
         mRows = rowCount;
         mColumns = columnCount;
         mData = new Vector<>(rowCount * columnCount);
         mData.setSize(rowCount * columnCount);
+        for (int i = 0; i < mData.size(); i++) {
+            mData.setElementAt(defaultValue, i);
+        }
     }
 
     /**
@@ -32,10 +48,11 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
      * @param row The row index of the requested index.
      * @param column The column index of the requested index.
      * @return The according index in the underlying {@link java.util.ArrayList}
+     * @throws IndexOutOfBoundsException If row or column are negative or larger than the size of the matrix.
      */
     private int calcIndex(final int row, final int column) {
-        if (row >= mRows || column > mColumns) {
-            throw new IllegalArgumentException("Index (" + row + "," + column + ") out of bounds");
+        if (row >= mRows || column > mColumns ||  row < 0 || column < 0) {
+            throw new IndexOutOfBoundsException("Index (" + row + "," + column + ") out of bounds");
         }
         return row * mColumns + column;
     }
@@ -54,6 +71,11 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
     }
 
     @Override
+    public Iterator<T> getDotIterator(final int width, final int height) {
+        return new ElementIter(width, height, this);
+    }
+
+    @Override
     public int getColumnCount() {
         return mColumns;
     }
@@ -61,5 +83,77 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
     @Override
     public int getRowCount() {
         return mRows;
+    }
+
+    public final String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < getRowCount(); i++) {
+            for (int j = 0; j < getColumnCount(); j++) {
+                sb.append(getValue(i, j));
+                sb.append(" ");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Iterator that iterates all elements of the matrix in a pattern that iterates Braille cells of specified height
+     * and width from left to right and top to bottom.
+     * See {@link MatrixData#getDotIterator(int, int)} for details.
+     */
+    class ElementIter implements Iterator<T> {
+
+        private final SimpleMatrixDataImpl<T> mMatrix;
+
+        private final int mCellWidth;
+        private final int mCellHeight;
+
+        // We use indices starting at 1, so that we do not have to check for the x-index to be 0 in the next() method call
+        private int mCurrentX = 1;
+        private int mCurrentY = 1;
+
+        private boolean mIsFirstElem = true;
+
+        ElementIter(final int cellWidth, final int cellHeight, final SimpleMatrixDataImpl<T> matrix) {
+            if (matrix.getColumnCount() % cellWidth != 0) {
+                throw new IllegalArgumentException("Cannot create requested iterator: matrix column count (" + matrix.getColumnCount() + ") is not a multiple of cell height (" + cellHeight + ")");
+            }
+            if (matrix.getRowCount() % cellHeight != 0) {
+                throw new IllegalArgumentException("Cannot create requested iterator: matrix row count (" + matrix.getRowCount() + ") is not a multiple of cell width (" + cellWidth + ")");
+            }
+            mMatrix = matrix;
+            mCellWidth = cellWidth;
+            mCellHeight = cellHeight;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !(mCurrentY == mMatrix.getRowCount() && mCurrentX == mMatrix.getColumnCount());
+        }
+
+        @Override
+        public T next() {
+            if (mIsFirstElem) {
+                mIsFirstElem = false;
+            } else if (mCurrentY % mCellHeight != 0) {
+                // Staying in the current cell, move down
+                mCurrentY++;
+            } else if (mCurrentX % mCellWidth != 0) {
+                // Staying in current cell, move right, set y to the top most index of the current cell
+                mCurrentX++;
+                mCurrentY = (((mCurrentY / mCellHeight) - 1) * mCellHeight) + 1;
+            } else if (mCurrentX < mMatrix.getColumnCount()) { // Moving on to the next cell
+                // Right is possible
+                mCurrentX += 1;
+                mCurrentY = (((mCurrentY / mCellHeight) - 1) * mCellHeight) + 1;
+            } else {
+                // We need to go downwards
+                mCurrentY += 1;
+                mCurrentX = 1;
+            }
+            // Correct index to match the specifications of the MatrixData interface
+            return mMatrix.getValue(mCurrentY - 1, mCurrentX - 1);
+        }
     }
 }
