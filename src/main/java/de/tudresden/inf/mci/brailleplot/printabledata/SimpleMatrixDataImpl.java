@@ -150,7 +150,7 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
             } else {
                 // We need to go downwards
                 mCurrentY += 1;
-                mCurrentX = (((mCurrentX / mCellWidth) - 1) * mCellWidth) + 1;
+                mCurrentX = 1;
             }
             // Correct index to match the specifications of the MatrixData interface
             return mMatrix.getValue(mCurrentY - 1, mCurrentX - 1);
