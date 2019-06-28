@@ -30,7 +30,7 @@ public final class BrailleCell6<T> {
      * @param fifth Value of the fifth dot.
      * @param sixth  Value of the sixth dot.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "checkstyle:MagicNumber"})
     public BrailleCell6(final T first, final T second, final T third, final T fourth, final T fifth, final T sixth) {
         mDots = (T[]) new Object[DOT_COUNT];
         mDots[0] = first;
