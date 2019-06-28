@@ -5,7 +5,7 @@ package de.tudresden.inf.mci.brailleplot.configparser;
  * @author Leonard Kupper
  * @version 2019.06.04
  */
-public abstract class ValidProperty {
+abstract class ValidProperty {
     String mName;
     String mValue;
 
