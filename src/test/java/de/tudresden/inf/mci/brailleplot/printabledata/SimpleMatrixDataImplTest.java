@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 
 class SimpleMatrixDataImplTest {
 
@@ -14,11 +15,11 @@ class SimpleMatrixDataImplTest {
     private final Integer mDefaultTestInt = 0;
 
     private MatrixData<Integer> simpleIntMat() {
-        return new SimpleMatrixDataImpl<>(new Printer(), new Format(),3, 3, mDefaultTestInt);
+        return new SimpleMatrixDataImpl<>(new Printer(new LinkedList<>()), new Format(new LinkedList<>()),3, 3, mDefaultTestInt);
     }
 
     private MatrixData<Integer> iteratorIntMat() {
-        SimpleMatrixDataImpl<Integer> matrix = new SimpleMatrixDataImpl<>(new Printer(), new Format(), 6, 4, 0);
+        SimpleMatrixDataImpl<Integer> matrix = new SimpleMatrixDataImpl<>(new Printer(new LinkedList<>()), new Format(new LinkedList<>()), 6, 4, 0);
         matrix.setValue(0, 0, 1);
         matrix.setValue(1, 0, 2);
         matrix.setValue(2, 0, 3);
