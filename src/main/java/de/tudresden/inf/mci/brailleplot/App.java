@@ -1,6 +1,5 @@
 package de.tudresden.inf.mci.brailleplot;
 
-import de.tudresden.inf.mci.brailleplot.rasterizer.UniformTextureBarChartRasterizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.concurrent.ConcurrentLinkedDeque;

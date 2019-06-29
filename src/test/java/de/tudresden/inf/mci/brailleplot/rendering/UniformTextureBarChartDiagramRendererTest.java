@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot.rasterizer;
+package de.tudresden.inf.mci.brailleplot.rendering;
 
 import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
@@ -9,13 +9,12 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.util.Set;
 
-public class UniformTextureBarChartRasterizerTest {
+public class UniformTextureBarChartDiagramRendererTest {
 
     public static Printer mPrinterConfig;
     public static Format mFormatConfig;
-    public static UniformTextureBarChartRasterizer mRasterizer;
+    public static UniformTextureBarChartDiagramRenderer mRasterizer;
 
     public static File getResource(String fileName) {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
@@ -38,7 +37,7 @@ public class UniformTextureBarChartRasterizerTest {
     @Test
     public void testRasterizerConstruction() {
         Assertions.assertDoesNotThrow(() -> {
-            mRasterizer = new UniformTextureBarChartRasterizer(mPrinterConfig, mFormatConfig);
+            mRasterizer = new UniformTextureBarChartDiagramRenderer(mPrinterConfig, mFormatConfig);
         });
     }
 
