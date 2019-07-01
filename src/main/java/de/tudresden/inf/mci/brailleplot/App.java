@@ -1,5 +1,16 @@
 package de.tudresden.inf.mci.brailleplot;
 
+import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
+import de.tudresden.inf.mci.brailleplot.configparser.Format;
+import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
+import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
+import de.tudresden.inf.mci.brailleplot.rendering.BarChart;
+import de.tudresden.inf.mci.brailleplot.rendering.BarChartRasterizing;
+import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
+import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRenderingBase;
+import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.concurrent.ConcurrentLinkedDeque;

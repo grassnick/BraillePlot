@@ -1,6 +1,11 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
-class Raster {
+/**
+ * Raster. Represents a raster for rasterizing.
+ * @author Leonard Kupper
+ * @version 2019.06.28
+ */
+public abstract class Raster {
 
     private int mCellsWide;
     private int mCellsHigh;
@@ -16,9 +21,9 @@ class Raster {
     private double mWidth;
     private double mHeight;
 
-    Raster(int cellsWide, int cellsHigh, int rowsPerCell, int columnsPerCell, double verticalDotDistance,
-                  double horizontalDotDistance, double verticalCellDistance, double horizontalCellDistance
-    ){
+    Raster(final int cellsWide, final int cellsHigh, final int rowsPerCell, final int columnsPerCell, final double verticalDotDistance,
+                  final double horizontalDotDistance, final double verticalCellDistance, final double horizontalCellDistance
+    ) {
         mCellsWide = cellsWide;
         mCellsHigh = cellsHigh;
         mRowsPerCell = rowsPerCell;
@@ -34,28 +39,28 @@ class Raster {
         mWidth =  (mColumnsPerCell - 1) * mHorizontalDotDistance * mCellsWide + (mCellsWide - 1) * mHorizontalCellDistance;
     }
 
-    public int getHorizontalCellCount() {
+    public final int getHorizontalCellCount() {
         return mCellsWide;
     }
-    public int getVerticalCellCount() {
+    public final int getVerticalCellCount() {
         return mCellsHigh;
     }
-    public int getVerticalCellSize() {
+    public final int getVerticalCellSize() {
         return mRowsPerCell;
     }
-    public int getHorizontalCellSize() {
+    public final int getHorizontalCellSize() {
         return mColumnsPerCell;
     }
-    public int getRowCount() {
+    public final int getRowCount() {
         return mRowCount;
     }
-    public int getColumnCount() {
+    public final int getColumnCount() {
         return mColumnCount;
     }
-    public double getRasterHeight() {
+    public final double getRasterHeight() {
         return mHeight;
     }
-    public double getRasterWidth() {
+    public final double getRasterWidth() {
         return mWidth;
     }
 

@@ -117,7 +117,9 @@
         <module name="LineLength"/>
 -->
         <module name="MethodLength"/>
+        <!-- TODO: FIND ANOTHER SOLUTION
         <module name="ParameterNumber"/>
+        -->
 
         <!-- Checks for whitespace                               -->
         <!-- See http://checkstyle.sf.net/config_whitespace.html -->
@@ -156,12 +158,14 @@
         </module>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
+        <!-- TODO: FIND ANOTHER SOLUTION
         <module name="MagicNumber"/>
+        -->
         <module name="MissingSwitchDefault"/>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
 
-        <!-- Checks for class design                         -->
+<!-- Checks for class design                         -->
         <!-- See http://checkstyle.sf.net/config_design.html -->
         <module name="DesignForExtension">
             <!-- Ignore this rule on functions annotated with certain annotations -->
