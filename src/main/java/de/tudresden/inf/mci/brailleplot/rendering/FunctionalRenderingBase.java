@@ -14,9 +14,6 @@ import java.util.Objects;
 public class FunctionalRenderingBase {
 
     private HashMap<Class<? extends DiagramStub>, FunctionalRasterizer> mRasterizingAlgorithms;
-    //private FunctionalRasterizer<BarChart> mBarChartRasterizing;
-    //private FunctionalRasterizer<ScatterPlot> mScatterPlotRasterizing;
-    //private FunctionalRasterizer<LineDiagram> mLineDiagramRasterizing;
     private Raster mRaster;
 
     public FunctionalRenderingBase() {
