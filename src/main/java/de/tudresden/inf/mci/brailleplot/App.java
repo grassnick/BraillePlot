@@ -7,9 +7,6 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
 import de.tudresden.inf.mci.brailleplot.rendering.AbstractRasterCanvas;
 import de.tudresden.inf.mci.brailleplot.rendering.BarChart;
-import de.tudresden.inf.mci.brailleplot.rendering.BarChartRasterizing;
-import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
-import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRenderingBase;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,8 +125,7 @@ public final class App {
             Printer printerConfig = configParser.getPrinter();
             Format formatConfig = configParser.getFormat("A4");
 
-            MasterRenderer renderer = new MasterRenderer(printerConfig, formatConfig, new FunctionalRenderingBase());
-            renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, BarChartRasterizing::uniformTextureRasterizing));
+            MasterRenderer renderer = new MasterRenderer(printerConfig, formatConfig);
             AbstractRasterCanvas canvas = renderer.rasterize(new BarChart());
             System.out.println(canvas.getMatrixData());
         } catch (final Exception e) {
