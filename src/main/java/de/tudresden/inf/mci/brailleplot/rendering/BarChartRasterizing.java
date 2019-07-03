@@ -13,7 +13,12 @@ public final class BarChartRasterizing {
 
     public static void uniformTextureRasterizing(final BarChart diagram, final AbstractRasterCanvas canvas) {
 
-        System.out.println("I am a bar chart rasterizing algorithm");
+        double hRatio = canvas.getHorizontalCellCount() / diagram.getNumberOfCategories();
+        double vRatio = canvas.getVerticalCellCount() / diagram.getNumberOfCategories();
+
+        System.out.println(diagram.getValue(1));
+
+
         for (int x = 0; x < 10; x++) {
             for (int y = 0; y < 10; y++) {
                 canvas.getMatrixData().setValue(y, x, true);

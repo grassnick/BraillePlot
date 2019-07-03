@@ -13,7 +13,7 @@ public class FunctionalRenderingBase {
 
     private HashMap<Class<? extends DiagramStub>, FunctionalRasterizer> mRasterizingAlgorithms;
     private AbstractRasterCanvas mRaster;
-    
+
     public FunctionalRenderingBase() {
         mRasterizingAlgorithms = new HashMap<>();
     }

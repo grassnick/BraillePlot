@@ -127,6 +127,12 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
     public final int getCellHeight() {
         return mCellHeight;
     }
+    public final int getHorizontalCellCount() {
+        return mHorizontalCellCount;
+    }
+    public final int getVerticalCellCount() {
+        return mVerticalCellCount;
+    }
 
     @Override
     public double getAbsoluteWidth() {

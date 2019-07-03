@@ -18,6 +18,18 @@ public class MasterRenderer {
     Format mFormat;
     FunctionalRenderingBase mRenderingBase;
 
+    public MasterRenderer(final Printer printer, final Format format) {
+        // if no rendering base is given, create own rendering base with default set of algorithms
+        FunctionalRenderingBase renderingBase = new FunctionalRenderingBase();
+
+        // here are the default algorithms:
+        renderingBase.registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, BarChartRasterizing::uniformTextureRasterizing));
+        //renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, ScatterPlotRasterizing::fooRasterizing));
+        //...
+
+        setRenderingContext(printer, format, renderingBase);
+    }
+
     public MasterRenderer(final Printer printer, final Format format, final FunctionalRenderingBase renderingBase) {
         setRenderingContext(printer, format, renderingBase);
     }
