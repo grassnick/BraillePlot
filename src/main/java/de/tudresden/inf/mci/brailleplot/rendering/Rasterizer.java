@@ -1,6 +1,5 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
-import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
 /**
  * Rasterizer. A functional interface for anything that is able to rasterize a diagram to a raster.
@@ -10,5 +9,5 @@ import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
  */
 @FunctionalInterface
 public interface Rasterizer<T extends DiagramStub> {
-    MatrixData rasterize(T data, Raster raster) throws InsufficientRenderingAreaException;
+    void rasterize(T data, AbstractRasterCanvas raster) throws InsufficientRenderingAreaException;
 }

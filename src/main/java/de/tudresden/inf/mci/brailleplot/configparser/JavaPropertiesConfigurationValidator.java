@@ -43,10 +43,14 @@ public class JavaPropertiesConfigurationValidator implements ConfigurationValida
         Map<String, Predicate<String>> f = new HashMap<>();
         f.put("page.width", requireInteger.and(requirePositive));
         f.put("page.height", requireInteger.and(requirePositive));
-        f.put("margin.top", requireInteger);
-        f.put("margin.right", requireInteger);
-        f.put("margin.bottom", requireInteger);
-        f.put("margin.left", requireInteger);
+        f.put("margin.top", requireInteger.and(requirePositive));
+        f.put("margin.right", requireInteger.and(requirePositive));
+        f.put("margin.bottom", requireInteger.and(requirePositive));
+        f.put("margin.left", requireInteger.and(requirePositive));
+        f.put("raster.dotDistance.horizontal", requireDouble.and(requirePositive));
+        f.put("raster.dotDistance.vertical", requireDouble.and(requirePositive));
+        f.put("raster.cellDistance.horizontal", requireDouble.and(requirePositive));
+        f.put("raster.cellDistance.vertical", requireDouble.and(requirePositive));
         f.put("isPortrait", requireBoolean);
 
         // Add definitions

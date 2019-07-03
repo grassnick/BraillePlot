@@ -1,7 +1,5 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
-import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
-
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -17,7 +15,7 @@ public class FunctionalRenderingBase {
     //private FunctionalRasterizer<BarChart> mBarChartRasterizing;
     //private FunctionalRasterizer<ScatterPlot> mScatterPlotRasterizing;
     //private FunctionalRasterizer<LineDiagram> mLineDiagramRasterizing;
-    private Raster mRaster;
+    private AbstractRasterCanvas mRaster;
 
     public FunctionalRenderingBase() {
         mRasterizingAlgorithms = new HashMap<>();
@@ -25,10 +23,10 @@ public class FunctionalRenderingBase {
 
     // Rasterizing
 
-    public final MatrixData rasterize(final DiagramStub diagram) throws InsufficientRenderingAreaException {
+    public final void rasterize(final DiagramStub diagram) throws InsufficientRenderingAreaException {
         // first, check if a raster is set. No rasterizing without raster.
         if (Objects.isNull(mRaster)) {
-            throw new IllegalStateException("No raster was set. The method 'setRaster' must be called before invoking the 'rasterize' method.");
+            throw new IllegalStateException("No raster was set. The method 'setRasterCanvas' must be called before invoking the 'rasterize' method.");
         }
         // then, look at the type of the diagram
         Class<? extends DiagramStub> diagramClass = diagram.getClass();
@@ -36,7 +34,7 @@ public class FunctionalRenderingBase {
         if (mRasterizingAlgorithms.containsKey(diagramClass)) {
             // dispatch to concrete rasterizer implementation
             FunctionalRasterizer selectedRasterizer = mRasterizingAlgorithms.get(diagramClass);
-            return selectedRasterizer.rasterize(diagram, mRaster);
+            selectedRasterizer.rasterize(diagram, mRaster);
         } else {
             throw new IllegalArgumentException("No rasterizer registered for diagram class: '"
                     + diagramClass.getCanonicalName() + "'");
@@ -48,10 +46,10 @@ public class FunctionalRenderingBase {
         mRasterizingAlgorithms.put(rasterizer.getSupportedDiagramClass(), rasterizer);
     }
 
-    public final void setRaster(final Raster raster) {
+    public final void setRasterCanvas(final AbstractRasterCanvas raster) {
         mRaster = Objects.requireNonNull(raster);
     }
-    public final Raster getRaster() {
+    public final AbstractRasterCanvas getRaster() {
         return mRaster;
     }
 }

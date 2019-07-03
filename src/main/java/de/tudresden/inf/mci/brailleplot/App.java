@@ -4,13 +4,13 @@ import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
-import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
+
+import de.tudresden.inf.mci.brailleplot.rendering.AbstractRasterCanvas;
 import de.tudresden.inf.mci.brailleplot.rendering.BarChart;
 import de.tudresden.inf.mci.brailleplot.rendering.BarChartRasterizing;
 import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRenderingBase;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -123,7 +123,15 @@ public final class App {
             // Parse csv data
 
             // ...
+            String configFilePath = System.getProperty("user.dir") + "/src/test/resources/dummyPrinterConfig.properties";
+            ConfigurationParser configParser = new JavaPropertiesConfigurationParser(configFilePath);
+            Printer printerConfig = configParser.getPrinter();
+            Format formatConfig = configParser.getFormat("A4");
 
+            MasterRenderer renderer = new MasterRenderer(printerConfig, formatConfig, new FunctionalRenderingBase());
+            renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, BarChartRasterizing::uniformTextureRasterizing));
+            AbstractRasterCanvas canvas = renderer.rasterize(new BarChart());
+            System.out.println(canvas.getMatrixData());
         } catch (final Exception e) {
             terminateWithException(e);
         }

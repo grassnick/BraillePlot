@@ -1,8 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
-import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
-
-import java.util.function.BiFunction;
+import java.util.function.BiConsumer;
 
 /**
  * FunctionalRasterizer. This class implements a concrete rasterizer via a functional interface.
@@ -14,18 +12,18 @@ import java.util.function.BiFunction;
 public class FunctionalRasterizer<T extends DiagramStub> implements Rasterizer {
 
     private Class<? extends T> mSupportedDiagramClass;
-    private BiFunction<T, Raster, MatrixData> mRasterizingAlgorithm;
+    private BiConsumer<T, AbstractRasterCanvas> mRasterizingAlgorithm;
 
-    public FunctionalRasterizer(final Class<? extends T> supportedDiagramClass, final BiFunction<T, Raster, MatrixData> rasterizingAlgorithm) {
+    public FunctionalRasterizer(final Class<? extends T> supportedDiagramClass, final BiConsumer<T, AbstractRasterCanvas> rasterizingAlgorithm) {
         mSupportedDiagramClass = supportedDiagramClass;
         mRasterizingAlgorithm = rasterizingAlgorithm;
     }
 
     @Override
-    public MatrixData rasterize(final DiagramStub data, final Raster raster) throws InsufficientRenderingAreaException {
+    public void rasterize(final DiagramStub data, final AbstractRasterCanvas raster) throws InsufficientRenderingAreaException {
         // invoke the given rasterizing algorithm
         T diagram = safeCast(data);
-        return mRasterizingAlgorithm.apply(diagram, raster);
+        mRasterizingAlgorithm.accept(diagram, raster);
     }
 
     public final Class<? extends T> getSupportedDiagramClass() {

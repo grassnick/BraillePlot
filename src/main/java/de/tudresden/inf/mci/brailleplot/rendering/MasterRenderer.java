@@ -2,7 +2,6 @@ package de.tudresden.inf.mci.brailleplot.rendering;
 
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
-import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
 import java.util.Objects;
 
@@ -23,29 +22,26 @@ public class MasterRenderer {
         setRenderingContext(printer, format, renderingBase);
     }
 
-    public final MatrixData rasterize(final DiagramStub data) throws InsufficientRenderingAreaException {
-        mRenderingBase.setRaster(calculateRaster());
-        return mRenderingBase.rasterize(data);
+    public final AbstractRasterCanvas rasterize(final DiagramStub data) throws InsufficientRenderingAreaException {
+        AbstractRasterCanvas canvas = createCompatibleRasterCanvas();
+        mRenderingBase.setRasterCanvas(canvas);
+        mRenderingBase.rasterize(data);
+        return canvas;
     }
 
-    private Raster calculateRaster() {
+    private AbstractRasterCanvas createCompatibleRasterCanvas() {
+
+        return new SixDotBrailleRasterCanvas(mPrinter, mFormat);
+
         /*
-        mPrinter.getProperty("raster.cells.width").toDouble();
-        mPrinter.getProperty("raster.cells.height").toDouble();
-        mPrinter.getProperty("raster.cells.dotDistance.horizontal").toDouble();
-        mPrinter.getProperty("raster.cells.dotDistance.vertical").toDouble();
-        mPrinter.getProperty("raster.cellDistance.horizontal").toDouble();
-        mPrinter.getProperty("raster.cellDistance.vertical").toDouble();
+        TODO: support 6 and 8 dot layout#
+        String rasterType = mPrinter.getProperty("raster.type").toString();
+        if (rasterType == "6-dot") {
+            return new SixDotBrailleRasterCanvas(mPrinter, mFormat);
+        } else {
 
-        mFormat.getProperty("width").toDouble();
-        mFormat.getProperty("height").toDouble();
-        mFormat.getProperty("margin.top").toDouble();
-        mFormat.getProperty("margin.bottom").toDouble();
-        mFormat.getProperty("margin.left").toDouble();
-        mFormat.getProperty("margin.right").toDouble();
-        */
-
-        return new SixDotBrailleRaster(35, 29, 0, 0, 0, 0);
+        }
+         */
     }
 
     // Getter & Setter
