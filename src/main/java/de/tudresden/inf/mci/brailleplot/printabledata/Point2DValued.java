@@ -1,7 +1,8 @@
 package de.tudresden.inf.mci.brailleplot.printabledata;
 
-import javax.measure.Unit;
+import javax.measure.Quantity;
 import javax.measure.quantity.Length;
+import java.util.Objects;
 
 /**
  * Representation of a 2 dimensional point with an associated value.
@@ -21,7 +22,7 @@ public class Point2DValued<T> extends Point2D {
      * @param y Position on the y axis.
      * @param val The value of the dot
      */
-    public Point2DValued(final Unit<Length> x, final Unit<Length> y, final T val) {
+    public Point2DValued(final Quantity<Length> x, final Quantity<Length> y, final T val) {
         super(x, y);
         if (val == null) {
             throw new NullPointerException();
@@ -35,5 +36,36 @@ public class Point2DValued<T> extends Point2D {
      */
     public final T getVal() {
         return mVal;
+    }
+
+    /**
+     * Check for Object equality.
+     * @param other The other to compare to.
+     * @return true, if X and Y positions and the values of both points are equal; else false
+     */
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof Point2DValued)) {
+            return false;
+        }
+        Point2D point = (Point2DValued) other;
+        return super.equals(other) && mVal.equals(((Point2DValued) other).mVal);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mVal, super.hashCode());
+    }
+
+    /**
+     * Create a human readable String to represent the point.
+     * @return A human readable String.
+     */
+    @Override
+    public String toString() {
+        return "(" + super.getX() + ", " + super.getY() + ": " + mVal + ")";
     }
 }
