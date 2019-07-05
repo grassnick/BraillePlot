@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 public class FunctionalRenderingBase {
 
-    private HashMap<Class<? extends DiagramStub>, FunctionalRasterizer> mRasterizingAlgorithms;
+    private HashMap<Class<? extends Renderable>, FunctionalRasterizer> mRasterizingAlgorithms;
     private AbstractRasterCanvas mRaster;
 
     public FunctionalRenderingBase() {
@@ -20,13 +20,13 @@ public class FunctionalRenderingBase {
 
     // Rasterizing
 
-    public final void rasterize(final DiagramStub diagram) throws InsufficientRenderingAreaException {
+    public final void rasterize(final Renderable diagram) throws InsufficientRenderingAreaException {
         // first, check if a raster is set. No rasterizing without raster.
         if (Objects.isNull(mRaster)) {
             throw new IllegalStateException("No raster was set. The method 'setRasterCanvas' must be called before invoking the 'rasterize' method.");
         }
         // then, look at the type of the diagram
-        Class<? extends DiagramStub> diagramClass = diagram.getClass();
+        Class<? extends Renderable> diagramClass = diagram.getClass();
         // is a rasterizer for the given diagram type available?
         if (mRasterizingAlgorithms.containsKey(diagramClass)) {
             // dispatch to concrete rasterizer implementation
@@ -39,7 +39,7 @@ public class FunctionalRenderingBase {
     }
 
 
-    public final void registerRasterizer(final FunctionalRasterizer<? extends DiagramStub> rasterizer) {
+    public final void registerRasterizer(final FunctionalRasterizer<? extends Renderable> rasterizer) {
         mRasterizingAlgorithms.put(rasterizer.getSupportedDiagramClass(), rasterizer);
     }
 

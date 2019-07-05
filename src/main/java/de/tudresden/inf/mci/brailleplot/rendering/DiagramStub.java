@@ -5,5 +5,5 @@ package de.tudresden.inf.mci.brailleplot.rendering;
  * @author Leonard Kupper
  * @version 2019.06.28
  */
-abstract class DiagramStub {
+public class DiagramStub implements Renderable {
 }

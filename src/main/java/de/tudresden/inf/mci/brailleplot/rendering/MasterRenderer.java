@@ -12,7 +12,7 @@ import java.util.Objects;
  * @author Leonard Kupper
  * @version 2019.07.01
  */
-public class MasterRenderer {
+public final class MasterRenderer {
 
     Printer mPrinter;
     Format mFormat;
@@ -23,7 +23,11 @@ public class MasterRenderer {
         FunctionalRenderingBase renderingBase = new FunctionalRenderingBase();
 
         // here are the default algorithms:
-        renderingBase.registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, BarChartRasterizing::uniformTextureRasterizing));
+
+        Rasterizer<Axis> commonAxisRasterizer = new LinearMappingAxisRasterizer();
+        Rasterizer<BarChart> uniformTexture = new UniformTextureBarChartRasterizer(commonAxisRasterizer);
+
+        renderingBase.registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, uniformTexture));
         //renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, ScatterPlotRasterizing::fooRasterizing));
         //...
 
@@ -34,7 +38,7 @@ public class MasterRenderer {
         setRenderingContext(printer, format, renderingBase);
     }
 
-    public final AbstractRasterCanvas rasterize(final DiagramStub data) throws InsufficientRenderingAreaException {
+    public final AbstractRasterCanvas rasterize(final Renderable data) throws InsufficientRenderingAreaException {
         AbstractRasterCanvas canvas = createCompatibleRasterCanvas();
         mRenderingBase.setRasterCanvas(canvas);
         mRenderingBase.rasterize(data);
