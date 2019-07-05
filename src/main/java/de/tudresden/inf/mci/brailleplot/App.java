@@ -1,6 +1,15 @@
 package de.tudresden.inf.mci.brailleplot;
 
+import parser.CsvOrientation;
+import parser.CsvParser;
+import parser.CsvType;
+import parser.PointListList;
+import parser.Point;
+
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedDeque;
+
 
 /**
  * Main class.
@@ -14,8 +23,18 @@ public final class App {
      * Instantiate application and execute it.
      * @param args Command line parameters.
      */
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws IOException {
         App app = App.getInstance();
+        String csvPath = "parser_line.csv";
+        CsvType csvType = CsvType.X_ALIGNED;
+        CsvOrientation csvOrientation = CsvOrientation.HORIZONTAL;
+        CsvParser parser = new CsvParser(new FileReader(csvPath), ',', '"');
+        PointListList points = parser.parse(csvType, csvOrientation);
+        for (PointListList.PointList l : points) {
+            for (Point p : l) {
+                System.out.println(p.getX() + p.getY() + p.getName());
+            }
+        }
         System.exit(app.run(args));
     }
 
