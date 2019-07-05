@@ -48,14 +48,20 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
         System.out.println(mXPositions.toString());
         System.out.println(mYPositions.toString());
 
-        mPrintableData = new SimpleMatrixDataImpl<Boolean>(mPrinter, mFormat, mColumnCount, mRowCount, false);
+    }
+
+    public final MatrixData<Boolean> getNewPage() {
+        mPageContainer.add(new SimpleMatrixDataImpl<Boolean>(mPrinter, mFormat, mRowCount, mColumnCount, false));
+        return getCurrentPage();
     }
 
     @SuppressWarnings("unchecked")
-    // This is allowed because the field is initialized with the correct type by the constructor and cannot be accessed
-    // from the outside and is never changed anywhere else.
-    public final MatrixData<Boolean> getMatrixData() {
-        return (MatrixData<Boolean>) mPrintableData;
+    // This is allowed because the mPageContainer fields are always initialized with the correct type by the page getters,
+    // cannot be accessed from the outside and are never changed anywhere else.
+    public final MatrixData<Boolean> getCurrentPage() {
+        if (mPageContainer.size() < 1)
+            return getNewPage();
+        return (MatrixData<Boolean>) mPageContainer.get(mPageContainer.size() - 1);
     }
 
     private void readRasterConfig() {
@@ -132,6 +138,18 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
     }
     public final int getVerticalCellCount() {
         return mVerticalCellCount;
+    }
+    public final double getHorizontalDotDistance() {
+        return mHorizontalDotDistance;
+    }
+    public final double getVerticalDotDistance() {
+        return mVerticalDotDistance;
+    }
+    public final double getHorizontalCellDistance() {
+        return mHorizontalCellDistance;
+    }
+    public final double getVerticalCellDistance() {
+        return mVerticalCellDistance;
     }
 
     @Override

@@ -4,6 +4,9 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Representation of a target onto which can be drawn. It wraps a {@link PrintableData} instance and specifies the size of the drawing area (in mm).
  */
@@ -14,16 +17,17 @@ public abstract class AbstractCanvas {
     double mMillimeterWidth;
     double mMillimeterHeight;
 
-    PrintableData mPrintableData;
+    List<PrintableData> mPageContainer;
 
     AbstractCanvas(final Printer printer, final Format format) {
         mPrinter = printer;
         mFormat = format;
+        mPageContainer = new ArrayList<>();
     }
 
     /**
      * This method is supposed to return the full width of the canvas.
-     * @return
+     * @return The width of the canvas in millimeters.
      */
     public double getAbsoluteWidth() {
         return mMillimeterWidth;
@@ -31,7 +35,7 @@ public abstract class AbstractCanvas {
 
     /**
      * This method is supposed to return the full height of the canvas.
-     * @return
+     * @return The height of the canvas in millimeters.
      */
     public double getAbsoluteHeight() {
         return mMillimeterHeight;
