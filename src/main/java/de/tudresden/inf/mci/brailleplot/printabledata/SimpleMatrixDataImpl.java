@@ -27,7 +27,7 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
      * @param rowCount The height of the matrix.
      * @param columnCount The width of the matrix.
      * @param defaultValue The default value each element will be assigned.
-     * @throws IllegalArgumentException if rowCount < 0 or columnCount < 0
+     * @throws IllegalArgumentException if rowCount {@literal <} 0 or columnCount {@literal <} 0
      */
     public SimpleMatrixDataImpl(final Printer printer, final Format format, final int rowCount, final int columnCount, final T defaultValue) {
         super(printer, format);
