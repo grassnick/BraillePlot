@@ -1,9 +1,10 @@
 package diagrams;
 
 import parser.PointListList;
+import parser.XType;
 
 public class Diagram {
-    protected PointListList p;
+    public PointListList p;
 
     public double getMinX() {
         return p.getMinX();
@@ -19,5 +20,17 @@ public class Diagram {
 
     public double getMaxY() {
         return p.getMaxY();
+    }
+
+    public XType getXType() {
+        return p.getXType();
+    }
+
+    public PointListList.PointList getDataSet(int index) {
+        return (PointListList.PointList) p.get(index);
+    }
+
+    public String getDataSetName(int index) {
+        return p.get(index).getName();
     }
 }

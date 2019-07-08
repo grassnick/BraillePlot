@@ -86,8 +86,7 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
 		lineIterator.next();
 
 		if(!lineIterator.hasNext())
-		{System.out.print("1");
-			return pointListList;}
+			return pointListList;
 
 		// Add a PointList for each title
 		while(lineIterator.hasNext()) {

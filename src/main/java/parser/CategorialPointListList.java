@@ -12,7 +12,7 @@ public class CategorialPointListList extends PointListList {
 
 	private static final long serialVersionUID = -1291194891140659342L;
 
-	private List<String> categoryNames;
+	public List<String> categoryNames;
 	private double maxYSum = Double.NEGATIVE_INFINITY;
 
 	public XType getXType() {

@@ -26,8 +26,7 @@ public class CsvXAlignedParser extends CsvParseAlgorithm {
 			return pointListList;
 		lineIterator.next();
 		if(!lineIterator.hasNext())
-		{System.out.print("1");
-			return pointListList;}
+			return pointListList;
 		
 		// Store all x values, if one is not specified store NaN
 		while(lineIterator.hasNext()) {
