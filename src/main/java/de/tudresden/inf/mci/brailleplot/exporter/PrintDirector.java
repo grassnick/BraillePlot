@@ -34,7 +34,7 @@ public class PrintDirector {
             case NORMALPRINTER: mBuilder = new NormalBuilder();
             case INDEX_EVEREST_D_V4_GRAPHIC_PRINTER: mBuilder = new GraphicPrintBuilder();
             case INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER: mBuilder = new FloatingDotAreaBuilder();
-            default: mBuilder = new NormalBuilder();
+            default: throw new IllegalArgumentException();
         }
     }
 
