@@ -1,5 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.exporter;
 
+import de.tudresden.inf.mci.brailleplot.printabledata.BrailleCell6;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,6 +12,6 @@ import java.util.Map;
  */
 
 public interface BrailleAlphabet {
-    public byte[] getValue(BrailleCell cell);
-    public Map<BrailleCell, byte[]> mAlphabet = new HashMap<>();
+    public byte[] getValue(BrailleCell6 cell);
+    public Map<BrailleCell6, byte[]> mAlphabet = new HashMap<>();
 }
