@@ -186,9 +186,8 @@
         <module name="TodoComment"/>
 -->
         <module name="UpperEll"/>
-        <!-- Add support for SupressWarnings Annotations -->
+        <!-- Add support for SuppressWarnings Annotations -->
         <module name="SuppressWarningsHolder" />
-
 
     </module>
 
