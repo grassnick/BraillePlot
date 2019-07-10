@@ -1,14 +1,18 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
-public class UniversalTextRasterizer implements Rasterizer<Text> {
+/**
+ * A rasterizer for text on braille grids.
+ * @version 2019.07.09
+ * @author Leonard Kupper
+ */
+public class BrailleTextRasterizer implements Rasterizer<Text> {
     @Override
     public void rasterize(Text data, AbstractRasterCanvas canvas) throws InsufficientRenderingAreaException {
-        // TODO: rasterize the text (Take different grids into consideration! 6-dot / 8-dot / equidistant?)
+        // TODO: rasterize the text (Take different grids into consideration! 6-dot / 8-dot)
         // Until then, we just display dummy characters
         int x = data.getArea().intWrapper().getX();
         int y = data.getArea().intWrapper().getY();
         for (int i = 0; i < data.getText().length(); i++) {
-            System.out.println("y: " + y + " x: " + x);
             canvas.getCurrentPage().setValue(y, x, true);
             canvas.getCurrentPage().setValue(y+1, x+1, true);
             canvas.getCurrentPage().setValue(y+2, x, true);
@@ -17,6 +21,7 @@ public class UniversalTextRasterizer implements Rasterizer<Text> {
         //Rasterizer.rectangle(data.getArea(), canvas.getCurrentPage(), true);
     }
 
+    // TODO: Completely replace with help methods to calculate suited area for left or right alignment of given text.
     public int calculateRequiredHeight(final String text, final int xPos, final int yPos, final int maxWidth,
                                            final AbstractRasterCanvas canvas) {
         // TODO: Add calculations for required height to fit the given text into the given canvas. (Linebreaks!)
