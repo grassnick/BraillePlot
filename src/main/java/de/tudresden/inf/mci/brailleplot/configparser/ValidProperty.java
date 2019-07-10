@@ -5,11 +5,14 @@ package de.tudresden.inf.mci.brailleplot.configparser;
  * @author Leonard Kupper
  * @version 2019.06.04
  */
-public abstract class ValidProperty {
+abstract class ValidProperty {
     String mName;
     String mValue;
 
     ValidProperty(final String name, final String value) {
+        if ((name == null) || (value == null)) {
+            throw new NullPointerException("Name and value of ValidProperty cannot be null.");
+        }
         mName = name;
         mValue = value;
     }

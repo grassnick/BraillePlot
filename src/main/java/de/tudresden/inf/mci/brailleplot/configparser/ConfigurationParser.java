@@ -1,7 +1,14 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * Abstract parser for configuration files. Interface for {@link Printer} and multiple {@link Format} configurations.
@@ -10,7 +17,7 @@ import java.util.*;
  * @version 2019.06.26
  */
 
-public abstract class ConfigurationParser {
+abstract class ConfigurationParser {
 
     private FileInputStream mInput;
     private ConfigurationValidator mValidator;
@@ -22,7 +29,9 @@ public abstract class ConfigurationParser {
     private Printer mDefaultPrinter;
     private Format mDefaultFormat;
 
-    ConfigurationParser() {};
+    ConfigurationParser() {
+
+    };
 
     /**
      * Internal algorithm used for parsing of the configuration file.
@@ -64,6 +73,7 @@ public abstract class ConfigurationParser {
      * Get a specific format configuration.
      * @param formatName The name of the format.
      * @return A {@link Format} object, representing the formats properties.
+     * @throws NoSuchElementException If no format has the specified name.
      */
     public final Format getFormat(final String formatName) {
         if (!mFormats.containsKey(formatName)) {
@@ -78,7 +88,7 @@ public abstract class ConfigurationParser {
      * This method should be called inside the concrete parsers constructor
      * @param validator The {@link ConfigurationValidator} object.
      */
-    protected void setValidator(ConfigurationValidator validator) {
+    protected void setValidator(final ConfigurationValidator validator) {
         mValidator = validator;
     }
 

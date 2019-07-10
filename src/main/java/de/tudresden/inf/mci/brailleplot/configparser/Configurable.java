@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
  * @author Leonard Kupper
  * @version 2019.06.26
  */
-public abstract class Configurable {
+abstract class Configurable {
 
     private Configurable mFallback;
     /**
@@ -18,7 +18,9 @@ public abstract class Configurable {
      */
     List<ValidProperty> mProperties;
 
-    Configurable() {};
+    Configurable() {
+
+    };
 
     /**
      * Get the names of all available properties.
@@ -38,9 +40,9 @@ public abstract class Configurable {
 
     /**
      * Get the property for the given property name.
-     * If no property has the specified name a {@link NoSuchElementException} is thrown.
      * @param propertyName The name of the property.
      * @return A {@link ValidProperty} object that represents the property.
+     * @throws NoSuchElementException If no property has the specified name.
      */
     public final ValidProperty getProperty(final String propertyName) {
         // look for property
