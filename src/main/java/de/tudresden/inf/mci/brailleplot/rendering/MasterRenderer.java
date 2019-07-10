@@ -10,7 +10,7 @@ import java.util.Objects;
  * The MasterRenderer takes representations of any diagram type, calculates the available raster/area from the given printer and format configuration and dispatches
  * any calls to the 'rasterize' and 'plot' methods to the given {@link FunctionalRenderingBase}.
  * @author Leonard Kupper
- * @version 2019.07.01
+ * @version 2019.07.09
  */
 public final class MasterRenderer {
 
@@ -24,8 +24,7 @@ public final class MasterRenderer {
 
         // here are the default algorithms:
 
-        Rasterizer<Axis> commonAxisRasterizer = new LinearMappingAxisRasterizer();
-        Rasterizer<BarChart> uniformTexture = new UniformTextureBarChartRasterizer(commonAxisRasterizer);
+        Rasterizer<BarChart> uniformTexture = new UniformTextureBarChartRasterizer();
 
         renderingBase.registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, uniformTexture));
         //renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, ScatterPlotRasterizing::fooRasterizing));
