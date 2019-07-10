@@ -16,11 +16,17 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
 import de.tudresden.inf.mci.brailleplot.rendering.AbstractRasterCanvas;
-import de.tudresden.inf.mci.brailleplot.rendering.BarChart;
+import de.tudresden.inf.mci.brailleplot.rendering.BarChartDummy;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
+import diagrams.BarChart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import parser.CategorialPointListList;
+import parser.CsvOrientation;
+import parser.CsvParser;
+import parser.CsvType;
 
+import java.io.FileReader;
 import java.util.Optional;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -42,24 +48,6 @@ public final class App {
      */
     public static void main(final String[] args) throws IOException {
         App app = App.getInstance();
-        /**String csvPath = "parser_bar.csv";
-        CsvType csvType = CsvType.X_ALIGNED_CATEGORIES;
-        CsvOrientation csvOrientation = CsvOrientation.HORIZONTAL;
-        CsvParser parser = new CsvParser(new FileReader(csvPath), ',', '"');
-        CategorialPointListList points = (CategorialPointListList) parser.parse(csvType, csvOrientation);
-        BarChart point = new BarChart(points);
-        System.out.print(parser.csvData + "\n");
-        System.out.print(point.getDataSetName(0) + ": ");
-        System.out.print(point.getDataSet(0)+ "\n");
-        System.out.print(point.getDataSetName(1) + ": ");
-        System.out.print(point.getDataSet(1)+ "\n");
-        System.out.print(point.getDataSetName(2) + ": ");
-        System.out.print(point.getDataSet(2)+ "\n");
-        System.out.print(point.getCategoryName(0)+ "\n");
-        System.out.print(point.getCategoryName(1)+ "\n");
-        System.out.print(point.getCategoryName(2)+ "\n");
-        System.out.print(point.getMinY() + "\n");
-        System.out.print(point.getMaxY() + "\n");**/
         System.exit(app.run(args));
     }
 
@@ -160,6 +148,13 @@ public final class App {
             }
 
             // Parse csv data
+            String csvPath = "parser_bar.csv";
+             CsvType csvType = CsvType.X_ALIGNED_CATEGORIES;
+             CsvOrientation csvOrientation = CsvOrientation.HORIZONTAL;
+             CsvParser parser = new CsvParser(new FileReader(csvPath), ',', '"');
+             CategorialPointListList points = (CategorialPointListList) parser.parse(csvType, csvOrientation);
+             BarChart exampleBarChart = new BarChart(points);
+             
 
             // ...
 
@@ -173,7 +168,7 @@ public final class App {
 
             // Rasterizing
             MasterRenderer renderer = new MasterRenderer(printerConfig, formatConfig);
-            AbstractRasterCanvas canvas = renderer.rasterize(new BarChart());
+            AbstractRasterCanvas canvas = renderer.rasterize(exampleBarChart);
             System.out.println(canvas.getCurrentPage());
 
 

@@ -15,7 +15,7 @@ public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
     /**
      * Constructor. Creates a new rasterizer from either a given rasterizer implementation or (keep in mind that
      * Rasterizer is a functional interface) from a ThrowingBiConsumer&lt;T, AbstractRasterCanvas, InsufficientRenderingAreaException&gt; method reference.
-     * @param supportedDiagramClass A reference to the accepted diagram class (e.g. 'BarChart.class')
+     * @param supportedDiagramClass A reference to the accepted diagram class (e.g. 'BarChartDummy.class')
      * @param rasterizer A reference to a Rasterizer instance.
      */
     public FunctionalRasterizer(

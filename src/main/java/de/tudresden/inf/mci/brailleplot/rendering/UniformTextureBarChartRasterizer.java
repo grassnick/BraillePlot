@@ -1,6 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
+import diagrams.BarChart;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +61,8 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         Rectangle barArea = mCanvas.getCellRectangle();
 
         // 1. Reserve space for the diagram title on the top
-        int titleBarHeight = mTextRasterizer.calculateRequiredHeight(mDiagram.getTitle(), 0, 0,
+        String strDiagramTitle = "I am a bar chart"; // TODO: WHERE DO WE GET THIS INFO FROM??
+        int titleBarHeight = mTextRasterizer.calculateRequiredHeight(strDiagramTitle, 0, 0,
                 barArea.intWrapper().getWidth() * mCanvas.getCellWidth(), mCanvas);
         Rectangle titleArea = barArea.removeFromTop(mCanvas.getCellYFromDotY(titleBarHeight));
 
@@ -83,8 +85,8 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         // Now the charts value range and categories are analyzed to figure out where the y-axis (x = 0) shall be
         // placed and how to scale the bars to still fit the available space.
 
-        double negValueRangeSize = abs(min(diagram.getValueRangeMin(),0));
-        double posValueRangeSize = max(diagram.getValueRangeMax(),0);
+        double negValueRangeSize = abs(min(diagram.getMinY(),0));
+        double posValueRangeSize = max(diagram.getMaxY(),0);
         // The complete value range is calculated in a way that it always includes zero, even if all category values
         // are positive or negative with absolute values > 0, because the y axis will always be positioned at x = 0.
         double valueRangeSize = negValueRangeSize + posValueRangeSize;
@@ -115,13 +117,14 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         // Now everything is ready to be rasterized onto the canvas.
 
         // 1. Rasterize the diagram title
-        Text diagramTitle = new Text(mDiagram.getTitle(), titleArea.scaledBy(mCanvas.getCellWidth(),mCanvas.getCellHeight()));
+        Text diagramTitle = new Text(strDiagramTitle, titleArea.scaledBy(mCanvas.getCellWidth(),mCanvas.getCellHeight()));
         mTextRasterizer.rasterize(diagramTitle, mCanvas);
 
         // 2. Draw the individual bars for each category.
         int refCellX = xAxisOriginPosition; // align bars with y-axis.
         int refCellY = barArea.intWrapper().getBottom(); // start with the bottommost bar.
-        for (double value : mDiagram.getCategories()) {
+        for (int i = 0; i < mDiagram.getCategoryCount(); i++) {
+            double value = mDiagram.getDataSet(0).get(i).getY();
             // calculate how to represent value with the current scaling
             int barLength = (int) round(value / xAxisStepWidth) * mTextureUnitSize;
             // draw the bar including its caption and then move the reference cell y position up
@@ -190,7 +193,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
             barThickness -= 2;
             if (barThickness < mBarMinThickness) {
                 throw new InsufficientRenderingAreaException("Not enough space to render given amount of categories in " +
-                        "bar chart. " + mDiagram.getNumberOfCategories() + " categories given. " + requiredCells +
+                        "bar chart. " + mDiagram.getCategoryCount() + " categories given. " + requiredCells +
                         " cells required but only " + availableCells + " available. " +
                         "(Minimum bar thickness is set to " + mBarMinThickness + " dots)");
             }
@@ -209,7 +212,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         int cellsInclusive = (int) ceil(sizeInclusive / (double) cellHeight);
         // --> Linear equation
         System.out.println(barThickness + " -> " + barCells + " " + (cellsInclusive - 1));
-        return barCells + (cellsInclusive - 1) * (mDiagram.getNumberOfCategories() - 1);
+        return barCells + (cellsInclusive - 1) * (mDiagram.getCategoryCount() - 1);
     }
 
 

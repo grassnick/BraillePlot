@@ -1,12 +1,13 @@
 package diagrams;
 
+import de.tudresden.inf.mci.brailleplot.rendering.Renderable;
 import parser.CategorialPointListList;
 import parser.PointListList;
 import parser.XType;
 
 import java.util.List;
 
-public class BarChart {
+public class BarChart implements Renderable {
     private CategorialPointListList p;
 
     public BarChart(CategorialPointListList p) {
