@@ -24,7 +24,6 @@ public interface Rasterizer<T extends Renderable> {
         int xMax = max(x1, x2);
         int yMin = min(y1, y2);
         int yMax = max(y1, y2);
-        System.out.println("Filling from " + xMin + "," + yMin + " to " + xMax + "," + yMax);
         for (int y = yMin; y <= yMax; y++) {
             for (int x = xMin; x <= xMax; x++) {
                 data.setValue(y,x,value);
@@ -32,13 +31,21 @@ public interface Rasterizer<T extends Renderable> {
         }
     }
 
-    static void rectangle(int x, int y, int w, int h, MatrixData<Boolean> data, boolean value) {
-        int x2 = x + w - 1;
-        int y2 = y + h - 1;
-        System.out.println("Drawing rectangle from " + x + "," + y + " to " + x2 + "," + y2);
-        fill(x, y, x, y2, data, value);
-        fill(x, y2, x2, y2, data, value);
-        fill(x2, y, x2, y2, data, value);
-        fill(x, y, x2, y, data, value);
+    static void rectangle(int x1, int y1, int x2, int y2, MatrixData<Boolean> data, boolean value) {
+        int xMin = min(x1, x2);
+        int xMax = max(x1, x2);
+        int yMin = min(y1, y2);
+        int yMax = max(y1, y2);
+        rectangle(new Rectangle(xMin,yMin,xMax-xMin+1,yMax-yMin+1), data, value);
+    }
+
+    static void rectangle(Rectangle rect, MatrixData<Boolean> data, boolean value) {
+        Rectangle.IntWrapper intRect = rect.intWrapper();
+        int x2 = max(intRect.getX() + intRect.getWidth() - 1, 0);
+        int y2 = max(intRect.getY() + intRect.getHeight() - 1, 0);
+        fill(intRect.getX(), intRect.getY(), intRect.getX(), y2, data, value);
+        fill(intRect.getX(), y2, x2, y2, data, value);
+        fill(x2, intRect.getY(), x2, y2, data, value);
+        fill(intRect.getX(), intRect.getY(), x2, intRect.getY(), data, value);
     }
 }
