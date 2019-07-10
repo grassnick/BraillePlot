@@ -4,7 +4,6 @@ import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
-
 import de.tudresden.inf.mci.brailleplot.rendering.AbstractRasterCanvas;
 import de.tudresden.inf.mci.brailleplot.rendering.BarChart;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
