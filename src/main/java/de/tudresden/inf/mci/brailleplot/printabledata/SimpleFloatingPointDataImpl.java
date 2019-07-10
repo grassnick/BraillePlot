@@ -18,7 +18,7 @@ public class SimpleFloatingPointDataImpl<T> extends AbstractPrintableData implem
 
     private LinkedList<Point2DValued<T>> mPoints;
 
-    SimpleFloatingPointDataImpl(final Printer printer, final Format format) {
+    public SimpleFloatingPointDataImpl(final Printer printer, final Format format) {
         super(printer, format);
         mPoints = new LinkedList<>();
     }

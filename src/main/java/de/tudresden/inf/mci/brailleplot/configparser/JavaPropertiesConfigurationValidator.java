@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  * @author Leonard Kupper
  * @version 2019.06.26
  */
-public class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
+class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
 
     private final HashMap<String, Predicate<String>> mValidPrinterProperties = new HashMap<>();
     private final HashMap<String, Predicate<String>> mValidFormatProperties = new HashMap<>();

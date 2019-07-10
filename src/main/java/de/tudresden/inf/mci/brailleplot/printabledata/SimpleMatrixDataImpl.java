@@ -27,7 +27,7 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
      * @param rowCount The height of the matrix.
      * @param columnCount The width of the matrix.
      * @param defaultValue The default value each element will be assigned.
-     * @throws IllegalArgumentException if rowCount < 0 or columnCount < 0
+     * @throws IllegalArgumentException if rowCount {@literal <} 0 or columnCount {@literal <} 0
      */
     public SimpleMatrixDataImpl(final Printer printer, final Format format, final int rowCount, final int columnCount, final T defaultValue) {
         super(printer, format);
@@ -73,6 +73,11 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
     @Override
     public Iterator<T> getDotIterator(final int width, final int height) {
         return new ElementIter(width, height, this);
+    }
+
+    @Override
+    public Iterator<BrailleCell6<T>> getBrailleCell6Iterator() {
+        return new BrailleCell6Iterator(this);
     }
 
     @Override
@@ -154,6 +159,34 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
             }
             // Correct index to match the specifications of the MatrixData interface
             return mMatrix.getValue(mCurrentY - 1, mCurrentX - 1);
+        }
+    }
+
+    /**
+     * Iterator that returns {@link BrailleCell6} objects rather than the dots themselves.
+     * See {@link MatrixData#getBrailleCell6Iterator()} for details.
+     */
+    class BrailleCell6Iterator implements Iterator<BrailleCell6<T>> {
+
+        private final Iterator<T> mElemIter;
+
+        BrailleCell6Iterator(final SimpleMatrixDataImpl<T> matrix) {
+            mElemIter = matrix.getDotIterator(BrailleCell6.COLUMN_COUNT, BrailleCell6.ROW_COUNT);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return mElemIter.hasNext();
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public BrailleCell6<T> next() {
+            T[] vals = (T[]) new Object[BrailleCell6.DOT_COUNT];
+            for (int i = 0; i < BrailleCell6.DOT_COUNT; i++) {
+                vals[i] = mElemIter.next();
+            }
+            return new BrailleCell6<>(vals);
         }
     }
 }

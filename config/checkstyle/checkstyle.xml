@@ -79,6 +79,7 @@
     <!--   <property name="fileExtensions" value="java"/> -->
     <!-- </module> -->
 
+    <module name="SuppressWarningsFilter" />
     <module name="TreeWalker">
 
         <!-- Checks for Javadoc comments.                     -->
@@ -187,6 +188,8 @@
         <module name="TodoComment"/>
 -->
         <module name="UpperEll"/>
+        <!-- Add support for SuppressWarnings Annotations -->
+        <module name="SuppressWarningsHolder" />
 
     </module>
 

@@ -17,7 +17,7 @@ import java.util.Set;
  * @version 2019.06.26
  */
 
-public abstract class ConfigurationParser {
+abstract class ConfigurationParser {
 
     private FileInputStream mInput;
     private ConfigurationValidator mValidator;
@@ -73,6 +73,7 @@ public abstract class ConfigurationParser {
      * Get a specific format configuration.
      * @param formatName The name of the format.
      * @return A {@link Format} object, representing the formats properties.
+     * @throws NoSuchElementException If no format has the specified name.
      */
     public final Format getFormat(final String formatName) {
         if (!mFormats.containsKey(formatName)) {
