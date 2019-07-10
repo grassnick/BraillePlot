@@ -94,7 +94,14 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < getRowCount(); i++) {
             for (int j = 0; j < getColumnCount(); j++) {
+                /*
                 sb.append(getValue(i, j));
+                */
+                if (getValue(i, j).equals(true)) {
+                    sb.append("o");
+                } else {
+                    sb.append(" ");
+                }
                 sb.append(" ");
             }
             sb.append("\n");

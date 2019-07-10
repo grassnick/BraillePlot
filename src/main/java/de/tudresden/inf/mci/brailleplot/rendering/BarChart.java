@@ -9,7 +9,7 @@ package de.tudresden.inf.mci.brailleplot.rendering;
 public class BarChart implements Renderable {
 
     //private double[] dummy = {0.21, 0.13, -0.3, 0.52, -1.02, 0.65, 0.77, -0.33};
-    private double[] dummy = {500,36,357,-384,473,75,220,356};
+    private double[] dummy = {500,36,357,473,75,220,356};
 
     final String getTitle() {
         return "I am a bar chart.";

@@ -143,18 +143,19 @@ public final class App {
             // Parse csv data
 
             // ...
+
+            // Config Parsing
+
             String configFilePath = System.getProperty("user.dir") + "/src/test/resources/dummyPrinterConfig.properties";
             ConfigurationParser configParser = new JavaPropertiesConfigurationParser(configFilePath);
             Printer printerConfig = configParser.getPrinter();
             Format formatConfig = configParser.getFormat("A4");
 
+
+            // Rasterizing
             MasterRenderer renderer = new MasterRenderer(printerConfig, formatConfig);
             AbstractRasterCanvas canvas = renderer.rasterize(new BarChart());
             System.out.println(canvas.getCurrentPage());
-
-            // Config Parsing
-
-
 
 
             // Last Step: Printing

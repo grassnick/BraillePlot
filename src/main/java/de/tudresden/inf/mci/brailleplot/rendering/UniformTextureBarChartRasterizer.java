@@ -28,7 +28,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
     private final int mBarDotPadding = 1;
     private final int mExtraBarCellPadding = 0; // cells
     private final int mBarInCellPadding = 2; // dots
-    private final boolean mLeftCaption = false;
+    private final boolean mLeftCaption = true;
     private final int mCaptionLength = 6; // cells
 
     // associated rasterizers
