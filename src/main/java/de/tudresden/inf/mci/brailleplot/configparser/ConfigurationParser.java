@@ -17,7 +17,7 @@ import java.util.Set;
  * @version 2019.06.26
  */
 
-abstract class ConfigurationParser {
+public abstract class ConfigurationParser {
 
     private FileInputStream mInput;
     private ConfigurationValidator mValidator;
