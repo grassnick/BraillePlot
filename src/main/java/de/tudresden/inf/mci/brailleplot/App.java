@@ -1,10 +1,24 @@
 package de.tudresden.inf.mci.brailleplot;
 
+
+import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
+import de.tudresden.inf.mci.brailleplot.configparser.Format;
+import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
+import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.exporter.PrintDirector;
+import de.tudresden.inf.mci.brailleplot.exporter.PrinterConfiguration;
+
+import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
+import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
+
 import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
+import de.tudresden.inf.mci.brailleplot.rendering.AbstractRasterCanvas;
+import de.tudresden.inf.mci.brailleplot.rendering.BarChart;
+import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,8 +28,8 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 /**
  * Main class.
  * Set up the application and run it.
- * @author Georg Graßnick
- * @version 06.06.19
+ * @author Georg Graßnick, Andrey Ruzhanskiy
+ * @version 28.06.19
  */
 
 public final class App {
@@ -101,6 +115,7 @@ public final class App {
      * @param args Command line parameters.
      * @return 0 if Application exited successfully, 1 on error.
      */
+    @SuppressWarnings("checkstyle:MagicNumber")
     int run(final String[] args) {
 
         // Has to be the first finalizer to be added, so that it is run last
@@ -135,7 +150,31 @@ public final class App {
 
             MasterRenderer renderer = new MasterRenderer(printerConfig, formatConfig);
             AbstractRasterCanvas canvas = renderer.rasterize(new BarChart());
-            System.out.println(canvas.getMatrixData());
+            System.out.println(canvas.getCurrentPage());
+
+            // Config Parsing
+
+
+
+
+            // Last Step: Printing
+
+
+            if (PrintDirector.printerExists("Index Everest-D V4")) {
+                System.out.println("Ja");
+            } else {
+                System.out.println("Nein");
+            }
+
+            MatrixData<Boolean> data = new SimpleMatrixDataImpl<Boolean>(printerConfig, formatConfig, 20, 18, true);
+
+            PrintDirector printD = new PrintDirector(PrinterConfiguration.NORMALPRINTER);
+            printD.print("Index Everest-D V4", data);
+            /*
+            byte[] data = lt.buildDemo(1);
+            lt.printString(data);
+            */
+
         } catch (final Exception e) {
             terminateWithException(e);
         }
@@ -144,5 +183,6 @@ public final class App {
 
         return EXIT_SUCCESS;
     }
+
 
 }
