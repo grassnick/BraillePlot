@@ -151,6 +151,12 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
     public final double getVerticalCellDistance() {
         return mVerticalCellDistance;
     }
+    public final Rectangle getCellRectangle() {
+        return new Rectangle(0,0,getHorizontalCellCount(),getVerticalCellCount());
+    }
+    public final Rectangle getDotRectangle() {
+        return new Rectangle(0,0,getColumnCount(),getRowCount());
+    }
 
     @Override
     public double getAbsoluteWidth() {
@@ -162,5 +168,12 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
         return mYPositions.get(mRowCount - 1);
     }
 
+    public int getCellXFromDotX(final int dotX) {
+        return dotX / mCellWidth;
+    }
+
+    public int getCellYFromDotY(final int dotY) {
+        return dotY / mCellHeight;
+    }
 
 }
