@@ -12,6 +12,8 @@ import static java.lang.Math.floor;
 /**
  * Representation of a target onto which an image can be rasterized.
  * It wraps a {@link de.tudresden.inf.mci.brailleplot.printabledata.MatrixData} instance and describes the raster size and its (not necessarily equidistant) layout.
+ @version 2019.07.09
+ @author Leonard Kupper
  */
 public abstract class AbstractRasterCanvas extends AbstractCanvas {
 
@@ -59,8 +61,9 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
     // This is allowed because the mPageContainer fields are always initialized with the correct type by the page getters,
     // cannot be accessed from the outside and are never changed anywhere else.
     public final MatrixData<Boolean> getCurrentPage() {
-        if (mPageContainer.size() < 1)
+        if (mPageContainer.size() < 1) {
             return getNewPage();
+        }
         return (MatrixData<Boolean>) mPageContainer.get(mPageContainer.size() - 1);
     }
 
@@ -152,10 +155,10 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
         return mVerticalCellDistance;
     }
     public final Rectangle getCellRectangle() {
-        return new Rectangle(0,0,getHorizontalCellCount(),getVerticalCellCount());
+        return new Rectangle(0, 0, getHorizontalCellCount(), getVerticalCellCount());
     }
     public final Rectangle getDotRectangle() {
-        return new Rectangle(0,0,getColumnCount(),getRowCount());
+        return new Rectangle(0, 0, getColumnCount(), getRowCount());
     }
 
     @Override
@@ -168,10 +171,19 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
         return mYPositions.get(mRowCount - 1);
     }
 
+    /**
+     * Returns the x coordinate (counted in cells) of the cell containing the dot with given x coordinate (counted in dots).
+     * @param dotX The dot x coordinate. In other words its columns number.
+     * @return The cell x coordinate. In other words the cells columns number.
+     */
     public int getCellXFromDotX(final int dotX) {
         return dotX / mCellWidth;
     }
-
+    /**
+     * Returns the y coordinate (counted in cells) of the cell containing the dot with given y coordinate (counted in dots).
+     * @param dotY The dot y coordinate. In other words its rows number.
+     * @return The cell y coordinate. In other words the cells columns number.
+     */
     public int getCellYFromDotY(final int dotY) {
         return dotY / mCellHeight;
     }
