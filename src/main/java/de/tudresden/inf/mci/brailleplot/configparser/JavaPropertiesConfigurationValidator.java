@@ -29,6 +29,8 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         // Definition of valid printer properties
         Map<String, Predicate<String>> p = new HashMap<>();
         p.put("name", requireNotEmpty);
+        p.put("indent.vertical", requireDouble.and(requirePositive));
+        p.put("indent.binding", requireDouble.and(requirePositive));
         p.put("min.charsPerLine", requireInteger.and(requirePositive));
         p.put("max.charsPerLine", requireInteger.and(requirePositive));
         p.put("min.linesPerPage", requireInteger.and(requirePositive));
