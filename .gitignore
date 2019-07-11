@@ -9,7 +9,7 @@ out
 brailleplot.iml
 
 # Application
-dummyPrinterConfig.properties
+!src/main/resources/*
 
 # Java
 *.class
