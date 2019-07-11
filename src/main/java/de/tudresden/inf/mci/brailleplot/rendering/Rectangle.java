@@ -14,6 +14,13 @@ public class Rectangle {
         setWidth(w);
         setHeight(h);
     }
+
+    public Rectangle(Rectangle rect) {
+        setX(rect.getX());
+        setY(rect.getY());
+        setWidth(rect.getWidth());
+        setHeight(rect.getHeight());
+    }
     
     public Rectangle removeFromTop(double height) {
         Rectangle removedPartition = fromTop(height);

@@ -7,7 +7,7 @@ import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 
 import java.util.ArrayList;
 
-import static java.lang.Math.floor;
+import static java.lang.Math.*;
 
 /**
  * Representation of a target onto which an image can be rasterized.
@@ -35,6 +35,9 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
     private double mVerticalDotDistance;
     private double mHorizontalCellDistance;
     private double mVerticalCellDistance;
+
+    // Printing area rectangles
+    private Rectangle mPrintingAreaCells;
 
     AbstractRasterCanvas(final Printer printer, final Format format, final int cellWidth, final int cellHeight) {
 
@@ -69,11 +72,7 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
 
     private void readRasterConfig() {
 
-        // how big is the full printable area in mm?
-        mMillimeterWidth = mFormat.getProperty("page.width").toInt() - (mFormat.getProperty("margin.left").toInt() + mFormat.getProperty("margin.right").toInt());
-        mMillimeterHeight = mFormat.getProperty("page.height").toInt() - (mFormat.getProperty("margin.top").toInt() + mFormat.getProperty("margin.bottom").toInt());
-
-        // what are the dot and cell distances in mm?
+        // What are the dot and cell distances in mm?
         mHorizontalDotDistance = mFormat.getProperty("raster.dotDistance.horizontal").toDouble();
         mVerticalDotDistance = mFormat.getProperty("raster.dotDistance.vertical").toDouble();
         mHorizontalCellDistance = mFormat.getProperty("raster.cellDistance.horizontal").toDouble();
@@ -87,13 +86,32 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
         double cellHorizontalMM = mHorizontalDotDistance * (mCellWidth - 1) + mHorizontalCellDistance; // Full width of one cell + padding in mm
         double cellVerticalMM = mVerticalDotDistance * (mCellHeight - 1) + mVerticalCellDistance; // Full height of one cell + padding in mm
 
-        // Calculate how many rows and columns of full cells fit inside the given printing area
+        // Calculate how many rows and columns of full cells fit inside the given page area
         mHorizontalCellCount = (int) floor((mMillimeterWidth + mHorizontalCellDistance) / cellHorizontalMM); // How many full cells fit horizontally?
         mVerticalCellCount = (int) floor((mMillimeterHeight + mVerticalCellDistance) / cellVerticalMM); // How many full cells fit vertically?
 
         // To how many dots does this raster size correspond?
         mColumnCount = mHorizontalCellCount * mCellWidth;
         mRowCount = mVerticalCellCount * mCellHeight;
+
+        /*
+        // How big is the raster on the page?
+        double fullHorizontalMM = (mHorizontalCellCount * cellHorizontalMM) - mHorizontalCellDistance;
+        double fullVerticalMM = (mVerticalCellCount * cellVerticalMM) - mVerticalCellDistance;
+         */
+
+        // Calculate a 'restricted' printing area rectangle, based on given virtual margins.
+
+        mPrintingAreaCells = new Rectangle(0, 0,mHorizontalCellCount,mVerticalCellCount); // The whole area.
+        int omitTop = (int) ceil(mMarginTop / cellVerticalMM);
+        int omitLeft = (int) ceil(mMarginLeft / cellHorizontalMM);
+        int omitBottom = (int) ceil(mMarginBottom / cellVerticalMM);
+        int omitRight = (int) ceil(mMarginRight / cellHorizontalMM);
+        mPrintingAreaCells.removeFromTop(omitTop);
+        mPrintingAreaCells.removeFromLeft(omitLeft);
+        mPrintingAreaCells.removeFromBottom(omitBottom);
+        mPrintingAreaCells.removeFromRight(omitRight);
+
     }
 
     private void calculateSpacing() {
@@ -123,7 +141,6 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
         return positions;
     }
 
-    // TODO: much more getters
     public final int getColumnCount() {
         return mColumnCount;
     }
@@ -155,10 +172,13 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
         return mVerticalCellDistance;
     }
     public final Rectangle getCellRectangle() {
-        return new Rectangle(0, 0, getHorizontalCellCount(), getVerticalCellCount());
+        return new Rectangle(mPrintingAreaCells);
     }
     public final Rectangle getDotRectangle() {
-        return new Rectangle(0, 0, getColumnCount(), getRowCount());
+        return toDotRectangle(mPrintingAreaCells);
+    }
+    public final Rectangle toDotRectangle(Rectangle cellRectangle) {
+        return cellRectangle.scaledBy(mCellWidth, mCellHeight);
     }
 
     @Override

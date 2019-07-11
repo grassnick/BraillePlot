@@ -160,7 +160,7 @@ public final class App {
 
             // Config Parsing
 
-            String configFilePath = System.getProperty("user.dir") + "/src/test/resources/dummyPrinterConfig.properties";
+            String configFilePath = getClass().getClassLoader().getResource("index_everest_d_v4.properties").getFile();
             ConfigurationParser configParser = new JavaPropertiesConfigurationParser(configFilePath);
             Printer printerConfig = configParser.getPrinter();
             Format formatConfig = configParser.getFormat("A4");

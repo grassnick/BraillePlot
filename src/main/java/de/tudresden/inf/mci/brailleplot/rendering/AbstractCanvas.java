@@ -7,6 +7,8 @@ import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Math.max;
+
 /**
  * Representation of a target onto which can be drawn. It wraps a {@link PrintableData} instance and specifies the size of the drawing area (in mm).
  */
@@ -17,12 +19,40 @@ public abstract class AbstractCanvas {
     double mMillimeterWidth;
     double mMillimeterHeight;
 
+    double mMarginTop;
+    double mMarginBottom;
+    double mMarginLeft;
+    double mMarginRight;
+
     List<PrintableData> mPageContainer;
 
     AbstractCanvas(final Printer printer, final Format format) {
         mPrinter = printer;
         mFormat = format;
         mPageContainer = new ArrayList<>();
+
+        readFormatConfig();
+    }
+
+    private void readFormatConfig() {
+
+        double indentTop = mPrinter.getProperty("indent.top").toDouble();
+        double indentLeft = mPrinter.getProperty("indent.left").toDouble();
+        double indentBottom = mPrinter.getProperty("indent.bottom").toDouble();
+        double indentRight = mPrinter.getProperty("indent.right").toDouble();
+
+        // Page margins in mm. The indentation is subtracted, we have no control over it, so the canvas just has to
+        // create the remaining 'virtual' margins by omitting some cells from the printing area rectangle.
+        // However, even this 'virtual' margin can never be negative! We can't add printing space where there is none.
+        mMarginTop = max(mFormat.getProperty("margin.top").toInt() - indentTop, 0);
+        mMarginLeft = max(mFormat.getProperty("margin.left").toInt() - indentLeft, 0);
+        mMarginBottom = max(mFormat.getProperty("margin.bottom").toInt() - indentBottom, 0);
+        mMarginRight = max(mFormat.getProperty("margin.right").toInt() - indentRight, 0);
+
+        // How big is the full page area in mm?
+        mMillimeterWidth = mFormat.getProperty("page.width").toInt() - (indentLeft + indentRight);
+        mMillimeterHeight = mFormat.getProperty("page.height").toInt() - (indentTop + indentBottom);
+
     }
 
     /**
