@@ -15,3 +15,6 @@ dummyPrinterConfig.properties
 *.class
 *.jar
 *.tar
+
+# Miscellaneous
+*.DS_Store
