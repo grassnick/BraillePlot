@@ -148,12 +148,12 @@ public final class App {
             }
 
             // Parse csv data
-            String csvPath = "parser_bar.csv";
-             CsvType csvType = CsvType.X_ALIGNED_CATEGORIES;
-             CsvOrientation csvOrientation = CsvOrientation.HORIZONTAL;
-             CsvParser parser = new CsvParser(new FileReader(csvPath), ',', '"');
-             CategorialPointListList points = (CategorialPointListList) parser.parse(csvType, csvOrientation);
-             BarChart exampleBarChart = new BarChart(points);
+            String csvPath = getClass().getClassLoader().getResource("parser_bar.csv").getFile();
+            CsvType csvType = CsvType.X_ALIGNED_CATEGORIES;
+            CsvOrientation csvOrientation = CsvOrientation.HORIZONTAL;
+            CsvParser parser = new CsvParser(new FileReader(csvPath), ',', '"');
+            CategorialPointListList points = (CategorialPointListList) parser.parse(csvType, csvOrientation);
+            BarChart exampleBarChart = new BarChart(points);
              
 
             // ...
@@ -181,10 +181,8 @@ public final class App {
                 System.out.println("Nein");
             }
 
-            MatrixData<Boolean> data = new SimpleMatrixDataImpl<Boolean>(printerConfig, formatConfig, 20, 18, true);
-
             PrintDirector printD = new PrintDirector(PrinterConfiguration.NORMALPRINTER);
-            printD.print("Index Everest-D V4", data);
+            //printD.print("Index Everest-D V4", canvas.getCurrentPage());
             /*
             byte[] data = lt.buildDemo(1);
             lt.printString(data);
