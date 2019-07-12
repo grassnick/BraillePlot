@@ -100,7 +100,7 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
                 if (getValue(i, j).equals(true)) {
                     sb.append("o");
                 } else {
-                    sb.append(" ");
+                    sb.append("´");
                 }
                 sb.append(" ");
             }
