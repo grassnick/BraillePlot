@@ -13,6 +13,7 @@ import javax.print.attribute.PrintRequestAttributeSet;
  * @author Andrey Ruzhanskiy
  */
 public class PrintDirector {
+
     private AbstractDocumentBuilder mBuilder;
     private final PrinterConfiguration mPrinter;
     private PrintService mService;
@@ -32,9 +33,9 @@ public class PrintDirector {
         this.mPrinter = printer;
 
         switch (mPrinter) {
-            case NORMALPRINTER: mBuilder = new NormalBuilder();
-            case INDEX_EVEREST_D_V4_GRAPHIC_PRINTER: mBuilder = new GraphicPrintBuilder();
-            case INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER: mBuilder = new FloatingDotAreaBuilder();
+            case NORMALPRINTER: mBuilder = new NormalBuilder(); break;
+            case INDEX_EVEREST_D_V4_GRAPHIC_PRINTER: mBuilder = new GraphicPrintBuilder(); break;
+            case INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER: mBuilder = new FloatingDotAreaBuilder(); break;
             default: throw new IllegalArgumentException();
         }
     }
@@ -64,6 +65,12 @@ public class PrintDirector {
     private void setPrinter(final String printerName) {
         if (printerExists(printerName)) {
             mPrinterName = printerName;
+            PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+            for (PrintService service: services) {
+                if (service.getName().equals(mPrinterName)) {
+                    mService = service;
+                }
+            }
         } else {
             throw new IllegalArgumentException();
         }
@@ -108,7 +115,6 @@ public class PrintDirector {
         }
         Doc doc = new SimpleDoc(data, mDocflavor, null);
         PrintRequestAttributeSet asset = new HashPrintRequestAttributeSet();
-        mService = PrintServiceLookup.lookupDefaultPrintService();
         DocPrintJob job = mService.createPrintJob();
         try {
             job.print(doc, asset);

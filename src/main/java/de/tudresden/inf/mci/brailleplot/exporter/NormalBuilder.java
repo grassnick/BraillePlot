@@ -1,14 +1,11 @@
 package de.tudresden.inf.mci.brailleplot.exporter;
 
-import de.tudresden.inf.mci.brailleplot.configparser.Printer;
-import de.tudresden.inf.mci.brailleplot.configparser.ValidProperty;
 import de.tudresden.inf.mci.brailleplot.printabledata.BrailleCell6;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.util.Iterator;
-import java.util.Properties;
+import java.util.Objects;
 
 
 /**
@@ -20,31 +17,61 @@ import java.util.Properties;
 @SuppressWarnings("checkstyle:MagicNumber")
 public class NormalBuilder extends AbstractDocumentBuilder {
 
+
+    /**
+     * Method for assembling the final document from the data parameter.
+     * In Normalbuilder, it first sets the correct parser according to the file extension, then initializes the iterator
+     * from the Matrixdata object and the Stream for writing bytes into an array and lastly loops through the Matrixdata
+     * to build the correct Document.
+     * @param data Raw Data to be printed without any escapesequences
+     * @return the final, printable document.
+     */
     @Override
     public byte[] assemble(final MatrixData data) {
-        if (data == null) {
-            throw new NullPointerException();
-        }
 
+        //Stolen Idea from Leo.
+        mData = Objects.requireNonNull(data);
+        // Setting the right parser, catch if not found and throw RuntimeException which can be handled.
         try {
             setParser();
         } catch (NotSupportedFileExtension e) {
             throw new RuntimeException();
         }
 
-
-
-
+        // Get Iterator for Cells.
         Iterator<BrailleCell6<Boolean>> iter = data.getBrailleCell6Iterator();
+
+        // Set stream for final output.
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
+        // Getting Width in BrailleCells
+        int width = data.getColumnCount() / 2;
 
+        // Declaration of  local variables for better readability.
+        BrailleCell6 current;
+        String key;
+        int value;
 
-    //    data.getFormatConfig().getProperty()
+        //
+        int i = 0;
+
+        // Loop through data and write to stream.
         while (iter.hasNext()) {
-            stream.write(mParser.getValue(iter.next().toShortString()));
-        }
 
+            current = iter.next();
+            key = current.getBitRepresentationFromBool();
+            value = mParser.getValue(key);
+            stream.write(value);
+            i++;
+
+            // Setting the Linebreaks
+            if (i == width) {
+                i = 0;
+                stream.write(0x0D);
+                stream.write(0x0A);
+            }
+
+        }
         return stream.toByteArray();
     }
 

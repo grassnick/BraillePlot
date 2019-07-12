@@ -13,13 +13,8 @@ import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
  */
 
 public abstract class AbstractDocumentBuilder {
-    /**
-     * MemberVariable for the final Document. Readable via getDocument
-     */
 
-    protected byte[] mDocument;
-
-    private MatrixData data;
+    MatrixData mData;
 
 
     AbstractBrailleTableParser mParser;
@@ -33,25 +28,18 @@ public abstract class AbstractDocumentBuilder {
         return null;
     }
 
-    /**
-     * Interface for getting the final Document.
-     * @return Document to be printed
-     */
-    public byte[] getDocument() {
-        return mDocument;
-    }
 
     protected void setParser() throws NotSupportedFileExtension {
         //read brailletablepath
-        Printer printer = data.getPrinterConfig();
+        Printer printer = mData.getPrinterConfig();
         String brailleTablePath = printer.getProperty("brailletable").toString();
 
         //read which kind of parser is needed (properties, json, xml,...)
         String fileEnding = brailleTablePath.split("\\.")[1];
         switch (fileEnding) {
-            case "properties": mParser = new PropertiesParser();
-            case "json": mParser = new JsonParser();
-            case "xml": mParser = new XmlParser();
+            case "properties": mParser = new PropertiesParser(printer.getProperty("brailletable").toString()); break;
+            case "json": mParser = new JsonParser(printer.getProperty("brailletable").toString()); break;
+            case "xml": mParser = new XmlParser(printer.getProperty("brailletable").toString()); break;
             default: throw new NotSupportedFileExtension();
         }
 

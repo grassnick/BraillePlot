@@ -105,10 +105,10 @@ public class AbstractIndexV4Builder extends AbstractDocumentBuilder {
     protected final byte[] mFirstLineOffsetName = new byte[] {0x46, 0x4F};
 
     /**
-     * Standard Value for First Line Offset..
+     * Standard Value for First Line Offset (~50/60).
      * Possible Values: equal or greater then 0.
      * The value is specified in tenths of mm.
-     * TODO find standard value!
+     *
      */
 
     protected byte[] mFirstLineOffsetValue = null;

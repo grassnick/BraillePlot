@@ -115,8 +115,8 @@ public class FloatingDotAreaBuilder extends AbstractIndexV4Builder {
         } catch (IOException e) {
             e.getMessage();
         }
-        mDocument = stream.toByteArray();
-        return mDocument;
+        //mDocument = stream.toByteArray();
+        return null;
     }
 
 
