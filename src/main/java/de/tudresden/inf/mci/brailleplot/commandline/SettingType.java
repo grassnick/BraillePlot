@@ -11,7 +11,6 @@ public enum SettingType {
     CSV_LOCATION("csv-path"),
     PRINTER_CONFIG_PATH("printer-config-path"),
     SEMANTIC_MAPPING("semantic-mapping");
-
     private final String mName;
 
     SettingType(final String name) {

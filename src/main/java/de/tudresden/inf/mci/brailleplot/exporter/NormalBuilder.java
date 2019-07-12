@@ -1,29 +1,55 @@
 package de.tudresden.inf.mci.brailleplot.exporter;
 
+import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.configparser.ValidProperty;
+import de.tudresden.inf.mci.brailleplot.printabledata.BrailleCell6;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.util.Iterator;
+import java.util.Properties;
+
 
 /**
  * Class representing a normal Document (for example a .txt) to print without
  * any Escapesequences.
  * @author Andrey Ruzhanskiy
+ * @version
  */
+@SuppressWarnings("checkstyle:MagicNumber")
 public class NormalBuilder extends AbstractDocumentBuilder {
 
     @Override
     public byte[] assemble(final MatrixData data) {
-        if(data == null) {
+        if (data == null) {
             throw new NullPointerException();
         }
 
-        //6 Point Braille
-        Iterator iter = data.getDotIterator(2, 3);
-        while (iter.hasNext()){
-            for (int i = 0; i < 6; i++) {
-
-            }
+        try {
+            setParser();
+        } catch (NotSupportedFileExtension e) {
+            throw new RuntimeException();
         }
-        return null;
+
+
+
+
+        Iterator<BrailleCell6<Boolean>> iter = data.getBrailleCell6Iterator();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+
+
+    //    data.getFormatConfig().getProperty()
+        while (iter.hasNext()) {
+            stream.write(mParser.getValue(iter.next().toShortString()));
+        }
+
+        return stream.toByteArray();
     }
+
+    protected NormalBuilder(){
+
+    }
+
 }

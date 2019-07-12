@@ -1,8 +1,7 @@
 package de.tudresden.inf.mci.brailleplot;
 
 
-import de.tudresden.inf.mci.brailleplot.configparser.Format;
-import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.configparser.*;
 import de.tudresden.inf.mci.brailleplot.exporter.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.exporter.PrinterConfiguration;
 
@@ -139,6 +138,12 @@ public final class App {
 
             // Config Parsing
 
+            // TODO make it default if nothing is found in p.
+            Optional<String> configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH);
+            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get());
+            Printer indexV4Printer = configParser.getPrinter();
+            indexV4Printer.getProperty("brailletable").toString();
+            Format A4Format = configParser.getFormat("A4");
 
 
 
@@ -151,8 +156,7 @@ public final class App {
                 System.out.println("Nein");
             }
 
-            MatrixData<Boolean> data = new SimpleMatrixDataImpl<Boolean>(new Printer(), new Format(), 20, 18, true);
-
+            MatrixData<Boolean> data = new SimpleMatrixDataImpl<Boolean>(indexV4Printer, A4Format, 18, 20, true);
             PrintDirector printD = new PrintDirector(PrinterConfiguration.NORMALPRINTER);
             printD.print("Index Everest-D V4", data);
             /*
@@ -169,5 +173,43 @@ public final class App {
         return EXIT_SUCCESS;
     }
 
+/*
+    public  void dummyConfigurationParsing() {
+
+        String workingDir = System.getProperty("user.dir");
+        String defaultConfigPath = workingDir + "/defaultConfig.properties";
+        String concreteConfigPath = workingDir + "/dummyPrinterConfig.properties";
+
+        // create parser and parse default config
+        try {
+            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(defaultConfigPath);
+            Printer defaultPrinter = configParser.getPrinter();
+            Format defaultFormat = configParser.getFormat("default");
+            // parse concrete configuration with set defaults
+            configParser = new JavaPropertiesConfigurationParser(
+                    concreteConfigPath,
+                    defaultPrinter,
+                    defaultFormat
+            );
+            Printer printerConfig = configParser.getPrinter();
+            for (String property : printerConfig.getPropertyNames()) {
+                System.out.println("Property: " + property + "=" + printerConfig.getProperty(property));
+            }
+
+            for (String formatName : configParser.getFormatNames()) {
+                System.out.println("Format: " + formatName);
+                Format formatConfig = configParser.getFormat(formatName);
+                for (String property : formatConfig.getPropertyNames()) {
+                    System.out.println("Property: " + property + "=" + formatConfig.getProperty(property));
+                }
+            }
+        } catch (ConfigurationValidationException e) {
+            System.out.println(e.getMessage());
+        } catch (ConfigurationParsingException e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+*/
 
 }

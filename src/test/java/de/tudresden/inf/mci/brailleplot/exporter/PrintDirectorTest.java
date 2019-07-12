@@ -20,7 +20,8 @@ public class PrintDirectorTest {
     public void testPrinterDoesNotExist(){
         Assertions.assertEquals(false, PrintDirector.printerExists("kek"));
     }
-    
+/*
+
     @Test
     public void testNullPointerInPrintString(){
         Assertions.assertThrows(NullPointerException.class, () -> {
@@ -30,5 +31,5 @@ public class PrintDirectorTest {
             });
         });
     }
-
+*/
 }

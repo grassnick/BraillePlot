@@ -18,6 +18,7 @@ public class PrintDirector {
     private PrintService mService;
     private String mPrinterName;
     private DocFlavor mDocflavor;
+    private AbstractBrailleTableParser mParser;
 
 
     /**
@@ -54,6 +55,7 @@ public class PrintDirector {
         return false;
     }
 
+
     /**
      * Method for setting the Printer.
      * @param printerName
@@ -74,7 +76,7 @@ public class PrintDirector {
 
     @SuppressWarnings("checkstyle:MagicNumber")
     public <T> void print(final String printerName, final MatrixData<T> data)  {
-        if (printerName == null || data == null){
+        if (printerName == null || data == null) {
             throw new NullPointerException();
         }
         setUpDoc();
@@ -101,11 +103,12 @@ public class PrintDirector {
      */
 
     private void print(final byte[] data) {
-        if(data == null){
+        if (data == null) {
             throw new NullPointerException();
         }
         Doc doc = new SimpleDoc(data, mDocflavor, null);
         PrintRequestAttributeSet asset = new HashPrintRequestAttributeSet();
+        mService = PrintServiceLookup.lookupDefaultPrintService();
         DocPrintJob job = mService.createPrintJob();
         try {
             job.print(doc, asset);
