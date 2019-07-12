@@ -36,6 +36,10 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         p.put("indent.left", requireDouble.and(requirePositive));
         p.put("indent.bottom", requireDouble.and(requirePositive));
         p.put("indent.right", requireDouble.and(requirePositive));
+        p.put("raster.indent.top", requireInteger.and(requirePositive));
+        p.put("raster.indent.left", requireInteger.and(requirePositive));
+        p.put("raster.indent.bottom", requireInteger.and(requirePositive));
+        p.put("raster.indent.right", requireInteger.and(requirePositive));
         p.put("min.charsPerLine", requireInteger.and(requirePositive));
         p.put("max.charsPerLine", requireInteger.and(requirePositive));
         p.put("min.linesPerPage", requireInteger.and(requirePositive));

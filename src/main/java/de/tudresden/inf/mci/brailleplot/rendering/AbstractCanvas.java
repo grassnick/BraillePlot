@@ -33,10 +33,10 @@ public abstract class AbstractCanvas {
         mFormat = format;
         mPageContainer = new ArrayList<>();
 
-        readFormatConfig();
+        readConfig();
     }
 
-    private void readFormatConfig() {
+    private void readConfig() {
 
         double indentTop = mPrinter.getProperty("indent.top").toDouble();
         double indentLeft = mPrinter.getProperty("indent.left").toDouble();
@@ -52,8 +52,9 @@ public abstract class AbstractCanvas {
         mMarginRight = max(mFormat.getProperty("margin.right").toInt() - indentRight, 0);
 
         // How big is the full page area in mm?
-        mMillimeterWidth = mFormat.getProperty("page.width").toInt() - (indentLeft + indentRight);
-        mMillimeterHeight = mFormat.getProperty("page.height").toInt() - (indentTop + indentBottom);
+        // The page size can't be negative too of course.
+        mMillimeterWidth = max(mFormat.getProperty("page.width").toInt() - (indentLeft + indentRight), 0);
+        mMillimeterHeight = max(mFormat.getProperty("page.height").toInt() - (indentTop + indentBottom), 0);
 
     }
 

@@ -27,8 +27,10 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
     private int mRowCount;
 
     // Cell size
-    private int mCellWidth;
-    private int mCellHeight;
+    private int mCellWidth; // dots
+    private int mCellHeight; // dots
+    private double mCellHorizontalMM; // millimeters
+    private double mCellVerticalMM; // millimeters
 
     // Spacing
     private double mHorizontalDotDistance;
@@ -44,10 +46,11 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
 
         super(printer, format);
 
+        // Cell size in dots
         mCellWidth = cellWidth;
         mCellHeight = cellHeight;
 
-        readRasterConfig();
+        readConfig();
         calculateRasterSize();
         calculateSpacing();
 
@@ -71,7 +74,7 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
         return (MatrixData<Boolean>) mPageContainer.get(mPageContainer.size() - 1);
     }
 
-    private void readRasterConfig() {
+    private void readConfig() {
 
         // What are the dot and cell distances in mm?
         mHorizontalDotDistance = mFormat.getProperty("raster.dotDistance.horizontal").toDouble();
@@ -79,17 +82,35 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
         mHorizontalCellDistance = mFormat.getProperty("raster.cellDistance.horizontal").toDouble();
         mVerticalCellDistance = mFormat.getProperty("raster.cellDistance.vertical").toDouble();
 
+        // Calculate cell size in mm
+        mCellHorizontalMM = mHorizontalDotDistance * (mCellWidth - 1) + mHorizontalCellDistance; // Full width of one cell + padding in mm
+        mCellVerticalMM = mVerticalDotDistance * (mCellHeight - 1) + mVerticalCellDistance; // Full height of one cell + padding in mm
+
+        // Now we are reading properties that are specific to rasterizing.
+        // The abstract parent class (AbstractCanvas) already calculated indentations based on millimeters, but it is
+        // also possible to set a raster.indentation counted in amount of cells and lines. Those must be removed additionally.
+        double indentTop = mPrinter.getProperty("raster.indent.top").toDouble() * mCellVerticalMM;
+        double indentLeft = mPrinter.getProperty("raster.indent.left").toDouble() * mCellHorizontalMM;
+        double indentBottom = mPrinter.getProperty("raster.indent.bottom").toDouble() * mCellVerticalMM;
+        double indentRight = mPrinter.getProperty("raster.indent.right").toDouble() * mCellHorizontalMM;
+
+        // Subtract additional raster indentation from virtual margin.
+        mMarginTop = max(mMarginTop - indentTop, 0);
+        mMarginLeft = max(mMarginLeft - indentLeft, 0);
+        mMarginBottom = max(mMarginBottom - indentBottom, 0);
+        mMarginRight = max(mMarginRight - indentRight, 0);
+
+        // Subtract additional raster indentation from page size.
+        mMillimeterWidth = max(mMillimeterWidth - (indentLeft + indentRight), 0);
+        mMillimeterHeight = max(mMillimeterHeight - (indentTop + indentBottom), 0);
+
     }
 
     private void calculateRasterSize() throws InsufficientRenderingAreaException {
 
-        // Calculate cell sizes in mm
-        double cellHorizontalMM = mHorizontalDotDistance * (mCellWidth - 1) + mHorizontalCellDistance; // Full width of one cell + padding in mm
-        double cellVerticalMM = mVerticalDotDistance * (mCellHeight - 1) + mVerticalCellDistance; // Full height of one cell + padding in mm
-
         // Calculate how many rows and columns of full cells fit inside the given page area
-        mHorizontalCellCount = (int) floor((mMillimeterWidth + mHorizontalCellDistance) / cellHorizontalMM); // How many full cells fit horizontally?
-        mVerticalCellCount = (int) floor((mMillimeterHeight + mVerticalCellDistance) / cellVerticalMM); // How many full cells fit vertically?
+        mHorizontalCellCount = (int) floor((mMillimeterWidth + mHorizontalCellDistance) / mCellHorizontalMM); // How many full cells fit horizontally?
+        mVerticalCellCount = (int) floor((mMillimeterHeight + mVerticalCellDistance) / mCellVerticalMM); // How many full cells fit vertically?
 
         // To how many dots does this raster size correspond?
         mColumnCount = mHorizontalCellCount * mCellWidth;
@@ -107,10 +128,10 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
         // so it is expected to at least take a look at the cell rectangle.
 
         mPrintingAreaCells = new Rectangle(0, 0,mHorizontalCellCount,mVerticalCellCount); // The whole area.
-        int omitTop = (int) ceil(mMarginTop / cellVerticalMM);
-        int omitLeft = (int) ceil(mMarginLeft / cellHorizontalMM);
-        int omitBottom = (int) ceil(mMarginBottom / cellVerticalMM);
-        int omitRight = (int) ceil(mMarginRight / cellHorizontalMM);
+        int omitTop = (int) ceil(mMarginTop / mCellVerticalMM);
+        int omitLeft = (int) ceil(mMarginLeft / mCellHorizontalMM);
+        int omitBottom = (int) ceil(mMarginBottom / mCellVerticalMM);
+        int omitRight = (int) ceil(mMarginRight / mCellHorizontalMM);
         try {
             mPrintingAreaCells.removeFromTop(omitTop);
             mPrintingAreaCells.removeFromLeft(omitLeft);

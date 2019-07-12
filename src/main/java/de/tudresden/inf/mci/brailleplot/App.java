@@ -161,7 +161,7 @@ public final class App {
 
             // Config Parsing
 
-            String configFilePath = getClass().getClassLoader().getResource("index_everest_d_v4.properties").getFile();
+            String configFilePath = getClass().getClassLoader().getResource("index_basic_d.properties").getFile();
             ConfigurationParser configParser = new JavaPropertiesConfigurationParser(configFilePath);
             Printer printerConfig = configParser.getPrinter();
             Format formatConfig = configParser.getFormat("A4");
@@ -176,7 +176,7 @@ public final class App {
             // Last Step: Printing
 
 
-            if (PrintDirector.printerExists("Index Everest-D V4")) {
+            if (PrintDirector.printerExists(printerConfig.getProperty("name").toString())) {
                 System.out.println("Ja");
             } else {
                 System.out.println("Nein");
@@ -184,7 +184,7 @@ public final class App {
 
 
             PrintDirector printD = new PrintDirector(PrinterConfiguration.NORMALPRINTER);
-            printD.print("Index Everest-D V4", canvas.getCurrentPage());
+            printD.print(printerConfig.getProperty("name").toString(), canvas.getCurrentPage());
             /*
             byte[] data = lt.buildDemo(1);
             lt.printString(data);
