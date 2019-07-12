@@ -26,24 +26,27 @@ public class NormalBuilder extends AbstractDocumentBuilder {
             throw new NullPointerException();
         }
 
-        try {
-            setParser();
-        } catch (NotSupportedFileExtension e) {
-            throw new RuntimeException();
-        }
-
-
-
 
         Iterator<BrailleCell6<Boolean>> iter = data.getBrailleCell6Iterator();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-
+        mParser = new PropertiesParser(data.getPrinterConfig().getProperty("brailletable").toString());
 
     //    data.getFormatConfig().getProperty()
+        int width = data.getColumnCount() / 2;
+        int i = 0;
         while (iter.hasNext()) {
             stream.write(mParser.getValue(iter.next().toShortString()));
+            i++;
+            if (i == width) {
+                i = 0;
+                stream.write(0x0D);
+                stream.write(0x0A);
+            }
+
+
         }
+
 
         return stream.toByteArray();
     }
