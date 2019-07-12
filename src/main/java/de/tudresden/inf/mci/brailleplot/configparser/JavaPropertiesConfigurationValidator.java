@@ -1,5 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -25,6 +27,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         Predicate<String> requireDouble = JavaPropertiesConfigurationValidator::checkIfDouble;
         Predicate<String> requireBoolean = JavaPropertiesConfigurationValidator::checkIfBoolean;
         Predicate<String> requirePositive = JavaPropertiesConfigurationValidator::checkIfPositive;
+        Predicate<String> requireFileExists = JavaPropertiesConfigurationValidator::checkIfFileExists;
 
         // Definition of valid printer properties
         Map<String, Predicate<String>> p = new HashMap<>();
@@ -42,6 +45,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         p.put("max.characterDistance", requireDouble.and(requirePositive));
         p.put("min.lineDistance", requireDouble.and(requirePositive));
         p.put("max.lineDistance", requireDouble.and(requirePositive));
+        p.put("brailletable", requireFileExists);
 
         // Definition of valid format properties
         Map<String, Predicate<String>> f = new HashMap<>();
@@ -154,4 +158,14 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
             return false;
         }
     }
+
+    private static boolean checkIfFileExists(final String filePath){
+        try {
+            FileInputStream stream = new FileInputStream(filePath);
+        } catch (FileNotFoundException e) {
+            return false;
+        }
+        return true;
+    }
+
 }
