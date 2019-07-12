@@ -4,6 +4,12 @@ import java.util.Objects;
 
 import static java.lang.Math.round;
 
+/**
+ * Represents a rectangle that can be continuously divided into partitions. Can be used for doing chart layout and as
+ * boundary of renderable objects.
+ * @author Leonard Kupper
+ * @version 2019.07.12
+ */
 public class Rectangle {
 
     private double mX, mY, mW, mH;
@@ -22,7 +28,7 @@ public class Rectangle {
         setHeight(rect.getHeight());
     }
     
-    public Rectangle removeFromTop(double height) {
+    public Rectangle removeFromTop(double height) throws OutOfSpaceException {
         Rectangle removedPartition = fromTop(height);
         double newY = (getY() + height);
         double newHeight = (getHeight() - height);
@@ -31,14 +37,14 @@ public class Rectangle {
         return removedPartition;
     }
 
-    public Rectangle removeFromBottom(double height) {
+    public Rectangle removeFromBottom(double height) throws OutOfSpaceException {
         Rectangle removedPartition = fromBottom(height);
         double newHeight = (getHeight() - height);
         setHeight(newHeight);
         return removedPartition;
     }
 
-    public Rectangle removeFromLeft(double width) {
+    public Rectangle removeFromLeft(double width) throws OutOfSpaceException {
         Rectangle removedPartition = fromLeft(width);
         double newX = (getX() + width);
         double newWidth = (getWidth() - width);
@@ -47,7 +53,7 @@ public class Rectangle {
         return removedPartition;
     }
 
-    public Rectangle removeFromRight(double width) {
+    public Rectangle removeFromRight(double width) throws OutOfSpaceException {
         Rectangle removedPartition = fromRight(width);
         double newWidth = (getWidth() - width);
         setWidth(newWidth);
@@ -56,20 +62,20 @@ public class Rectangle {
 
     // Methods to getText a mRectangle partition
 
-    public Rectangle fromTop(double height) {
+    public Rectangle fromTop(double height) throws OutOfSpaceException {
         checkHeight(height);
         return new Rectangle(getX(), getY(), getWidth(), height);
     }
-    public Rectangle fromLeft(double width) {
+    public Rectangle fromLeft(double width) throws OutOfSpaceException {
         checkWidth(width);
         return new Rectangle(getX(), getY(), width, getHeight());
     }
-    public Rectangle fromBottom(double height) {
+    public Rectangle fromBottom(double height) throws OutOfSpaceException {
         checkHeight(height);
         double newY = (getY() + (getHeight() - height));
         return new Rectangle(getX(), newY, getWidth(), height);
     }
-    public Rectangle fromRight(double width) {
+    public Rectangle fromRight(double width) throws OutOfSpaceException {
         checkWidth(width);
         double newX = (getX() + (getWidth() - width));
         return new Rectangle(newX, getY(), width, getHeight());
@@ -77,15 +83,15 @@ public class Rectangle {
 
     // Help methods for validity check of requested partition
 
-    private void checkHeight(double h) {
+    private void checkHeight(double h) throws OutOfSpaceException {
         if (h > getHeight()) {
-            throw new IllegalArgumentException("The new rectangles height cannot be greater than this rectangles height." +
+            throw new OutOfSpaceException("The rectangle partition height cannot be greater than its parent rectangle height." +
                     "(" + h + ">" + getHeight() + ")");
         }
     }
-    private void checkWidth(double w) {
+    private void checkWidth(double w) throws OutOfSpaceException {
         if (w > getWidth()) {
-            throw new IllegalArgumentException("The new rectangles width cannot be greater than this rectangles width." +
+            throw new OutOfSpaceException("The rectangle partition width cannot be greater than its parent rectangle width." +
                     "(" + w + ">" + getWidth() + ")");
         }
     }
@@ -199,6 +205,29 @@ public class Rectangle {
         @Override
         public String toString() {
             return "x:" + getX() + ", y:" + getY() + ", w:" + getWidth() + ", h:" + getHeight();
+        }
+    }
+
+    /**
+     * Exception that indicates that an operation on the rectangle has failed because there was too few space available.
+     * Typically this is caused by trying to get a partition of the rectangle which is bigger than its parent rectangle itself.
+     * @author Leonard Kupper
+     * @version 2019.07.12
+     */
+    public class OutOfSpaceException extends Exception {
+
+        public OutOfSpaceException() { }
+
+        public OutOfSpaceException(final String message) {
+            super(message);
+        }
+
+        public OutOfSpaceException(final Throwable cause) {
+            super(cause);
+        }
+
+        public OutOfSpaceException(final String message, final Throwable cause) {
+            super(message, cause);
         }
     }
 

@@ -12,7 +12,7 @@ import static java.lang.Math.*;
 /**
  * UniformTextureBarChartRasterizer. I will write an explanation when finished, this class has changed like over 9000 times...
  * @author Leonard Kupper
- * @version 2019.07.09
+ * @version 2019.07.12
  */
 final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
 
@@ -58,26 +58,37 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
 
 
         // Basic chart layout happens in the following steps (1-4):
-        Rectangle barArea = mCanvas.getCellRectangle();
 
-        // 1. Reserve space for the diagram title on the top
         String strDiagramTitle = "I am a bar chart"; // TODO: WHERE DO WE GET THIS INFO FROM??
-        int titleBarHeight = mTextRasterizer.calculateRequiredHeight(strDiagramTitle, 0, 0,
-                barArea.intWrapper().getWidth() * mCanvas.getCellWidth(), mCanvas);
-        Rectangle titleArea = barArea.removeFromTop(mCanvas.getCellYFromDotY(titleBarHeight));
+        Rectangle barArea = mCanvas.getCellRectangle();
+        System.out.println(barArea + " " + mCanvas.getAbsoluteWidth() + " x " + mCanvas.getAbsoluteHeight() + " mm");
+        int titleBarHeight;
+        Rectangle titleArea, xAxisArea;
 
-        // 2. Reserve space for the x-axis on the bottom
-        Rectangle xAxisArea = barArea.removeFromBottom(2);
+        try {
+            // 1. Reserve space for the diagram title on the top
+            titleBarHeight = mTextRasterizer.calculateRequiredHeight(strDiagramTitle, 0, 0,
+                    barArea.intWrapper().getWidth() * mCanvas.getCellWidth(), mCanvas);
+            titleArea = barArea.removeFromTop(mCanvas.getCellYFromDotY(titleBarHeight));
 
-        // 3. Reserve space for bar captions on the left or right side
-        if (mLeftCaption) {
-            barArea.removeFromLeft(mCaptionLength);
-        } else {
-            barArea.removeFromRight(mCaptionLength);
+            // 2. Reserve space for the x-axis on the bottom
+            xAxisArea = barArea.removeFromBottom(2);
+
+            // 3. Reserve space for bar captions on the left or right side
+            if (mLeftCaption) {
+                barArea.removeFromLeft(mCaptionLength);
+            } else {
+                barArea.removeFromRight(mCaptionLength);
+            }
+
+            // 4. One extra cell is removed, because there must always be one cell of space for the y-axis.
+            barArea.removeFromRight(1);
+        } catch (Rectangle.OutOfSpaceException e) {
+            // If the rectangle throws an OutOfSpaceException, this just means that there is no way to fit all
+            // components of the chart inside the given area.
+            throw new InsufficientRenderingAreaException("Not enough space to build bar chart layout.", e);
         }
 
-        // 4. One extra cell is removed, because there must always be one cell of space for the y-axis.
-        barArea.removeFromRight(1);
 
         // The remaining rectangle 'barArea' does now represent the available area for the bars to be displayed.
 

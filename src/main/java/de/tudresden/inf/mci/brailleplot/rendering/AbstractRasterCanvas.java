@@ -12,8 +12,8 @@ import static java.lang.Math.*;
 /**
  * Representation of a target onto which an image can be rasterized.
  * It wraps a {@link de.tudresden.inf.mci.brailleplot.printabledata.MatrixData} instance and describes the raster size and its (not necessarily equidistant) layout.
- @version 2019.07.09
- @author Leonard Kupper
+ * @author Leonard Kupper
+ * @version 2019.07.12
  */
 public abstract class AbstractRasterCanvas extends AbstractCanvas {
 
@@ -39,7 +39,8 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
     // Printing area rectangles
     private Rectangle mPrintingAreaCells;
 
-    AbstractRasterCanvas(final Printer printer, final Format format, final int cellWidth, final int cellHeight) {
+    AbstractRasterCanvas(final Printer printer, final Format format, final int cellWidth, final int cellHeight)
+            throws InsufficientRenderingAreaException {
 
         super(printer, format);
 
@@ -80,7 +81,7 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
 
     }
 
-    private void calculateRasterSize() {
+    private void calculateRasterSize() throws InsufficientRenderingAreaException {
 
         // Calculate cell sizes in mm
         double cellHorizontalMM = mHorizontalDotDistance * (mCellWidth - 1) + mHorizontalCellDistance; // Full width of one cell + padding in mm
@@ -100,17 +101,27 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
         double fullVerticalMM = (mVerticalCellCount * cellVerticalMM) - mVerticalCellDistance;
          */
 
-        // Calculate a 'restricted' printing area rectangle, based on given virtual margins.
+        // Calculate a 'restricted' printing area rectangle, based on the given virtual margins.
+        // By omitting some cells from the printing area rectangle, a real margin is imitated.
+        // A rasterizer working with this canvas can still force to write values outside the restricted rectangle
+        // so it is expected to at least take a look at the cell rectangle.
 
         mPrintingAreaCells = new Rectangle(0, 0,mHorizontalCellCount,mVerticalCellCount); // The whole area.
         int omitTop = (int) ceil(mMarginTop / cellVerticalMM);
         int omitLeft = (int) ceil(mMarginLeft / cellHorizontalMM);
         int omitBottom = (int) ceil(mMarginBottom / cellVerticalMM);
         int omitRight = (int) ceil(mMarginRight / cellHorizontalMM);
-        mPrintingAreaCells.removeFromTop(omitTop);
-        mPrintingAreaCells.removeFromLeft(omitLeft);
-        mPrintingAreaCells.removeFromBottom(omitBottom);
-        mPrintingAreaCells.removeFromRight(omitRight);
+        try {
+            mPrintingAreaCells.removeFromTop(omitTop);
+            mPrintingAreaCells.removeFromLeft(omitLeft);
+            mPrintingAreaCells.removeFromBottom(omitBottom);
+            mPrintingAreaCells.removeFromRight(omitRight);
+        } catch (Rectangle.OutOfSpaceException e) {
+            // If an OutOfSpaceException is thrown this early, it basically means that the defined page size is smaller
+            // than the sum of its margins, indicating heavy layer 8 error.
+            throw new InsufficientRenderingAreaException("The defined page size is smaller than the sum of its margins", e);
+        }
+
 
     }
 
@@ -141,17 +152,20 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
         return positions;
     }
 
-    public final int getColumnCount() {
-        return mColumnCount;
-    }
-    public final int getRowCount() {
-        return mRowCount;
-    }
     public final int getCellWidth() {
         return mCellWidth;
     }
     public final int getCellHeight() {
         return mCellHeight;
+    }
+
+    /*
+    TODO: Maybe remove these 4 getters, they are currently not used and could mislead to write into the margin. Rasterizers should use the cell and dot rectangle instead.
+    public final int getColumnCount() {
+        return mColumnCount;
+    }
+    public final int getRowCount() {
+        return mRowCount;
     }
     public final int getHorizontalCellCount() {
         return mHorizontalCellCount;
@@ -159,6 +173,7 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
     public final int getVerticalCellCount() {
         return mVerticalCellCount;
     }
+    */
     public final double getHorizontalDotDistance() {
         return mHorizontalDotDistance;
     }
@@ -183,12 +198,12 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
 
     @Override
     public double getAbsoluteWidth() {
-        return mXPositions.get(mColumnCount - 1);
+        return mXPositions.get(getDotRectangle().intWrapper().getRight()) - mXPositions.get(getDotRectangle().intWrapper().getX());
     }
 
     @Override
     public double getAbsoluteHeight() {
-        return mYPositions.get(mRowCount - 1);
+        return mYPositions.get(getDotRectangle().intWrapper().getBottom()) - mYPositions.get(getDotRectangle().intWrapper().getY());
     }
 
     /**

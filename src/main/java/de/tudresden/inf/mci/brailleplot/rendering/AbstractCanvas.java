@@ -11,6 +11,8 @@ import static java.lang.Math.max;
 
 /**
  * Representation of a target onto which can be drawn. It wraps a {@link PrintableData} instance and specifies the size of the drawing area (in mm).
+ * @author Leonard Kupper
+ * @version 2019.07.12
  */
 public abstract class AbstractCanvas {
 
@@ -60,7 +62,7 @@ public abstract class AbstractCanvas {
      * @return The width of the canvas in millimeters.
      */
     public double getAbsoluteWidth() {
-        return mMillimeterWidth;
+        return mMillimeterWidth - (mMarginLeft + mMarginRight);
     }
 
     /**
@@ -68,7 +70,7 @@ public abstract class AbstractCanvas {
      * @return The height of the canvas in millimeters.
      */
     public double getAbsoluteHeight() {
-        return mMillimeterHeight;
+        return mMillimeterHeight - (mMarginTop + mMarginBottom);
     }
 
 }
