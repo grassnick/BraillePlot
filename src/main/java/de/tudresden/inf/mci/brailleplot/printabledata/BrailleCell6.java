@@ -102,7 +102,11 @@ public final class BrailleCell6<T> {
         return sb.toString();
     }
 
-    public String toShortString(){
+    /**
+     *
+     * @return
+     */
+    public String getBitRepresentationFromBool(){
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < mDots.length; i++) {
             if(Boolean.parseBoolean(mDots[i].toString())) {
