@@ -11,7 +11,8 @@ import java.util.Map;
  * @version 28.06.2019
  */
 
-public interface BrailleAlphabet {
-    public byte[] getValue(BrailleCell6 cell);
+public abstract class BrailleAlphabet {
+    public abstract <T> byte[] getValue(BrailleCell6 cell);
+    public AbstractBrailleTableParser mParser;
     public Map<BrailleCell6, byte[]> mAlphabet = new HashMap<>();
 }

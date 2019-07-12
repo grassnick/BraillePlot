@@ -49,7 +49,7 @@ public final class BrailleCell6<T> {
      * @param vals An array of values to obtain the values from.
      * @throws IllegalArgumentException If the length is not equal to 6.
      */
-    BrailleCell6(final T[] vals) {
+    public BrailleCell6(final T[] vals) {
         if (vals.length != DOT_COUNT) {
             throw new IllegalArgumentException("Input Array must be of length " + DOT_COUNT);
         }
@@ -98,6 +98,19 @@ public final class BrailleCell6<T> {
                 sb.append(" ");
             }
             sb.append("\n");
+        }
+        return sb.toString();
+    }
+
+    public String toShortString(){
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < mDots.length; i++) {
+            if(Boolean.parseBoolean(mDots[i].toString())) {
+                sb.append("1");
+            } else {
+                sb.append("0");
+            }
+
         }
         return sb.toString();
     }

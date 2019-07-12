@@ -1,5 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.exporter;
+import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
+import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 
 /**
  * This Class provides an Extension Point for further implementation
@@ -17,6 +19,11 @@ public abstract class AbstractDocumentBuilder {
 
     protected byte[] mDocument;
 
+    private MatrixData data;
+
+
+    AbstractBrailleTableParser mParser;
+
     /**
      * Complex method for complex construction of an Document for the printer.
      * @param data Raw Data to be printed without any escapesequences
@@ -32,6 +39,23 @@ public abstract class AbstractDocumentBuilder {
      */
     public byte[] getDocument() {
         return mDocument;
+    }
+
+    protected void setParser() throws NotSupportedFileExtension {
+        //read brailletablepath
+        Printer printer = data.getPrinterConfig();
+        String brailleTablePath = printer.getProperty("brailletable").toString();
+
+        //read which kind of parser is needed (properties, json, xml,...)
+        String fileEnding = brailleTablePath.split("\\.")[1];
+        switch (fileEnding) {
+            case "properties": mParser = new PropertiesParser();
+            case "json": mParser = new JsonParser();
+            case "xml": mParser = new XmlParser();
+            default: throw new NotSupportedFileExtension();
+        }
+
+
     }
 
 }

@@ -24,7 +24,7 @@ public class CommandLineParser {
         mOptions.addOption("h", SettingType.DISPLAY_HELP.toString(), false, "Print help and exit")
                 .addOption("c", SettingType.CSV_LOCATION.toString(), true, "Path to CSV")
                 .addOption("s", SettingType.SEMANTIC_MAPPING.toString(), true, "Literal for semantic mapping")
-                .addOption("p", SettingType.PRINTER_CONFIG_PATH.toString(), true, "path to printer configuration file");
+                .addOption("p", SettingType.PRINTER_CONFIG_PATH.toString(), true, "Path to printer configuration file");
     }
 
     /**
