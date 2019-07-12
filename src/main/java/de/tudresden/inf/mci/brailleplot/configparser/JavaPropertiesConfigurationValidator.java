@@ -155,7 +155,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         try {
             FileInputStream stream = new FileInputStream(filePath);
         } catch (FileNotFoundException e) {
-            return false;
+            throw new RuntimeException(e);
         }
         return true;
     }
