@@ -103,7 +103,7 @@ public final class BrailleCell6<T> {
     }
 
     /**
-     *
+     * Method for getting the Bit Representation of the Cell (110001). Should only be used if T is boolean.
      * @return
      */
     public String getBitRepresentationFromBool(){
