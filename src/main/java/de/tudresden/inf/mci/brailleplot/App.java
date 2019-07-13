@@ -161,10 +161,12 @@ public final class App {
 
             // Config Parsing
 
-            String configFilePath = getClass().getClassLoader().getResource("index_basic_d.properties").getFile();
+            String usedPrinter = "index_everest_d_v4.properties";
+            //String usedPrinter = "index_basic_d.properties";
+            String configFilePath = getClass().getClassLoader().getResource(usedPrinter).getFile();
             ConfigurationParser configParser = new JavaPropertiesConfigurationParser(configFilePath);
             Printer printerConfig = configParser.getPrinter();
-            Format formatConfig = configParser.getFormat("A4");
+            Format formatConfig = configParser.getFormat("A5");
 
 
             // Rasterizing
