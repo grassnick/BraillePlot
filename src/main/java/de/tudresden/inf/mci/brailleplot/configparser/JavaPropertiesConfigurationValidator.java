@@ -151,7 +151,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         }
     }
 
-    private static boolean checkIfFileExists(final String filePath){
+    private static boolean checkIfFileExists(final String filePath) {
         try {
             FileInputStream stream = new FileInputStream(filePath);
         } catch (FileNotFoundException e) {
