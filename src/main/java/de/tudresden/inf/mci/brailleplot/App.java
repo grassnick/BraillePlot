@@ -141,9 +141,9 @@ public final class App {
             // TODO make it default if nothing is found in p.
             Optional<String> configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH);
             JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get());
-            Printer indexV4Printer = configParser.getPrinter();
-            indexV4Printer.getProperty("brailletable").toString();
-            Format A4Format = configParser.getFormat("A4");
+            Printer printer = configParser.getPrinter();
+            printer.getProperty("brailletable").toString();
+            Format formatA4 = configParser.getFormat("A4");
 
 
 
@@ -156,9 +156,9 @@ public final class App {
                 System.out.println("Nein");
             }
 
-            MatrixData<Boolean> data = new SimpleMatrixDataImpl<Boolean>(indexV4Printer, A4Format, 18, 20, true);
+            MatrixData<Boolean> data = new SimpleMatrixDataImpl<>(printer, formatA4, 18, 20, true);
             PrintDirector printD = new PrintDirector(PrinterConfiguration.NORMALPRINTER);
-            printD.print("Index Everest-D V4", data);
+            printD.print(printer.getProperty("name").toString(), data);
             /*
             byte[] data = lt.buildDemo(1);
             lt.printString(data);
