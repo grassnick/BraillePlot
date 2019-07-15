@@ -104,12 +104,12 @@ public final class BrailleCell6<T> {
 
     /**
      * Method for getting the Bit Representation of the Cell (110001). Should only be used if T is boolean.
-     * @return
+     * @return String containing the Bit Representation.
      */
-    public String getBitRepresentationFromBool(){
+    public String getBitRepresentationFromBool() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < mDots.length; i++) {
-            if(Boolean.parseBoolean(mDots[i].toString())) {
+            if (Boolean.parseBoolean(mDots[i].toString())) {
                 sb.append("1");
             } else {
                 sb.append("0");
