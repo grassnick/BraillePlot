@@ -1,10 +1,5 @@
 package de.tudresden.inf.mci.brailleplot.exporter;
 
-import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 
 /**
  * Class representing the Graphic-Mode-Protocol from Braille Index Everest D4.
@@ -12,10 +7,10 @@ import java.io.IOException;
  */
 public class GraphicPrintBuilder extends AbstractIndexV4Builder {
 
-    private final byte[] mEnterImageMode = new byte[] {0x1B, 0x09};
+   /* private final byte[] mEnterImageMode = new byte[] {0x1B, 0x09};
     private final byte[] mExitImageMode = new byte[] {0x1B, 0x0A};
     private final byte[] mSetImageType = new byte[] {0x1B, 0x0B};
-
+    */
     protected GraphicPrintBuilder() {
 
     }
@@ -25,7 +20,7 @@ public class GraphicPrintBuilder extends AbstractIndexV4Builder {
      * The ready to print Document, as byte[]
      * @param data
      */
-    @Override
+    /*@Override
     public byte[] assemble(final MatrixData data) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
@@ -42,5 +37,5 @@ public class GraphicPrintBuilder extends AbstractIndexV4Builder {
         //mDocument = stream.toByteArray();
         return null;
     }
-
+    */
 }
