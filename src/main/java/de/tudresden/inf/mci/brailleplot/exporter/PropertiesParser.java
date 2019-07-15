@@ -1,6 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.exporter;
 
 import java.io.FileInputStream;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -17,11 +18,14 @@ public class PropertiesParser implements AbstractBrailleTableParser {
      * @param filePath The Path to the BrailleTable.
      * @throws RuntimeException if an I... TODO
      */
-    PropertiesParser(String filePath) {
+    PropertiesParser(final String filePath) {
+        Objects.requireNonNull(filePath);
+
         FileInputStream stream;
         try {
             stream = new FileInputStream(filePath);
             mProperties.load(stream);
+            stream.close();
         } catch (java.io.IOException e) {
             throw new RuntimeException(e);
         }
@@ -34,7 +38,8 @@ public class PropertiesParser implements AbstractBrailleTableParser {
      * @return The Byte(int) representing the Braillecell specified in the BrailleTable,
      */
     @Override
-    public int getValue(String key) {
+    public int getValue(final String key) {
+        Objects.requireNonNull(key);
         return Integer.parseInt(mProperties.getProperty(key));
     }
 }
