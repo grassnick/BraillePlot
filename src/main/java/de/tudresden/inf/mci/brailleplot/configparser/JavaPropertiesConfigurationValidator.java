@@ -40,11 +40,12 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         p.put("raster.indent.left", requireInteger.and(requirePositive));
         p.put("raster.indent.bottom", requireInteger.and(requirePositive));
         p.put("raster.indent.right", requireInteger.and(requirePositive));
-        p.put("min.charsPerLine", requireInteger.and(requirePositive));
-        p.put("max.charsPerLine", requireInteger.and(requirePositive));
-        p.put("min.linesPerPage", requireInteger.and(requirePositive));
-        p.put("max.linesPerPage", requireInteger.and(requirePositive));
-        p.put("equidistantSupport", requireBoolean);
+        p.put("raster.dotDistance.horizontal", requireDouble.and(requirePositive));
+        p.put("raster.dotDistance.vertical", requireDouble.and(requirePositive));
+        p.put("raster.cellDistance.horizontal", requireDouble.and(requirePositive));
+        p.put("raster.cellDistance.vertical", requireDouble.and(requirePositive));
+        p.put("raster.dotDiameter", requireDouble.and(requirePositive));
+        p.put("floatingDotSupport", requireBoolean);
         p.put("min.characterDistance", requireDouble.and(requirePositive));
         p.put("max.characterDistance", requireDouble.and(requirePositive));
         p.put("min.lineDistance", requireDouble.and(requirePositive));
@@ -59,10 +60,6 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         f.put("margin.right", requireInteger.and(requirePositive));
         f.put("margin.bottom", requireInteger.and(requirePositive));
         f.put("margin.left", requireInteger.and(requirePositive));
-        f.put("raster.dotDistance.horizontal", requireDouble.and(requirePositive));
-        f.put("raster.dotDistance.vertical", requireDouble.and(requirePositive));
-        f.put("raster.cellDistance.horizontal", requireDouble.and(requirePositive));
-        f.put("raster.cellDistance.vertical", requireDouble.and(requirePositive));
         f.put("isPortrait", requireBoolean);
 
         // Add definitions

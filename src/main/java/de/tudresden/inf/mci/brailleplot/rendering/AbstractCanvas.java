@@ -51,8 +51,8 @@ public abstract class AbstractCanvas {
         mMarginBottom = max(mFormat.getProperty("margin.bottom").toInt() - indentBottom, 0);
         mMarginRight = max(mFormat.getProperty("margin.right").toInt() - indentRight, 0);
 
-        // How big is the full page area in mm?
-        // The page size can't be negative too of course.
+        // How big is the technically accessible area of the page in mm?
+        // These sizes can't be negative too of course.
         mMillimeterWidth = max(mFormat.getProperty("page.width").toInt() - (indentLeft + indentRight), 0);
         mMillimeterHeight = max(mFormat.getProperty("page.height").toInt() - (indentTop + indentBottom), 0);
 
@@ -62,7 +62,7 @@ public abstract class AbstractCanvas {
      * This method is supposed to return the full width of the canvas.
      * @return The width of the canvas in millimeters.
      */
-    public double getAbsoluteWidth() {
+    public double getPrintableWidth() {
         return mMillimeterWidth - (mMarginLeft + mMarginRight);
     }
 
@@ -70,7 +70,7 @@ public abstract class AbstractCanvas {
      * This method is supposed to return the full height of the canvas.
      * @return The height of the canvas in millimeters.
      */
-    public double getAbsoluteHeight() {
+    public double getPrintableHeight() {
         return mMillimeterHeight - (mMarginTop + mMarginBottom);
     }
 

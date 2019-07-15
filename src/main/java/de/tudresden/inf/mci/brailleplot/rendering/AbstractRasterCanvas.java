@@ -37,6 +37,7 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
     private double mVerticalDotDistance;
     private double mHorizontalCellDistance;
     private double mVerticalCellDistance;
+    private double mDotDiameter;
 
     // Printing area rectangles
     private Rectangle mPrintingAreaCells;
@@ -77,10 +78,11 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
     private void readConfig() {
 
         // What are the dot and cell distances in mm?
-        mHorizontalDotDistance = mFormat.getProperty("raster.dotDistance.horizontal").toDouble();
-        mVerticalDotDistance = mFormat.getProperty("raster.dotDistance.vertical").toDouble();
-        mHorizontalCellDistance = mFormat.getProperty("raster.cellDistance.horizontal").toDouble();
-        mVerticalCellDistance = mFormat.getProperty("raster.cellDistance.vertical").toDouble();
+        mHorizontalDotDistance = mPrinter.getProperty("raster.dotDistance.horizontal").toDouble();
+        mVerticalDotDistance = mPrinter.getProperty("raster.dotDistance.vertical").toDouble();
+        mHorizontalCellDistance = mPrinter.getProperty("raster.cellDistance.horizontal").toDouble();
+        mVerticalCellDistance = mPrinter.getProperty("raster.cellDistance.vertical").toDouble();
+        mDotDiameter = mPrinter.getProperty("raster.dotDiameter").toDouble();
 
         // Calculate cell size in mm
         mCellHorizontalMM = mHorizontalDotDistance * (mCellWidth - 1) + mHorizontalCellDistance; // Full width of one cell + padding in mm
@@ -207,6 +209,9 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
     public final double getVerticalCellDistance() {
         return mVerticalCellDistance;
     }
+    public final double getDotDiameter() {
+        return mDotDiameter;
+    }
     public final Rectangle getCellRectangle() {
         return new Rectangle(mPrintingAreaCells);
     }
@@ -218,12 +223,12 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
     }
 
     @Override
-    public double getAbsoluteWidth() {
+    public double getPrintableWidth() {
         return mXPositions.get(getDotRectangle().intWrapper().getRight()) - mXPositions.get(getDotRectangle().intWrapper().getX());
     }
 
     @Override
-    public double getAbsoluteHeight() {
+    public double getPrintableHeight() {
         return mYPositions.get(getDotRectangle().intWrapper().getBottom()) - mYPositions.get(getDotRectangle().intWrapper().getY());
     }
 
