@@ -19,7 +19,6 @@ public class PrintDirector {
     private PrintService mService;
     private String mPrinterName;
     private DocFlavor mDocflavor;
-    private AbstractBrailleTableParser mParser;
 
 
     /**
@@ -34,8 +33,12 @@ public class PrintDirector {
 
         switch (mPrinter) {
             case NORMALPRINTER: mBuilder = new NormalBuilder(); break;
-            case INDEX_EVEREST_D_V4_GRAPHIC_PRINTER: mBuilder = new GraphicPrintBuilder(); break;
-            case INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER: mBuilder = new FloatingDotAreaBuilder(); break;
+            case INDEX_EVEREST_D_V4_GRAPHIC_PRINTER:
+                mBuilder = new GraphicPrintBuilder();
+                break;
+            case INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER:
+                mBuilder = new FloatingDotAreaBuilder();
+                break;
             default: throw new IllegalArgumentException();
         }
     }
@@ -72,7 +75,7 @@ public class PrintDirector {
                 }
             }
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("The given Printer " + printerName + " was not found in the System.");
         }
     }
 
@@ -86,14 +89,17 @@ public class PrintDirector {
         if (printerName == null || data == null) {
             throw new NullPointerException();
         }
-        setUpDoc();
-        setPrinter(printerName);
+        String printerNameFromConfig = data.getPrinterConfig().getProperty("name").toString();
+        if (printerName.equals(printerNameFromConfig)) {
+            setUpDoc();
+            setPrinter(printerName);
+            byte[] result = mBuilder.assemble(data);
+            print(result);
+        } else {
+            throw new IllegalArgumentException("The given Printername does not correspond with the Printername "
+                    + "in the printerConfig. Printerconfig: " + printerNameFromConfig + " Printer " + printerName);
+        }
 
-        byte[] result = mBuilder.assemble(data);
-
-        // Printing the Document
-
-        print(result);
     }
 
     /**
