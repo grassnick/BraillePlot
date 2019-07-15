@@ -12,7 +12,7 @@ import java.util.Objects;
  * Class representing a normal Document (for example a .txt) to print without
  * any Escapesequences.
  * @author Andrey Ruzhanskiy
- * @version
+ * @version 12.07.2019
  */
 @SuppressWarnings("checkstyle:MagicNumber")
 public class NormalBuilder extends AbstractDocumentBuilder {
@@ -29,7 +29,7 @@ public class NormalBuilder extends AbstractDocumentBuilder {
     @Override
     public byte[] assemble(final MatrixData data) {
 
-        //Stolen Idea from Leo.
+        //Check if Null Object was given.
         mData = Objects.requireNonNull(data);
         // Setting the right parser, catch if not found and throw RuntimeException which can be handled.
         try {
@@ -39,13 +39,13 @@ public class NormalBuilder extends AbstractDocumentBuilder {
         }
 
         // Get Iterator for Cells.
-        Iterator<BrailleCell6<Boolean>> iter = data.getBrailleCell6Iterator();
+        Iterator<BrailleCell6<Boolean>> iter = mData.getBrailleCell6Iterator();
 
         // Set stream for final output.
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
         // Getting Width in BrailleCells
-        int width = data.getColumnCount() / 2;
+        int width = mData.getColumnCount() / 2;
 
         // Declaration of  local variables for better readability.
         BrailleCell6 current;
@@ -74,9 +74,4 @@ public class NormalBuilder extends AbstractDocumentBuilder {
         }
         return stream.toByteArray();
     }
-
-    protected NormalBuilder(){
-
-    }
-
 }
