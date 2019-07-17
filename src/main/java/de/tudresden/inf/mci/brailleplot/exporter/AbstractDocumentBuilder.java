@@ -44,7 +44,7 @@ public abstract class AbstractDocumentBuilder {
             case "properties": mParser = new PropertiesParser(printer.getProperty("brailletable").toString()); break;
             case "json": mParser = new JsonParser(printer.getProperty("brailletable").toString()); break;
             case "xml": mParser = new XmlParser(printer.getProperty("brailletable").toString()); break;
-            default: throw new NotSupportedFileExtension();
+            default: throw new NotSupportedFileExtension("The Fileextension " + fileEnding + "is currently not supported.");
         }
     }
 }

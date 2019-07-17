@@ -66,3 +66,29 @@ checkstyleTest{
     showViolations = true
     checkstyleTest.enabled = false
 }
+
+sourceSets {
+    IntegrationTests {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+configurations {
+    IntegrationTestsImplementation.extendsFrom implementation
+    IntegrationTestsRuntimeOnly.extendsFrom runtimeOnly
+}
+
+dependencies {
+    integrationTestsImplementation 'junit:junit:4.12'
+}
+
+task integrationTest(type: Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.IntegrationTests.output.classesDirs
+    classpath = sourceSets.IntegrationTests.runtimeClasspath
+    shouldRunAfter test
+}
+
+check.dependsOn integrationTest

@@ -31,6 +31,7 @@ public class NormalBuilder extends AbstractDocumentBuilder {
 
         //Check if Null Object was given.
         mData = Objects.requireNonNull(data);
+
         // Setting the right parser, catch if not found and throw RuntimeException which can be handled.
         try {
             setParser();
@@ -63,14 +64,12 @@ public class NormalBuilder extends AbstractDocumentBuilder {
             value = mParser.getValue(key);
             stream.write(value);
             i++;
-
             // Setting the Linebreaks
             if (i == width) {
                 i = 0;
                 stream.write(0x0D);
                 stream.write(0x0A);
             }
-
         }
         return stream.toByteArray();
     }
