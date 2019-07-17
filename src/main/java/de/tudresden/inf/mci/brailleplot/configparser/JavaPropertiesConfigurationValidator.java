@@ -1,5 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
+import de.tudresden.inf.mci.brailleplot.exporter.PrinterConfiguration;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
@@ -28,6 +30,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         Predicate<String> requireBoolean = JavaPropertiesConfigurationValidator::checkIfBoolean;
         Predicate<String> requirePositive = JavaPropertiesConfigurationValidator::checkIfPositive;
         Predicate<String> requireFileExists = JavaPropertiesConfigurationValidator::checkIfFileExists;
+        Predicate<String> requireEnum = JavaPropertiesConfigurationValidator::checkIfEnum;
 
         // Definition of valid printer properties
         Map<String, Predicate<String>> p = new HashMap<>();
@@ -42,6 +45,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         p.put("min.lineDistance", requireDouble.and(requirePositive));
         p.put("max.lineDistance", requireDouble.and(requirePositive));
         p.put("brailletable", requireFileExists);
+        p.put("mode", requireNotEmpty.and(requireEnum));
 
         // Definition of valid format properties
         Map<String, Predicate<String>> f = new HashMap<>();
@@ -158,5 +162,15 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
             throw new RuntimeException(e);
         }
         return true;
+    }
+
+
+    private static boolean checkIfEnum(final String name) {
+        for (PrinterConfiguration p : PrinterConfiguration.values()) {
+            if (p.toString().toLowerCase().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

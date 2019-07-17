@@ -157,8 +157,10 @@ public final class App {
             }
 
             MatrixData<Boolean> data = new SimpleMatrixDataImpl<>(printer, formatA4, 18, 20, true);
-            PrintDirector printD = new PrintDirector(PrinterConfiguration.NORMALPRINTER);
+            String printerConfigUpperCase = printer.getProperty("mode").toString().toUpperCase();
+            PrintDirector printD = new PrintDirector(PrinterConfiguration.valueOf(printerConfigUpperCase));
             printD.print(printer.getProperty("name").toString(), data);
+
             /*
             byte[] data = lt.buildDemo(1);
             lt.printString(data);
