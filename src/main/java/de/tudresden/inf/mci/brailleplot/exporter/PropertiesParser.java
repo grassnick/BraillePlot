@@ -16,7 +16,7 @@ public class PropertiesParser implements AbstractBrailleTableParser {
     /**
      * Constructor for PropertiesParser. Takes an filePath to the Brailletable file with the .properties filextension.
      * @param filePath The Path to the BrailleTable.
-     * @throws RuntimeException if an I... TODO
+     * @throws RuntimeException if the file Path does not exists.
      */
     PropertiesParser(final String filePath) {
         Objects.requireNonNull(filePath);

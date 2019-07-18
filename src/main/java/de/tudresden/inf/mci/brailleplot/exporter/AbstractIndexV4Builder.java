@@ -3,9 +3,9 @@ package de.tudresden.inf.mci.brailleplot.exporter;
 /**
  * Abstract Class for Documents, that need special Escape Sequences for the Index Everest-V4.
  * All special Documents (i.e. Floating Dot Area) should implement this class. All information taken
- * from the Index PrinterConfiguration Interface Protocol V5_V4 2ß16-05-13. All the Variables with the respective Values have no
+ * from the Index PrinterCapability Interface Protocol V5_V4 2ß16-05-13. All the Variables with the respective Values have no
  * particular order (except mStartTemporaryDoc, which must be at the beginning). All the Variable Names are set to
- * final, these are PrinterConfiguration specific Values that should not be changed.
+ * final, these are PrinterCapability specific Values that should not be changed.
  * @author Andrey Ruzhanskiy
  * @version 31.05.2019
  */
