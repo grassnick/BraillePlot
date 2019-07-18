@@ -69,15 +69,39 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
 
     }
 
+    /**
+     * Use this function in the validators constructor to add a printer property definition to the internal validation table.
+     * The property will be treated as 'required'.
+     * @param propertyName The name of the property. (The prefix 'printer.' must be omitted.)
+     * @param validation The validation predicate. {@link Predicate}&lt;{@link String}&gt;
+     */
     private void definePrinterProperty(final String propertyName, final Predicate<String> validation) {
         definePrinterProperty(propertyName, validation, true);
     }
+    /**
+     * Use this function in the validators constructor to add a printer property definition to the internal validation table.
+     * @param propertyName The name of the property. (The prefix 'printer.' must be omitted.)
+     * @param validation The validation predicate. {@link Predicate}&lt;{@link String}&gt;
+     * @param required Signals whether this is a required property or not.
+     */
     private void definePrinterProperty(final String propertyName, final Predicate<String> validation, final boolean required) {
         defineProperty(mValidPrinterProperties, propertyName, validation, required, mRequiredPrinterProperties);
     }
+    /**
+     * Use this function in the validators constructor to add a format property definition to the internal validation table.
+     * The property will be treated as 'required'.
+     * @param propertyName The name of the property. (The prefix 'format.[name].' must be omitted.)
+     * @param validation The validation predicate. {@link Predicate}&lt;{@link String}&gt;
+     */
     private void defineFormatProperty(final String propertyName, final Predicate<String> validation) {
         defineFormatProperty(propertyName, validation, true);
     }
+    /**
+     * Use this function in the validators constructor to add a format property definition to the internal validation table.
+     * @param propertyName The name of the property. (The prefix 'format.[name].' must be omitted.)
+     * @param validation The validation predicate. {@link Predicate}&lt;{@link String}&gt;
+     * @param required Signals whether this is a required property or not.
+     */
     private void defineFormatProperty(final String propertyName, final Predicate<String> validation, final boolean required) {
         defineProperty(mValidFormatProperties, propertyName, validation, required, mRequiredFormatProperties);
     }
