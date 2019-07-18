@@ -11,6 +11,6 @@ package de.tudresden.inf.mci.brailleplot.exporter;
  * @version 17.07.2019
  */
 
-public enum PrinterConfiguration {
+public enum PrinterCapability {
     NORMALPRINTER, INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER, INDEX_EVEREST_D_V4_GRAPHIC_PRINTER
 }
