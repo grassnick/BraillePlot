@@ -25,8 +25,8 @@ public class JavaPropertiesConfigurationParserTest {
     // Correct use testcases
     @Test @BeforeAll
     public static void testSuccessfulParsing() {
-        String defaultConfigPath = getResource("defaultConfig.properties").getAbsolutePath();
-        String configPath = getResource("dummyPrinterConfig.properties").getAbsolutePath();
+        String defaultConfigPath = getResource("default.properties").getAbsolutePath();
+        String configPath = getResource("concrete.properties").getAbsolutePath();
         Assertions.assertDoesNotThrow(() -> {
             // Parse defaults
             ConfigurationParser defaultPropertyParser = new JavaPropertiesConfigurationParser(defaultConfigPath);
@@ -38,41 +38,40 @@ public class JavaPropertiesConfigurationParserTest {
             mPrinterConfig = parser.getPrinter();
             Set<String> properties = mPrinterConfig.getPropertyNames();
             Set<String> formats = parser.getFormatNames();
-            mFormatConfig = parser.getFormat("B5");
+            mFormatConfig = parser.getFormat("A4");
         });
     }
     @Test
     public void testCorrectValues() {
         // default values - not overwritten
-        Assertions.assertEquals(35, mPrinterConfig.getProperty("max.charsPerLine").toInt());
-        Assertions.assertEquals(29, mPrinterConfig.getProperty("max.linesPerPage").toInt());
+        Assertions.assertEquals(2.5, mPrinterConfig.getProperty("max.characterDistance").toDouble());
+        Assertions.assertEquals(false, mPrinterConfig.getProperty("floatingDotSupport").toBool());
 
-        Assertions.assertEquals(10, mFormatConfig.getProperty("margin.left").toInt());
+        Assertions.assertEquals(10, mFormatConfig.getProperty("margin.bottom").toInt());
 
         // overwritten values
-        Assertions.assertEquals(true, mPrinterConfig.getProperty("equidistantSupport").toBool());
-        Assertions.assertEquals(2.5, mPrinterConfig.getProperty("max.characterDistance").toDouble());
 
-        Assertions.assertEquals(176, mFormatConfig.getProperty("page.width").toInt());
-        Assertions.assertEquals(250, mFormatConfig.getProperty("page.height").toInt());
+        Assertions.assertEquals(0, mFormatConfig.getProperty("margin.left").toInt());
 
         // values without default
         Assertions.assertEquals("Index Everest-D V4", mPrinterConfig.getProperty("name").toString());
 
-        Assertions.assertEquals(false, mFormatConfig.getProperty("isPortrait").toBool());
     }
     @Test
     public void testCompatibleTypeConversion() {
-        Assertions.assertEquals("35", mPrinterConfig.getProperty("max.charsPerLine").toString());
+        Assertions.assertEquals("5.0", mPrinterConfig.getProperty("indent.top").toString());
         Assertions.assertEquals(false, mPrinterConfig.getProperty("max.characterDistance").toBool());
 
-        Assertions.assertEquals(250.0, mFormatConfig.getProperty("page.height").toDouble());
+        Assertions.assertEquals(297.0, mFormatConfig.getProperty("page.height").toDouble());
     }
     @Test
     public void testFallbackProperties() {
 
-        String specifiedByConfig[] = {"name", "max.characterDistance", "equidistantSupport"};
-        String specifiedByFallback[] = {"max.charsPerLine", "max.linesPerPage"};
+        String specifiedByConfig[] = {"name", "brailletable", "indent.top", "indent.left",
+                "indent.bottom", "indent.right", "raster.indent.top", "raster.indent.left", "raster.indent.bottom",
+                "raster.indent.right", "raster.dotDistance.horizontal", "raster.dotDistance.vertical",
+                "raster.cellDistance.horizontal", "raster.cellDistance.vertical", "raster.dotDiameter"};
+        String specifiedByFallback[] = {"floatingDotSupport", "max.characterDistance", "raster.dotDiameter"};
 
         // config shall extend the fallback
         HashSet<String> expectedPropertyNames = new HashSet<>(Arrays.asList(specifiedByConfig));
@@ -109,7 +108,7 @@ public class JavaPropertiesConfigurationParserTest {
     }
     @Test
     public void testNonexistentFormat() {
-        String configPath = getResource("defaultConfig.properties").getAbsolutePath();
+        String configPath = getResource("default.properties").getAbsolutePath();
         Assertions.assertThrows(NoSuchElementException.class, () -> {
             ConfigurationParser parser = new JavaPropertiesConfigurationParser(configPath);
             parser.getFormat("B5");
@@ -117,7 +116,7 @@ public class JavaPropertiesConfigurationParserTest {
     }
     @Test
     public void testNonexistentProperties() {
-        String configPath = getResource("defaultConfig.properties").getAbsolutePath();
+        String configPath = getResource("default.properties").getAbsolutePath();
         Assertions.assertThrows(NoSuchElementException.class, () -> {
             ValidProperty spooderman = mPrinterConfig.getProperty("spooderman");
         });
@@ -127,11 +126,11 @@ public class JavaPropertiesConfigurationParserTest {
     }
     @Test
     public void testIncompatibleTypeConversion() {
-        Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("equidistantSupport").toInt());
+        Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("floatingDotSupport").toInt());
         Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("max.characterDistance").toInt());
         Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("name").toDouble());
 
-        Assertions.assertThrows(NumberFormatException.class, () -> mFormatConfig.getProperty("isPortrait").toDouble());
+        //Assertions.assertThrows(NumberFormatException.class, () -> mFormatConfig.getProperty("isPortrait").toDouble());
     }
 
 }
