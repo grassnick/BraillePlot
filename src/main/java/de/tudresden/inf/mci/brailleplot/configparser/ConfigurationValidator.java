@@ -15,4 +15,5 @@ interface ConfigurationValidator {
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
     ValidProperty validate(String key, String value) throws ConfigurationValidationException;
+    void assertComplete();
 }

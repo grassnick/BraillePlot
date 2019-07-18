@@ -249,4 +249,28 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
         return dotY / mCellHeight;
     }
 
+
+    public int quantifyX(double unquantifiedMillimeterX) {
+        return findClosestValueIndex(unquantifiedMillimeterX, mXPositions);
+    }
+
+    public int quantifyY(double unquantifiedMillimeterY) {
+        return findClosestValueIndex(unquantifiedMillimeterY, mYPositions);
+    }
+
+    private int findClosestValueIndex(Double value, ArrayList<Double> list) {
+        double minDistance = Double.POSITIVE_INFINITY;
+        for (int index = 0; index < list.size(); index++) {
+            double distance = abs(list.get(index) - value);
+            if (distance < minDistance) {
+                minDistance = distance;
+            } else {
+                // possible, because we know that the positions are sorted.
+                return index - 1;
+            }
+
+        }
+        // last value is the closest.
+        return (list.size() - 1);
+    }
 }

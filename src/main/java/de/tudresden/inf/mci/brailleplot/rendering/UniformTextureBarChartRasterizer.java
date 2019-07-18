@@ -61,7 +61,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
 
         String strDiagramTitle = "I am a bar chart"; // TODO: WHERE DO WE GET THIS INFO FROM??
         Rectangle barArea = mCanvas.getCellRectangle();
-        System.out.println(barArea + " " + mCanvas.getAbsoluteWidth() + " x " + mCanvas.getAbsoluteHeight() + " mm");
+        System.out.println(barArea + " " + mCanvas.getPrintableWidth() + " x " + mCanvas.getPrintableHeight() + " mm");
         int titleBarHeight;
         Rectangle titleArea, xAxisArea;
 

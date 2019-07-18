@@ -152,6 +152,8 @@ public abstract class ConfigurationParser {
         // load and parse file
         setConfigFile(filePath);
         parse();
+        // Check validation completeness. (Required properties)
+        mValidator.assertComplete();
         // build printer object from added properties
         mPrinter = new Printer(mPrinterProperties);
         if (mDefaultPrinter != null) {

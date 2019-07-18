@@ -18,6 +18,7 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
 import de.tudresden.inf.mci.brailleplot.rendering.AbstractRasterCanvas;
 import de.tudresden.inf.mci.brailleplot.rendering.BarChartDummy;
+import de.tudresden.inf.mci.brailleplot.rendering.Image;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import diagrams.BarChart;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import parser.CsvOrientation;
 import parser.CsvParser;
 import parser.CsvType;
 
+import java.io.File;
 import java.io.FileReader;
 import java.util.Optional;
 import java.io.IOException;
@@ -166,12 +168,15 @@ public final class App {
             String configFilePath = getClass().getClassLoader().getResource(usedPrinter).getFile();
             ConfigurationParser configParser = new JavaPropertiesConfigurationParser(configFilePath);
             Printer printerConfig = configParser.getPrinter();
-            Format formatConfig = configParser.getFormat("A5");
+            Format formatConfig = configParser.getFormat("wide");
 
 
             // Rasterizing
             MasterRenderer renderer = new MasterRenderer(printerConfig, formatConfig);
-            AbstractRasterCanvas canvas = renderer.rasterize(exampleBarChart);
+            //AbstractRasterCanvas canvas = renderer.rasterize(exampleBarChart);
+            File imageFile = new File(getClass().getClassLoader().getResource("chart.png").getFile());
+            Image image = new Image(imageFile);
+            AbstractRasterCanvas canvas = renderer.rasterize(image);
             System.out.println(canvas.getCurrentPage());
 
 

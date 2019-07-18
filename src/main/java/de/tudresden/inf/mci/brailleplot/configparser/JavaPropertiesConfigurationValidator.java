@@ -2,9 +2,7 @@ package de.tudresden.inf.mci.brailleplot.configparser;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -15,10 +13,19 @@ import java.util.regex.Pattern;
  */
 class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
 
+    private final String PRINTER_PREFIX = "printer";
+    private final String FORMAT_PREFIX = "format";
+
     private final HashMap<String, Predicate<String>> mValidPrinterProperties = new HashMap<>();
     private final HashMap<String, Predicate<String>> mValidFormatProperties = new HashMap<>();
+    private final HashMap<String, ArrayList<String>> mCompletenessCheck = new HashMap<>();
+    private final ArrayList<String> mRequiredPrinterProperties = new ArrayList<>();
+    private final ArrayList<String> mRequiredFormatProperties = new ArrayList<>();
 
     JavaPropertiesConfigurationValidator() {
+
+        // Reset state for check of required properties.
+        resetCompletenessCheck();
 
         // Definition of type checker predicates
         Predicate<String> requireEmpty = String::isEmpty;
@@ -31,40 +38,58 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
 
         // Definition of valid printer properties
         Map<String, Predicate<String>> p = new HashMap<>();
-        p.put("name", requireNotEmpty);
-        p.put("indent.top", requireDouble.and(requirePositive));
-        p.put("indent.left", requireDouble.and(requirePositive));
-        p.put("indent.bottom", requireDouble.and(requirePositive));
-        p.put("indent.right", requireDouble.and(requirePositive));
-        p.put("raster.indent.top", requireInteger.and(requirePositive));
-        p.put("raster.indent.left", requireInteger.and(requirePositive));
-        p.put("raster.indent.bottom", requireInteger.and(requirePositive));
-        p.put("raster.indent.right", requireInteger.and(requirePositive));
-        p.put("raster.dotDistance.horizontal", requireDouble.and(requirePositive));
-        p.put("raster.dotDistance.vertical", requireDouble.and(requirePositive));
-        p.put("raster.cellDistance.horizontal", requireDouble.and(requirePositive));
-        p.put("raster.cellDistance.vertical", requireDouble.and(requirePositive));
-        p.put("raster.dotDiameter", requireDouble.and(requirePositive));
-        p.put("floatingDotSupport", requireBoolean);
-        p.put("min.characterDistance", requireDouble.and(requirePositive));
-        p.put("max.characterDistance", requireDouble.and(requirePositive));
-        p.put("min.lineDistance", requireDouble.and(requirePositive));
-        p.put("max.lineDistance", requireDouble.and(requirePositive));
-        p.put("brailletable", requireFileExists);
+        definePrinterProperty("name", requireNotEmpty);
+        definePrinterProperty("mode", requireNotEmpty);
+        definePrinterProperty("indent.top", requireDouble.and(requirePositive));
+        definePrinterProperty("indent.left", requireDouble.and(requirePositive));
+        definePrinterProperty("indent.bottom", requireDouble.and(requirePositive));
+        definePrinterProperty("indent.right", requireDouble.and(requirePositive));
+        definePrinterProperty("raster.indent.top", requireInteger.and(requirePositive));
+        definePrinterProperty("raster.indent.left", requireInteger.and(requirePositive));
+        definePrinterProperty("raster.indent.bottom", requireInteger.and(requirePositive));
+        definePrinterProperty("raster.indent.right", requireInteger.and(requirePositive));
+        definePrinterProperty("raster.dotDistance.horizontal", requireDouble.and(requirePositive));
+        definePrinterProperty("raster.dotDistance.vertical", requireDouble.and(requirePositive));
+        definePrinterProperty("raster.cellDistance.horizontal", requireDouble.and(requirePositive));
+        definePrinterProperty("raster.cellDistance.vertical", requireDouble.and(requirePositive));
+        definePrinterProperty("raster.dotDiameter", requireDouble.and(requirePositive));
+        definePrinterProperty("floatingDotSupport", requireBoolean);
+        definePrinterProperty("min.characterDistance", requireDouble.and(requirePositive), false);
+        definePrinterProperty("max.characterDistance", requireDouble.and(requirePositive), false);
+        definePrinterProperty("min.lineDistance", requireDouble.and(requirePositive), false);
+        definePrinterProperty("max.lineDistance", requireDouble.and(requirePositive), false);
+        definePrinterProperty("brailletable", requireFileExists);
 
         // Definition of valid format properties
         Map<String, Predicate<String>> f = new HashMap<>();
-        f.put("page.width", requireInteger.and(requirePositive));
-        f.put("page.height", requireInteger.and(requirePositive));
-        f.put("margin.top", requireInteger.and(requirePositive));
-        f.put("margin.right", requireInteger.and(requirePositive));
-        f.put("margin.bottom", requireInteger.and(requirePositive));
-        f.put("margin.left", requireInteger.and(requirePositive));
-        f.put("isPortrait", requireBoolean);
+        defineFormatProperty("page.width", requireInteger.and(requirePositive));
+        defineFormatProperty("page.height", requireInteger.and(requirePositive));
+        defineFormatProperty("margin.top", requireInteger.and(requirePositive));
+        defineFormatProperty("margin.right", requireInteger.and(requirePositive));
+        defineFormatProperty("margin.bottom", requireInteger.and(requirePositive));
+        defineFormatProperty("margin.left", requireInteger.and(requirePositive));
+        defineFormatProperty("isPortrait", requireBoolean, false);
 
-        // Add definitions
-        mValidPrinterProperties.putAll(p);
-        mValidFormatProperties.putAll(f);
+    }
+
+    private void definePrinterProperty(String propertyName, Predicate<String> validation) {
+        definePrinterProperty(propertyName, validation, true);
+    }
+    private void definePrinterProperty(String propertyName, Predicate<String> validation, boolean required) {
+        defineProperty(mValidPrinterProperties, propertyName, validation, required, mRequiredPrinterProperties);
+    }
+    private void defineFormatProperty(String propertyName, Predicate<String> validation) {
+        defineFormatProperty(propertyName, validation, true);
+    }
+    private void defineFormatProperty(String propertyName, Predicate<String> validation, boolean required) {
+        defineProperty(mValidFormatProperties, propertyName, validation, required, mRequiredFormatProperties);
+    }
+    private void defineProperty(HashMap<String, Predicate<String>> defTable, String propertyName,
+                                Predicate<String> validation, boolean required, ArrayList<String> checkList) {
+        defTable.put(propertyName, validation);
+        if (Objects.nonNull(checkList) && required) {
+            checkList.add(propertyName);
+        }
     }
 
     /**
@@ -75,6 +100,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
      * @return A {@link ValidProperty} object representing the validated property.
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
+    @Override
     public ValidProperty validate(final String key, final String value) throws ConfigurationValidationException {
         Objects.requireNonNull(key);
         Objects.requireNonNull(value);
@@ -84,7 +110,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         String prefix = keyParts[0];
 
         // Decide whether printer or format property and do lookup in respective validation table.
-        if (prefix.equals("printer")) {
+        if (prefix.equals(PRINTER_PREFIX)) {
             if (keyParts.length <= 1) {
                 throw new ConfigurationValidationException("Invalid printer property key: " + key);
             }
@@ -93,17 +119,50 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
                 propertyName = propertyName + "." + keyParts[2];
             }
             validationLookup(mValidPrinterProperties, propertyName, value);
+            updateCompletenessCheck(PRINTER_PREFIX, propertyName, mRequiredPrinterProperties);
             return new PrinterProperty(propertyName, value);
-        } else if (prefix.equals("format")) {
+        } else if (prefix.equals(FORMAT_PREFIX)) {
             if (keyParts.length <= 2) {
                 throw new ConfigurationValidationException("Invalid format property key: " + key);
             }
             String formatName = keyParts[1];
+            String namespace = FORMAT_PREFIX + "." + formatName;
             String propertyName = keyParts[2];
             validationLookup(mValidFormatProperties, propertyName, value);
+            updateCompletenessCheck(namespace, propertyName, mRequiredFormatProperties);
             return new FormatProperty(formatName, propertyName, value);
         } else {
             throw new ConfigurationValidationException("Invalid property prefix: " + prefix);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    // mRequiredPrinterProperties is ArrayList<String>.
+    void resetCompletenessCheck() {
+        mCompletenessCheck.clear();
+        // This namespace is always required:
+        mCompletenessCheck.put(PRINTER_PREFIX, (ArrayList<String>) mRequiredPrinterProperties.clone());
+    }
+
+    @SuppressWarnings("unchecked")
+    // checklist must be an ArrayList<String> in first place.
+    private void updateCompletenessCheck(String namespace, String propertyName, ArrayList<String> checklist) {
+        // If this is a new namespace, first add the checklist for the namespace.
+        if (!mCompletenessCheck.containsKey(namespace)) {
+            mCompletenessCheck.put(namespace, (ArrayList<String>) checklist.clone());
+        }
+        // 'tick off' the given property from the checklist associated with the regarding namespace.
+        mCompletenessCheck.get(namespace).remove(propertyName);
+    }
+
+    @Override
+    public void assertComplete() {
+        for (String namespace : mCompletenessCheck.keySet()) {
+            List checklist = mCompletenessCheck.get(namespace);
+            if (!checklist.isEmpty()) {
+                throw new IllegalStateException("Incomplete validation. Missing required properties: '" + checklist +
+                        "' in namespace '" + namespace + "'");
+            }
         }
     }
 
@@ -123,6 +182,8 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
             );
         }
     }
+
+    // Validation Predicates
 
     private static boolean checkIfInteger(final String value) {
         if (!Pattern.matches("-?[0-9]+", value)) {

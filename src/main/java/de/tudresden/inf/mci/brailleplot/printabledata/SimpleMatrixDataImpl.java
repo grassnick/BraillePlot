@@ -102,6 +102,9 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
                 } else {
                     sb.append("´");
                 }
+                if (((j+1) % 2) == 0) {
+                    sb.append(" ");
+                }
                 sb.append(" ");
             }
             sb.append("\n");
