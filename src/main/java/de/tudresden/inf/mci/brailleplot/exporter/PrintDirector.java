@@ -1,21 +1,24 @@
 package de.tudresden.inf.mci.brailleplot.exporter;
 
 
+import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
 import javax.print.*;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
+import java.util.Objects;
 
 /**
  * Implements a variation of the GoF Design pattern Builder. This class is used for setting the printerconfiguration and
  * for printing.
  * @author Andrey Ruzhanskiy
+ * @version 17.07.2019
  */
 public class PrintDirector {
 
     private AbstractDocumentBuilder mBuilder;
-    private final PrinterConfiguration mPrinter;
+    private final PrinterCapability mPrinter;
     private PrintService mService;
     private String mPrinterName;
     private DocFlavor mDocflavor;
@@ -24,13 +27,16 @@ public class PrintDirector {
     /**
      * Constructor for the PrintDirector. Main Class for printing. The class takes care of the complex Protocol to build
      * the document for the given configuration.
-     * @param printer Which printerconfiguration should be used. Normalprinter assumes that no special Features like
+     * @param printerCap Which printerconfiguration should be used. Normalprinter assumes that no special Features like
      *                GraphicMode or FloatindDotArea will be used.
+     * @param printerConfig The Printer object, used for extracting the name of the printer.
      */
 
-    public PrintDirector(final PrinterConfiguration printer) {
-        this.mPrinter = printer;
-
+    public PrintDirector(final PrinterCapability printerCap, final Printer printerConfig) {
+        Objects.requireNonNull(printerCap);
+        Objects.requireNonNull(printerConfig);
+        this.mPrinter = printerCap;
+        mPrinterName = printerConfig.getProperty("name").toString();
         switch (mPrinter) {
             case NORMALPRINTER: mBuilder = new NormalBuilder(); break;
             case INDEX_EVEREST_D_V4_GRAPHIC_PRINTER:
@@ -41,84 +47,56 @@ public class PrintDirector {
                 break;
             default: throw new IllegalArgumentException();
         }
+
     }
 
     /**
-     * Static method for checking if the printer, which was given, exists in the Printer System Dialog.
-     * @param printerName The name of the printer to check.
-     * @return
+     * Public method for printing the given Document with the given data.
+     * @param data Data to be printed.
      */
 
-    public static boolean printerExists(final String printerName) {
-        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
-        for (PrintService service: services) {
-            if (service.getName().equals(printerName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    /**
-     * Method for setting the Printer.
-     * @param printerName
-     * @throws IllegalArgumentException if the printer is not found.
-     */
-    private void setPrinter(final String printerName) {
-        if (printerExists(printerName)) {
-            mPrinterName = printerName;
-            PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
-            for (PrintService service: services) {
-                if (service.getName().equals(mPrinterName)) {
-                    mService = service;
-                }
-            }
-        } else {
-            throw new IllegalArgumentException("The given Printer " + printerName + " was not found in the System.");
-        }
+    public <T> void print(final MatrixData<T> data)  {
+        Objects.requireNonNull(data);
+        setUpDoc();
+        setUpService();
+        byte[] result = mBuilder.assemble(data);
+        print(result);
     }
 
     /**
-     * Stub.
-     * @param printerName
-     */
-
-    @SuppressWarnings("checkstyle:MagicNumber")
-    public <T> void print(final String printerName, final MatrixData<T> data)  {
-        if (printerName == null || data == null) {
-            throw new NullPointerException();
-        }
-        String printerNameFromConfig = data.getPrinterConfig().getProperty("name").toString();
-        if (printerName.equals(printerNameFromConfig)) {
-            setUpDoc();
-            setPrinter(printerName);
-            byte[] result = mBuilder.assemble(data);
-            print(result);
-        } else {
-            throw new IllegalArgumentException("The given Printername does not correspond with the Printername "
-                    + "in the printerConfig. Printerconfig: " + printerNameFromConfig + " Printer " + printerName);
-        }
-
-    }
-
-    /**
-     * Method for setting up the DocFlavor fir printing. Currently, not parameterised because the printer can (hopefully
-     * understand raw bytes with an octet stream.
+     * Method for setting up the DocFlavor for printing. Currently, not parameterised because the printer can
+     * (hopefully) understand raw bytes with an octet stream.
      */
     private void setUpDoc() {
         mDocflavor = new DocFlavor("application/octet-stream", "[B");
     }
 
+
     /**
-     * Private Method for sendind the data to the printer.
-     * @param data
+     * Method for setting the correct printer Service for the Printername.
+     * @throws RuntimeException if the System cant find the service.
+     */
+
+    private void setUpService() {
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        for (PrintService service: services) {
+            if (service.getName().equals(mPrinterName)) {
+                mService = service;
+                return;
+            }
+        }
+        throw new RuntimeException("Cant register Printerservice for the printername : " + mPrinterName);
+    }
+
+    /**
+     * Private Method for sending the data to the printer. Separated from the public method so that the assemble process
+     * and the printing process are separated logically, but from outside it looks like it all happens in one method.
+     * @param data to be printed.
+     * @throws PrintException If the printingjob could not be completed.
      */
 
     private void print(final byte[] data) {
-        if (data == null) {
-            throw new NullPointerException();
-        }
+        Objects.requireNonNull(data);
         Doc doc = new SimpleDoc(data, mDocflavor, null);
         PrintRequestAttributeSet asset = new HashPrintRequestAttributeSet();
         DocPrintJob job = mService.createPrintJob();

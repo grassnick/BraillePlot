@@ -8,6 +8,7 @@ package de.tudresden.inf.mci.brailleplot.exporter;
  * Softwaredeveloper must
  * Currently used in PrintDirector.
  * @author Andrey Ruzhanskiy
+ * @version 17.07.2019
  */
 
 public enum PrinterConfiguration {

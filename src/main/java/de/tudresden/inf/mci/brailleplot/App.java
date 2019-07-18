@@ -3,7 +3,7 @@ package de.tudresden.inf.mci.brailleplot;
 
 import de.tudresden.inf.mci.brailleplot.configparser.*;
 import de.tudresden.inf.mci.brailleplot.exporter.PrintDirector;
-import de.tudresden.inf.mci.brailleplot.exporter.PrinterConfiguration;
+import de.tudresden.inf.mci.brailleplot.exporter.PrinterCapability;
 
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
@@ -149,22 +149,10 @@ public final class App {
 
             // Last Step: Printing
 
-
-            if (PrintDirector.printerExists("Index Everest-D V4")) {
-                System.out.println("Ja");
-            } else {
-                System.out.println("Nein");
-            }
-
             MatrixData<Boolean> data = new SimpleMatrixDataImpl<>(printer, formatA4, 18, 20, true);
             String printerConfigUpperCase = printer.getProperty("mode").toString().toUpperCase();
-            PrintDirector printD = new PrintDirector(PrinterConfiguration.valueOf(printerConfigUpperCase));
-            printD.print(printer.getProperty("name").toString(), data);
-
-            /*
-            byte[] data = lt.buildDemo(1);
-            lt.printString(data);
-            */
+            PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), printer);
+            printD.print(data);
 
         } catch (final Exception e) {
             terminateWithException(e);

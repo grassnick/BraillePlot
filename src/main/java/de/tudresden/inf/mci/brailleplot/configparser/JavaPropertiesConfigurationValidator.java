@@ -1,7 +1,9 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
-import de.tudresden.inf.mci.brailleplot.exporter.PrinterConfiguration;
+import de.tudresden.inf.mci.brailleplot.exporter.PrinterCapability;
 
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
@@ -31,10 +33,11 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         Predicate<String> requirePositive = JavaPropertiesConfigurationValidator::checkIfPositive;
         Predicate<String> requireFileExists = JavaPropertiesConfigurationValidator::checkIfFileExists;
         Predicate<String> requireEnum = JavaPropertiesConfigurationValidator::checkIfEnum;
+        Predicate<String> requirePrinterExists = JavaPropertiesConfigurationValidator::checkIfPrinterExists;
 
         // Definition of valid printer properties
         Map<String, Predicate<String>> p = new HashMap<>();
-        p.put("name", requireNotEmpty);
+        p.put("name", requireNotEmpty.and(requirePrinterExists));
         p.put("min.charsPerLine", requireInteger.and(requirePositive));
         p.put("max.charsPerLine", requireInteger.and(requirePositive));
         p.put("min.linesPerPage", requireInteger.and(requirePositive));
@@ -166,11 +169,36 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
 
 
     private static boolean checkIfEnum(final String name) {
-        for (PrinterConfiguration p : PrinterConfiguration.values()) {
+        for (PrinterCapability p : PrinterCapability.values()) {
             if (p.toString().toLowerCase().equals(name)) {
+                return true;
+            }
+        }
+        PrinterCapability[] possibleValues = PrinterCapability.values();
+        StringBuilder sBuilder = new StringBuilder();
+        for (int i = 0; i < possibleValues.length; i++) {
+            sBuilder.append(possibleValues[i]).append(",");
+        }
+        String result =  sBuilder.deleteCharAt(sBuilder.length() - 1).toString();
+        throw new RuntimeException("The given mode for the printer "
+                + name + "is currently not supported/not found in"
+                + "the system. Currently, the possible values are: " + result);
+    }
+
+    /**
+     * Static method for checking if the printer, which was given, exists in the Printer System Dialog.
+     * @param printerName The name of the printer to check.
+     * @return True if printer exists. False if not.
+     */
+
+    private static boolean checkIfPrinterExists(final String printerName) {
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        for (PrintService service: services) {
+            if (service.getName().equals(printerName)) {
                 return true;
             }
         }
         return false;
     }
+
 }
