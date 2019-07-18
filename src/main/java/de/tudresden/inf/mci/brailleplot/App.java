@@ -151,7 +151,7 @@ public final class App {
             }
 
             // Parse csv data
-            String csvPath = getClass().getClassLoader().getResource("parser_bar.csv").getFile();
+            String csvPath = getClass().getClassLoader().getResource("0_bar_chart.csv").getFile();
             CsvType csvType = CsvType.X_ALIGNED_CATEGORIES;
             CsvOrientation csvOrientation = CsvOrientation.HORIZONTAL;
             CsvParser parser = new CsvParser(new FileReader(csvPath), ',', '"');
