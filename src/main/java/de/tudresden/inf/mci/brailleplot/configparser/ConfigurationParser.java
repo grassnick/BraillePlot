@@ -14,17 +14,17 @@ import java.util.Set;
  * Abstract parser for configuration files. Interface for {@link Printer} and multiple {@link Format} configurations.
  * Must be extended to implement a concrete parsing algorithm for a specific file format.
  * @author Leonard Kupper
- * @version 2019.06.26
+ * @version 2019.07.18
  */
 
-abstract class ConfigurationParser {
+public abstract class ConfigurationParser {
 
     private FileInputStream mInput;
     private ConfigurationValidator mValidator;
     private Printer mPrinter;
     private Map<String, Format> mFormats = new HashMap<>();
     private String mConfigFilePath;
-    private List<PrinterProperty> mPrinterProperties = new ArrayList<>();;
+    private List<PrinterProperty> mPrinterProperties = new ArrayList<>();
     private Map<String, List<FormatProperty>> mFormatProperties = new HashMap<>();
     private Printer mDefaultPrinter;
     private Format mDefaultFormat;
@@ -38,7 +38,7 @@ abstract class ConfigurationParser {
      * Implement this method by parsing information from the configuration file (see {@link #getInput()}), optionally validating it (see {@link ConfigurationValidator}),
      * constructing {@link PrinterProperty} and {@link FormatProperty} objects from this information and adding them with the methods
      * {@link #addProperty(PrinterProperty)} and {@link #addProperty(FormatProperty)}.
-     * This method is called by ({@link #parseConfigFile(String)}).
+     * This method is called by ({@link #parseConfigFile(String, boolean)}).
      * @throws ConfigurationParsingException On any error while accessing the configuration file or syntax.
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
@@ -144,11 +144,15 @@ abstract class ConfigurationParser {
      * This method should be called inside the concrete parsers constructor after the optional default configurations
      * ({@link #setDefaults(Printer, Format)}) and the validator ({@link #setValidator(ConfigurationValidator)}) have been set.
      * @param filePath The configuration file to be parsed. The type depends on the concrete implementation of the parser.
+     * @param assertCompleteness Signals whether to check for existence of all required properties or not.
      * @throws ConfigurationParsingException On any error while accessing the configuration file or syntax
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
-    protected final void parseConfigFile(final String filePath)
+    protected final void parseConfigFile(final String filePath, final boolean assertCompleteness)
             throws ConfigurationParsingException, ConfigurationValidationException {
+        // reset internal property buffer
+        mPrinterProperties.clear();
+        mFormatProperties.clear();
         // load and parse file
         setConfigFile(filePath);
         parse();
@@ -157,11 +161,17 @@ abstract class ConfigurationParser {
         if (mDefaultPrinter != null) {
             mPrinter.setFallback(mDefaultPrinter);
         }
+        if (assertCompleteness) {
+            mValidator.checkPrinterConfigComplete(mPrinter);
+        }
         // build format objects from added properties
         for (String formatName : mFormatProperties.keySet()) {
-            Format newFormat = new Format(mFormatProperties.get(formatName));
+            Format newFormat = new Format(mFormatProperties.get(formatName), formatName);
             if (mDefaultFormat != null) {
                 newFormat.setFallback(mDefaultFormat);
+            }
+            if (assertCompleteness) {
+                mValidator.checkFormatConfigComplete(newFormat);
             }
             mFormats.put(formatName, newFormat);
         }
