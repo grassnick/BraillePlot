@@ -165,8 +165,9 @@ public final class App {
 
             String usedPrinter = "index_everest_d_v4.properties";
             //String usedPrinter = "index_basic_d.properties";
+            String defaultConfigFilePath = getClass().getClassLoader().getResource("default.properties").getFile();
             String configFilePath = getClass().getClassLoader().getResource(usedPrinter).getFile();
-            ConfigurationParser configParser = new JavaPropertiesConfigurationParser(configFilePath);
+            ConfigurationParser configParser = new JavaPropertiesConfigurationParser(configFilePath, defaultConfigFilePath);
             Printer printerConfig = configParser.getPrinter();
             Format formatConfig = configParser.getFormat("wide");
 
@@ -174,7 +175,7 @@ public final class App {
             // Rasterizing
             MasterRenderer renderer = new MasterRenderer(printerConfig, formatConfig);
             //AbstractRasterCanvas canvas = renderer.rasterize(exampleBarChart);
-            File imageFile = new File(getClass().getClassLoader().getResource("chart.png").getFile());
+            File imageFile = new File(getClass().getClassLoader().getResource("2_image_chart.png").getFile());
             Image image = new Image(imageFile);
             AbstractRasterCanvas canvas = renderer.rasterize(image);
             System.out.println(canvas.getCurrentPage());

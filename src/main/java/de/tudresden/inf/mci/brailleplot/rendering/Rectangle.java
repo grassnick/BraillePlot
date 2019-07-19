@@ -3,6 +3,8 @@ package de.tudresden.inf.mci.brailleplot.rendering;
 import java.util.Objects;
 
 import static java.lang.Math.round;
+import static java.lang.Math.min;
+import static java.lang.Math.max;
 
 /**
  * Represents a rectangle that can be continuously divided into partitions. Can be used for doing chart layout and as
@@ -113,10 +115,10 @@ public class Rectangle {
     }
 
     public double getRight() {
-        return mX + mW - 1;
+        return mX + mW;
     }
     public double getBottom() {
-        return mY + mH - 1;
+        return mY + mH;
     }
 
     public void setX(double x) {
@@ -149,6 +151,19 @@ public class Rectangle {
      */
     public Rectangle scaledBy(final double xScale, final double yScale) {
         return new Rectangle(mX * xScale, mY * yScale, mW * xScale, mH * yScale);
+    }
+
+    /**
+     * Returns a new rectangle representing the intersection of this rectangle with another rectangle.
+     * @param otherRectangle The other rectangle to intersect with this.
+     * @return New rectangle representing the intersection.
+     */
+    public Rectangle intersectedWith(Rectangle otherRectangle) {
+        double itsctX = max(getX(), otherRectangle.getX());
+        double itsctY = max(getY(), otherRectangle.getY());
+        double itsctB = min(getBottom(), otherRectangle.getBottom());
+        double itsctR = min(getRight(), otherRectangle.getRight());
+        return new Rectangle(itsctX, itsctY, max(0, itsctR - itsctX), max(0, itsctB - itsctY));
     }
 
     @Override
@@ -191,11 +206,15 @@ public class Rectangle {
             return wrapInt(mRectangle.getHeight());
         }
 
+        // QUESTION FOR REVIEW:
+        // Does the -1 always make sense for integer coordinates?
+        // The point is that on integer coords, if you have a rectangle at x,y of size 1x1, it 'ends' at x,y not x+1,y+1
+        // The rectangle does not 'touch' the neighboring positions.
         public int getRight() {
-            return wrapInt(mRectangle.getRight());
+            return wrapInt(mRectangle.getRight()) - 1;
         }
         public int getBottom() {
-            return wrapInt(mRectangle.getBottom());
+            return wrapInt(mRectangle.getBottom()) - 1;
         }
 
         public Rectangle getRectangle() {

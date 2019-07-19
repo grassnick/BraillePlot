@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 /**
  * Representation of a target onto which can be drawn. It wraps a {@link PrintableData} instance and specifies the size of the drawing area (in mm).
@@ -38,23 +39,34 @@ public abstract class AbstractCanvas {
 
     private void readConfig() {
 
-        double indentTop = mPrinter.getProperty("indent.top").toDouble();
-        double indentLeft = mPrinter.getProperty("indent.left").toDouble();
-        double indentBottom = mPrinter.getProperty("indent.bottom").toDouble();
-        double indentRight = mPrinter.getProperty("indent.right").toDouble();
+        double constraintTop = mPrinter.getProperty("constraint.top").toDouble();
+        double constraintLeft = mPrinter.getProperty("constraint.left").toDouble();
+        double constraintHeight, constraintWidth;
+        if (mPrinter.getPropertyNames().contains("constraint.height")) {
+            constraintHeight = mPrinter.getProperty("constraint.height").toDouble();
+        } else {
+            constraintHeight = Integer.MAX_VALUE;
+        }
+        if (mPrinter.getPropertyNames().contains("constraint.width")) {
+            constraintWidth = mPrinter.getProperty("constraint.width").toDouble();
+        } else {
+            constraintWidth = Integer.MAX_VALUE;
+        }
+        int pageWidth = mFormat.getProperty("page.width").toInt();
+        int pageHeight = mFormat.getProperty("page.height").toInt();
 
-        // Page margins in mm. The indentation is subtracted, we have no control over it, so the canvas just has to
-        // create the remaining 'virtual' margins by omitting some cells from the printing area rectangle.
+        // Page margins in mm. The printing area constraint is subtracted, we have no control over it, so the canvas just
+        // has to create the remaining 'virtual' margins by omitting some cells from the printing area rectangle.
         // However, even this 'virtual' margin can never be negative! We can't add printing space where there is none.
-        mMarginTop = max(mFormat.getProperty("margin.top").toInt() - indentTop, 0);
-        mMarginLeft = max(mFormat.getProperty("margin.left").toInt() - indentLeft, 0);
-        mMarginBottom = max(mFormat.getProperty("margin.bottom").toInt() - indentBottom, 0);
-        mMarginRight = max(mFormat.getProperty("margin.right").toInt() - indentRight, 0);
+        mMarginTop = max(0, mFormat.getProperty("margin.top").toInt() - constraintTop);
+        mMarginLeft = max(0, mFormat.getProperty("margin.left").toInt() - constraintLeft);
+        mMarginBottom = max(0, mFormat.getProperty("margin.bottom").toInt() - max(0, pageHeight - (constraintTop + constraintHeight)));
+        mMarginRight = max(0, mFormat.getProperty("margin.right").toInt() - max(0, pageWidth - (constraintLeft + constraintWidth)));
 
         // How big is the technically accessible area of the page in mm?
         // These sizes can't be negative too of course.
-        mMillimeterWidth = max(mFormat.getProperty("page.width").toInt() - (indentLeft + indentRight), 0);
-        mMillimeterHeight = max(mFormat.getProperty("page.height").toInt() - (indentTop + indentBottom), 0);
+        mMillimeterWidth = max(0, min(pageWidth - constraintLeft, constraintWidth));
+        mMillimeterHeight = max(0, min(pageHeight - constraintTop, constraintHeight));
 
     }
 

@@ -88,63 +88,77 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
         mCellHorizontalMM = mHorizontalDotDistance * (mCellWidth - 1) + mHorizontalCellDistance; // Full width of one cell + padding in mm
         mCellVerticalMM = mVerticalDotDistance * (mCellHeight - 1) + mVerticalCellDistance; // Full height of one cell + padding in mm
 
-        // Now we are reading properties that are specific to rasterizing.
-        // The abstract parent class (AbstractCanvas) already calculated indentations based on millimeters, but it is
-        // also possible to set a raster.indentation counted in amount of cells and lines. Those must be removed additionally.
-        double indentTop = mPrinter.getProperty("raster.indent.top").toDouble() * mCellVerticalMM;
-        double indentLeft = mPrinter.getProperty("raster.indent.left").toDouble() * mCellHorizontalMM;
-        double indentBottom = mPrinter.getProperty("raster.indent.bottom").toDouble() * mCellVerticalMM;
-        double indentRight = mPrinter.getProperty("raster.indent.right").toDouble() * mCellHorizontalMM;
 
+/*      TO BE DELETED
         // Subtract additional raster indentation from virtual margin.
-        mMarginTop = max(mMarginTop - indentTop, 0);
-        mMarginLeft = max(mMarginLeft - indentLeft, 0);
-        mMarginBottom = max(mMarginBottom - indentBottom, 0);
-        mMarginRight = max(mMarginRight - indentRight, 0);
+        mMarginTop = max(mMarginTop - rasterConstraintTop, 0);
+        mMarginLeft = max(mMarginLeft - rasterConstraintLeft, 0);
+        mMarginBottom = max(mMarginBottom - rasterConstraintWidth, 0);
+        mMarginRight = max(mMarginRight - rasterConstraintWidth, 0);
 
         // Subtract additional raster indentation from page size.
-        mMillimeterWidth = max(mMillimeterWidth - (indentLeft + indentRight), 0);
-        mMillimeterHeight = max(mMillimeterHeight - (indentTop + indentBottom), 0);
+        mMillimeterWidth = max(mMillimeterWidth - (rasterConstraintLeft + rasterConstraintWidth), 0);
+        mMillimeterHeight = max(mMillimeterHeight - (rasterConstraintTop + rasterConstraintWidth), 0);
+
+ */
 
     }
 
     private void calculateRasterSize() throws InsufficientRenderingAreaException {
 
-        // Calculate how many rows and columns of full cells fit inside the given page area
+        // The following properties impact the printing area, but are specific to rasterizing. (That's why they weren't read before in the AbstractCanvas)
+        // The abstract parent class (AbstractCanvas) already calculated indentations based on millimeters, but it is
+        // also possible to set a raster.indentation counted in amount of cells and lines. Those must be removed additionally.
+        int rasterConstraintTop = mPrinter.getProperty("raster.constraint.top").toInt();
+        int rasterConstraintLeft = mPrinter.getProperty("raster.constraint.left").toInt();
+        int rasterConstraintHeight, rasterConstraintWidth;
+        if (mPrinter.getPropertyNames().contains("raster.constraint.height")) {
+            rasterConstraintHeight = mPrinter.getProperty("raster.constraint.height").toInt();
+        } else {
+            rasterConstraintHeight = Integer.MAX_VALUE;
+        }
+        if (mPrinter.getPropertyNames().contains("raster.constraint.width")) {
+            rasterConstraintWidth = mPrinter.getProperty("raster.constraint.width").toInt();
+        } else {
+            rasterConstraintWidth = Integer.MAX_VALUE;
+        }
+
+        // How many cells would be omitted by applying the remaining virtual margins?
+        int omitTop = max(0, (int) ceil(mMarginTop / mCellVerticalMM) - rasterConstraintTop);
+        int omitLeft = max(0, (int) ceil(mMarginLeft / mCellHorizontalMM) - rasterConstraintLeft);
+        int omitBottom = (int) ceil(mMarginBottom / mCellVerticalMM);
+        int omitRight = (int) ceil(mMarginRight / mCellHorizontalMM);
+
+        // Calculate how many rows and columns of full cells fit inside the given page area (ignoring margins and raster constraints)
         mHorizontalCellCount = (int) floor((mMillimeterWidth + mHorizontalCellDistance) / mCellHorizontalMM); // How many full cells fit horizontally?
         mVerticalCellCount = (int) floor((mMillimeterHeight + mVerticalCellDistance) / mCellVerticalMM); // How many full cells fit vertically?
-
-        // To how many dots does this raster size correspond?
-        mColumnCount = mHorizontalCellCount * mCellWidth;
-        mRowCount = mVerticalCellCount * mCellHeight;
-
-        /*
-        // How big is the raster on the page?
-        double fullHorizontalMM = (mHorizontalCellCount * cellHorizontalMM) - mHorizontalCellDistance;
-        double fullVerticalMM = (mVerticalCellCount * cellVerticalMM) - mVerticalCellDistance;
-         */
 
         // Calculate a 'restricted' printing area rectangle, based on the given virtual margins.
         // By omitting some cells from the printing area rectangle, a real margin is imitated.
         // A rasterizer working with this canvas can still force to write values outside the restricted rectangle
         // so it is expected to at least take a look at the cell rectangle.
-
-        mPrintingAreaCells = new Rectangle(0, 0,mHorizontalCellCount,mVerticalCellCount); // The whole area.
-        int omitTop = (int) ceil(mMarginTop / mCellVerticalMM);
-        int omitLeft = (int) ceil(mMarginLeft / mCellHorizontalMM);
-        int omitBottom = (int) ceil(mMarginBottom / mCellVerticalMM);
-        int omitRight = (int) ceil(mMarginRight / mCellHorizontalMM);
+        Rectangle raster = new Rectangle(0, 0, mHorizontalCellCount, mVerticalCellCount);
         try {
-            mPrintingAreaCells.removeFromTop(omitTop);
-            mPrintingAreaCells.removeFromLeft(omitLeft);
-            mPrintingAreaCells.removeFromBottom(omitBottom);
-            mPrintingAreaCells.removeFromRight(omitRight);
+            raster.removeFromTop(omitTop);
+            raster.removeFromLeft(omitLeft);
+            raster.removeFromBottom(omitBottom);
+            raster.removeFromRight(omitRight);
         } catch (Rectangle.OutOfSpaceException e) {
             // If an OutOfSpaceException is thrown this early, it basically means that the defined page size is smaller
             // than the sum of its margins, indicating heavy layer 8 error.
             throw new InsufficientRenderingAreaException("The defined page size is smaller than the sum of its margins", e);
         }
+        // rasterConstraintTop and rasterConstraintLeft are already regarded in the virtual margins
+        Rectangle rasterConstraint = new Rectangle(0, 0, rasterConstraintWidth, rasterConstraintHeight);
+        //Rectangle rasterConstraint = new Rectangle(0, 0, rasterConstraintWidth, rasterConstraintHeight);
+        Rectangle intersect = raster.intersectedWith(rasterConstraint);
 
+        mPrintingAreaCells = new Rectangle(intersect); // The whole area.
+        //mPrintingAreaCells = new Rectangle(0, 0, intersect.getWidth(), intersect.getHeight()); // The whole area.
+
+        // To how many dots does this raster size correspond?
+        mColumnCount = mPrintingAreaCells.intWrapper().getWidth() * mCellWidth;
+        mRowCount = mPrintingAreaCells.intWrapper().getHeight() * mCellHeight;
 
     }
 
