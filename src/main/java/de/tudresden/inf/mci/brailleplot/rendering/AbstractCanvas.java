@@ -86,4 +86,8 @@ public abstract class AbstractCanvas {
         return mMillimeterHeight - (mMarginTop + mMarginBottom);
     }
 
+    public int getPageCount() {
+        return mPageContainer.size();
+    }
+
 }
