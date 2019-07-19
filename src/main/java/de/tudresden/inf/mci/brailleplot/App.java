@@ -8,16 +8,12 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.exporter.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.exporter.PrinterConfiguration;
 
-import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
-import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
-
 import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
 import de.tudresden.inf.mci.brailleplot.rendering.AbstractRasterCanvas;
-import de.tudresden.inf.mci.brailleplot.rendering.BarChartDummy;
 import de.tudresden.inf.mci.brailleplot.rendering.Image;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import diagrams.BarChart;
