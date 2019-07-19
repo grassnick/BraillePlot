@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Representation of a printers configuration properties.
  * @author Leonard Kupper
- * @version 2019.06.04
+ * @version 2019.07.18
  */
 public final class Printer extends Configurable {
 
@@ -18,5 +18,10 @@ public final class Printer extends Configurable {
     public Printer(final List<PrinterProperty> properties) {
         mProperties = new ArrayList<>();
         mProperties.addAll(properties);
+    }
+
+    @Override
+    public String toString() {
+        return "printer configuration";
     }
 }

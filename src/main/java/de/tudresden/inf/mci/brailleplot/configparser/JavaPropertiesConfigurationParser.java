@@ -6,7 +6,7 @@ import java.util.Properties;
 /**
  * Concrete parser for configuration files in Java Property File format.
  * @author Leonard Kupper
- * @version 2019.06.26
+ * @version 2019.07.18
  */
 public final class JavaPropertiesConfigurationParser extends ConfigurationParser {
 
@@ -15,47 +15,33 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
     /**
      * Constructor.
      *
-     * Parse the configuration from a JAVA Property File (.properties) without a default configuration.
-     * @param filePath The path of the JAVA Property File.
-     * @throws ConfigurationParsingException On any error while accessing the configuration file or syntax.
-     * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
-     */
-    public JavaPropertiesConfigurationParser(
-            final String filePath
-    ) throws ConfigurationParsingException, ConfigurationValidationException {
-        setValidator(new JavaPropertiesConfigurationValidator());
-        parseConfigFile(filePath);
-    }
-
-    /**
-     * Constructor.
-     *
      * Parse the configuration from a Java Property File (.properties) with a given default configuration.
      * @param filePath The path of the Java Property File.
-     * @param defaultPrinter A {@link Printer} object containing the default properties or null for no default to be set.
-     * @param defaultFormat A {@link Format} object containing the default properties or null for no default to be set.
+     * @param defaultPath The path to the Java Property File containing the default properties.
      * @throws ConfigurationParsingException On any error while accessing the configuration file or syntax.
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
     public JavaPropertiesConfigurationParser(
             final String filePath,
-            final Printer defaultPrinter,
-            final Format defaultFormat
+            final String defaultPath
     ) throws ConfigurationParsingException, ConfigurationValidationException {
         setValidator(new JavaPropertiesConfigurationValidator());
-        setDefaults(defaultPrinter, defaultFormat);
-        parseConfigFile(filePath);
+        parseConfigFile(defaultPath, false);
+        setDefaults(getPrinter(), getFormat("default"));
+        parseConfigFile(filePath, true);
     }
 
     /**
      * Concrete internal algorithm used for parsing the Java Property File.
-     * This method is called by ({@link #parseConfigFile(String)}).
+     * This method is called by ({@link #parseConfigFile(String, boolean)}).
      * @throws ConfigurationParsingException On any error while accessing the configuration file or syntax.
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
     protected void parse() throws ConfigurationParsingException, ConfigurationValidationException {
         // Load properties from the .properties file
         try {
+            // Reset java property instance
+            mProperties.clear();
             mProperties.load(getInput());
         } catch (IOException e) {
             throw new ConfigurationParsingException("Unable to load properties from file.", e);
