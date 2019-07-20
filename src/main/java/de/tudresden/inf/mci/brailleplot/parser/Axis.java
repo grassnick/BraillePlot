@@ -1,4 +1,4 @@
-package parser;
+package de.tudresden.inf.mci.brailleplot.parser;
 
 import java.text.DecimalFormat;
 import java.util.NoSuchElementException;

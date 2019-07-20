@@ -1,4 +1,0 @@
-/**
- * CSV parsing
- */
-package parser;

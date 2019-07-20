@@ -1,6 +1,4 @@
-package parser;
-
-import parser.PointListList.PointList;
+package de.tudresden.inf.mci.brailleplot.parser;
 
 import java.util.List;
 
@@ -11,7 +9,7 @@ import java.util.List;
 public abstract class CsvParseAlgorithm {
 	/**
 	 * If the data sets are oriented horizontally, i.e. in rows, parse the rows
-	 * into {@link PointList PointLists}.
+	 * into {@link PointListList.PointList PointLists}.
 	 * 
 	 * @param csvData
 	 * @return
@@ -20,7 +18,7 @@ public abstract class CsvParseAlgorithm {
 
 	/**
 	 * If the data sets are oriented vertically, i.e. in columns, parse the
-	 * columns into {@link PointList PointLists}.
+	 * columns into {@link PointListList.PointList PointLists}.
 	 * 
 	 * @param csvData
 	 * @return
@@ -28,8 +26,8 @@ public abstract class CsvParseAlgorithm {
 	public abstract PointListList parseAsVerticalDataSets(List<? extends List<String>> csvData);
 
 	/**
-	 * Adds a {@code point} to a {@link PointList} in a {@link PointListList},
-	 * specified by {@code listIndex}. Adds more {@link PointList PointLists} if
+	 * Adds a {@code point} to a {@link PointListList.PointList} in a {@link PointListList},
+	 * specified by {@code listIndex}. Adds more {@link PointListList.PointList PointLists} if
 	 * needed.
 	 * 
 	 * @param pointListList
@@ -41,7 +39,7 @@ public abstract class CsvParseAlgorithm {
 	 */
 	protected void addPointToPointListList(PointListList pointListList, int listIndex, Point point) {
 		while (pointListList.size() < listIndex) {
-			pointListList.add(new PointList());
+			pointListList.add(new PointListList.PointList());
 		}
 
 		pointListList.get(listIndex).insertSorted(point);

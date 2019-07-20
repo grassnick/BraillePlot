@@ -1,19 +1,18 @@
-package parser;
+package de.tudresden.inf.mci.brailleplot.parser;
 
-import parser.PointListList.PointList;
+import de.tudresden.inf.mci.brailleplot.parser.PointListList.PointList;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 
-public class CsvXAlignedParser extends CsvParseAlgorithm {
+public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
 
 	@Override
 	public PointListList parseAsHorizontalDataSets(List<? extends List<String>> csvData) {
-		PointListList pointListList = new PointListList();
-		List<Number> xValues = new ArrayList<>();
+		CategorialPointListList pointListList = new CategorialPointListList();
+
 		Iterator<? extends List<String>> rowIterator = csvData.iterator();
 		
 		if(!rowIterator.hasNext())
@@ -21,22 +20,16 @@ public class CsvXAlignedParser extends CsvParseAlgorithm {
 		
 		Iterator<String> lineIterator = rowIterator.next().iterator();
 		
-		// Move the iterator to the x value
+		// Move the iterator to the first category name
 		if(!lineIterator.hasNext())
 			return pointListList;
 		lineIterator.next();
 		if(!lineIterator.hasNext())
 			return pointListList;
 		
-		// Store all x values, if one is not specified store NaN
+		// Store all categories
 		while(lineIterator.hasNext()) {
-			Number xValue;
-			try {
-				xValue = Constants.numberFormat.parse(lineIterator.next());
-			} catch (ParseException e) {
-				xValue = Double.NaN;
-			}
-			xValues.add(xValue);
+			pointListList.addCategory(lineIterator.next());
 		}
 		
 		// Store each row's data set
@@ -53,14 +46,8 @@ public class CsvXAlignedParser extends CsvParseAlgorithm {
 			// Add all the points
 			int colPosition = 0;
 			while (lineIterator.hasNext()) {
-				if(colPosition >= xValues.size())
+				if(colPosition >= pointListList.getCategoryCount())
 					break;
-				Number xValue = xValues.get(colPosition);
-				if(xValue.equals(Double.NaN)) {
-					lineIterator.next();
-					colPosition++;
-					continue;
-				}
 				
 				// Find out the y value
 				Number yValue;
@@ -72,7 +59,7 @@ public class CsvXAlignedParser extends CsvParseAlgorithm {
 				}
 				
 				// Add the new point
-				Point newPoint = new Point(xValue.doubleValue(), yValue.doubleValue());
+				Point newPoint = new Point(colPosition, yValue.doubleValue());
 				pointList.insertSorted(newPoint);
 				colPosition++;
 			}
@@ -83,41 +70,43 @@ public class CsvXAlignedParser extends CsvParseAlgorithm {
 
 	@Override
 	public PointListList parseAsVerticalDataSets(List<? extends List<String>> csvData) {
-		PointListList pointListList = new PointListList();
+		CategorialPointListList pointListList = new CategorialPointListList();
 		Iterator<? extends List<String>> rowIterator = csvData.iterator();
+
 		
 		if(!rowIterator.hasNext())
 			return pointListList;
-		
+
 		Iterator<String> lineIterator = rowIterator.next().iterator();
-		
+
 		// Move the iterator to the first title
 		if(!lineIterator.hasNext())
 			return pointListList;
+
 		lineIterator.next();
+
 		if(!lineIterator.hasNext())
 			return pointListList;
-		
+
 		// Add a PointList for each title
 		while(lineIterator.hasNext()) {
 			PointList pointList = new PointList();
 			pointList.setName(lineIterator.next());
 			pointListList.add(pointList);
 		}
-		
+
 		// Add the data
+		int categoryCounter = 0;
 		while(rowIterator.hasNext()) {
 			lineIterator = rowIterator.next().iterator();
-			if(!lineIterator.hasNext())
-				continue;
-			
-			// Find out the x value
-			Number xValue;
-			try {
-				xValue = Constants.numberFormat.parse(lineIterator.next());
-			} catch (ParseException e) {
+			if(!lineIterator.hasNext()) {
+				categoryCounter++;
 				continue;
 			}
+			
+			// Find out the category title
+			String currentCategory = lineIterator.next();
+			pointListList.addCategory(currentCategory);
 			
 			// Find out the y values and add the points to the respective lists
 			int currentDataSet = 0;
@@ -130,13 +119,14 @@ public class CsvXAlignedParser extends CsvParseAlgorithm {
 					continue;
 				}
 				
-				Point newPoint = new Point(xValue.doubleValue(), yValue.doubleValue());
+				Point newPoint = new Point(categoryCounter, yValue.doubleValue());
 				addPointToPointListList(pointListList, currentDataSet, newPoint);
 				currentDataSet++;
 			}
 			
+			categoryCounter++;
 		}
-		
+
 		return pointListList;		
 	}
 

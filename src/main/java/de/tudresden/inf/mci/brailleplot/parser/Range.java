@@ -1,4 +1,4 @@
-package parser;
+package de.tudresden.inf.mci.brailleplot.parser;
 
 import com.beust.jcommander.IStringConverter;
 /**

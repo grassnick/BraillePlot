@@ -1,4 +1,4 @@
-package parser;
+package de.tudresden.inf.mci.brailleplot.parser;
 
 /**
  * Determines whether the x values are metric or categorial.
