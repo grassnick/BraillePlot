@@ -5,7 +5,9 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -13,7 +15,7 @@ import static java.lang.Math.min;
 /**
  * Representation of a target onto which can be drawn. It wraps a {@link PrintableData} instance and specifies the size of the drawing area (in mm).
  * @author Leonard Kupper
- * @version 2019.07.12
+ * @version 2019.07.20
  */
 public abstract class AbstractCanvas {
 
@@ -86,8 +88,21 @@ public abstract class AbstractCanvas {
         return mMillimeterHeight - (mMarginTop + mMarginBottom);
     }
 
-    public final int getPageCount() {
+    /**
+     * Get the number of pages in the canvas.
+     * @return The number of pages.
+     */
+    public int getPageCount() {
         return mPageContainer.size();
+    }
+
+    /**
+     * Get an Iterator for the PrintableData instances representing the canvas pages. The single instances should be
+     * casted to the regarding concrete type depending on the canvas implementation.
+     * @return A {@link ListIterator}&lt;{@link PrintableData}&gt;.
+     */
+    public ListIterator<PrintableData> getPageIterator() {
+        return mPageContainer.listIterator();
     }
 
 }

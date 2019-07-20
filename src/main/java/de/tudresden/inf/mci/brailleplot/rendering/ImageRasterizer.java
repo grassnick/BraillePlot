@@ -8,6 +8,8 @@ import static java.lang.Math.*;
 
 /**
  * A rasterizer that is able to re-raster a raster graphics onto a canvas.
+ * @author Leonard Kupper
+ * @version 2019.07.20
  */
 public class ImageRasterizer implements Rasterizer<Image> {
 
@@ -44,7 +46,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
     }
 
     @Override
-    public void rasterize(final Image imgData, final AbstractRasterCanvas canvas) throws InsufficientRenderingAreaException {
+    public void rasterize(final Image imgData, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
 
         // Each rasterizer essentially works by taking an instance of a Renderable (in this case Image) and then
         // creating a graphical representation of the object on the raster canvas.
@@ -73,7 +75,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
         }
     }
 
-    private void linearMapping(final BufferedImage imgBuf, final AbstractRasterCanvas canvas) {
+    private void linearMapping(final BufferedImage imgBuf, final RasterCanvas canvas) {
 
         // A canvas is basically a wrapper for multiple representations of printable data, each representing a page.
         // These representations can be acquired by either requesting the current page or creating a new page.
@@ -128,7 +130,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
         }
     }
 
-    private void quantifiedPositionMapping(final BufferedImage imgBuf, final AbstractRasterCanvas canvas) {
+    private void quantifiedPositionMapping(final BufferedImage imgBuf, final RasterCanvas canvas) {
 
         MatrixData<Boolean> data = canvas.getNewPage();
 

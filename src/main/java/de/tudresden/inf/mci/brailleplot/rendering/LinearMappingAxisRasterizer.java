@@ -6,13 +6,19 @@ import static de.tudresden.inf.mci.brailleplot.rendering.Axis.Type.X_AXIS;
 import static de.tudresden.inf.mci.brailleplot.rendering.Axis.Type.Y_AXIS;
 import static java.lang.Math.abs;
 
+/**
+ * A rasterizer for instances of {@link Axis} which is using a simple approach by linear mapping.
+ * @author Leonard Kupper
+ * @version 2019.07.20
+ */
+
 public class LinearMappingAxisRasterizer implements Rasterizer<Axis> {
 
     private BrailleTextRasterizer mTextRasterizer = new BrailleTextRasterizer();
-    private AbstractRasterCanvas mCanvas;
+    private RasterCanvas mCanvas;
 
     @Override
-    public void rasterize(final Axis axis, final AbstractRasterCanvas canvas) throws InsufficientRenderingAreaException {
+    public void rasterize(final Axis axis, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
 
         mCanvas = canvas;
         MatrixData<Boolean> data = mCanvas.getCurrentPage();

@@ -10,14 +10,15 @@ import java.util.Objects;
 import static java.lang.Math.*;
 
 /**
- * UniformTextureBarChartRasterizer. I will write an explanation when finished, this class has changed like over 9000 times...
+ * A rasterizer for instances of {@link BarChart} which is based on an algorithm that constructs horizontal category
+ * bars that are filled with a uniform texture. The rasterizer is 'cell' based, working on 6-dot or 8-dot layouts.
  * @author Leonard Kupper
- * @version 2019.07.12
+ * @version 2019.07.20
  */
 final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
 
     BarChart mDiagram;
-    AbstractRasterCanvas mCanvas;
+    RasterCanvas mCanvas;
     MatrixData<Boolean> mData;
 
     // TODO: move some of these into the format config.
@@ -45,7 +46,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
 
 
     @Override
-    public void rasterize(final BarChart diagram, final AbstractRasterCanvas canvas)
+    public void rasterize(final BarChart diagram, final RasterCanvas canvas)
             throws InsufficientRenderingAreaException {
 
         // The comments here can only give a very short overview, please see the wiki for a full explanation.

@@ -14,9 +14,9 @@ import static java.lang.Math.*;
  * Representation of a target onto which an image can be rasterized.
  * It wraps a {@link de.tudresden.inf.mci.brailleplot.printabledata.MatrixData} instance and describes the raster size and its (not necessarily equidistant) layout.
  * @author Leonard Kupper
- * @version 2019.07.12
+ * @version 2019.07.20
  */
-public class AbstractRasterCanvas extends AbstractCanvas {
+public class RasterCanvas extends AbstractCanvas {
 
     private ArrayList<Double> mXPositions;
     private ArrayList<Double> mYPositions;
@@ -44,7 +44,7 @@ public class AbstractRasterCanvas extends AbstractCanvas {
     private Rectangle mPrintingAreaCells;
 
     /**
-     * Constructor. Creates a new AbstractRasterCanvas, which is a canvas that represents it pages as instances of
+     * Constructor. Creates a new RasterCanvas, which is a canvas that represents it pages as instances of
      * {@link MatrixData} and holds information about the layout and spacing of the underlying raster grid.
      * The described grid is build from uniform 'cells' consisting of a variable amount of dots.
      * It is used as a target on which can be drawn by a {@link Rasterizer}.
@@ -55,7 +55,7 @@ public class AbstractRasterCanvas extends AbstractCanvas {
      * @throws InsufficientRenderingAreaException If the given configuration leads to an printable area of negative
      * size or zero size, e.g. if the sum of defined margins and constraints adds up to be greater than the original page size.
      */
-    AbstractRasterCanvas(final Printer printer, final Format format, final int cellWidth, final int cellHeight)
+    RasterCanvas(final Printer printer, final Format format, final int cellWidth, final int cellHeight)
             throws InsufficientRenderingAreaException {
 
         super(printer, format);

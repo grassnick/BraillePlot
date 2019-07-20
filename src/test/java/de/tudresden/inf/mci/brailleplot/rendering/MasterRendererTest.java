@@ -4,7 +4,6 @@ import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
-import diagrams.BarChart;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -64,7 +63,7 @@ public class MasterRendererTest {
                     MasterRenderer renderer = new MasterRenderer(mPrinter, mFormat, renderingBase);
 
                     // Test rasterizer selection
-                    AbstractRasterCanvas result;
+                    RasterCanvas result;
 
                     result= renderer.rasterize(new Text("dummy text", new Rectangle(0,0,1,1)));
                     Assertions.assertEquals(1, result.getPageCount());

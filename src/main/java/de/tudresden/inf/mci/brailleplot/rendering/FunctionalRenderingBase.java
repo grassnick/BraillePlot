@@ -7,12 +7,12 @@ import java.util.Objects;
  * FunctionalRenderingBase. This class acts as a wrapper for multiple {@link FunctionalRasterizer} instances.
  * The rasterizer instances can be registered at runtime. The main purpose of the class is to take diagram representations of any type and select the correct concrete rasterizer.
  * @author Leonard Kupper
- * @version 2019.07.01
+ * @version 2019.07.20
  */
 public class FunctionalRenderingBase {
 
     private HashMap<Class<? extends Renderable>, FunctionalRasterizer> mRasterizingAlgorithms;
-    private AbstractRasterCanvas mRaster;
+    private RasterCanvas mRaster;
 
     public FunctionalRenderingBase() {
         mRasterizingAlgorithms = new HashMap<>();
@@ -43,10 +43,10 @@ public class FunctionalRenderingBase {
         mRasterizingAlgorithms.put(rasterizer.getSupportedDiagramClass(), rasterizer);
     }
 
-    public final void setRasterCanvas(final AbstractRasterCanvas raster) {
+    public final void setRasterCanvas(final RasterCanvas raster) {
         mRaster = Objects.requireNonNull(raster);
     }
-    public final AbstractRasterCanvas getRaster() {
+    public final RasterCanvas getRaster() {
         return mRaster;
     }
 }

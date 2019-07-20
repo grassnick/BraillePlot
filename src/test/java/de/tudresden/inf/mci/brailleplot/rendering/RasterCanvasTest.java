@@ -1,19 +1,16 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
 import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
-import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
-import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.ListIterator;
 
 
-public class AbstractRasterCanvasTest {
+public class RasterCanvasTest {
 
     public static final String mDefaultConfig = getResource("default.properties").getAbsolutePath();
     public static final String mBaseConfig = getResource("base_format.properties").getAbsolutePath();
@@ -32,7 +29,7 @@ public class AbstractRasterCanvasTest {
         Assertions.assertDoesNotThrow(
                 () -> {
                     ConfigurationParser parser = new JavaPropertiesConfigurationParser(mBaseConfig, mDefaultConfig);
-                    AbstractRasterCanvas canvas = new SixDotBrailleRasterCanvas(parser.getPrinter(), parser.getFormat("test"));
+                    RasterCanvas canvas = new SixDotBrailleRasterCanvas(parser.getPrinter(), parser.getFormat("test"));
 
                     // pre-calculated and measured correct values:
                     int x = 0;
@@ -78,7 +75,7 @@ public class AbstractRasterCanvasTest {
         Assertions.assertDoesNotThrow(
                 () -> {
                     ConfigurationParser parser = new JavaPropertiesConfigurationParser(mMarginsOnlyConfig, mDefaultConfig);
-                    AbstractRasterCanvas canvas = new SixDotBrailleRasterCanvas(parser.getPrinter(), parser.getFormat("test"));
+                    RasterCanvas canvas = new SixDotBrailleRasterCanvas(parser.getPrinter(), parser.getFormat("test"));
 
                     // pre-calculated and measured correct values:
                     // 6 mm left margin -> 1 cell border
@@ -112,7 +109,7 @@ public class AbstractRasterCanvasTest {
         Assertions.assertDoesNotThrow(
                 () -> {
                     ConfigurationParser parser = new JavaPropertiesConfigurationParser(mConstraintOnlyConfig, mDefaultConfig);
-                    AbstractRasterCanvas canvas = new SixDotBrailleRasterCanvas(parser.getPrinter(), parser.getFormat("test"));
+                    RasterCanvas canvas = new SixDotBrailleRasterCanvas(parser.getPrinter(), parser.getFormat("test"));
 
                     // pre-calculated and measured correct values:
                     // width-constraint: 190.0 mm -> fits 32 cells h.
@@ -145,7 +142,7 @@ public class AbstractRasterCanvasTest {
         Assertions.assertDoesNotThrow(
                 () -> {
                     ConfigurationParser parser = new JavaPropertiesConfigurationParser(mBothConfig, mDefaultConfig);
-                    AbstractRasterCanvas canvas = new SixDotBrailleRasterCanvas(parser.getPrinter(), parser.getFormat("test"));
+                    RasterCanvas canvas = new SixDotBrailleRasterCanvas(parser.getPrinter(), parser.getFormat("test"));
 
                     // pre-calculated and measured correct values:
                     // width-constraint: 190.0 mm -> fits 32 cells h.
@@ -174,13 +171,13 @@ public class AbstractRasterCanvasTest {
     }
 
     @Test @SuppressWarnings("unchecked")
-    // AbstractRasterCanvas is guaranteed to create MatrixData instances for its pages
+    // RasterCanvas is guaranteed to create MatrixData instances for its pages
     public void testPageIterator() {
         Assertions.assertDoesNotThrow(
                 () -> {
                     ConfigurationParser parser = new JavaPropertiesConfigurationParser(mBaseConfig, mDefaultConfig);
                     MasterRenderer renderer = new MasterRenderer(parser.getPrinter(), parser.getFormat("test"));
-                    AbstractRasterCanvas result = renderer.rasterize(new Image(getResource("dummy.bmp")));
+                    RasterCanvas result = renderer.rasterize(new Image(getResource("dummy.bmp")));
                     ListIterator iter = result.getPageIterator();
                     while (iter.hasNext()) {
                         MatrixData<Boolean> page = (MatrixData<Boolean>) iter.next();

@@ -4,7 +4,6 @@ import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
-import diagrams.BarChart;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -49,7 +48,7 @@ public class FunctionalRasterizerTest {
         // which decides which rasterizer to use based on the Renderable type.
         // Directly passing the wrong Renderable type must cause exception:
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            AbstractRasterCanvas testCanvas = new SixDotBrailleRasterCanvas(mPrinter, mFormat);
+            RasterCanvas testCanvas = new SixDotBrailleRasterCanvas(mPrinter, mFormat);
             // Pass Image to Text rasterizer.
             textRasterizer.rasterize(new Image(getResource("dummy.bmp")), testCanvas);
         });

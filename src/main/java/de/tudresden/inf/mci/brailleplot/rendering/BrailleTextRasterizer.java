@@ -2,12 +2,12 @@ package de.tudresden.inf.mci.brailleplot.rendering;
 
 /**
  * A rasterizer for text on braille grids.
- * @version 2019.07.09
+ * @version 2019.07.20
  * @author Leonard Kupper
  */
 public class BrailleTextRasterizer implements Rasterizer<Text> {
     @Override
-    public void rasterize(final Text data, final AbstractRasterCanvas canvas) throws InsufficientRenderingAreaException {
+    public void rasterize(final Text data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
         // TODO: rasterize the text (Take different grids into consideration! 6-dot / 8-dot)
         // Until then, we just display dummy characters
         int x = data.getArea().intWrapper().getX();
@@ -23,13 +23,13 @@ public class BrailleTextRasterizer implements Rasterizer<Text> {
 
     // TODO: Completely replace with help methods to calculate suited area for left or right alignment of given text.
     public int calculateRequiredHeight(final String text, final int xPos, final int yPos, final int maxWidth,
-                                           final AbstractRasterCanvas canvas) {
+                                           final RasterCanvas canvas) {
         // TODO: Add calculations for required height to fit the given text into the given canvas. (Linebreaks!)
         // Until then we use a dummy value assuming one line of text:
         return canvas.getCellHeight();
     }
 
-    public int calculateRequiredWidth(final String text, final int xPos, final int yPos, final AbstractRasterCanvas canvas) {
+    public int calculateRequiredWidth(final String text, final int xPos, final int yPos, final RasterCanvas canvas) {
         // TODO: Add calculations for required width to fit the given text into the given canvas. (Extra spacing for equidistant grid!)
         // Until then we use a dummy value assuming single character on braille grid:
         return canvas.getCellWidth();

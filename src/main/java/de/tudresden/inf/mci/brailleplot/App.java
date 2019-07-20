@@ -13,7 +13,7 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
-import de.tudresden.inf.mci.brailleplot.rendering.AbstractRasterCanvas;
+import de.tudresden.inf.mci.brailleplot.rendering.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.rendering.Image;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import diagrams.BarChart;
@@ -169,10 +169,10 @@ public final class App {
 
             // Rasterizing
             MasterRenderer renderer = new MasterRenderer(printerConfig, formatConfig);
-            //AbstractRasterCanvas canvas = renderer.rasterize(exampleBarChart);
+            //RasterCanvas canvas = renderer.rasterize(exampleBarChart);
             File imageFile = new File(getClass().getClassLoader().getResource("2_image_chart.png").getFile());
             Image image = new Image(imageFile);
-            AbstractRasterCanvas canvas = renderer.rasterize(image);
+            RasterCanvas canvas = renderer.rasterize(image);
             System.out.println(canvas.getCurrentPage());
 
 

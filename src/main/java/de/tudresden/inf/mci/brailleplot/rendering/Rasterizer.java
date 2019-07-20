@@ -10,12 +10,12 @@ import static java.lang.Math.min;
  * Rasterizer. A functional interface for anything that is able to rasterize a diagram to a raster.
  * @param <T> The concrete diagram class which can be rasterized with the rasterizer.
  * @author Leonard Kupper
- * @version 2019.07.01
+ * @version 2019.07.20
  */
 @FunctionalInterface
 public interface Rasterizer<T extends Renderable> {
 
-    void rasterize(T data, AbstractRasterCanvas canvas) throws InsufficientRenderingAreaException;
+    void rasterize(T data, RasterCanvas canvas) throws InsufficientRenderingAreaException;
 
     // Basic geometric rasterizing toolset:
 

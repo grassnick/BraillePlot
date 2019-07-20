@@ -11,7 +11,7 @@ import java.util.Objects;
  * The MasterRenderer takes representations of any diagram type, calculates the available raster/area from the given printer and format configuration and dispatches
  * any calls to the 'rasterize' and 'plot' methods to the given {@link FunctionalRenderingBase}.
  * @author Leonard Kupper
- * @version 2019.07.12
+ * @version 2019.07.20
  */
 public final class MasterRenderer {
 
@@ -40,14 +40,14 @@ public final class MasterRenderer {
         setRenderingContext(printer, format, renderingBase);
     }
 
-    public AbstractRasterCanvas rasterize(final Renderable data) throws InsufficientRenderingAreaException {
-        AbstractRasterCanvas canvas = createCompatibleRasterCanvas();
+    public RasterCanvas rasterize(final Renderable data) throws InsufficientRenderingAreaException {
+        RasterCanvas canvas = createCompatibleRasterCanvas();
         mRenderingBase.setRasterCanvas(canvas);
         mRenderingBase.rasterize(data);
         return canvas;
     }
 
-    private AbstractRasterCanvas createCompatibleRasterCanvas() throws InsufficientRenderingAreaException {
+    private RasterCanvas createCompatibleRasterCanvas() throws InsufficientRenderingAreaException {
 
         return new SixDotBrailleRasterCanvas(mPrinter, mFormat);
 

@@ -5,16 +5,16 @@ package de.tudresden.inf.mci.brailleplot.rendering;
  * The rasterizing algorithm to be used is passed to the constructor as lambda function, method reference or rasterizer implementation.
  * @param <T> The concrete diagram class which can be rasterized with the rasterizer.
  * @author Leonard Kupper
- * @version 2019.07.01
+ * @version 2019.07.20
  */
 public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
 
     private Class<? extends T> mSupportedDiagramClass;
-    private ThrowingBiConsumer<T, AbstractRasterCanvas, InsufficientRenderingAreaException> mRasterizingAlgorithm;
+    private ThrowingBiConsumer<T, RasterCanvas, InsufficientRenderingAreaException> mRasterizingAlgorithm;
 
     /**
      * Constructor. Creates a new rasterizer from either a given rasterizer implementation or (keep in mind that
-     * Rasterizer is a functional interface) from a ThrowingBiConsumer&lt;T, AbstractRasterCanvas, InsufficientRenderingAreaException&gt; method reference.
+     * Rasterizer is a functional interface) from a ThrowingBiConsumer&lt;T, RasterCanvas, InsufficientRenderingAreaException&gt; method reference.
      * @param supportedDiagramClass A reference to the accepted diagram class (e.g. 'BarChart.class')
      * @param rasterizer A reference to a Rasterizer instance.
      */
@@ -28,7 +28,7 @@ public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
     /*
     public FunctionalRasterizer(
             final Class<? extends T> supportedDiagramClass,
-            final ThrowingBiConsumer<T, AbstractRasterCanvas, InsufficientRenderingAreaException> rasterizingAlgorithm)
+            final ThrowingBiConsumer<T, RasterCanvas, InsufficientRenderingAreaException> rasterizingAlgorithm)
     {
         mSupportedDiagramClass = supportedDiagramClass;
         mRasterizingAlgorithm = rasterizingAlgorithm;
@@ -36,7 +36,7 @@ public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
      */
 
     @Override
-    public void rasterize(final Renderable data, final AbstractRasterCanvas canvas) throws InsufficientRenderingAreaException {
+    public void rasterize(final Renderable data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
         // invoke the given rasterizing algorithm
         T diagram = safeCast(data);
         mRasterizingAlgorithm.accept(diagram, canvas);
