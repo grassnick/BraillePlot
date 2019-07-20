@@ -40,7 +40,7 @@ public final class MasterRenderer {
         setRenderingContext(printer, format, renderingBase);
     }
 
-    public final AbstractRasterCanvas rasterize(final Renderable data) throws InsufficientRenderingAreaException {
+    public AbstractRasterCanvas rasterize(final Renderable data) throws InsufficientRenderingAreaException {
         AbstractRasterCanvas canvas = createCompatibleRasterCanvas();
         mRenderingBase.setRasterCanvas(canvas);
         mRenderingBase.rasterize(data);
@@ -64,30 +64,30 @@ public final class MasterRenderer {
 
     // Getter & Setter
 
-    public final void setRenderingContext(final Printer printer, final Format format, final FunctionalRenderingBase renderingBase) {
+    public void setRenderingContext(final Printer printer, final Format format, final FunctionalRenderingBase renderingBase) {
         setPrinter(printer);
         setFormat(format);
         setRenderingBase(renderingBase);
     }
 
-    public final void setPrinter(final Printer printer) {
+    public void setPrinter(final Printer printer) {
         mPrinter = Objects.requireNonNull(printer);
     }
-    public final Printer getPrinter() {
+    public Printer getPrinter() {
         return mPrinter;
     }
 
-    public final void setFormat(final Format format) {
+    public void setFormat(final Format format) {
         mFormat = Objects.requireNonNull(format);
     }
-    public final Format getFormat() {
+    public Format getFormat() {
         return mFormat;
     }
 
-    public final void setRenderingBase(final FunctionalRenderingBase renderingBase) {
+    public void setRenderingBase(final FunctionalRenderingBase renderingBase) {
         mRenderingBase = Objects.requireNonNull(renderingBase);
     }
-    public final FunctionalRenderingBase getRenderingBase() {
+    public FunctionalRenderingBase getRenderingBase() {
         return mRenderingBase;
     }
 }

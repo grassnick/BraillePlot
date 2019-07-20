@@ -15,14 +15,14 @@ public class Text implements Renderable {
         setArea(area);
     }
 
-    public void setText(String content) {
+    public void setText(final String content) {
         mContent = Objects.requireNonNull(content);
     }
     public String getText() {
         return mContent;
     }
 
-    public void setArea(Rectangle area) {
+    public void setArea(final Rectangle area) {
         mArea = Objects.requireNonNull(area);
     }
     public Rectangle getArea() {

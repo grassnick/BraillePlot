@@ -7,15 +7,15 @@ package de.tudresden.inf.mci.brailleplot.rendering;
  */
 public class BrailleTextRasterizer implements Rasterizer<Text> {
     @Override
-    public void rasterize(Text data, AbstractRasterCanvas canvas) throws InsufficientRenderingAreaException {
+    public void rasterize(final Text data, final AbstractRasterCanvas canvas) throws InsufficientRenderingAreaException {
         // TODO: rasterize the text (Take different grids into consideration! 6-dot / 8-dot)
         // Until then, we just display dummy characters
         int x = data.getArea().intWrapper().getX();
         int y = data.getArea().intWrapper().getY();
         for (int i = 0; i < data.getText().length(); i++) {
             canvas.getCurrentPage().setValue(y, x, true);
-            canvas.getCurrentPage().setValue(y+1, x+1, true);
-            canvas.getCurrentPage().setValue(y+2, x, true);
+            canvas.getCurrentPage().setValue(y + 1, x + 1, true);
+            canvas.getCurrentPage().setValue(y + 2, x, true);
             x += 2;
         }
         //Rasterizer.rectangle(data.getArea(), canvas.getCurrentPage(), true);

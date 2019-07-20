@@ -16,21 +16,21 @@ public class Rectangle {
 
     private double mX, mY, mW, mH;
 
-    public Rectangle(double x, double y, double w, double h) {
+    public Rectangle(final double x, final double y, final double w, final double h) {
         setX(x);
         setY(y);
         setWidth(w);
         setHeight(h);
     }
 
-    public Rectangle(Rectangle rect) {
+    public Rectangle(final Rectangle rect) {
         setX(rect.getX());
         setY(rect.getY());
         setWidth(rect.getWidth());
         setHeight(rect.getHeight());
     }
-    
-    public Rectangle removeFromTop(double height) throws OutOfSpaceException {
+
+    public Rectangle removeFromTop(final double height) throws OutOfSpaceException {
         Rectangle removedPartition = fromTop(height);
         double newY = (getY() + height);
         double newHeight = (getHeight() - height);
@@ -39,14 +39,14 @@ public class Rectangle {
         return removedPartition;
     }
 
-    public Rectangle removeFromBottom(double height) throws OutOfSpaceException {
+    public Rectangle removeFromBottom(final double height) throws OutOfSpaceException {
         Rectangle removedPartition = fromBottom(height);
         double newHeight = (getHeight() - height);
         setHeight(newHeight);
         return removedPartition;
     }
 
-    public Rectangle removeFromLeft(double width) throws OutOfSpaceException {
+    public Rectangle removeFromLeft(final double width) throws OutOfSpaceException {
         Rectangle removedPartition = fromLeft(width);
         double newX = (getX() + width);
         double newWidth = (getWidth() - width);
@@ -55,7 +55,7 @@ public class Rectangle {
         return removedPartition;
     }
 
-    public Rectangle removeFromRight(double width) throws OutOfSpaceException {
+    public Rectangle removeFromRight(final double width) throws OutOfSpaceException {
         Rectangle removedPartition = fromRight(width);
         double newWidth = (getWidth() - width);
         setWidth(newWidth);
@@ -64,20 +64,20 @@ public class Rectangle {
 
     // Methods to getText a mRectangle partition
 
-    public Rectangle fromTop(double height) throws OutOfSpaceException {
+    public Rectangle fromTop(final double height) throws OutOfSpaceException {
         checkHeight(height);
         return new Rectangle(getX(), getY(), getWidth(), height);
     }
-    public Rectangle fromLeft(double width) throws OutOfSpaceException {
+    public Rectangle fromLeft(final double width) throws OutOfSpaceException {
         checkWidth(width);
         return new Rectangle(getX(), getY(), width, getHeight());
     }
-    public Rectangle fromBottom(double height) throws OutOfSpaceException {
+    public Rectangle fromBottom(final double height) throws OutOfSpaceException {
         checkHeight(height);
         double newY = (getY() + (getHeight() - height));
         return new Rectangle(getX(), newY, getWidth(), height);
     }
-    public Rectangle fromRight(double width) throws OutOfSpaceException {
+    public Rectangle fromRight(final double width) throws OutOfSpaceException {
         checkWidth(width);
         double newX = (getX() + (getWidth() - width));
         return new Rectangle(newX, getY(), width, getHeight());
@@ -85,16 +85,16 @@ public class Rectangle {
 
     // Help methods for validity check of requested partition
 
-    private void checkHeight(double h) throws OutOfSpaceException {
+    private void checkHeight(final double h) throws OutOfSpaceException {
         if (h > getHeight()) {
-            throw new OutOfSpaceException("The rectangle partition height cannot be greater than its parent rectangle height." +
-                    "(" + h + ">" + getHeight() + ")");
+            throw new OutOfSpaceException("The rectangle partition height cannot be greater than its parent rectangle height."
+                    + "(" + h + ">" + getHeight() + ")");
         }
     }
-    private void checkWidth(double w) throws OutOfSpaceException {
+    private void checkWidth(final double w) throws OutOfSpaceException {
         if (w > getWidth()) {
-            throw new OutOfSpaceException("The rectangle partition width cannot be greater than its parent rectangle width." +
-                    "(" + w + ">" + getWidth() + ")");
+            throw new OutOfSpaceException("The rectangle partition width cannot be greater than its parent rectangle width."
+                    + "(" + w + ">" + getWidth() + ")");
         }
     }
 
@@ -121,22 +121,22 @@ public class Rectangle {
         return mY + mH;
     }
 
-    public void setX(double x) {
+    public void setX(final double x) {
         mX = x;
     }
 
-    public void setY(double y) {
+    public void setY(final double y) {
         mY = y;
     }
 
-    public void setWidth(double width) {
+    public void setWidth(final double width) {
         if (width < 0) {
             throw new IllegalArgumentException("The width can't be negative.");
         }
         mW = width;
     }
 
-    public void setHeight(double height) {
+    public void setHeight(final double height) {
         if (height < 0) {
             throw new IllegalArgumentException("The height can't be negative.");
         }
@@ -158,7 +158,7 @@ public class Rectangle {
      * @param otherRectangle The other rectangle to intersect with this.
      * @return New rectangle representing the intersection.
      */
-    public Rectangle intersectedWith(Rectangle otherRectangle) {
+    public Rectangle intersectedWith(final Rectangle otherRectangle) {
         double itsctX = max(getX(), otherRectangle.getX());
         double itsctY = max(getY(), otherRectangle.getY());
         double itsctB = min(getBottom(), otherRectangle.getBottom());
@@ -177,16 +177,16 @@ public class Rectangle {
         return new IntWrapper(this);
     }
 
-    public class IntWrapper {
+    public final class IntWrapper {
 
         private Rectangle mRectangle;
 
-        public IntWrapper(Rectangle rectangle) {
+        public IntWrapper(final Rectangle rectangle) {
             this.mRectangle = Objects.requireNonNull(rectangle);
         }
 
 
-        private int wrapInt(double value) {
+        private int wrapInt(final double value) {
             return Math.toIntExact(round(value));
         }
 

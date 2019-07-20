@@ -232,7 +232,7 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
     public final Rectangle getDotRectangle() {
         return toDotRectangle(mPrintingAreaCells);
     }
-    public final Rectangle toDotRectangle(Rectangle cellRectangle) {
+    public final Rectangle toDotRectangle(final Rectangle cellRectangle) {
         return cellRectangle.scaledBy(mCellWidth, mCellHeight);
     }
 
@@ -264,15 +264,15 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
     }
 
 
-    public int quantifyX(double unquantifiedMillimeterX) {
+    public final int quantifyX(final double unquantifiedMillimeterX) {
         return findClosestValueIndex(unquantifiedMillimeterX, mXPositions);
     }
 
-    public int quantifyY(double unquantifiedMillimeterY) {
+    public final int quantifyY(final double unquantifiedMillimeterY) {
         return findClosestValueIndex(unquantifiedMillimeterY, mYPositions);
     }
 
-    private int findClosestValueIndex(Double value, ArrayList<Double> list) {
+    private int findClosestValueIndex(final Double value, final ArrayList<Double> list) {
         double minDistance = Double.POSITIVE_INFINITY;
         for (int index = 0; index < list.size(); index++) {
             double distance = abs(list.get(index) - value);

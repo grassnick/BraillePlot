@@ -15,13 +15,12 @@ public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
     /**
      * Constructor. Creates a new rasterizer from either a given rasterizer implementation or (keep in mind that
      * Rasterizer is a functional interface) from a ThrowingBiConsumer&lt;T, AbstractRasterCanvas, InsufficientRenderingAreaException&gt; method reference.
-     * @param supportedDiagramClass A reference to the accepted diagram class (e.g. 'BarChartDummy.class')
+     * @param supportedDiagramClass A reference to the accepted diagram class (e.g. 'BarChart.class')
      * @param rasterizer A reference to a Rasterizer instance.
      */
     public FunctionalRasterizer(
             final Class<T> supportedDiagramClass,
-            final Rasterizer<T> rasterizer)
-    {
+            final Rasterizer<T> rasterizer) {
         mSupportedDiagramClass = supportedDiagramClass;
         mRasterizingAlgorithm = rasterizer::rasterize;
     }
@@ -54,7 +53,7 @@ public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
     // Should somebody still force this to happen by intentional tampering, we have no choice but to catch this disgrace.
     private T safeCast(final Renderable data) {
         try {
-            return (T) data;
+            return getSupportedDiagramClass().cast(data);
         } catch (ClassCastException e) {
             // wow
             throw new IllegalArgumentException("Wrong diagram type! This rasterizer is not meant to be used with '"

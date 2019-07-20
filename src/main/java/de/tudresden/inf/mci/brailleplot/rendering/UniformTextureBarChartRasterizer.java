@@ -45,7 +45,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
 
 
     @Override
-    public final void rasterize(final BarChart diagram, final AbstractRasterCanvas canvas)
+    public void rasterize(final BarChart diagram, final AbstractRasterCanvas canvas)
             throws InsufficientRenderingAreaException {
 
         // The comments here can only give a very short overview, please see the wiki for a full explanation.
@@ -96,8 +96,8 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         // Now the charts value range and categories are analyzed to figure out where the y-axis (x = 0) shall be
         // placed and how to scale the bars to still fit the available space.
 
-        double negValueRangeSize = abs(min(diagram.getMinY(),0));
-        double posValueRangeSize = max(diagram.getMaxY(),0);
+        double negValueRangeSize = abs(min(diagram.getMinY(), 0));
+        double posValueRangeSize = max(diagram.getMaxY(), 0);
         // The complete value range is calculated in a way that it always includes zero, even if all category values
         // are positive or negative with absolute values > 0, because the y axis will always be positioned at x = 0.
         double valueRangeSize = negValueRangeSize + posValueRangeSize;
@@ -128,7 +128,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         // Now everything is ready to be rasterized onto the canvas.
 
         // 1. Rasterize the diagram title
-        Text diagramTitle = new Text(strDiagramTitle, titleArea.scaledBy(mCanvas.getCellWidth(),mCanvas.getCellHeight()));
+        Text diagramTitle = new Text(strDiagramTitle, titleArea.scaledBy(mCanvas.getCellWidth(), mCanvas.getCellHeight()));
         mTextRasterizer.rasterize(diagramTitle, mCanvas);
 
         // 2. Draw the individual bars for each category.
@@ -147,8 +147,8 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         // First calculate axis positions and bounds
         // (these are conversions from 'cell-based' rectangles into a 'dot-based' representation, because the axis
         // rasterizer uses linear mapping, needs 'dot coordinates' and does not care about cell borders)
-        Rectangle yAxisBound = barArea.scaledBy(mCanvas.getCellWidth(),mCanvas.getCellHeight());
-        Rectangle xAxisBound = xAxisArea.scaledBy(mCanvas.getCellWidth(),mCanvas.getCellHeight());
+        Rectangle yAxisBound = barArea.scaledBy(mCanvas.getCellWidth(), mCanvas.getCellHeight());
+        Rectangle xAxisBound = xAxisArea.scaledBy(mCanvas.getCellWidth(), mCanvas.getCellHeight());
         int originX = (xAxisOriginPosition + 1) * mCanvas.getCellWidth() - 1; // convert cell position to dot position
         int originY = xAxisBound.intWrapper().getY();
 
@@ -180,7 +180,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
 
     private double findAxisScaling(final double valueRangeSize, final int availableUnits) {
         double minRangePerUnit = valueRangeSize / availableUnits; // this range must fit into one 'axis step'
-        double orderOfMagnitude = pow(10,ceil(log10(minRangePerUnit)));
+        double orderOfMagnitude = pow(10, ceil(log10(minRangePerUnit)));
         double scaledRange = 0;
         for (double scaling : mUnitScalings) {
             scaledRange = (scaling * orderOfMagnitude);
@@ -203,10 +203,10 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         while (availableCells < (requiredCells = requiredCells(barThickness))) {
             barThickness -= 2;
             if (barThickness < mBarMinThickness) {
-                throw new InsufficientRenderingAreaException("Not enough space to render given amount of categories in " +
-                        "bar chart. " + mDiagram.getCategoryCount() + " categories given. " + requiredCells +
-                        " cells required but only " + availableCells + " available. " +
-                        "(Minimum bar thickness is set to " + mBarMinThickness + " dots)");
+                throw new InsufficientRenderingAreaException("Not enough space to render given amount of categories in "
+                        + "bar chart. " + mDiagram.getCategoryCount() + " categories given. " + requiredCells
+                        + " cells required but only " + availableCells + " available. "
+                        + "(Minimum bar thickness is set to " + mBarMinThickness + " dots)");
             }
         }
         return barThickness;
@@ -285,12 +285,12 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
     }
 
     private void checkValidBrailleRaster() throws InsufficientRenderingAreaException {
-        boolean isValidBrailleRaster = ((mCanvas.getCellWidth() == 2) &&
-                (mCanvas.getCellHeight() >= 3) && (mCanvas.getCellHeight() <= 4));
+        boolean isValidBrailleRaster = ((mCanvas.getCellWidth() == 2)
+                && (mCanvas.getCellHeight() >= 3) && (mCanvas.getCellHeight() <= 4));
         if (!isValidBrailleRaster) {
             // TODO: Maybe refactor to have different rendering exceptions?
-            throw new InsufficientRenderingAreaException("This rasterizer can only work with a 6-dot or 8-dot " +
-                    "braille raster.");
+            throw new InsufficientRenderingAreaException("This rasterizer can only work with a 6-dot or 8-dot "
+                    + "braille raster.");
         }
     }
 

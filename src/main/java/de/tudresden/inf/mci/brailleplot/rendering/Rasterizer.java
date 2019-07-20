@@ -26,7 +26,7 @@ public interface Rasterizer<T extends Renderable> {
         int yMax = max(y1, y2);
         for (int y = yMin; y <= yMax; y++) {
             for (int x = xMin; x <= xMax; x++) {
-                data.setValue(y,x,value);
+                data.setValue(y, x, value);
             }
         }
     }
@@ -36,7 +36,7 @@ public interface Rasterizer<T extends Renderable> {
         int xMax = max(x1, x2);
         int yMin = min(y1, y2);
         int yMax = max(y1, y2);
-        rectangle(new Rectangle(xMin,yMin,xMax-xMin+1,yMax-yMin+1), data, value);
+        rectangle(new Rectangle(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1), data, value);
     }
 
     static void rectangle(Rectangle rect, MatrixData<Boolean> data, boolean value) {

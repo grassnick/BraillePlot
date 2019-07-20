@@ -36,7 +36,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
             final boolean preventOverStretch,
             final boolean preserveAspectRatio,
             final boolean useQuantifiedPositions,
-            int threshold) {
+            final int threshold) {
         mPreventOverStretch = preventOverStretch;
         mPreserveAspectRatio = preserveAspectRatio;
         mQuantifiedPositions = useQuantifiedPositions;
@@ -44,7 +44,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
     }
 
     @Override
-    public void rasterize(Image imgData, AbstractRasterCanvas canvas) throws InsufficientRenderingAreaException {
+    public void rasterize(final Image imgData, final AbstractRasterCanvas canvas) throws InsufficientRenderingAreaException {
 
         // Each rasterizer essentially works by taking an instance of a Renderable (in this case Image) and then
         // creating a graphical representation of the object on the raster canvas.
@@ -71,137 +71,9 @@ public class ImageRasterizer implements Rasterizer<Image> {
         } else {
             linearMapping(imgBuf, canvas);
         }
-
-
-        /*
-        original: 431 x 251
-        raster: 90 x 87
-
-        hRatio = 430 / 90 = 4.78
-        vRatio = 250 / 87 = 2.87
-
-        raster[0,0]:
-        x1,y1 ..........
-        |               |
-        |               |
-        |.......... x2,y2
-        x2 = -1 // because we set next x1 to be x2's neighbor (avoid double scan).
-        scanX = 0
-        x1 = x2 + 1 -> 0
-        scanX += hRatio -> 4.78
-        x2 = floor(scanX) -> 4
-
-        raster[1,0]:
-        x1 -> 5
-        scanX += hRatio -> 9.56
-        x2 -> 9
-
-        raster[2,0]:
-        x1 -> 10
-        scanX += hRatio -> 14.34
-        x2 -> 14
-
-        raster[3,0]:
-        x1 -> 15
-        scanX += hRatio -> 19.12
-        x2 -> 19
-
-        raster[4,0]:
-        x1 -> 20
-        scanX += hRatio -> 23.9 (hRatio * x)
-        x2 -> 23
-
-        raster[90,0]:
-        x1 -> 426
-        scanX += hRatio -> 430
-        x2 -> 430
-
-
-
-
-        original: 50 x 50
-        raster: 90 x 87
-
-        hRatio = 49 / 90 = 0.54444...
-        vRatio = 49 / 87 = 0.56321...
-
-        x2 = -1
-
-        x1 = 0
-        scanX = 0.544444
-        x2 = 0
-
-        x1 = 1
-        scanX = 1.0888888
-        x2 = 1
-
-        x1 = 2
-        scanX = 1.6333333
-        x2 =
-
-         */
-
-        /*
-
-        // NON FIXED RATIO - PARTIAL SCAN STEPS
-
-        double scanX = 0;
-        for (int outX = 0; outX < availableArea.getWidth(); outX++) {
-            int x1 = (int) round(scanX);
-            //int x2 = (int) min(round(scanX += scanStepSize), imgBuf.getWidth() - 1); // 4 * 100 = 400
-            int x2 = (int) min(round(scanX += hRatio), imgBuf.getWidth() - 1);
-            double scanY = 0;
-            for (int outY = 0; outY < availableArea.getHeight(); outY++) {
-                int y1 = (int) round(scanY);
-                //int y2 = (int) min(round(scanY += scanStepSize), imgBuf.getHeight() - 1); // 4 * 100 = 400
-                int y2 = (int) min(round(scanY += vRatio), imgBuf.getHeight() - 1);
-                System.out.println(x1 + "," + y1 + " " + x2 + "," + y2);
-                int value = minFilter(imgBuf, x1, y1, x2, y2);
-                data.setValue(outY, outX, value <= mLowThreshold);
-                if (scanY >= (imgBuf.getHeight() - 1)) {
-                    break;
-                }
-            }
-            if (scanX >= (imgBuf.getWidth() - 1)) {
-                break;
-            }
-        }
-
-         */
-
-        /*
-
-        // FIXED RATIO - FULL SCAN STEPS
-
-        int inX = 0;
-        for (int outX = 0; outX < floor(imgBuf.getWidth() / scanStepSize); outX++) {
-            int inY = 0;
-            for (int outY = 0; outY < floor(imgBuf.getHeight() / scanStepSize); outY++) {
-                boolean setDot = false;
-                for (int offsetX = 0; offsetX < scanStepSize; offsetX++) {
-                    for (int offsetY = 0; offsetY < scanStepSize; offsetY++) {
-                        int readX = min(inX + offsetX, imgBuf.getWidth() - 1);
-                        int readY = min(inY + offsetY, imgBuf.getHeight() - 1);
-                        //System.out.println(readX + "," + readY);
-                        int grey = toGrayScaleValue(imgBuf.getRGB(readX, readY));
-                        if (grey <= mLowThreshold) {
-                            setDot = true;
-                        }
-                    }
-                }
-                inY += scanStepSize;
-
-                data.setValue(outY, outX, setDot);
-
-            }
-            inX += scanStepSize;
-        }
-         */
-
-        //availableArea.getWidth();
     }
 
-    private void linearMapping(BufferedImage imgBuf, AbstractRasterCanvas canvas) {
+    private void linearMapping(final BufferedImage imgBuf, final AbstractRasterCanvas canvas) {
 
         // A canvas is basically a wrapper for multiple representations of printable data, each representing a page.
         // These representations can be acquired by either requesting the current page or creating a new page.
@@ -219,7 +91,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
         double hRatio =  (availableArea.getWidth() - 1) / imgBuf.getWidth();
         double vRatio = (availableArea.getHeight() - 1) / imgBuf.getHeight();
 
-        if(mPreventOverStretch) {
+        if (mPreventOverStretch) {
             // In case that the given images resolution is smaller than the grid on at least one dimension
             // this prevents it to be 'stretched' on the output, leading to 'cuts' in former solid lines.
             // The maximum ratio is 1 for the linear mapping, meaning that the pixel position would be the
@@ -229,7 +101,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
             hRatio = min(hRatio, 1);
             vRatio = min(hRatio, 1);
         }
-        if(mPreserveAspectRatio) {
+        if (mPreserveAspectRatio) {
             // This selects the smaller of both ratios for both dimensions to keep aspect ratio the same in the output.
             hRatio = min(hRatio, vRatio);
             vRatio = min(vRatio, vRatio);
@@ -256,7 +128,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
         }
     }
 
-    private void quantifiedPositionMapping(BufferedImage imgBuf, AbstractRasterCanvas canvas) {
+    private void quantifiedPositionMapping(final BufferedImage imgBuf, final AbstractRasterCanvas canvas) {
 
         MatrixData<Boolean> data = canvas.getNewPage();
 
@@ -268,13 +140,13 @@ public class ImageRasterizer implements Rasterizer<Image> {
         double hRatio =  (availableArea.getWidth() / imgBuf.getWidth());
         double vRatio = (availableArea.getHeight() / imgBuf.getHeight());
 
-        if(mPreventOverStretch) {
+        if (mPreventOverStretch) {
             // Here, the maximum ratio is not 1 as in the linear mapping but instead equal to the regarding dot
             // distances. This is because the ratios are not measured in dots/pixel but mm/pixel.
             hRatio = min(hRatio, canvas.getHorizontalDotDistance());
             vRatio = min(vRatio, canvas.getVerticalDotDistance());
         }
-        if(mPreserveAspectRatio) {
+        if (mPreserveAspectRatio) {
             hRatio = min(hRatio, vRatio);
             vRatio = min(hRatio, vRatio);
         }
@@ -306,22 +178,11 @@ public class ImageRasterizer implements Rasterizer<Image> {
         }
     }
 
-    /*
-    private int minFilter(BufferedImage imgBuf, int x1, int y1, int x2, int y2) {
-        int min = 255;
-        for (int x = min(x1, x2); x <= max(x1, x2); x++) {
-            for (int y = min(y1, y2); y <= max(y1, y2); y++) {
-                min = min(min, toGrayScaleValue(imgBuf.getRGB(x,y)));
-            }
-        }
-        return min;
-    }
-     */
 
-    private int toGrayScaleValue(int rgb) {
+    private int toGrayScaleValue(final int rgb) {
         int r = (rgb >> 16) & 0xff;
         int g = (rgb >> 8) & 0xff;
         int b = (rgb) & 0xff;
-        return ((r+g+b) / 3);
+        return ((r + g + b) / 3);
     }
 }

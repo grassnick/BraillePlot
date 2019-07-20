@@ -5,7 +5,6 @@ import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import static de.tudresden.inf.mci.brailleplot.rendering.Axis.Type.X_AXIS;
 import static de.tudresden.inf.mci.brailleplot.rendering.Axis.Type.Y_AXIS;
 import static java.lang.Math.abs;
-import static java.lang.Math.signum;
 
 public class LinearMappingAxisRasterizer implements Rasterizer<Axis> {
 
@@ -13,7 +12,7 @@ public class LinearMappingAxisRasterizer implements Rasterizer<Axis> {
     private AbstractRasterCanvas mCanvas;
 
     @Override
-    public void rasterize(Axis axis, AbstractRasterCanvas canvas) throws InsufficientRenderingAreaException {
+    public void rasterize(final Axis axis, final AbstractRasterCanvas canvas) throws InsufficientRenderingAreaException {
 
         mCanvas = canvas;
         MatrixData<Boolean> data = mCanvas.getCurrentPage();

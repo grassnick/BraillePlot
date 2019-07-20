@@ -79,7 +79,7 @@ public class Axis implements Renderable {
     public Map<Integer, String> getLabels() {
         return mLabels;
     }
-    public void setLabels(Map<Integer, String> labels) {
+    public void setLabels(final Map<Integer, String> labels) {
         mLabels = Objects.requireNonNull(labels);
     }
     public boolean hasLabels() {
@@ -89,7 +89,7 @@ public class Axis implements Renderable {
     public Rectangle getBoundary() {
         return Objects.requireNonNull(mBoundary);
     }
-    public void setBoundary(Rectangle boundary) {
+    public void setBoundary(final Rectangle boundary) {
         mBoundary = Objects.requireNonNull(boundary);
     }
     public boolean hasBoundary() {

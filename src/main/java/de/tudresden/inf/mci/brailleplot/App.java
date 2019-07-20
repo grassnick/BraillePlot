@@ -153,7 +153,6 @@ public final class App {
             CsvParser parser = new CsvParser(new FileReader(csvPath), ',', '"');
             CategorialPointListList points = (CategorialPointListList) parser.parse(csvType, csvOrientation);
             BarChart exampleBarChart = new BarChart(points);
-             
 
             // ...
 

@@ -9,7 +9,7 @@ public class Image implements Renderable {
 
     private BufferedImage imageData;
 
-    public Image(File imageFile) throws java.io.IOException {
+    public Image(final File imageFile) throws java.io.IOException {
         imageData = ImageIO.read(Objects.requireNonNull(imageFile));
     }
 
