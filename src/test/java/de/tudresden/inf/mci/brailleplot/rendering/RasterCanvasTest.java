@@ -4,11 +4,13 @@ import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.ListIterator;
 
 
 public class AbstractRasterCanvasTest {
@@ -167,6 +169,23 @@ public class AbstractRasterCanvasTest {
                     Assertions.assertEquals(h, raster.intWrapper().getHeight());
                     Assertions.assertEquals(printW, canvas.getPrintableWidth());
                     Assertions.assertEquals(printH, canvas.getPrintableHeight());
+                }
+        );
+    }
+
+    @Test @SuppressWarnings("unchecked")
+    // AbstractRasterCanvas is guaranteed to create MatrixData instances for its pages
+    public void testPageIterator() {
+        Assertions.assertDoesNotThrow(
+                () -> {
+                    ConfigurationParser parser = new JavaPropertiesConfigurationParser(mBaseConfig, mDefaultConfig);
+                    MasterRenderer renderer = new MasterRenderer(parser.getPrinter(), parser.getFormat("test"));
+                    AbstractRasterCanvas result = renderer.rasterize(new Image(getResource("dummy.bmp")));
+                    ListIterator iter = result.getPageIterator();
+                    while (iter.hasNext()) {
+                        MatrixData<Boolean> page = (MatrixData<Boolean>) iter.next();
+                        Assertions.assertNotNull(page);
+                    }
                 }
         );
     }

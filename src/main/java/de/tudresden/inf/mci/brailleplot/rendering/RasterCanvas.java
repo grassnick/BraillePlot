@@ -6,6 +6,7 @@ import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 import static java.lang.Math.*;
 
@@ -15,7 +16,7 @@ import static java.lang.Math.*;
  * @author Leonard Kupper
  * @version 2019.07.12
  */
-public abstract class AbstractRasterCanvas extends AbstractCanvas {
+public class AbstractRasterCanvas extends AbstractCanvas {
 
     private ArrayList<Double> mXPositions;
     private ArrayList<Double> mYPositions;
@@ -42,6 +43,18 @@ public abstract class AbstractRasterCanvas extends AbstractCanvas {
     // Printing area rectangles
     private Rectangle mPrintingAreaCells;
 
+    /**
+     * Constructor. Creates a new AbstractRasterCanvas, which is a canvas that represents it pages as instances of
+     * {@link MatrixData} and holds information about the layout and spacing of the underlying raster grid.
+     * The described grid is build from uniform 'cells' consisting of a variable amount of dots.
+     * It is used as a target on which can be drawn by a {@link Rasterizer}.
+     * @param printer The {@link Printer} configuration to be used.
+     * @param format The {@link Format} configuration to be used.
+     * @param cellWidth The horizontal count of dots in a cell.
+     * @param cellHeight The vertical count of dots in a cell.
+     * @throws InsufficientRenderingAreaException If the given configuration leads to an printable area of negative
+     * size or zero size, e.g. if the sum of defined margins and constraints adds up to be greater than the original page size.
+     */
     AbstractRasterCanvas(final Printer printer, final Format format, final int cellWidth, final int cellHeight)
             throws InsufficientRenderingAreaException {
 
