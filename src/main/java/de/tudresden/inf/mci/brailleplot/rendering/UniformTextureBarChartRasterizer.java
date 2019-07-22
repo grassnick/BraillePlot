@@ -1,7 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
-import diagrams.BarChart;
+import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 
 import java.util.HashMap;
 import java.util.Map;
