@@ -16,8 +16,8 @@ plugins {
     id 'checkstyle'
 }
 
-sourceCompatibility = 12
-targetCompatibility = 12
+sourceCompatibility = 11
+targetCompatibility = 11
 
 repositories {
     // Use jcenter for resolving your dependencies.
@@ -30,7 +30,7 @@ dependencies {
     // Use JUnit test framework
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
     testImplementation('org.junit.jupiter:junit-jupiter:5.4.2')
-
+    
     // Logging
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.26'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
@@ -45,7 +45,7 @@ dependencies {
 
 }
 
-test {
+tasks.withType(Test) {
     useJUnitPlatform()
 }
 
@@ -62,33 +62,11 @@ jar {
     }
 }
 
-checkstyleTest{
+checkstyleTest {
     showViolations = true
     checkstyleTest.enabled = false
 }
 
-sourceSets {
-    IntegrationTests {
-        compileClasspath += sourceSets.main.output
-        runtimeClasspath += sourceSets.main.output
-    }
-}
-configurations {
-    IntegrationTestsImplementation.extendsFrom implementation
-    IntegrationTestsRuntimeOnly.extendsFrom runtimeOnly
-}
+    // Needed for Integrationtests
 
-dependencies {
-    integrationTestsImplementation 'junit:junit:4.12'
-}
-
-task integrationTest(type: Test) {
-    description = 'Runs integration tests.'
-    group = 'verification'
-
-    testClassesDirs = sourceSets.IntegrationTests.output.classesDirs
-    classpath = sourceSets.IntegrationTests.runtimeClasspath
-    shouldRunAfter test
-}
-
-check.dependsOn integrationTest
+apply from: "$rootDir/integrationTest.gradle"

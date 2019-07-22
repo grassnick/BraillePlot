@@ -3,6 +3,7 @@ build
 out
 *gradle*
 !build.gradle
+!integrationTest.gradle
 
 # IntelliJ
 .idea
