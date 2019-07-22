@@ -113,11 +113,11 @@ public class RasterCanvasTest {
 
                     // pre-calculated and measured correct values:
                     // width-constraint: 190.0 mm -> fits 32 cells h.
-                    // height-constraint: 250.0 mm -> fits 25 cells v.
+                    // height-constraint: 250.0 mm -> fits 25 cells v. (-1 because top constraint of 1 cell) -> 24 cells v.
                     int x = 0; // zero because constraint
                     int y = 0; // moves reference point.
                     int w = 30; // because raster.constraint.width = 30 < 32 (will pick minimum)
-                    int h = 25; // because 25 < raster.constraint.height = 28
+                    int h = 24; // because 25 < raster.constraint.height = 28
                     double printW = (w * (2.5 + 3.5)) - 3.5; // 176.5 mm
                     double printH = (h * (2 * 2.5 + 5.0)) - 5.0; // 245.0 mm
 

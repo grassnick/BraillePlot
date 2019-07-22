@@ -5,12 +5,8 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 
 /**
  * Representation of a target onto which can be drawn. It wraps a {@link PrintableData} instance and specifies the size of the drawing area (in mm).
@@ -21,6 +17,9 @@ public abstract class AbstractCanvas {
 
     Printer mPrinter;
     Format mFormat;
+
+    Rectangle mPrintableArea;
+    /*
     double mMillimeterWidth;
     double mMillimeterHeight;
 
@@ -28,10 +27,11 @@ public abstract class AbstractCanvas {
     double mMarginBottom;
     double mMarginLeft;
     double mMarginRight;
+     */
 
     List<PrintableData> mPageContainer;
 
-    AbstractCanvas(final Printer printer, final Format format) {
+    AbstractCanvas(final Printer printer, final Format format) throws InsufficientRenderingAreaException {
         mPrinter = printer;
         mFormat = format;
         mPageContainer = new ArrayList<>();
@@ -39,8 +39,31 @@ public abstract class AbstractCanvas {
         readConfig();
     }
 
-    private void readConfig() {
+    private void readConfig() throws InsufficientRenderingAreaException {
 
+        // New approach using a box model:
+
+        // Create a page box
+        int pageWidth = mFormat.getProperty("page.width").toInt();
+        int pageHeight = mFormat.getProperty("page.height").toInt();
+        Rectangle pageBox = new Rectangle(0, 0, pageWidth, pageHeight);
+
+        // Create a margin box
+        int marginTop = mFormat.getProperty("margin.top").toInt();
+        int marginLeft = mFormat.getProperty("margin.left").toInt();
+        int marginBottom = mFormat.getProperty("margin.bottom").toInt();
+        int marginRight = mFormat.getProperty("margin.right").toInt();
+        Rectangle marginBox = new Rectangle(pageBox);
+        try {
+            marginBox.removeFromTop(marginTop);
+            marginBox.removeFromLeft(marginLeft);
+            marginBox.removeFromBottom(marginBottom);
+            marginBox.removeFromRight(marginRight);
+        } catch (Rectangle.OutOfSpaceException e) {
+            throw new InsufficientRenderingAreaException("The sum of the defined margins is bigger than the page size.", e);
+        }
+
+        // Create a constraint box
         double constraintTop = mPrinter.getProperty("constraint.top").toDouble();
         double constraintLeft = mPrinter.getProperty("constraint.left").toDouble();
         double constraintHeight, constraintWidth;
@@ -54,22 +77,22 @@ public abstract class AbstractCanvas {
         } else {
             constraintWidth = Integer.MAX_VALUE;
         }
-        int pageWidth = mFormat.getProperty("page.width").toInt();
-        int pageHeight = mFormat.getProperty("page.height").toInt();
+        Rectangle constraintBox = new Rectangle(constraintLeft, constraintTop, constraintWidth, constraintHeight);
 
-        // Page margins in mm. The printing area constraint is subtracted, we have no control over it, so the canvas just
-        // has to create the remaining 'virtual' margins by omitting some cells from the printing area rectangle.
-        // However, even this 'virtual' margin can never be negative! We can't add printing space where there is none.
-        mMarginTop = max(0, mFormat.getProperty("margin.top").toInt() - constraintTop);
-        mMarginLeft = max(0, mFormat.getProperty("margin.left").toInt() - constraintLeft);
-        mMarginBottom = max(0, mFormat.getProperty("margin.bottom").toInt() - max(0, pageHeight - (constraintTop + constraintHeight)));
-        mMarginRight = max(0, mFormat.getProperty("margin.right").toInt() - max(0, pageWidth - (constraintLeft + constraintWidth)));
+        mPrintableArea = calculatePrintingArea(marginBox, constraintBox);
 
-        // How big is the technically accessible area of the page in mm?
-        // These sizes can't be negative too of course.
-        mMillimeterWidth = max(0, min(pageWidth - constraintLeft, constraintWidth));
-        mMillimeterHeight = max(0, min(pageHeight - constraintTop, constraintHeight));
+    }
 
+    /**
+     * A universal help function to calculate the printable area from original page size, desired minimum margins
+     * and the given area constraints of the printer.
+     * @param marginBox A rectangle representing the page with cropped edges representing the margins.
+     * @param constraintBox A rectangle representing the printer constraint as [x = constraint x, y = constraint y,
+     *                      w = constraint width, h = constraint height]
+     * @return A rectangle representing the valid printing area.
+     */
+    final Rectangle calculatePrintingArea(final Rectangle marginBox, final Rectangle constraintBox) {
+        return marginBox.intersectedWith(constraintBox).translatedBy(-1 * constraintBox.getX(), -1 * constraintBox.getY());
     }
 
     /**
@@ -77,7 +100,8 @@ public abstract class AbstractCanvas {
      * @return The width of the canvas in millimeters.
      */
     public double getPrintableWidth() {
-        return mMillimeterWidth - (mMarginLeft + mMarginRight);
+        //return mMillimeterWidth - (mMarginLeft + mMarginRight);
+        return mPrintableArea.getWidth();
     }
 
     /**
@@ -85,7 +109,8 @@ public abstract class AbstractCanvas {
      * @return The height of the canvas in millimeters.
      */
     public double getPrintableHeight() {
-        return mMillimeterHeight - (mMarginTop + mMarginBottom);
+        //return mMillimeterHeight - (mMarginTop + mMarginBottom);
+        return mPrintableArea.getHeight();
     }
 
     /**

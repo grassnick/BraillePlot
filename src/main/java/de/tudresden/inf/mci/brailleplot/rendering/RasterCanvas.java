@@ -4,6 +4,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
+import org.w3c.dom.css.Rect;
 
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -27,6 +28,9 @@ public class RasterCanvas extends AbstractCanvas {
     private int mColumnCount;
     private int mRowCount;
 
+    // Printing area rectangle
+    private Rectangle mPrintingAreaCells;
+
     // Cell size
     private int mCellWidth; // dots
     private int mCellHeight; // dots
@@ -39,9 +43,6 @@ public class RasterCanvas extends AbstractCanvas {
     private double mHorizontalCellDistance;
     private double mVerticalCellDistance;
     private double mDotDiameter;
-
-    // Printing area rectangles
-    private Rectangle mPrintingAreaCells;
 
     /**
      * Constructor. Creates a new RasterCanvas, which is a canvas that represents it pages as instances of
@@ -119,9 +120,24 @@ public class RasterCanvas extends AbstractCanvas {
 
     private void calculateRasterSize() throws InsufficientRenderingAreaException {
 
+        // New approach using a box model:
+
+        // Dividing the printable area into cells to create a cell raster box.
+        int cellRasterX = (int) ceil(mPrintableArea.getX() / mCellHorizontalMM);
+        int cellRasterY = (int) ceil(mPrintableArea.getY() / mCellVerticalMM);
+        int cellRasterR = (int) floor((mPrintableArea.getRight() + mHorizontalCellDistance) / mCellHorizontalMM);
+        int cellRasterB = (int) floor((mPrintableArea.getBottom() + mVerticalCellDistance) / mCellVerticalMM);
+        Rectangle cellRasterBox = new Rectangle(
+                cellRasterX, cellRasterY,
+                cellRasterR - cellRasterX,
+                cellRasterB - cellRasterY
+        );
+
         // The following properties impact the printing area, but are specific to rasterizing. (That's why they weren't read before in the AbstractCanvas)
         // The abstract parent class (AbstractCanvas) already calculated indentations based on millimeters, but it is
         // also possible to set a raster.indentation counted in amount of cells and lines. Those must be removed additionally.
+
+        // Create a raster constraint box
         int rasterConstraintTop = mPrinter.getProperty("raster.constraint.top").toInt();
         int rasterConstraintLeft = mPrinter.getProperty("raster.constraint.left").toInt();
         int rasterConstraintHeight, rasterConstraintWidth;
@@ -135,43 +151,22 @@ public class RasterCanvas extends AbstractCanvas {
         } else {
             rasterConstraintWidth = Integer.MAX_VALUE;
         }
+        Rectangle rasterConstraintBox = new Rectangle(rasterConstraintLeft, rasterConstraintTop,
+                rasterConstraintWidth, rasterConstraintHeight);
 
-        // How many cells would be omitted by applying the remaining virtual margins?
-        int omitTop = max(0, (int) ceil(mMarginTop / mCellVerticalMM) - rasterConstraintTop);
-        int omitLeft = max(0, (int) ceil(mMarginLeft / mCellHorizontalMM) - rasterConstraintLeft);
-        int omitBottom = (int) ceil(mMarginBottom / mCellVerticalMM);
-        int omitRight = (int) ceil(mMarginRight / mCellHorizontalMM);
+        mPrintingAreaCells = calculatePrintingArea(cellRasterBox, rasterConstraintBox);
 
-        // Calculate how many rows and columns of full cells fit inside the given page area (ignoring margins and raster constraints)
-        mHorizontalCellCount = (int) floor((mMillimeterWidth + mHorizontalCellDistance) / mCellHorizontalMM); // How many full cells fit horizontally?
-        mVerticalCellCount = (int) floor((mMillimeterHeight + mVerticalCellDistance) / mCellVerticalMM); // How many full cells fit vertically?
+        // The following values are set to keep track of the 'real' size of the internal data representation, because
+        // the margins are created virtually by printing some empty cells at the pages top / left edge.
+        // Rasterizers are only presented with a sub-area rectangle, representing the valid printing area.
 
-        // Calculate a 'restricted' printing area rectangle, based on the given virtual margins.
-        // By omitting some cells from the printing area rectangle, a real margin is imitated.
-        // A rasterizer working with this canvas can still force to write values outside the restricted rectangle
-        // so it is expected to at least take a look at the cell rectangle.
-        Rectangle raster = new Rectangle(0, 0, mHorizontalCellCount, mVerticalCellCount);
-        try {
-            raster.removeFromTop(omitTop);
-            raster.removeFromLeft(omitLeft);
-            raster.removeFromBottom(omitBottom);
-            raster.removeFromRight(omitRight);
-        } catch (Rectangle.OutOfSpaceException e) {
-            // If an OutOfSpaceException is thrown this early, it basically means that the defined page size is smaller
-            // than the sum of its margins, indicating heavy layer 8 error.
-            throw new InsufficientRenderingAreaException("The defined page size is smaller than the sum of its margins", e);
-        }
-        // rasterConstraintTop and rasterConstraintLeft are already regarded in the virtual margins
-        Rectangle rasterConstraint = new Rectangle(0, 0, rasterConstraintWidth, rasterConstraintHeight);
-        //Rectangle rasterConstraint = new Rectangle(0, 0, rasterConstraintWidth, rasterConstraintHeight);
-        Rectangle intersect = raster.intersectedWith(rasterConstraint);
-
-        mPrintingAreaCells = new Rectangle(intersect); // The whole area.
-        //mPrintingAreaCells = new Rectangle(0, 0, intersect.getWidth(), intersect.getHeight()); // The whole area.
+        // How many rows and columns of full cells fit inside the given page area (ignoring margins and raster constraints)
+        mHorizontalCellCount = mPrintingAreaCells.intWrapper().getRight() + 1; // How many full cells fit horizontally?
+        mVerticalCellCount = mPrintingAreaCells.intWrapper().getBottom() + 1; // How many full cells fit vertically?
 
         // To how many dots does this raster size correspond?
-        mColumnCount = mPrintingAreaCells.intWrapper().getWidth() * mCellWidth;
-        mRowCount = mPrintingAreaCells.intWrapper().getHeight() * mCellHeight;
+        mColumnCount = mHorizontalCellCount * mCellWidth;
+        mRowCount = mVerticalCellCount * mCellHeight;
 
     }
 
@@ -209,21 +204,6 @@ public class RasterCanvas extends AbstractCanvas {
         return mCellHeight;
     }
 
-    /*
-    TODO: Maybe remove these 4 getters, they are currently not used and could mislead to write into the margin. Rasterizers should use the cell and dot rectangle instead.
-    public final int getColumnCount() {
-        return mColumnCount;
-    }
-    public final int getRowCount() {
-        return mRowCount;
-    }
-    public final int getHorizontalCellCount() {
-        return mHorizontalCellCount;
-    }
-    public final int getVerticalCellCount() {
-        return mVerticalCellCount;
-    }
-    */
     public final double getHorizontalDotDistance() {
         return mHorizontalDotDistance;
     }
