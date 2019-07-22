@@ -245,6 +245,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
      * @param thickness The thickness of the bar in dots.
      * @param categoryName The caption to be displayed next to the bar.
      * @return The y position of the next reference cell for the next bar.
+     * @throws InsufficientRenderingAreaException If the underlying text rasterizer throws it while rasterizing the bar caption.
      */
     private int drawHorizontalBar(final int cellX, final int cellY, final int length, final int thickness,
                                   final String categoryName) throws InsufficientRenderingAreaException {

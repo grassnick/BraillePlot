@@ -5,7 +5,8 @@ import java.util.Objects;
 
 /**
  * FunctionalRenderingBase. This class acts as a wrapper for multiple {@link FunctionalRasterizer} instances.
- * The rasterizer instances can be registered at runtime. The main purpose of the class is to take diagram representations of any type and select the correct concrete rasterizer.
+ * The rasterizer instances can be registered at runtime. The main purpose of the class is to take {@link Renderable}
+ * representations of any type and select the correct concrete rasterizer.
  * @author Leonard Kupper
  * @version 2019.07.22
  */
@@ -24,6 +25,7 @@ public class FunctionalRenderingBase {
      * @throws InsufficientRenderingAreaException If too few space is available on the currently set {@link RasterCanvas}
      * to display the amount of data contained in the given renderable representation.
      * @exception IllegalStateException If no {@link RasterCanvas} is set. Call {@link #setRasterCanvas(RasterCanvas)} beforehand.
+     * @exception IllegalArgumentException If no rasterizer is registered for the given renderable type.
      */
     public void rasterize(final Renderable renderData) throws InsufficientRenderingAreaException {
         // First, check if a raster is set. No rasterizing without raster.

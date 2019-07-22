@@ -140,7 +140,7 @@ public class Axis implements Renderable {
      * label (positive values = labels toward positive value range, 0 = at coordinate origin, negative values = labels
      * toward negative value range). The value is a String representing the label text.
      * Not every position must be supplied with a label.
-     * @return A {@link Map} containing all labels.
+     * @param labels A {@link Map} containing all labels.
      */
     public void setLabels(final Map<Integer, String> labels) {
         mLabels = Objects.requireNonNull(labels);
