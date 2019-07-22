@@ -42,7 +42,7 @@ public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
         mRasterizingAlgorithm.accept(diagram, canvas);
     }
 
-    public final Class<? extends T> getSupportedDiagramClass() {
+    final Class<? extends T> getSupportedDiagramClass() {
         return mSupportedDiagramClass;
     }
 

@@ -17,6 +17,13 @@ public class LinearMappingAxisRasterizer implements Rasterizer<Axis> {
     private BrailleTextRasterizer mTextRasterizer = new BrailleTextRasterizer();
     private RasterCanvas mCanvas;
 
+    /**
+     * Rasterizes a {@link Axis} instance onto a {@link RasterCanvas}.
+     * @param axis A instance of {@link Axis} representing the visual diagram axis.
+     * @param canvas A instance of {@link RasterCanvas} representing the target for the rasterizer output.
+     * @throws InsufficientRenderingAreaException If too few space is available on the {@link RasterCanvas}
+     * to display the given axis.
+     */
     @Override
     public void rasterize(final Axis axis, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
 
@@ -52,7 +59,7 @@ public class LinearMappingAxisRasterizer implements Rasterizer<Axis> {
                     if (hasLabels && axis.getLabels().containsKey(i)) {
                         String label = axis.getLabels().get(i);
                         Rectangle labelArea = new Rectangle(dotX - 1, endY + 1, stepWidth, mCanvas.getCellHeight());
-                        mTextRasterizer.rasterize(new Text(label, labelArea), mCanvas);
+                        mTextRasterizer.rasterize(new BrailleText(label, labelArea), mCanvas);
                     }
                     i++;
                 }
@@ -62,7 +69,7 @@ public class LinearMappingAxisRasterizer implements Rasterizer<Axis> {
                     if (hasLabels && axis.getLabels().containsKey(i)) {
                         String label = axis.getLabels().get(i);
                         Rectangle labelArea = new Rectangle(dotX - 1, endY + 1, stepWidth, mCanvas.getCellHeight());
-                        mTextRasterizer.rasterize(new Text(label, labelArea), mCanvas);
+                        mTextRasterizer.rasterize(new BrailleText(label, labelArea), mCanvas);
                     }
                     i--;
                 }
@@ -92,7 +99,7 @@ public class LinearMappingAxisRasterizer implements Rasterizer<Axis> {
                     if (hasLabels && axis.getLabels().containsKey(i)) {
                         String label = axis.getLabels().get(i);
                         Rectangle labelArea = new Rectangle(endX + Integer.signum(tickSize), dotY, stepWidth, mCanvas.getCellHeight());
-                        mTextRasterizer.rasterize(new Text(label, labelArea), mCanvas);
+                        mTextRasterizer.rasterize(new BrailleText(label, labelArea), mCanvas);
                     }
                     */
                     i++;
@@ -104,7 +111,7 @@ public class LinearMappingAxisRasterizer implements Rasterizer<Axis> {
                     if (hasLabels && axis.getLabels().containsKey(i)) {
                         String label = axis.getLabels().get(i);
                         Rectangle labelArea = new Rectangle(endX + Integer.signum(tickSize), dotY, stepWidth, mCanvas.getCellHeight());
-                        mTextRasterizer.rasterize(new Text(label, labelArea), mCanvas);
+                        mTextRasterizer.rasterize(new BrailleText(label, labelArea), mCanvas);
                     }
                     */
                     i--;

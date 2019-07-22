@@ -46,7 +46,7 @@ public class MasterRendererTest {
 
                     // Register two different rasterizers for two different types.
                     // The rasterizers are later distinguished by the number of pages they generate.
-                    FunctionalRasterizer<Text> rasterizerRef1 = new FunctionalRasterizer<>(Text.class, (data, canvas) -> {
+                    FunctionalRasterizer<BrailleText> rasterizerRef1 = new FunctionalRasterizer<>(BrailleText.class, (data, canvas) -> {
                         for (int i = 0; i < 1; i++) {
                             canvas.getNewPage();
                         }
@@ -65,7 +65,7 @@ public class MasterRendererTest {
                     // Test rasterizer selection
                     RasterCanvas result;
 
-                    result= renderer.rasterize(new Text("dummy text", new Rectangle(0,0,1,1)));
+                    result= renderer.rasterize(new BrailleText("dummy text", new Rectangle(0,0,1,1)));
                     Assertions.assertEquals(1, result.getPageCount());
 
                     result = renderer.rasterize(new Image(getResource("dummy.bmp")));

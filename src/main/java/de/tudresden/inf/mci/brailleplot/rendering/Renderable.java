@@ -6,4 +6,5 @@ package de.tudresden.inf.mci.brailleplot.rendering;
  * @version 2019.07.04
  */
 public interface Renderable {
+    // Not much going on here...
 }

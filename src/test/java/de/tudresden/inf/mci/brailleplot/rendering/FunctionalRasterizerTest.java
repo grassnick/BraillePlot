@@ -39,8 +39,8 @@ public class FunctionalRasterizerTest {
 
     @Test
     public void testInvalidDirectCall() {
-        // Create FunctionalRasterizer for Text
-        FunctionalRasterizer<Text> textRasterizer = new FunctionalRasterizer<>(Text.class, (data, canvas) -> {
+        // Create FunctionalRasterizer for BrailleText
+        FunctionalRasterizer<BrailleText> textRasterizer = new FunctionalRasterizer<>(BrailleText.class, (data, canvas) -> {
             // dummy
         });
 
@@ -49,7 +49,7 @@ public class FunctionalRasterizerTest {
         // Directly passing the wrong Renderable type must cause exception:
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             RasterCanvas testCanvas = new SixDotBrailleRasterCanvas(mPrinter, mFormat);
-            // Pass Image to Text rasterizer.
+            // Pass Image to BrailleText rasterizer.
             textRasterizer.rasterize(new Image(getResource("dummy.bmp")), testCanvas);
         });
     }

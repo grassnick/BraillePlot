@@ -4,7 +4,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
 /**
- * Represents a raster consisting of 6-dot braille cells.
+ * Represents a raster consisting of 6-dot braille cells. (May be removed completely in favor of dynamic {@link RasterCanvas})
  * @author Leonard Kupper
  * @version 2019.07.20
  */

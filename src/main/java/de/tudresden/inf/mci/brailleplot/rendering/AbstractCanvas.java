@@ -11,7 +11,7 @@ import java.util.ListIterator;
 /**
  * Representation of a target onto which can be drawn. It wraps a {@link PrintableData} instance and specifies the size of the drawing area (in mm).
  * @author Leonard Kupper
- * @version 2019.07.20
+ * @version 2019.07.22
  */
 public abstract class AbstractCanvas {
 
@@ -19,15 +19,6 @@ public abstract class AbstractCanvas {
     Format mFormat;
 
     Rectangle mPrintableArea;
-    /*
-    double mMillimeterWidth;
-    double mMillimeterHeight;
-
-    double mMarginTop;
-    double mMarginBottom;
-    double mMarginLeft;
-    double mMarginRight;
-     */
 
     List<PrintableData> mPageContainer;
 

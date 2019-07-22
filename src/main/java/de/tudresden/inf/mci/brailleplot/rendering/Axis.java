@@ -5,8 +5,8 @@ import java.util.Objects;
 
 /**
  * The representation of a visible axis with a line, tickmarks and labels.
- *  @version 2019.07.09
- *  @author Leonard Kupper
+ * @author Leonard Kupper
+ * @version 2019.07.09
  */
 public class Axis implements Renderable {
 
@@ -178,6 +178,9 @@ public class Axis implements Renderable {
         return !Objects.isNull(mBoundary);
     }
 
+    /**
+     * Representation of the axis type / orientation.
+     */
     enum Type {
         X_AXIS, Y_AXIS;
     }

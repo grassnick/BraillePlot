@@ -38,13 +38,22 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
     private LinearMappingAxisRasterizer mAxisRasterizer;
     //private Rasterizer<Legend> mLegendRasterizer;
 
+    /**
+     * Constructor. Create a new rasterizer for instances of {@link BarChart}.
+     */
     UniformTextureBarChartRasterizer() {
         mTextRasterizer = new BrailleTextRasterizer();
         mAxisRasterizer = new LinearMappingAxisRasterizer();
         //mLegendRasterizer = new LegendRasterizer();
     }
 
-
+    /**
+     * Rasterizes a {@link BarChart} instance onto a {@link RasterCanvas}.
+     * @param diagram A instance of {@link BarChart} representing the bar chart diagram.
+     * @param canvas A instance of {@link RasterCanvas} representing the target for the rasterizer output.
+     * @throws InsufficientRenderingAreaException If too few space is available on the {@link RasterCanvas}
+     * to display the given diagram.
+     */
     @Override
     public void rasterize(final BarChart diagram, final RasterCanvas canvas)
             throws InsufficientRenderingAreaException {
@@ -129,7 +138,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         // Now everything is ready to be rasterized onto the canvas.
 
         // 1. Rasterize the diagram title
-        Text diagramTitle = new Text(strDiagramTitle, titleArea.scaledBy(mCanvas.getCellWidth(), mCanvas.getCellHeight()));
+        BrailleText diagramTitle = new BrailleText(strDiagramTitle, titleArea.scaledBy(mCanvas.getCellWidth(), mCanvas.getCellHeight()));
         mTextRasterizer.rasterize(diagramTitle, mCanvas);
 
         // 2. Draw the individual bars for each category.
@@ -279,7 +288,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
             captionCellX = mCanvas.getCellXFromDotX(max(lowerX, upperX) + 1);
         }
         Rectangle captionArea = new Rectangle(captionCellX, captionCellY, mCaptionLength, 1);
-        mTextRasterizer.rasterize(new Text(categoryName,
+        mTextRasterizer.rasterize(new BrailleText(categoryName,
                 captionArea.scaledBy(mCanvas.getCellWidth(), mCanvas.getCellHeight())), mCanvas);
 
         return mCanvas.getCellYFromDotY(upperY - (mBarDotPadding + 1)) - mExtraBarCellPadding;

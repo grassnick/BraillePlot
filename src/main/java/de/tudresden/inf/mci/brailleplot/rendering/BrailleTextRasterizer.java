@@ -1,13 +1,13 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
 /**
- * A rasterizer for text on braille grids.
- * @version 2019.07.20
+ * A rasterizer for text on braille grids. This class is still a stub and must be implemented!
+ * @version 2019.07.21
  * @author Leonard Kupper
  */
-public class BrailleTextRasterizer implements Rasterizer<Text> {
+public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
     @Override
-    public void rasterize(final Text data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
+    public void rasterize(final BrailleText data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
         // TODO: rasterize the text (Take different grids into consideration! 6-dot / 8-dot)
         // Until then, we just display dummy characters
         int x = data.getArea().intWrapper().getX();

@@ -9,7 +9,7 @@ import static java.lang.Math.*;
 /**
  * A rasterizer that is able to re-raster a raster graphics onto a canvas.
  * @author Leonard Kupper
- * @version 2019.07.20
+ * @version 2019.07.22
  */
 public class ImageRasterizer implements Rasterizer<Image> {
 
@@ -24,9 +24,12 @@ public class ImageRasterizer implements Rasterizer<Image> {
     private boolean mPreserveAspectRatio;
     private boolean mQuantifiedPositions;
 
-    // Output threshold: A dot will be set for gray scale values below (darker than) the threshold.
+    // Output threshold: A dot will be set for gray scale values below (darker than/equal) this threshold.
     private int mLowThreshold;
 
+    /**
+     * Constructor. Creates a new {@link Rasterizer} for instances of {@link Image} with default settings.
+     */
     public ImageRasterizer() {
         mPreventOverStretch = true;
         mPreserveAspectRatio = true;
@@ -34,6 +37,18 @@ public class ImageRasterizer implements Rasterizer<Image> {
         mLowThreshold = 80;
     }
 
+    /**
+     * Constructor. Creates a new {@link Rasterizer} for instances of {@link Image}.
+     * @param preventOverStretch In case that the given images resolution is smaller than the grid on at least one
+     *                           dimension this flag prevents it to be 'stretched' on the output, leading to 'cuts' in
+     *                           former solid lines.
+     * @param preserveAspectRatio  This flag will cause the rasterizer to select the smaller of both scaling ratios for
+     *                             both dimensions to keep aspect ratio the same in the output.
+     * @param useQuantifiedPositions Algorithm selection flag:
+     *                               If set to true, output dot positions will be quantified.
+     *                               If set to false, simple linear mapping will be applied instead.
+     * @param threshold Gray scale threshold which determines whether a pixel in the original image sets a dot in the output.
+     */
     public ImageRasterizer(
             final boolean preventOverStretch,
             final boolean preserveAspectRatio,
@@ -45,8 +60,13 @@ public class ImageRasterizer implements Rasterizer<Image> {
         mLowThreshold = threshold;
     }
 
+    /**
+     * Rasterizes a {@link Image} instance onto a {@link RasterCanvas}.
+     * @param imgData A instance of {@link Image} representing the renderable image.
+     * @param canvas A instance of {@link RasterCanvas} representing the target for the rasterizer output.
+     */
     @Override
-    public void rasterize(final Image imgData, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
+    public void rasterize(final Image imgData, final RasterCanvas canvas) {
 
         // Each rasterizer essentially works by taking an instance of a Renderable (in this case Image) and then
         // creating a graphical representation of the object on the raster canvas.

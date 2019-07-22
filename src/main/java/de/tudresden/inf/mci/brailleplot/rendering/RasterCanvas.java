@@ -4,10 +4,8 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
-import org.w3c.dom.css.Rect;
 
 import java.util.ArrayList;
-import java.util.ListIterator;
 
 import static java.lang.Math.*;
 
@@ -15,7 +13,7 @@ import static java.lang.Math.*;
  * Representation of a target onto which an image can be rasterized.
  * It wraps a {@link de.tudresden.inf.mci.brailleplot.printabledata.MatrixData} instance and describes the raster size and its (not necessarily equidistant) layout.
  * @author Leonard Kupper
- * @version 2019.07.20
+ * @version 2019.07.22
  */
 public class RasterCanvas extends AbstractCanvas {
 

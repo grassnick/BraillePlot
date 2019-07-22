@@ -16,6 +16,13 @@ public class Rectangle {
 
     private double mX, mY, mW, mH;
 
+    /**
+     * Constructor. Creates a rectangle with given position and size.
+     * @param x The x coordinate of the upper left corner.
+     * @param y The y coordinate of the upper left corner.
+     * @param w The width of the rectangle, meaning its rightward expanse.
+     * @param h The height of the rectangle, meaning its downward expanse.
+     */
     public Rectangle(final double x, final double y, final double w, final double h) {
         setX(x);
         setY(y);
@@ -23,6 +30,10 @@ public class Rectangle {
         setHeight(h);
     }
 
+    /**
+     * Copy constructor. Creates a copy of a rectangle.
+     * @param rect The rectangle to be copied.
+     */
     public Rectangle(final Rectangle rect) {
         setX(rect.getX());
         setY(rect.getY());
@@ -30,6 +41,12 @@ public class Rectangle {
         setHeight(rect.getHeight());
     }
 
+    /**
+     * Removes a partition from the rectangles top and returns it.
+     * @param height The height of the partition that will be removed.
+     * @return A rectangle representing the cropped partition.
+     * @throws OutOfSpaceException If the requested partition is greater than the underlying rectangle itself.
+     */
     public Rectangle removeFromTop(final double height) throws OutOfSpaceException {
         Rectangle removedPartition = fromTop(height);
         double newY = (getY() + height);
@@ -39,6 +56,12 @@ public class Rectangle {
         return removedPartition;
     }
 
+    /**
+     * Removes a partition from the rectangles bottom and returns it.
+     * @param height The height of the partition that will be removed.
+     * @return A rectangle representing the cropped partition.
+     * @throws OutOfSpaceException If the requested partition is greater than the underlying rectangle itself.
+     */
     public Rectangle removeFromBottom(final double height) throws OutOfSpaceException {
         Rectangle removedPartition = fromBottom(height);
         double newHeight = (getHeight() - height);
@@ -46,6 +69,12 @@ public class Rectangle {
         return removedPartition;
     }
 
+    /**
+     * Removes a partition from the rectangles left side and returns it.
+     * @param width The width of the partition that will be removed.
+     * @return A rectangle representing the cropped partition.
+     * @throws OutOfSpaceException If the requested partition is greater than the underlying rectangle itself.
+     */
     public Rectangle removeFromLeft(final double width) throws OutOfSpaceException {
         Rectangle removedPartition = fromLeft(width);
         double newX = (getX() + width);
@@ -55,6 +84,12 @@ public class Rectangle {
         return removedPartition;
     }
 
+    /**
+     * Removes a partition from the rectangles right side and returns it.
+     * @param width The width of the partition that will be removed.
+     * @return A rectangle representing the cropped partition.
+     * @throws OutOfSpaceException If the requested partition is greater than the underlying rectangle itself.
+     */
     public Rectangle removeFromRight(final double width) throws OutOfSpaceException {
         Rectangle removedPartition = fromRight(width);
         double newWidth = (getWidth() - width);
@@ -62,21 +97,48 @@ public class Rectangle {
         return removedPartition;
     }
 
-    // Methods to getText a mRectangle partition
+    // Methods to get a rectangle partition
 
+    /**
+     * Gets a partition from the rectangles top without removing it from the original instance.
+     * @param height The height of the selected partition.
+     * @return A rectangle representing the selected partition.
+     * @throws OutOfSpaceException If the requested partition is greater than the underlying rectangle itself.
+     */
     public Rectangle fromTop(final double height) throws OutOfSpaceException {
         checkHeight(height);
         return new Rectangle(getX(), getY(), getWidth(), height);
     }
+
+    /**
+     * Gets a partition from the rectangles left side without removing it from the original instance.
+     * @param width The width of the selected partition.
+     * @return A rectangle representing the selected partition.
+     * @throws OutOfSpaceException If the requested partition is greater than the underlying rectangle itself.
+     */
     public Rectangle fromLeft(final double width) throws OutOfSpaceException {
         checkWidth(width);
         return new Rectangle(getX(), getY(), width, getHeight());
     }
+
+    /**
+     * Gets a partition from the rectangles bottom without removing it from the original instance.
+     * @param height The height of the selected partition.
+     * @return A rectangle representing the selected partition.
+     * @throws OutOfSpaceException If the requested partition is greater than the underlying rectangle itself.
+     */
     public Rectangle fromBottom(final double height) throws OutOfSpaceException {
         checkHeight(height);
         double newY = (getY() + (getHeight() - height));
         return new Rectangle(getX(), newY, getWidth(), height);
     }
+
+    /**
+     * Gets a partition from the rectangles right side without removing it from the original instance.
+     * @param width The width of the selected partition.
+     * @return A rectangle representing the selected partition.
+     * @throws OutOfSpaceException If the requested partition is greater than the underlying rectangle itself.
+     */
     public Rectangle fromRight(final double width) throws OutOfSpaceException {
         checkWidth(width);
         double newX = (getX() + (getWidth() - width));
@@ -98,37 +160,76 @@ public class Rectangle {
         }
     }
 
+    // Getters for edge positions and size
+
+    /**
+     * Gets the rectangles x position.
+     * @return The x coordinate of the upper left corner.
+     */
     public double getX() {
         return mX;
     }
 
+    /**
+     * Gets the rectangles y position.
+     * @return The y coordinate of the upper left corner.
+     */
     public double getY() {
         return mY;
     }
 
+    /**
+     * Gets the rectangles width.
+     * @return The distance between the rectangles left and right edge.
+     */
     public double getWidth() {
         return mW;
     }
 
+    /**
+     * Gets the rectangles height.
+     * @return The distance between the rectangles top and bottom edge.
+     */
     public double getHeight() {
         return mH;
     }
 
+    /**
+     * Gets the rectangles right edges position.
+     * @return The x coordinate of the lower right corner.
+     */
     public double getRight() {
         return mX + mW;
     }
+
+    /**
+     * Gets the rectangles bottom edges position.
+     * @return The y coordinate of the lower right corner.
+     */
     public double getBottom() {
         return mY + mH;
     }
 
+    /**
+     * Sets a new x position for the rectangle.
+     * @param x The new x coordinate of the upper left corner.
+     */
     public void setX(final double x) {
         mX = x;
     }
 
+    /**
+     * Sets a new y position for the rectangle.
+     * @param y The new y coordinate of the upper left corner.
+     */
     public void setY(final double y) {
         mY = y;
     }
 
+    /**
+     * Sets a new width for the rectangle.
+     * @param width The new width value.
+     */
     public void setWidth(final double width) {
         if (width < 0) {
             throw new IllegalArgumentException("The width can't be negative.");
@@ -136,6 +237,10 @@ public class Rectangle {
         mW = width;
     }
 
+    /**
+     * Sets a new height for the rectangle.
+     * @param height The new height value.
+     */
     public void setHeight(final double height) {
         if (height < 0) {
             throw new IllegalArgumentException("The height can't be negative.");
@@ -166,6 +271,16 @@ public class Rectangle {
         return new Rectangle(itsctX, itsctY, max(0, itsctR - itsctX), max(0, itsctB - itsctY));
     }
 
+    /**
+     * Returns a translated copy of this rectangle.
+     * @param alongX The distance to move the copy along x axis.
+     * @param alongY The distance to move the copy along y axis.
+     * @return A new rectangle representing a translated copy of this rectangle.
+     */
+    public Rectangle translatedBy(final double alongX, final double alongY) {
+        return new Rectangle(getX() + alongX, getY() + alongY, getWidth(), getHeight());
+    }
+
     @Override
     public String toString() {
         return "x:" + getX() + ", y:" + getY() + ", w:" + getWidth() + ", h:" + getHeight();
@@ -173,10 +288,20 @@ public class Rectangle {
 
     // Wrapper to make it easy to read integer values from rectangle.
 
+    /**
+     * Retrieves a proxy object as integer coordinate representation of the rectangle. This is meant as a shortcut
+     * for otherwise frequent int-casting when using rectangles on a integer based coordinate system.
+     * @return An instance of {@link IntWrapper} proxying this rectangle.
+     */
     public IntWrapper intWrapper() {
         return new IntWrapper(this);
     }
 
+    /**
+     * Wrapper of rectangle for integer coordinates.
+     * @author Leonard Kupper
+     * @version 2019.07.22
+     */
     public final class IntWrapper {
 
         private Rectangle mRectangle;
