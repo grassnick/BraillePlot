@@ -13,7 +13,7 @@ import java.io.File;
 
 public class FunctionalRasterizerTest {
 
-    public static final String mDefaultConfig = getResource("default.properties").getAbsolutePath();
+    public static final String mDefaultConfig = getResource("rasterizer_test_default.properties").getAbsolutePath();
     public static final String mBaseConfig = getResource("base_format.properties").getAbsolutePath();
     public static Printer mPrinter;
     public static Format mFormat;

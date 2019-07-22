@@ -12,7 +12,7 @@ import java.util.ListIterator;
 
 public class RasterCanvasTest {
 
-    public static final String mDefaultConfig = getResource("default.properties").getAbsolutePath();
+    public static final String mDefaultConfig = getResource("rasterizer_test_default.properties").getAbsolutePath();
     public static final String mBaseConfig = getResource("base_format.properties").getAbsolutePath();
     public static final String mMarginsOnlyConfig = getResource("margins_only.properties").getAbsolutePath();
     public static final String mConstraintOnlyConfig = getResource("constraint_only.properties").getAbsolutePath();
