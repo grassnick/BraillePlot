@@ -330,11 +330,7 @@ public class Rectangle {
         public int getHeight() {
             return wrapInt(mRectangle.getHeight());
         }
-
-        // QUESTION FOR REVIEW:
-        // Does the -1 always make sense for integer coordinates?
-        // The point is that on integer coords, if you have a rectangle at x,y of size 1x1, it 'ends' at x,y not x+1,y+1
-        // The rectangle does not 'touch' the neighboring positions.
+        
         public int getRight() {
             return wrapInt(mRectangle.getRight()) - 1;
         }
