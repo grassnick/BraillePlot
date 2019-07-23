@@ -131,11 +131,6 @@ public final class App {
 
             // ...
 
-            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(
-                    getClass().getClassLoader().getResource("index_everest_d_v4.properties").getFile(),
-                    getClass().getClassLoader().getResource("default.properties").getFile()
-            );
-            MasterRenderer renderer = new MasterRenderer(configParser.getPrinter(), configParser.getFormat("A4"));
         } catch (final Exception e) {
             terminateWithException(e);
         }
