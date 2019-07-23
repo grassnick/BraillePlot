@@ -91,7 +91,6 @@ public abstract class AbstractCanvas {
      * @return The width of the canvas in millimeters.
      */
     public double getPrintableWidth() {
-        //return mMillimeterWidth - (mMarginLeft + mMarginRight);
         return mPrintableArea.getWidth();
     }
 
@@ -100,7 +99,6 @@ public abstract class AbstractCanvas {
      * @return The height of the canvas in millimeters.
      */
     public double getPrintableHeight() {
-        //return mMillimeterHeight - (mMarginTop + mMarginBottom);
         return mPrintableArea.getHeight();
     }
 
