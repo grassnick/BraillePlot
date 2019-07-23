@@ -12,60 +12,60 @@ import java.util.Arrays;
 
 public class CsvParser {
 
-	static final Logger log = LoggerFactory.getLogger(CsvParser.class);
-	
-	private ArrayList<ArrayList<String>> csvData;
+    static final Logger log = LoggerFactory.getLogger(CsvParser.class);
 
-	/**
-	 * Initiates the parser. The parser reads from the specified {@code reader}
-	 * and populates {@link #csvData}.
-	 * 
-	 * @param reader
-	 *            a reader, like {@link FileReader}
-	 * @param separator
-	 * @param quoteChar
-	 * @throws IOException
-	 *             if the {@link CSVReader} has problems parsing
-	 */
-	public CsvParser(Reader reader, char separator, char quoteChar) throws IOException {
-		CSVReader csvReader = new CSVReader(reader, separator, quoteChar);
+    private ArrayList<ArrayList<String>> csvData;
 
-		csvData = new ArrayList<>();
+    /**
+     * Initiates the parser. The parser reads from the specified {@code reader}
+     * and populates {@link #csvData}.
+     *
+     * @param reader
+     *            a reader, like {@link FileReader}
+     * @param separator
+     * @param quoteChar
+     * @throws IOException
+     *             if the {@link CSVReader} has problems parsing
+     */
+    public CsvParser(Reader reader, char separator, char quoteChar) throws IOException {
+        CSVReader csvReader = new CSVReader(reader, separator, quoteChar);
 
-		String[] nextLine;
-		while ((nextLine = csvReader.readNext()) != null) {
-			csvData.add(new ArrayList<String>(Arrays.asList(nextLine)));
-		}
+        csvData = new ArrayList<>();
 
-		csvReader.close();
-	}
-	
-	public PointListList parse(CsvType csvType, CsvOrientation csvOrientation) {
-		CsvParseAlgorithm csvParseAlgorithm;
-		
-		log.info("Parse die Daten als \"{}\", Orientierung \"{}\"", csvType, csvOrientation);
-		
-		switch (csvType) {
-		case DOTS:
-			csvParseAlgorithm = new CsvDotParser();
-			break;
-		case X_ALIGNED:
-			csvParseAlgorithm = new CsvXAlignedParser();
-			break;
-		case X_ALIGNED_CATEGORIES:
-			csvParseAlgorithm = new CsvXAlignedCategoriesParser();
-			break;
-		default:
-			return null;
-		}
-		
-		switch (csvOrientation) {
-		case HORIZONTAL:
-			return csvParseAlgorithm.parseAsHorizontalDataSets(csvData);
-		case VERTICAL:
-			return csvParseAlgorithm.parseAsVerticalDataSets(csvData);
-		default:
-			return null;
-		}
-	}
+        String[] nextLine;
+        while ((nextLine = csvReader.readNext()) != null) {
+            csvData.add(new ArrayList<String>(Arrays.asList(nextLine)));
+        }
+
+        csvReader.close();
+    }
+
+    public PointListList parse(CsvType csvType, CsvOrientation csvOrientation) {
+        CsvParseAlgorithm csvParseAlgorithm;
+
+        log.info("Parse die Daten als \"{}\", Orientierung \"{}\"", csvType, csvOrientation);
+
+        switch (csvType) {
+        case DOTS:
+            csvParseAlgorithm = new CsvDotParser();
+            break;
+        case X_ALIGNED:
+            csvParseAlgorithm = new CsvXAlignedParser();
+            break;
+        case X_ALIGNED_CATEGORIES:
+            csvParseAlgorithm = new CsvXAlignedCategoriesParser();
+            break;
+        default:
+            return null;
+        }
+
+        switch (csvOrientation) {
+        case HORIZONTAL:
+            return csvParseAlgorithm.parseAsHorizontalDataSets(csvData);
+        case VERTICAL:
+            return csvParseAlgorithm.parseAsVerticalDataSets(csvData);
+        default:
+            return null;
+        }
+    }
 }
