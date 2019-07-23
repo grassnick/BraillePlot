@@ -8,7 +8,7 @@ import static java.lang.Math.min;
 
 /**
  * Rasterizer. A functional interface for anything that is able to rasterize renderable data onto a raster.
- * This interface also defines a static set of tool methods for basic operations on a rasters data container ({@link MatrixData}).
+ * This interface also defines a static set of tool methods for basic operations on a raster's data container ({@link MatrixData}).
  * @param <T> The concrete class implementing {@link Renderable} which can be rasterized with the rasterizer.
  * @author Leonard Kupper
  * @version 2019.07.22
@@ -19,7 +19,7 @@ public interface Rasterizer<T extends Renderable> {
     /**
      * Rasterizes a {@link Renderable} instance onto a {@link RasterCanvas}.
      * @param data The renderable representation.
-     * @param canvas A instance of {@link RasterCanvas} representing the target for the rasterizer output.
+     * @param canvas An instance of {@link RasterCanvas} representing the target for the rasterizer output.
      * @throws InsufficientRenderingAreaException If too few space is available on the {@link RasterCanvas}
      * to display the given data.
      */
