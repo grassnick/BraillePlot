@@ -1,7 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.exporter;
 
 
-import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -16,7 +15,7 @@ import org.junit.jupiter.api.Test;
 public class PrintDirectorTest {
 
     // Negative Tests
-    // Because this componend depends heavily on almost all other components, the testcases will be more integration t
+    // Because this componend depends heavily on almost all other components, the testcases will be more integration
     // tests then unittests.
     /**
      * Test for giving a Null to the PrintDirector-Constructor.
@@ -28,5 +27,4 @@ public class PrintDirectorTest {
             PrintDirector printF1 = new PrintDirector(null, null);
         });
     }
-
 }
