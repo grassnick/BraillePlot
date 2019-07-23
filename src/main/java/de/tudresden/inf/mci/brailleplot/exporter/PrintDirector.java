@@ -78,6 +78,7 @@ public class PrintDirector {
      */
 
     private void setUpService() {
+        Objects.requireNonNull(mPrinterName);
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         for (PrintService service: services) {
             if (service.getName().equals(mPrinterName)) {
@@ -97,6 +98,8 @@ public class PrintDirector {
 
     private void print(final byte[] data) {
         Objects.requireNonNull(data);
+        Objects.requireNonNull(mService);
+        Objects.requireNonNull(mDocflavor);
         Doc doc = new SimpleDoc(data, mDocflavor, null);
         PrintRequestAttributeSet asset = new HashPrintRequestAttributeSet();
         DocPrintJob job = mService.createPrintJob();
