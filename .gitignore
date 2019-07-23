@@ -6,11 +6,7 @@ out
 
 # IntelliJ
 .idea
-brailleplot.iml
-
-# Application
-!src/main/resources/*
-src/main/java/de/tudresden/inf/mci/brailleplot/rendering/UniformTextureBarChartRasterizer.java
+*.iml
 
 # Java
 *.class
