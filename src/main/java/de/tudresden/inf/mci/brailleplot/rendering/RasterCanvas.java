@@ -67,9 +67,6 @@ public class RasterCanvas extends AbstractCanvas {
         calculateRasterSize();
         calculateSpacing();
 
-        System.out.println(mXPositions.toString());
-        System.out.println(mYPositions.toString());
-
     }
 
     public final MatrixData<Boolean> getNewPage() {
@@ -99,20 +96,6 @@ public class RasterCanvas extends AbstractCanvas {
         // Calculate cell size in mm
         mCellHorizontalMM = mHorizontalDotDistance * (mCellWidth - 1) + mHorizontalCellDistance; // Full width of one cell + padding in mm
         mCellVerticalMM = mVerticalDotDistance * (mCellHeight - 1) + mVerticalCellDistance; // Full height of one cell + padding in mm
-
-
-/*      TO BE DELETED
-        // Subtract additional raster indentation from virtual margin.
-        mMarginTop = max(mMarginTop - rasterConstraintTop, 0);
-        mMarginLeft = max(mMarginLeft - rasterConstraintLeft, 0);
-        mMarginBottom = max(mMarginBottom - rasterConstraintWidth, 0);
-        mMarginRight = max(mMarginRight - rasterConstraintWidth, 0);
-
-        // Subtract additional raster indentation from page size.
-        mMillimeterWidth = max(mMillimeterWidth - (rasterConstraintLeft + rasterConstraintWidth), 0);
-        mMillimeterHeight = max(mMillimeterHeight - (rasterConstraintTop + rasterConstraintWidth), 0);
-
- */
 
     }
 

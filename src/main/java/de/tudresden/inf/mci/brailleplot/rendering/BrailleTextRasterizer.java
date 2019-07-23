@@ -18,7 +18,6 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
             canvas.getCurrentPage().setValue(y + 2, x, true);
             x += 2;
         }
-        //Rasterizer.rectangle(data.getArea(), canvas.getCurrentPage(), true);
     }
 
     // TODO: Completely replace with help methods to calculate suited area for left or right alignment of given text.

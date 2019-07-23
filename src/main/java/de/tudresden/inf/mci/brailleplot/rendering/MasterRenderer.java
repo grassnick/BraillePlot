@@ -23,12 +23,12 @@ public final class MasterRenderer {
         // if no rendering base is given, create own rendering base with default set of algorithms
         FunctionalRenderingBase renderingBase = new FunctionalRenderingBase();
 
-        // here are the default algorithms:
+        // Default Algorithms:
 
-        Rasterizer<BarChart> uniformTexture = new UniformTextureBarChartRasterizer();
+        // Rasterizer<BarChart> uniformTexture = new UniformTextureBarChartRasterizer();
         Rasterizer<Image> linearImageMapping = new ImageRasterizer();
 
-        renderingBase.registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, uniformTexture));
+        // renderingBase.registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, uniformTexture));
         renderingBase.registerRasterizer(new FunctionalRasterizer<Image>(Image.class, linearImageMapping));
         //renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, ScatterPlotRasterizing::fooRasterizing));
         //...
@@ -57,7 +57,7 @@ public final class MasterRenderer {
         if (rasterType == "6-dot") {
             return new SixDotBrailleRasterCanvas(mPrinter, mFormat);
         } else {
-
+            ...
         }
          */
     }

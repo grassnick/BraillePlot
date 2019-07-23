@@ -71,7 +71,6 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
 
         String strDiagramTitle = "I am a bar chart"; // TODO: WHERE DO WE GET THIS INFO FROM??
         Rectangle barArea = mCanvas.getCellRectangle();
-        System.out.println(barArea + " " + mCanvas.getPrintableWidth() + " x " + mCanvas.getPrintableHeight() + " mm");
         int titleBarHeight;
         Rectangle titleArea, xAxisArea;
 
@@ -119,7 +118,6 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         // A little helper algorithm tries to find a good scaling such that the axis divisions correspond to the original
         // value range in a rational way. (e.g. one step on the x-axis is a half of the order of magnitude of the value range.)
         double xAxisStepWidth = findAxisScaling(valueRangeSize, availableUnits);
-        System.out.println("Precision: " + xAxisStepWidth);
 
         // Divide the bar area into a negative and a positive fragment, depending on the value range.
         int negUnits = (int) round((negValueRangeSize / valueRangeSize) * availableUnits);
@@ -176,7 +174,6 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         char labelLetter = 'A';
         for (int axisTick = (negUnits / 2) * -1; axisTick <= (posUnits / 2); axisTick++) {
             xAxisLabels.put(axisTick, Character.toString(labelLetter));
-            System.out.println(axisTick + ": " + labelLetter);
             labelLetter++;
         }
         xAxis.setLabels(xAxisLabels);
@@ -232,7 +229,6 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         int barCells = (int) ceil(barSize / (double) cellHeight); // important cast, else int division happens
         int cellsInclusive = (int) ceil(sizeInclusive / (double) cellHeight);
         // --> Linear equation
-        System.out.println(barThickness + " -> " + barCells + " " + (cellsInclusive - 1));
         return barCells + (cellsInclusive - 1) * (mDiagram.getCategoryCount() - 1);
     }
 
@@ -258,7 +254,6 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         int lowerY = bottomRightDotY - mBarInCellPadding; // position relative to reference point
         int upperX = lowerX + length; // add the horizontal size of the bar (representing the category value)
         int upperY = lowerY - (thickness - 1); // substract the bar thickness (up = towards smaller y)
-        System.out.println("Bar: " + lowerX + "," + lowerY + " " + upperX + "," + upperY);
         Rasterizer.rectangle(lowerX, lowerY, upperX, upperY, mData, true);
 
         // then the rectangle is filled with the uniform texture

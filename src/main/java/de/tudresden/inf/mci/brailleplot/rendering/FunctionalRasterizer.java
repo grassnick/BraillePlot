@@ -7,7 +7,7 @@ package de.tudresden.inf.mci.brailleplot.rendering;
  * @author Leonard Kupper
  * @version 2019.07.20
  */
-public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
+class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
 
     private Class<? extends T> mSupportedDiagramClass;
     private ThrowingBiConsumer<T, RasterCanvas, InsufficientRenderingAreaException> mRasterizingAlgorithm;
@@ -25,16 +25,6 @@ public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
         mRasterizingAlgorithm = rasterizer::rasterize;
     }
 
-    /*
-    public FunctionalRasterizer(
-            final Class<? extends T> supportedDiagramClass,
-            final ThrowingBiConsumer<T, RasterCanvas, InsufficientRenderingAreaException> rasterizingAlgorithm)
-    {
-        mSupportedDiagramClass = supportedDiagramClass;
-        mRasterizingAlgorithm = rasterizingAlgorithm;
-    }
-     */
-
     @Override
     public void rasterize(final Renderable data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
         // invoke the given rasterizing algorithm
@@ -49,7 +39,7 @@ public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
     @SuppressWarnings("unchecked")
     // This is allowed, because the code that calls the rasterize method does a lookup based on the diagram class beforehand
     // and will only select the appropriate rasterizer. (See FunctionalRenderingBase)
-    // Since the FunctionalRasterizer is package private, there is no way to invoke it with the wrong type from 'outside'. TODO: MAKE IT PACKAGE PRIVATE!
+    // Since the FunctionalRasterizer is package private, there is no way to invoke it with the wrong type from 'outside'.
     // Should somebody still force this to happen by intentional tampering, we have no choice but to catch this disgrace.
     private T safeCast(final Renderable data) {
         try {

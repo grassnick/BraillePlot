@@ -83,7 +83,6 @@ public class ImageRasterizer implements Rasterizer<Image> {
 
         // First, a readable representation of the is retrieved.
         BufferedImage imgBuf = imgData.getBufferedImage();
-        System.out.println(imgBuf.getWidth() + "x" + imgBuf.getHeight());
 
         // Then the selected method is applied.
         // Implementing the rasterizer as class comes in handy. Subtasks can be splitted into help
@@ -172,8 +171,6 @@ public class ImageRasterizer implements Rasterizer<Image> {
             hRatio = min(hRatio, vRatio);
             vRatio = min(hRatio, vRatio);
         }
-
-        System.out.println("Available area: " + availableArea.getWidth() + "mm x " + availableArea.getHeight() + "mm");
 
         // Quantified Positions: The pixel position of the original image is linearly mapped to the respective
         // millimeter position on the printed area of the page. This step preserves the original distance ratios.
