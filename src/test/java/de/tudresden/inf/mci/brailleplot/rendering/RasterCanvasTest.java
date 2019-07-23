@@ -12,11 +12,11 @@ import java.util.ListIterator;
 
 public class RasterCanvasTest {
 
-    public static final String mDefaultConfig = getResource("rasterizer_test_default.properties").getAbsolutePath();
-    public static final String mBaseConfig = getResource("base_format.properties").getAbsolutePath();
-    public static final String mMarginsOnlyConfig = getResource("margins_only.properties").getAbsolutePath();
-    public static final String mConstraintOnlyConfig = getResource("constraint_only.properties").getAbsolutePath();
-    public static final String mBothConfig = getResource("margins_and_constraint.properties").getAbsolutePath();
+    public static final String mDefaultConfig = getResource("config/rasterizer_test_default.properties").getAbsolutePath();
+    public static final String mBaseConfig = getResource("config/base_format.properties").getAbsolutePath();
+    public static final String mMarginsOnlyConfig = getResource("config/margins_only.properties").getAbsolutePath();
+    public static final String mConstraintOnlyConfig = getResource("config/constraint_only.properties").getAbsolutePath();
+    public static final String mBothConfig = getResource("config/margins_and_constraint.properties").getAbsolutePath();
 
     public static File getResource(String fileName) {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
@@ -177,7 +177,7 @@ public class RasterCanvasTest {
                 () -> {
                     ConfigurationParser parser = new JavaPropertiesConfigurationParser(mBaseConfig, mDefaultConfig);
                     MasterRenderer renderer = new MasterRenderer(parser.getPrinter(), parser.getFormat("test"));
-                    RasterCanvas result = renderer.rasterize(new Image(getResource("dummy.bmp")));
+                    RasterCanvas result = renderer.rasterize(new Image(getResource("examples/img/dummy.bmp")));
                     ListIterator iter = result.getPageIterator();
                     while (iter.hasNext()) {
                         MatrixData<Boolean> page = (MatrixData<Boolean>) iter.next();

@@ -13,8 +13,8 @@ import java.io.File;
 
 public class MasterRendererTest {
 
-    public static final String mDefaultConfig = getResource("rasterizer_test_default.properties").getAbsolutePath();
-    public static final String mBaseConfig = getResource("base_format.properties").getAbsolutePath();
+    public static final String mDefaultConfig = getResource("config/rasterizer_test_default.properties").getAbsolutePath();
+    public static final String mBaseConfig = getResource("config/base_format.properties").getAbsolutePath();
     public static Printer mPrinter;
     public static Format mFormat;
 
@@ -68,7 +68,7 @@ public class MasterRendererTest {
                     result= renderer.rasterize(new BrailleText("dummy text", new Rectangle(0,0,1,1)));
                     Assertions.assertEquals(1, result.getPageCount());
 
-                    result = renderer.rasterize(new Image(getResource("dummy.bmp")));
+                    result = renderer.rasterize(new Image(getResource("examples/img/dummy.bmp")));
                     Assertions.assertEquals(2, result.getPageCount());
 
                     // Test replacement of rasterizer
@@ -79,7 +79,7 @@ public class MasterRendererTest {
                     });
                     renderingBase.registerRasterizer(rasterizerRef3);
 
-                    result = renderer.rasterize(new Image(getResource("dummy.bmp")));
+                    result = renderer.rasterize(new Image(getResource("examples/img/dummy.bmp")));
                     Assertions.assertEquals(3, result.getPageCount());
 
                 }
@@ -93,6 +93,6 @@ public class MasterRendererTest {
         // Create MasterRenderer with empty rendering base.
         MasterRenderer empty = new MasterRenderer(mPrinter, mFormat, new FunctionalRenderingBase());
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> empty.rasterize(new Image(getResource("dummy.bmp"))));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> empty.rasterize(new Image(getResource("examples/img/dummy.bmp"))));
     }
 }

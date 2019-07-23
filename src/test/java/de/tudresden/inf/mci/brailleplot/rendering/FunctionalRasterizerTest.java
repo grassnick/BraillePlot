@@ -13,8 +13,8 @@ import java.io.File;
 
 public class FunctionalRasterizerTest {
 
-    public static final String mDefaultConfig = getResource("rasterizer_test_default.properties").getAbsolutePath();
-    public static final String mBaseConfig = getResource("base_format.properties").getAbsolutePath();
+    public static final String mDefaultConfig = getResource("config/rasterizer_test_default.properties").getAbsolutePath();
+    public static final String mBaseConfig = getResource("config/base_format.properties").getAbsolutePath();
     public static Printer mPrinter;
     public static Format mFormat;
 
@@ -50,7 +50,7 @@ public class FunctionalRasterizerTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             RasterCanvas testCanvas = new SixDotBrailleRasterCanvas(mPrinter, mFormat);
             // Pass Image to BrailleText rasterizer.
-            textRasterizer.rasterize(new Image(getResource("dummy.bmp")), testCanvas);
+            textRasterizer.rasterize(new Image(getResource("examples/img/dummy.bmp")), testCanvas);
         });
     }
 }
