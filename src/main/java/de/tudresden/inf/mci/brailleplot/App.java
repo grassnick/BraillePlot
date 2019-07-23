@@ -5,6 +5,8 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
+import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
+import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,6 +131,11 @@ public final class App {
 
             // ...
 
+            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(
+                    getClass().getClassLoader().getResource("index_everest_d_v4.properties").getFile(),
+                    getClass().getClassLoader().getResource("default.properties").getFile()
+            );
+            MasterRenderer renderer = new MasterRenderer(configParser.getPrinter(), configParser.getFormat("A4"));
         } catch (final Exception e) {
             terminateWithException(e);
         }

@@ -10,7 +10,10 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
  */
 class SixDotBrailleRasterCanvas extends RasterCanvas {
 
+    private static final int CELL_WIDTH = 2;
+    private static final int CELL_HEIGHT = 3;
+
     SixDotBrailleRasterCanvas(final Printer printer, final Format format) throws InsufficientRenderingAreaException {
-        super(printer, format, 2, 3);
+        super(printer, format, CELL_WIDTH, CELL_HEIGHT);
     }
 }

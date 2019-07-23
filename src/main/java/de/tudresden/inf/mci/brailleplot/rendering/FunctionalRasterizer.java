@@ -18,7 +18,7 @@ class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
      * @param supportedDiagramClass A reference to the accepted diagram class (e.g. 'BarChart.class')
      * @param rasterizer A reference to a Rasterizer instance.
      */
-    public FunctionalRasterizer(
+    FunctionalRasterizer(
             final Class<T> supportedDiagramClass,
             final Rasterizer<T> rasterizer) {
         mSupportedDiagramClass = supportedDiagramClass;

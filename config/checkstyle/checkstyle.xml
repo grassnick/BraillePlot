@@ -105,9 +105,7 @@
 
         <!-- Checks for imports                              -->
         <!-- See http://checkstyle.sf.net/config_import.html -->
-       <!-- Sometimes its better with a star...
         <module name="AvoidStarImport"/>
-        -->
         <module name="IllegalImport"/> <!-- defaults to sun.* packages -->
         <module name="RedundantImport"/>
         <module name="UnusedImports">
@@ -120,9 +118,7 @@
         <module name="LineLength"/>
 -->
         <module name="MethodLength"/>
-        <!-- TODO: FIND ANOTHER SOLUTION
         <module name="ParameterNumber"/>
-        -->
 
         <!-- Checks for whitespace                               -->
         <!-- See http://checkstyle.sf.net/config_whitespace.html -->
@@ -161,9 +157,7 @@
         </module>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
-        <!-- TODO: FIND ANOTHER SOLUTION
         <module name="MagicNumber"/>
-        -->
         <module name="MissingSwitchDefault"/>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>

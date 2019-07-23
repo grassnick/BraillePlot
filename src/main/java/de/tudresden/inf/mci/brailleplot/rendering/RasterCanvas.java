@@ -7,7 +7,9 @@ import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 
 import java.util.ArrayList;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
+import static java.lang.Math.ceil;
+import static java.lang.Math.floor;
 
 /**
  * Representation of a target onto which an image can be rasterized.

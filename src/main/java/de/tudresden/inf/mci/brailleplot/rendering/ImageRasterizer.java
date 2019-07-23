@@ -4,7 +4,8 @@ import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
 import java.awt.image.BufferedImage;
 
-import static java.lang.Math.*;
+import static java.lang.Math.min;
+import static java.lang.Math.round;
 
 /**
  * A rasterizer that is able to re-raster a raster graphics onto a canvas.
@@ -26,6 +27,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
 
     // Output threshold: A dot will be set for gray scale values below (darker than/equal) this threshold.
     private int mLowThreshold;
+    private final int mDefaultThreshold = 80;
 
     /**
      * Constructor. Creates a new {@link Rasterizer} for instances of {@link Image} with default settings.
@@ -34,7 +36,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
         mPreventOverStretch = true;
         mPreserveAspectRatio = true;
         mQuantifiedPositions = true;
-        mLowThreshold = 80;
+        mLowThreshold = mDefaultThreshold;
     }
 
     /**
@@ -199,9 +201,12 @@ public class ImageRasterizer implements Rasterizer<Image> {
 
 
     private int toGrayScaleValue(final int rgb) {
-        int r = (rgb >> 16) & 0xff;
-        int g = (rgb >> 8) & 0xff;
-        int b = (rgb) & 0xff;
-        return ((r + g + b) / 3);
+        final int colorChannels = 3;
+        final int bitsPerChannel = 8;
+        final int byteMask = 0xff;
+        int r = (rgb >> 2 * bitsPerChannel) & byteMask;
+        int g = (rgb >> bitsPerChannel) & byteMask;
+        int b = (rgb) & byteMask;
+        return ((r + g + b) / colorChannels);
     }
 }

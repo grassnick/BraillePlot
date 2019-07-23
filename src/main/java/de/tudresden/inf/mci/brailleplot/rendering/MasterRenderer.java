@@ -2,7 +2,6 @@ package de.tudresden.inf.mci.brailleplot.rendering;
 
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
-import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 
 import java.util.Objects;
 
