@@ -14,9 +14,11 @@ import org.junit.jupiter.api.Test;
 
 public class PrintDirectorTest {
 
-    // Negative Tests
-    // Because this componend depends heavily on almost all other components, the testcases will be more integration
-    // tests then unittests.
+    /* Negative Tests
+     Because this componend depends heavily on almost all other components, the testcases will be more integration
+     tests then unittests.
+    */
+
     /**
      * Test for giving a Null to the PrintDirector-Constructor.
      * Expected: NullPointerException.
