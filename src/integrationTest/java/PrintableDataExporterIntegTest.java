@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import javax.print.DocFlavor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -131,6 +132,40 @@ public class PrintableDataExporterIntegTest {
                 throw e.getTargetException();
             }
         });
+    }
+
+
+
+    @Test
+    public void testWrongDocFlavor() {
+        Assertions.assertThrows(RuntimeException.class, () -> {
+            Field mDocflavor = PrintDirector.class.getDeclaredField("mDocflavor");
+            mDocflavor.setAccessible(true);
+            PrintDirector printD = new PrintDirector(PrinterCapability.NORMALPRINTER, printer);
+            mDocflavor.set(printD, new DocFlavor("text/html", "[B"));
+            Method setUpService = PrintDirector.class.getDeclaredMethod("setUpService");
+            setUpService.setAccessible(true);
+            try {
+                setUpService.invoke(printD);
+                Method privatePrint = PrintDirector.class.getDeclaredMethod("print", byte[].class);
+                privatePrint.setAccessible(true);
+                privatePrint.invoke(printD, new byte[] {0x50});
+            } catch (InvocationTargetException e){
+                throw e.getTargetException();
+            }
+
+        });
+    }
+
+    // Positve Testcases
+
+    @Test
+    public void testIfPrintJobIsExistent() {
+        Assertions.assertDoesNotThrow(() ->{
+            PrintDirector printD = new PrintDirector(PrinterCapability.NORMALPRINTER, printer);
+            printD.print(data);
+        });
+
     }
 
 
