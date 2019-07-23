@@ -106,7 +106,7 @@ public class PrintDirector {
         try {
             job.print(doc, asset);
         } catch (PrintException pe) {
-            System.out.println(pe.getMessage());
+            throw new RuntimeException(pe);
         }
 
     }
