@@ -330,7 +330,7 @@ public class Rectangle {
         public int getHeight() {
             return wrapInt(mRectangle.getHeight());
         }
-        
+
         public int getRight() {
             return wrapInt(mRectangle.getRight()) - 1;
         }
