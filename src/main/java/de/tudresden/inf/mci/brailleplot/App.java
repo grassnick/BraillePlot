@@ -5,8 +5,6 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
-import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
-import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
