@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot.parser;
+package de.tudresden.inf.mci.brailleplot.csvparser;
 
 import com.opencsv.CSVReader;
 import org.slf4j.Logger;

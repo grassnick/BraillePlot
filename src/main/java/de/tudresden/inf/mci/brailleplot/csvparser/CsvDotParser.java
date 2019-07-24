@@ -1,6 +1,6 @@
-package de.tudresden.inf.mci.brailleplot.parser;
+package de.tudresden.inf.mci.brailleplot.csvparser;
 
-import de.tudresden.inf.mci.brailleplot.parser.PointListList.PointList;
+import de.tudresden.inf.mci.brailleplot.csvparser.PointListList.PointList;
 
 import java.text.ParseException;
 import java.util.Iterator;

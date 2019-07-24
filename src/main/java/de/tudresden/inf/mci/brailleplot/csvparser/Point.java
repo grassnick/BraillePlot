@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot.parser;
+package de.tudresden.inf.mci.brailleplot.csvparser;
 
 import org.w3c.dom.Element;
 

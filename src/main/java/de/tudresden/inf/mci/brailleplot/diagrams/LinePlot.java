@@ -1,6 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.diagrams;
 
-import de.tudresden.inf.mci.brailleplot.parser.PointListList;
+import de.tudresden.inf.mci.brailleplot.csvparser.PointListList;
 
 /**
  * Representation of a line plot.
