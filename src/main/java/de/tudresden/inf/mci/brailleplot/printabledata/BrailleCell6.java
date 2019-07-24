@@ -49,7 +49,7 @@ public final class BrailleCell6<T> {
      * @param vals An array of values to obtain the values from.
      * @throws IllegalArgumentException If the length is not equal to 6.
      */
-    public BrailleCell6(final T[] vals) {
+    BrailleCell6(final T[] vals) {
         if (vals.length != DOT_COUNT) {
             throw new IllegalArgumentException("Input Array must be of length " + DOT_COUNT);
         }

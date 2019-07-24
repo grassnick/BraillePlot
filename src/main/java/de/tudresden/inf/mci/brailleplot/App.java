@@ -1,6 +1,5 @@
 package de.tudresden.inf.mci.brailleplot;
 
-
 import de.tudresden.inf.mci.brailleplot.configparser.*;
 import de.tudresden.inf.mci.brailleplot.exporter.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.exporter.PrinterCapability;
@@ -17,15 +16,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
-import java.io.IOException;
-import java.util.concurrent.ConcurrentLinkedDeque;
 
+import java.io.IOException;
+
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * Main class.
  * Set up the application and run it.
- * @author Georg Graßnick, Andrey Ruzhanskiy
- * @version 28.06.19
+ * @author Georg Graßnick
+ * @version 06.06.19
  */
 
 public final class App {
@@ -35,26 +35,8 @@ public final class App {
      * Instantiate application and execute it.
      * @param args Command line parameters.
      */
-    public static void main(final String[] args) throws IOException {
+    public static void main(final String[] args) {
         App app = App.getInstance();
-        /**String csvPath = "parser_bar.csv";
-        CsvType csvType = CsvType.X_ALIGNED_CATEGORIES;
-        CsvOrientation csvOrientation = CsvOrientation.HORIZONTAL;
-        CsvParser parser = new CsvParser(new FileReader(csvPath), ',', '"');
-        CategorialPointListList points = (CategorialPointListList) parser.parse(csvType, csvOrientation);
-        BarChart point = new BarChart(points);
-        System.out.print(parser.csvData + "\n");
-        System.out.print(point.getDataSetName(0) + ": ");
-        System.out.print(point.getDataSet(0)+ "\n");
-        System.out.print(point.getDataSetName(1) + ": ");
-        System.out.print(point.getDataSet(1)+ "\n");
-        System.out.print(point.getDataSetName(2) + ": ");
-        System.out.print(point.getDataSet(2)+ "\n");
-        System.out.print(point.getCategoryName(0)+ "\n");
-        System.out.print(point.getCategoryName(1)+ "\n");
-        System.out.print(point.getCategoryName(2)+ "\n");
-        System.out.print(point.getMinY() + "\n");
-        System.out.print(point.getMaxY() + "\n");**/
         System.exit(app.run(args));
     }
 
@@ -129,7 +111,6 @@ public final class App {
      * @param args Command line parameters.
      * @return 0 if Application exited successfully, 1 on error.
      */
-    @SuppressWarnings("checkstyle:MagicNumber")
     int run(final String[] args) {
 
         // Has to be the first finalizer to be added, so that it is run last

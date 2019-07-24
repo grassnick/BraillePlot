@@ -7,12 +7,13 @@ out
 
 # IntelliJ
 .idea
-brailleplot.iml
-
-# Application
-dummyPrinterConfig.properties
+*.iml
 
 # Java
 *.class
 *.jar
 *.tar
+
+# Miscellaneous
+*.DS_Store
+*.db

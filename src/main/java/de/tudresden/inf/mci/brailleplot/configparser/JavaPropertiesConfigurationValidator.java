@@ -45,6 +45,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
 
  /*
         Map<String, Predicate<String>> p = new HashMap<>();
+<<<<<<< HEAD
         p.put("name", requireNotEmpty.and(requirePrinterExists));
         p.put("min.charsPerLine", requireInteger.and(requirePositive));
         p.put("max.charsPerLine", requireInteger.and(requirePositive));

@@ -38,6 +38,7 @@ dependencies {
     // Units
     compile group: 'javax.measure', name: 'unit-api', version: '2.0-PRD'
     compile group: 'tec.units', name: 'unit-ri', version: '1.0.3'
+<<<<<<< HEAD
     
     // Parsing
     compile group: 'javax.json', name: 'javax.json-api', version: '1.0'
@@ -47,6 +48,8 @@ dependencies {
     compile group: 'com.beust', name: 'jcommander', version: '1.64'
 
 
+=======
+>>>>>>> feat/rasterizer-10
 }
 
 tasks.withType(Test) {
