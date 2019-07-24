@@ -5,11 +5,14 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
+import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
+import de.tudresden.inf.mci.brailleplot.rendering.Image;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -130,7 +133,14 @@ public final class App {
             // Parse csv data
 
             // ...
-
+            ConfigurationParser parser = new JavaPropertiesConfigurationParser(
+                    getClass().getClassLoader().getResource("config/index_everest_d_v4.properties").getFile(),
+                    getClass().getClassLoader().getResource("config/default.properties").getFile()
+            );
+            MasterRenderer renderer = new MasterRenderer(parser.getPrinter(), parser.getFormat("A4"));
+            renderer.rasterize(new Image(
+                    new File(getClass().getClassLoader().getResource("examples/img/2_image_chart.png").toURI())
+            ));
         } catch (final Exception e) {
             terminateWithException(e);
         }
