@@ -2,6 +2,7 @@ package de.tudresden.inf.mci.brailleplot.rendering;
 
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 
 import java.util.Objects;
 
@@ -24,10 +25,10 @@ public final class MasterRenderer {
 
         // Default Algorithms:
 
-        // Rasterizer<BarChart> uniformTexture = new UniformTextureBarChartRasterizer();
+        Rasterizer<BarChart> uniformTexture = new UniformTextureBarChartRasterizer();
         Rasterizer<Image> linearImageMapping = new ImageRasterizer();
 
-        // renderingBase.registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, uniformTexture));
+        renderingBase.registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, uniformTexture));
         renderingBase.registerRasterizer(new FunctionalRasterizer<Image>(Image.class, linearImageMapping));
         //renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, ScatterPlotRasterizing::fooRasterizing));
         //...

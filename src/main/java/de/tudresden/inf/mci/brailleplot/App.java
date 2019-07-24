@@ -1,9 +1,14 @@
 package de.tudresden.inf.mci.brailleplot;
 
 import de.tudresden.inf.mci.brailleplot.configparser.*;
+import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 import de.tudresden.inf.mci.brailleplot.exporter.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.exporter.PrinterCapability;
 
+import de.tudresden.inf.mci.brailleplot.parser.CategorialPointListList;
+import de.tudresden.inf.mci.brailleplot.parser.CsvOrientation;
+import de.tudresden.inf.mci.brailleplot.parser.CsvParser;
+import de.tudresden.inf.mci.brailleplot.parser.CsvType;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 
@@ -12,9 +17,14 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
+import de.tudresden.inf.mci.brailleplot.rendering.Image;
+import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
+import de.tudresden.inf.mci.brailleplot.rendering.RasterCanvas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileReader;
 import java.util.Optional;
 
 import java.io.IOException;
@@ -137,20 +147,35 @@ public final class App {
 
             // Parse csv data
 
+            String csvPath = getClass().getClassLoader().getResource("examples/csv/1_bar_chart.csv").getFile();
+            CsvType csvType = CsvType.X_ALIGNED_CATEGORIES;
+            CsvOrientation csvOrientation = CsvOrientation.HORIZONTAL;
+            CsvParser parser = new CsvParser(new FileReader(csvPath), ',', '"');
+            CategorialPointListList points = (CategorialPointListList) parser.parse(csvType, csvOrientation);
+            BarChart point = new BarChart(points);
+
+
             // Config Parsing
 
-            // TODO make it default if nothing is found in p.
-            Optional<String> configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH);
-            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get(), "default.properties");
+            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(
+                    getClass().getClassLoader().getResource("config/index_everest_d_v4.properties").getFile(),
+                    getClass().getClassLoader().getResource("config/default.properties").getFile()
+            );
             Printer printer = configParser.getPrinter();
             printer.getProperty("brailletable").toString();
             Format formatA4 = configParser.getFormat("A4");
 
-
+            MasterRenderer renderer = new MasterRenderer(printer, formatA4);
 
             // Last Step: Printing
 
-            MatrixData<Boolean> data = new SimpleMatrixDataImpl<>(printer, formatA4, 18, 20, true);
+            /*
+            RasterCanvas canvas = renderer.rasterize(new Image(
+                    new File(getClass().getClassLoader().getResource("examples/img/fry.png").toURI())
+            ));
+             */
+            RasterCanvas canvas = renderer.rasterize(point);
+            MatrixData<Boolean> data = canvas.getCurrentPage();
             String printerConfigUpperCase = printer.getProperty("mode").toString().toUpperCase();
             PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), printer);
             printD.print(data);

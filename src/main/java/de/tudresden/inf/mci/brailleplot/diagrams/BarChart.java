@@ -2,6 +2,7 @@ package de.tudresden.inf.mci.brailleplot.diagrams;
 
 import de.tudresden.inf.mci.brailleplot.parser.CategorialPointListList;
 import de.tudresden.inf.mci.brailleplot.parser.PointListList;
+import de.tudresden.inf.mci.brailleplot.rendering.Renderable;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  * Representation of a bar chart.
  * @author Richard Schmidt
  */
-public class BarChart {
+public class BarChart implements Renderable {
     private CategorialPointListList p;
 
     public BarChart(final CategorialPointListList p) {
