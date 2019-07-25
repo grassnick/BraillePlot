@@ -7,21 +7,21 @@ package de.tudresden.inf.mci.brailleplot.rendering;
  * @author Leonard Kupper
  * @version 2019.07.20
  */
-class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
+public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
 
-    private Class<? extends T> mSupportedDiagramClass;
+    private Class<? extends T> mSupportedRenderableClass;
     private ThrowingBiConsumer<T, RasterCanvas, InsufficientRenderingAreaException> mRasterizingAlgorithm;
 
     /**
      * Constructor. Creates a new rasterizer from either a given rasterizer implementation or (keep in mind that
      * Rasterizer is a functional interface) from a ThrowingBiConsumer&lt;T, RasterCanvas, InsufficientRenderingAreaException&gt; method reference.
-     * @param supportedDiagramClass A reference to the accepted diagram class (e.g. 'BarChart.class')
+     * @param supportedRenderableClass A reference to the accepted diagram class (e.g. 'BarChart.class')
      * @param rasterizer A reference to a Rasterizer instance.
      */
-    FunctionalRasterizer(
-            final Class<T> supportedDiagramClass,
+    public FunctionalRasterizer(
+            final Class<T> supportedRenderableClass,
             final Rasterizer<T> rasterizer) {
-        mSupportedDiagramClass = supportedDiagramClass;
+        mSupportedRenderableClass = supportedRenderableClass;
         mRasterizingAlgorithm = rasterizer::rasterize;
     }
 
@@ -32,8 +32,8 @@ class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
         mRasterizingAlgorithm.accept(diagram, canvas);
     }
 
-    final Class<? extends T> getSupportedDiagramClass() {
-        return mSupportedDiagramClass;
+    final Class<? extends T> getSupportedRenderableClass() {
+        return mSupportedRenderableClass;
     }
 
     @SuppressWarnings("unchecked")
@@ -43,10 +43,10 @@ class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
     // Should somebody still force this to happen by intentional tampering, we have no choice but to catch this disgrace.
     private T safeCast(final Renderable data) {
         try {
-            return getSupportedDiagramClass().cast(data);
+            return getSupportedRenderableClass().cast(data);
         } catch (ClassCastException e) {
             // wow
-            throw new IllegalArgumentException("Wrong diagram type! This rasterizer is not meant to be used with '"
+            throw new IllegalArgumentException("Wrong renderable type! This rasterizer is not meant to be used with '"
                     + data.getClass().getCanonicalName() + "'", e);
         }
     }

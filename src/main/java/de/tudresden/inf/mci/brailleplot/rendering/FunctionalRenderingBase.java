@@ -52,7 +52,7 @@ public class FunctionalRenderingBase {
      * @param rasterizer The instance of {@link FunctionalRasterizer} to be registered.
      */
     public void registerRasterizer(final FunctionalRasterizer<? extends Renderable> rasterizer) {
-        mRasterizingAlgorithms.put(rasterizer.getSupportedDiagramClass(), rasterizer);
+        mRasterizingAlgorithms.put(rasterizer.getSupportedRenderableClass(), rasterizer);
     }
 
     /**
