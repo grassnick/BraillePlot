@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 import java.util.Objects;
 
@@ -54,13 +52,13 @@ public final class MasterRenderer {
     }
 
     public RasterCanvas rasterize(final Renderable data) throws InsufficientRenderingAreaException {
-        mLogger.info("Starting a new {} rasterizing on RenderingBase {}",
-                data.getClass().getSimpleName(), mRenderingBase.hashCode());
+        mLogger.info("Preparing a new {} rasterizing on RenderingBase {}",
+                data.getClass().getSimpleName(), mRenderingBase);
         RasterCanvas canvas = createCompatibleRasterCanvas();
         mRenderingBase.setRasterCanvas(canvas);
         mRenderingBase.rasterize(data);
-        mLogger.info("Rasterizing of {} on RenderingBase {} has finished",
-                data.getClass().getSimpleName(), mRenderingBase.hashCode());
+        mLogger.info("Rasterizing of {} on RenderingBase {} has finished, result containing {} pages",
+                data.getClass().getSimpleName(), mRenderingBase, canvas.getPageCount());
         return canvas;
     }
 
@@ -89,7 +87,7 @@ public final class MasterRenderer {
 
     public void setPrinter(final Printer printer) {
         mPrinter = Objects.requireNonNull(printer);
-        mLogger.info("Rendering context: Printer was set to {}", mPrinter.getProperty("name")); // TODO: Printer.toString() should append printer name.
+        mLogger.info("Rendering context: Printer was set to {}", mPrinter);
     }
     public Printer getPrinter() {
         return mPrinter;
@@ -105,7 +103,7 @@ public final class MasterRenderer {
 
     public void setRenderingBase(final FunctionalRenderingBase renderingBase) {
         mRenderingBase = Objects.requireNonNull(renderingBase);
-        mLogger.info("Rendering context: Set RenderingBase to instance [{}]", mRenderingBase.hashCode());
+        mLogger.info("Rendering context: Set RenderingBase to instance {}", mRenderingBase);
     }
     public FunctionalRenderingBase getRenderingBase() {
         return mRenderingBase;

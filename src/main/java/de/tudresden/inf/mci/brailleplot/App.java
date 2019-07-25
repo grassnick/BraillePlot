@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot;
 
+import ch.qos.logback.classic.Level;
 import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
@@ -102,6 +103,11 @@ public final class App {
         System.exit(EXIT_ERROR);
     }
 
+    public static void setLoggingLevel(final ch.qos.logback.classic.Level level) {
+        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        root.setLevel(level);
+    }
+
     /**
      * Main loop of the application.
      * @param args Command line parameters.
@@ -117,6 +123,7 @@ public final class App {
         try {
             // Logging example
             mLogger.info("Application started");
+            setLoggingLevel(Level.TRACE);
 
             // Parse command line parameters
             CommandLineParser cliParser = new CommandLineParser();

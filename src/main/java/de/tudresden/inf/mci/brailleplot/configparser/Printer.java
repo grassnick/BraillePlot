@@ -22,6 +22,10 @@ public final class Printer extends Configurable {
 
     @Override
     public String toString() {
-        return "printer configuration";
+        if (getPropertyNames().contains("name")) {
+            return "printer configuration (" + getProperty("name") + ")";
+        } else {
+            return "printer configuration";
+        }
     }
 }

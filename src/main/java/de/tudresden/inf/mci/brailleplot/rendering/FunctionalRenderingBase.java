@@ -85,7 +85,7 @@ public class FunctionalRenderingBase {
      */
     public void setRasterCanvas(final RasterCanvas raster) {
         mRaster = Objects.requireNonNull(raster);
-        mLogger.info("RasterCanvas has been set to instance [{}]", raster.hashCode());
+        mLogger.info("RasterCanvas has been set to instance {}", raster);
     }
 
     /**

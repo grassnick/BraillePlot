@@ -1,5 +1,8 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * FunctionalRasterizer. This class implements a concrete rasterizer via a functional interface.
  * The rasterizing algorithm to be used is passed to the constructor as lambda function, method reference or rasterizer implementation.
@@ -8,6 +11,8 @@ package de.tudresden.inf.mci.brailleplot.rendering;
  * @version 2019.07.20
  */
 public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
+
+    private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
 
     private Class<? extends T> mSupportedRenderableClass;
     private ThrowingBiConsumer<T, RasterCanvas, InsufficientRenderingAreaException> mRasterizingAlgorithm;
@@ -21,6 +26,8 @@ public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
     public FunctionalRasterizer(
             final Class<T> supportedRenderableClass,
             final Rasterizer<T> rasterizer) {
+        mLogger.info("Creating new FunctionalRasterizer: Binding {} rasterizer {}.",
+                supportedRenderableClass.getSimpleName(), rasterizer);
         mSupportedRenderableClass = supportedRenderableClass;
         mRasterizingAlgorithm = rasterizer::rasterize;
     }
@@ -28,8 +35,9 @@ public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
     @Override
     public void rasterize(final Renderable data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
         // invoke the given rasterizing algorithm
-        T diagram = safeCast(data);
-        mRasterizingAlgorithm.accept(diagram, canvas);
+        T safeData = safeCast(data);
+        mLogger.trace("Delegating task to bound rasterizing algorithm {}", mRasterizingAlgorithm);
+        mRasterizingAlgorithm.accept(safeData, canvas);
     }
 
     final Class<? extends T> getSupportedRenderableClass() {

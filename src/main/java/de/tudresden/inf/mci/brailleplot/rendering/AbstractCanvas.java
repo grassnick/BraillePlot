@@ -3,6 +3,8 @@ package de.tudresden.inf.mci.brailleplot.rendering;
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.ListIterator;
  */
 public abstract class AbstractCanvas {
 
+    private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
+
     Printer mPrinter;
     Format mFormat;
 
@@ -23,14 +27,20 @@ public abstract class AbstractCanvas {
     List<PrintableData> mPageContainer;
 
     AbstractCanvas(final Printer printer, final Format format) throws InsufficientRenderingAreaException {
+
+        mLogger.trace("Creating new canvas");
+
         mPrinter = printer;
         mFormat = format;
         mPageContainer = new ArrayList<>();
 
         readConfig();
+
     }
 
     private void readConfig() throws InsufficientRenderingAreaException {
+
+        mLogger.trace("Reading general printer and format configuration for printing area calculation");
 
         // New approach using a box model:
 
@@ -38,6 +48,7 @@ public abstract class AbstractCanvas {
         int pageWidth = mFormat.getProperty("page.width").toInt();
         int pageHeight = mFormat.getProperty("page.height").toInt();
         Rectangle pageBox = new Rectangle(0, 0, pageWidth, pageHeight);
+        mLogger.trace("Determined page box: {}", pageBox);
 
         // Create a margin box
         int marginTop = mFormat.getProperty("margin.top").toInt();
@@ -53,6 +64,7 @@ public abstract class AbstractCanvas {
         } catch (Rectangle.OutOfSpaceException e) {
             throw new InsufficientRenderingAreaException("The sum of the defined margins is bigger than the page size.", e);
         }
+        mLogger.trace("Determined margin box: {}", marginBox);
 
         // Create a constraint box
         double constraintTop = mPrinter.getProperty("constraint.top").toDouble();
@@ -69,8 +81,10 @@ public abstract class AbstractCanvas {
             constraintWidth = Integer.MAX_VALUE;
         }
         Rectangle constraintBox = new Rectangle(constraintLeft, constraintTop, constraintWidth, constraintHeight);
+        mLogger.trace("Determined constraint box: {}", constraintBox);
 
         mPrintableArea = calculatePrintingArea(marginBox, constraintBox);
+        mLogger.info("The calculated available printing area equals: {}", mPrintableArea);
 
     }
 

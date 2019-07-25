@@ -1,5 +1,8 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Objects;
 
 import static java.lang.Math.round;
@@ -13,6 +16,8 @@ import static java.lang.Math.max;
  * @version 2019.07.12
  */
 public class Rectangle {
+
+    private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
 
     private double mX, mY, mW, mH;
 
@@ -28,6 +33,7 @@ public class Rectangle {
         setY(y);
         setWidth(w);
         setHeight(h);
+        mLogger.trace("Created new rectangle: {}", this);
     }
 
     /**
@@ -39,6 +45,7 @@ public class Rectangle {
         setY(rect.getY());
         setWidth(rect.getWidth());
         setHeight(rect.getHeight());
+        mLogger.trace("Copied rectangle: {}", this);
     }
 
     /**

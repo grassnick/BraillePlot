@@ -1,6 +1,8 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
 
@@ -20,6 +22,8 @@ public class ImageRasterizer implements Rasterizer<Image> {
     // it is technically also possible to implement a rasterizer as a method independent from a class, as long
     // as it takes a renderable and a canvas as parameters.
 
+    private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
+
     // Switches
     private boolean mPreventOverStretch;
     private boolean mPreserveAspectRatio;
@@ -27,16 +31,14 @@ public class ImageRasterizer implements Rasterizer<Image> {
 
     // Output threshold: A dot will be set for gray scale values below (darker than/equal) this threshold.
     private int mLowThreshold;
-    private final int mDefaultThreshold = 80;
+    private static final int DEFAULT_THRESHOLD = 80;
 
     /**
      * Constructor. Creates a new {@link Rasterizer} for instances of {@link Image} with default settings.
      */
     public ImageRasterizer() {
-        mPreventOverStretch = true;
-        mPreserveAspectRatio = true;
-        mQuantifiedPositions = true;
-        mLowThreshold = mDefaultThreshold;
+        this(true, true, true, DEFAULT_THRESHOLD);
+        mLogger.trace("Created ImageRasterizer with default settings");
     }
 
     /**
@@ -60,6 +62,8 @@ public class ImageRasterizer implements Rasterizer<Image> {
         mPreserveAspectRatio = preserveAspectRatio;
         mQuantifiedPositions = useQuantifiedPositions;
         mLowThreshold = threshold;
+        mLogger.trace("Created ImageRasterizer. Settings: preventOverStretch={}, preserveAspectRatio={}, useQuantifiedPositions={}, lowThreshold={}",
+                mPreventOverStretch, mPreserveAspectRatio, mQuantifiedPositions, mLowThreshold);
     }
 
     /**
@@ -83,6 +87,9 @@ public class ImageRasterizer implements Rasterizer<Image> {
         // the grey scale value of each pixel.
         // A more sophisticated implementation could utilize an edge finding algorithm.
 
+        mLogger.info("Rasterizing Image {}", imgData);
+
+        mLogger.trace("Retrieving buffered image.");
         // First, a readable representation of the is retrieved.
         BufferedImage imgBuf = imgData.getBufferedImage();
 
@@ -97,6 +104,8 @@ public class ImageRasterizer implements Rasterizer<Image> {
     }
 
     private void linearMapping(final BufferedImage imgBuf, final RasterCanvas canvas) {
+
+        mLogger.trace("Apply linear mapping algorithm.");
 
         // A canvas is basically a wrapper for multiple representations of printable data, each representing a page.
         // These representations can be acquired by either requesting the current page or creating a new page.
@@ -152,6 +161,8 @@ public class ImageRasterizer implements Rasterizer<Image> {
     }
 
     private void quantifiedPositionMapping(final BufferedImage imgBuf, final RasterCanvas canvas) {
+
+        mLogger.trace("Apply quantified position algorithm.");
 
         MatrixData<Boolean> data = canvas.getNewPage();
 
