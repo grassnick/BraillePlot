@@ -6,6 +6,9 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Parser for CSV files that contain data for a scatter plot. Inherits from CsvParseAlgorithm.
+ */
 public class CsvDotParser extends CsvParseAlgorithm {
 
     /**
@@ -14,7 +17,7 @@ public class CsvDotParser extends CsvParseAlgorithm {
      *
      * @return the parsed data
      */
-    public PointListList parseAsHorizontalDataSets(List<? extends List<String>> csvData) {
+    public PointListList parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
         int row = 0;
 
         PointListList pointListList = new PointListList();
@@ -41,8 +44,8 @@ public class CsvDotParser extends CsvParseAlgorithm {
                 Number xValue;
                 Number yValue;
                 try {
-                    xValue = Constants.numberFormat.parse(xRowIterator.next());
-                    yValue = Constants.numberFormat.parse(yRowIterator.next());
+                    xValue = Constants.NUMBER_FORMAT.parse(xRowIterator.next());
+                    yValue = Constants.NUMBER_FORMAT.parse(yRowIterator.next());
                 } catch (ParseException e) {
                     continue;
                 }
@@ -51,8 +54,9 @@ public class CsvDotParser extends CsvParseAlgorithm {
             }
 
             // If there were no points found, do not add the row to the list
-            if (!rowPoints.isEmpty())
+            if (!rowPoints.isEmpty()) {
                 pointListList.add(rowPoints);
+            }
         }
 
         return pointListList;
@@ -65,13 +69,14 @@ public class CsvDotParser extends CsvParseAlgorithm {
      * @return the parsed data
      */
     @Override
-    public PointListList parseAsVerticalDataSets(List<? extends List<String>> csvData) {
+    public PointListList parseAsVerticalDataSets(final List<? extends List<String>> csvData) {
         int row = 0;
 
         PointListList pointListList = new PointListList();
 
-        if (csvData.isEmpty())
+        if (csvData.isEmpty()) {
             return pointListList;
+        }
 
         // Iterate over the first row in order to get the headers
         int col = 0;
@@ -99,8 +104,9 @@ public class CsvDotParser extends CsvParseAlgorithm {
 
                 col++;
 
-                if (!fieldIterator.hasNext())
+                if (!fieldIterator.hasNext()) {
                     break;
+                }
 
                 yRaw = fieldIterator.next();
 
@@ -108,8 +114,8 @@ public class CsvDotParser extends CsvParseAlgorithm {
                 Number yValue;
 
                 try {
-                    xValue = Constants.numberFormat.parse(xRaw);
-                    yValue = Constants.numberFormat.parse(yRaw);
+                    xValue = Constants.NUMBER_FORMAT.parse(xRaw);
+                    yValue = Constants.NUMBER_FORMAT.parse(yRaw);
                 } catch (ParseException e) {
                     col++;
                     continue;

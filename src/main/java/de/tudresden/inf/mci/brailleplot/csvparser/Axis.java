@@ -3,31 +3,34 @@ package de.tudresden.inf.mci.brailleplot.csvparser;
 import java.text.DecimalFormat;
 import java.util.NoSuchElementException;
 
+/**
+ * Abstract class for Axis representation.
+ */
 public abstract class Axis {
 
     // The following offsets can and shall be overwritten by child classes
-    /** X offset of horizontal axis labels */
-    public final double labelOffsetHorizontalX;
-    /** Y offset of horizontal axis labels */
-    public final double labelOffsetHorizontalY;
-    /** X offset of vertical axis labels */
-    public final double labelOffsetVerticalX;
-    /** Y offset of vertical axis labels */
-    public final double labelOffsetVerticalY;
+    /** X offset of horizontal axis labels. */
+    public final double mLabelOffsetHorizontalX;
+    /** Y offset of horizontal axis labels. */
+    public final double mLabelOffsetHorizontalY;
+    /** X offset of vertical axis labels. */
+    public final double mLabelOffsetVerticalX;
+    /** Y offset of vertical axis labels. */
+    public final double mLabelOffsetVerticalY;
 
-    protected double ticInterval;
-    protected Range ticRange;
-    protected double gridInterval;
-    protected Range range;
-    protected double labelInterval;
-    protected Range labelRange;
-    protected final DecimalFormat decimalFormat = (DecimalFormat) DecimalFormat.getInstance(Constants.locale);
+    protected double mTicInterval;
+    protected Range mTicRange;
+    protected double mGridInterval;
+    protected Range mRange;
+    protected double mLabelInterval;
+    protected Range mLabelRange;
+    protected final DecimalFormat mDecimalFormat = (DecimalFormat) DecimalFormat.getInstance(Constants.LOCALE);
 
-    protected String unit;
-    protected String title;
+    protected String mUnit;
+    protected String mTitle;
 
     /** How much the point position shall be shifted - used for nominal axes.*/
-    protected final double pointOffset;
+    protected final double mPointOffset;
 
     /**
      * Constructor setting the label and point offsets.
@@ -37,27 +40,27 @@ public abstract class Axis {
      * @param labelOffsetVerticalY
      * @param pointOffset
      */
-    public Axis(double labelOffsetHorizontalX, double labelOffsetHorizontalY, double labelOffsetVerticalX,
-            double labelOffsetVerticalY, double pointOffset, String title, String unit) {
-        this.labelOffsetHorizontalX = labelOffsetHorizontalX;
-        this.labelOffsetHorizontalY = labelOffsetHorizontalY;
-        this.labelOffsetVerticalX = labelOffsetVerticalX;
-        this.labelOffsetVerticalY = labelOffsetVerticalY;
-        this.pointOffset = pointOffset;
-        this.title = title;
-        this.unit = unit;
+    public Axis(final double labelOffsetHorizontalX, final double labelOffsetHorizontalY, final double labelOffsetVerticalX,
+                final double labelOffsetVerticalY, final double pointOffset, final String title, final String unit) {
+        this.mLabelOffsetHorizontalX = labelOffsetHorizontalX;
+        this.mLabelOffsetHorizontalY = labelOffsetHorizontalY;
+        this.mLabelOffsetVerticalX = labelOffsetVerticalX;
+        this.mLabelOffsetVerticalY = labelOffsetVerticalY;
+        this.mPointOffset = pointOffset;
+        this.mTitle = title;
+        this.mUnit = unit;
     }
 
-    public AxisIterator ticLines() {
-        return new AxisIterator(ticRange, ticInterval);
+    public final AxisIterator ticLines() {
+        return new AxisIterator(mTicRange, mTicInterval);
     }
 
-    public AxisIterator gridLines() {
-        return new AxisIterator(range, gridInterval);
+    public final AxisIterator gridLines() {
+        return new AxisIterator(mRange, mGridInterval);
     }
 
-    public AxisIterator labelPositions() {
-        return new AxisIterator(labelRange, labelInterval);
+    public final AxisIterator labelPositions() {
+        return new AxisIterator(mLabelRange, mLabelInterval);
     }
 
     public abstract String formatForAxisLabel(double value);
@@ -66,20 +69,23 @@ public abstract class Axis {
 
     public abstract String formatForSymbolAudioLabel(double value);
 
+    /**
+     * Iterator for the axis values.
+     */
     public static class AxisIterator implements java.util.Iterator<Double>, Iterable<Double> {
 
-        private Range range;
-        private double interval;
-        private double current;
+        private Range mRange;
+        private double mInterval;
+        private double mCurrent;
 
-        protected AxisIterator(Range range, double interval) {
+        protected AxisIterator(final Range range, final double interval) {
             this(range, interval, 0);
         }
 
-        protected AxisIterator(Range range, double interval, double offset) {
-            this.range = range;
-            this.interval = interval;
-            current = range.getFrom() + offset;
+        protected AxisIterator(final Range range, final double interval, final double offset) {
+            this.mRange = range;
+            this.mInterval = interval;
+            mCurrent = range.getFrom() + offset;
         }
 
         /**
@@ -89,15 +95,16 @@ public abstract class Axis {
          */
         @Override
         public boolean hasNext() {
-            return current <= range.getTo();
+            return mCurrent <= mRange.getTo();
         }
 
         @Override
         public Double next() {
-            if (!hasNext())
+            if (!hasNext()) {
                 throw new NoSuchElementException();
-            double nextCurrent = this.current;
-            this.current += interval;
+            }
+            double nextCurrent = this.mCurrent;
+            this.mCurrent += mInterval;
             return nextCurrent;
         }
 
@@ -113,39 +120,39 @@ public abstract class Axis {
 
     }
 
-    public double getTicInterval() {
-        return ticInterval;
+    public final double getTicInterval() {
+        return mTicInterval;
     }
 
-    public Range getTicRange() {
-        return ticRange;
+    public final Range getTicRange() {
+        return mTicRange;
     }
 
-    public double getGridInterval() {
-        return gridInterval;
+    public final double getmGridInterval() {
+        return mGridInterval;
     }
 
-    public Range getRange() {
-        return range;
+    public final Range getRange() {
+        return mRange;
     }
 
-    public double getLabelInterval() {
-        return labelInterval;
+    public final double getLabelInterval() {
+        return mLabelInterval;
     }
 
-    public Range getLabelRange() {
-        return labelRange;
+    public final Range getLabelRange() {
+        return mLabelRange;
     }
 
-    public String getUnit() {
-        return unit;
+    public final String getUnit() {
+        return mUnit;
     }
 
-    public String getTitle() {
-        return title;
+    public final String getTitle() {
+        return mTitle;
     }
 
-    public double getPointOffset() {
-        return pointOffset;
+    public final double getPointOffset() {
+        return mPointOffset;
     }
 }

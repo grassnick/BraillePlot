@@ -30,7 +30,7 @@ public class CsvXAlignedParser extends CsvParseAlgorithm {
         while(lineIterator.hasNext()) {
             Number xValue;
             try {
-                xValue = Constants.numberFormat.parse(lineIterator.next());
+                xValue = Constants.NUMBER_FORMAT.parse(lineIterator.next());
             } catch (ParseException e) {
                 xValue = Double.NaN;
             }
@@ -63,7 +63,7 @@ public class CsvXAlignedParser extends CsvParseAlgorithm {
                 // Find out the y value
                 Number yValue;
                 try {
-                    yValue = Constants.numberFormat.parse(lineIterator.next());
+                    yValue = Constants.NUMBER_FORMAT.parse(lineIterator.next());
                 } catch (ParseException e) {
                     colPosition++;
                     continue;
@@ -112,7 +112,7 @@ public class CsvXAlignedParser extends CsvParseAlgorithm {
             // Find out the x value
             Number xValue;
             try {
-                xValue = Constants.numberFormat.parse(lineIterator.next());
+                xValue = Constants.NUMBER_FORMAT.parse(lineIterator.next());
             } catch (ParseException e) {
                 continue;
             }
@@ -122,7 +122,7 @@ public class CsvXAlignedParser extends CsvParseAlgorithm {
             while(lineIterator.hasNext()) {
                 Number yValue;
                 try {
-                    yValue = Constants.numberFormat.parse(lineIterator.next());
+                    yValue = Constants.NUMBER_FORMAT.parse(lineIterator.next());
                 } catch (ParseException e) {
                     currentDataSet++;
                     continue;

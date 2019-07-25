@@ -7,13 +7,13 @@ public class SvgTools {
     }
 
     /**
-     * Format a number for svg usage according to the constant decimalFormat
+     * Format a number for svg usage according to the constant DECIMAL_FORMAT
      *
      * @param value
      * @return
      */
     public static String format2svg(double value) {
-        return Constants.decimalFormat.format(value);
+        return Constants.DECIMAL_FORMAT.format(value);
     }
 
     /**
@@ -43,7 +43,7 @@ public class SvgTools {
      *         filled with the set arguments
      */
     public static String translate(String key, Object... arguments) {
-        return MessageFormat.format(Constants.bundle.getString(key), arguments);
+        return MessageFormat.format(Constants.BUNDLE.getString(key), arguments);
     }
 
     /**

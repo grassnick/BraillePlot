@@ -22,8 +22,8 @@ public class MetricAxis extends Axis {
 
         boolean finished = false;
         double interval = 0;
-        range = new Range(0, 0);
-        range.setName(axisRange.getName());
+        mRange = new Range(0, 0);
+        mRange.setName(axisRange.getName());
         int dimensionExp;
         double dimension;
         double factor;
@@ -47,31 +47,31 @@ public class MetricAxis extends Axis {
             factor = getFactorForIntervalAndDimension(interval, dimension);
             finished = true;
             interval = factor * dimension * 2;
-            range.setFrom(((int) (axisRange.getFrom() / interval)) * interval);
-            range.setTo(((int) (axisRange.getTo() / interval)) * interval);
-            if (range.getFrom() > axisRange.getFrom()) {
-                axisRange.setFrom(range.getFrom() - interval);
+            mRange.setFrom(((int) (axisRange.getFrom() / interval)) * interval);
+            mRange.setTo(((int) (axisRange.getTo() / interval)) * interval);
+            if (mRange.getFrom() > axisRange.getFrom()) {
+                axisRange.setFrom(mRange.getFrom() - interval);
                 finished = false;
             }
-            if (range.getTo() < axisRange.getTo()) {
-                axisRange.setTo(range.getTo() + interval);
+            if (mRange.getTo() < axisRange.getTo()) {
+                axisRange.setTo(mRange.getTo() + interval);
                 finished = false;
             }
         } while (!finished);
 
-        gridInterval = interval;
+        mGridInterval = interval;
 
-        ticInterval = interval; // TODO set this to 2 * interval if needed, maybe create an option
-        ticRange = new Range(Math.ceil(range.getFrom() / ticInterval) * ticInterval,
-                Math.floor(range.getTo() / ticInterval) * ticInterval);
+        mTicInterval = interval; // TODO set this to 2 * interval if needed, maybe create an option
+        mTicRange = new Range(Math.ceil(mRange.getFrom() / mTicInterval) * mTicInterval,
+                Math.floor(mRange.getTo() / mTicInterval) * mTicInterval);
 
-        labelRange = ticRange;
-        labelInterval = ticInterval * 2;
+        mLabelRange = mTicRange;
+        mLabelInterval = mTicInterval * 2;
 
-        decimalFormat.setMaximumFractionDigits(Math.max(0, -dimensionExp + 2));
+        mDecimalFormat.setMaximumFractionDigits(Math.max(0, -dimensionExp + 2));
 
         atom = dimension / 100;
-        atomCount = (int) (range.distance() / atom + 1);
+        atomCount = (int) (mRange.distance() / atom + 1);
 
         intervalSteps = new ArrayList<>();
         calculateIntervalSteps(dimension, factor);
@@ -79,7 +79,7 @@ public class MetricAxis extends Axis {
 
     @Override
     public String formatForAxisLabel(double value) {
-        String str = decimalFormat.format(value);
+        String str = mDecimalFormat.format(value);
         return "-0".equals(str) ? "0" : str;
     }
 

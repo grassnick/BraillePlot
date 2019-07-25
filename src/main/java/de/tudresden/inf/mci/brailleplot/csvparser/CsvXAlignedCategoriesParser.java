@@ -6,39 +6,47 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
 
-
+/**
+ * Parser for CSV files with bar chart data. Inherits from CsvParseAlgorithm.
+ */
 public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
 
     @Override
-    public PointListList parseAsHorizontalDataSets(List<? extends List<String>> csvData) {
+    public PointListList parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
         CategorialPointListList pointListList = new CategorialPointListList();
 
         Iterator<? extends List<String>> rowIterator = csvData.iterator();
 
-        if(!rowIterator.hasNext())
+        if (!rowIterator.hasNext()) {
             return pointListList;
+        }
 
         Iterator<String> lineIterator = rowIterator.next().iterator();
 
         // Move the iterator to the first category name
-        if(!lineIterator.hasNext())
+        if (!lineIterator.hasNext()) {
             return pointListList;
+        }
+
         lineIterator.next();
-        if(!lineIterator.hasNext())
+
+        if (!lineIterator.hasNext()) {
             return pointListList;
+        }
 
         // Store all categories
-        while(lineIterator.hasNext()) {
+        while (lineIterator.hasNext()) {
             pointListList.addCategory(lineIterator.next());
         }
 
         // Store each row's data set
-        while(rowIterator.hasNext()) {
+        while (rowIterator.hasNext()) {
             lineIterator = rowIterator.next().iterator();
 
             // Create a PointList with the title of the data set
-            if(!lineIterator.hasNext())
+            if (!lineIterator.hasNext()) {
                 continue;
+            }
             PointList pointList = new PointList();
             pointList.setName(lineIterator.next());
             pointListList.add(pointList);
@@ -46,13 +54,14 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
             // Add all the points
             int colPosition = 0;
             while (lineIterator.hasNext()) {
-                if(colPosition >= pointListList.getCategoryCount())
+                if (colPosition >= pointListList.getCategoryCount()) {
                     break;
+                }
 
                 // Find out the y value
                 Number yValue;
                 try {
-                    yValue = Constants.numberFormat.parse(lineIterator.next());
+                    yValue = Constants.NUMBER_FORMAT.parse(lineIterator.next());
                 } catch (ParseException e) {
                     colPosition++;
                     continue;
@@ -69,27 +78,30 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
     }
 
     @Override
-    public PointListList parseAsVerticalDataSets(List<? extends List<String>> csvData) {
+    public PointListList parseAsVerticalDataSets(final List<? extends List<String>> csvData) {
         CategorialPointListList pointListList = new CategorialPointListList();
         Iterator<? extends List<String>> rowIterator = csvData.iterator();
 
 
-        if(!rowIterator.hasNext())
+        if (!rowIterator.hasNext()) {
             return pointListList;
+        }
 
         Iterator<String> lineIterator = rowIterator.next().iterator();
 
         // Move the iterator to the first title
-        if(!lineIterator.hasNext())
+        if (!lineIterator.hasNext()) {
             return pointListList;
+        }
 
         lineIterator.next();
 
-        if(!lineIterator.hasNext())
+        if (!lineIterator.hasNext()) {
             return pointListList;
+        }
 
         // Add a PointList for each title
-        while(lineIterator.hasNext()) {
+        while (lineIterator.hasNext()) {
             PointList pointList = new PointList();
             pointList.setName(lineIterator.next());
             pointListList.add(pointList);
@@ -97,9 +109,9 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
 
         // Add the data
         int categoryCounter = 0;
-        while(rowIterator.hasNext()) {
+        while (rowIterator.hasNext()) {
             lineIterator = rowIterator.next().iterator();
-            if(!lineIterator.hasNext()) {
+            if (!lineIterator.hasNext()) {
                 categoryCounter++;
                 continue;
             }
@@ -110,10 +122,10 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
 
             // Find out the y values and add the points to the respective lists
             int currentDataSet = 0;
-            while(lineIterator.hasNext()) {
+            while (lineIterator.hasNext()) {
                 Number yValue;
                 try {
-                    yValue = Constants.numberFormat.parse(lineIterator.next());
+                    yValue = Constants.NUMBER_FORMAT.parse(lineIterator.next());
                 } catch (ParseException e) {
                     currentDataSet++;
                     continue;

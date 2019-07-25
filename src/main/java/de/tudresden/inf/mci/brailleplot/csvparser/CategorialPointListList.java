@@ -12,46 +12,47 @@ public class CategorialPointListList extends PointListList {
 
     private static final long serialVersionUID = -1291194891140659342L;
 
-    public List<String> categoryNames;
-    private double maxYSum = Double.NEGATIVE_INFINITY;
+    public List<String> mCategoryNames;
+    private double mMaxYSum = Double.NEGATIVE_INFINITY;
 
-    public XType getXType() {
+    public final XType getXType() {
         return XType.CATEGORIAL;
     }
 
     public CategorialPointListList() {
-        categoryNames = new ArrayList<>();
+        mCategoryNames = new ArrayList<>();
     }
 
-    public void addCategory(String name) {
-        categoryNames.add(name);
+    public final void addCategory(final String name) {
+        mCategoryNames.add(name);
     }
 
-    public String getCategoryName(int index) {
+    public final String getCategoryName(final int index) {
         try {
-            return categoryNames.get(index);
+            return mCategoryNames.get(index);
         } catch (Exception e) {
             return "";
         }
     }
 
-    public int getCategoryCount() {
-        return categoryNames.size();
+    public final int getCategoryCount() {
+        return mCategoryNames.size();
     }
 
-    public void setCategoryNames(List<String> categoryNames) {
-        this.categoryNames = categoryNames;
+    public final void setCategoryNames(final List<String> categoryNames) {
+        this.mCategoryNames = categoryNames;
     }
 
-    public List<String> getCategoryNames() {
-        return categoryNames;
+    public final List<String> getCategoryNames() {
+        return mCategoryNames;
     }
 
-    public double getCategorySum(int index) {
+    public final double getCategorySum(final int index) {
         double sum = 0;
-        for(PointList pointList : this) {
-            if(pointList.size() > index)
+        for (PointList pointList : this) {
+            if (pointList.size() > index) {
                 sum += pointList.get(index).getY();
+            }
         }
         return sum;
     }
@@ -59,11 +60,12 @@ public class CategorialPointListList extends PointListList {
     @Override
     public void updateMinMax() {
         super.updateMinMax();
-        for(int i = 0; i < categoryNames.size(); i++)
-            maxYSum = Math.max(maxYSum, getCategorySum(i));
+        for (int i = 0; i < mCategoryNames.size(); i++) {
+            mMaxYSum = Math.max(mMaxYSum, getCategorySum(i));
+        }
     }
 
-    public double getMaxYSum() {
-        return maxYSum;
+    public final double getMaxYSum() {
+        return mMaxYSum;
     }
 }

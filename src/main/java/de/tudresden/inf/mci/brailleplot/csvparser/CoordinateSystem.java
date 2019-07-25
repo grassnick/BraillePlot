@@ -12,16 +12,18 @@ import java.util.List;
  */
 public class CoordinateSystem {
 
-    public final Axis xAxis;
-    public final Axis yAxis;
+    public final Axis mXAxis;
+    public final Axis mYAxis;
 
-    public final boolean pi;
+    public final boolean mPi;
 
-    /** Origin of the real coordinate system (left upper corner) */
-    private final Point origin;
+    /** Origin of the real coordinate system (left upper corner). */
+    private final Point mOrigin;
 
-    /** Size of the drawing area excluding margins */
-    private final Point size;
+    /** Size of the drawing area excluding margins. */
+    private final Point mSize;
+
+    public static final int CONSTANT = 3;
 
     /**
      * Constructor for a coordinate system with a nominal x axis. TODO replace
@@ -32,22 +34,22 @@ public class CoordinateSystem {
      * @param size
      * @param diagramContentMargin
      */
-    public CoordinateSystem(List<String> xCategories, Range yRange, Point size, List<Integer> diagramContentMargin, String xUnit, String yUnit) {
-        origin = new Point(diagramContentMargin.get(3), diagramContentMargin.get(0));
+    public CoordinateSystem(final List<String> xCategories, final Range yRange, final Point size, final List<Integer> diagramContentMargin, final String xUnit, final String yUnit) {
+        mOrigin = new Point(diagramContentMargin.get(CONSTANT), diagramContentMargin.get(0));
 
-        this.size = new Point(size);
-        this.size.setX(this.size.getX() - (diagramContentMargin.get(1) + diagramContentMargin.get(3)));
-        this.size.setY(this.size.getY() - (diagramContentMargin.get(0) + diagramContentMargin.get(2)));
-        // this.size.x = Math.min(this.size.x, this.size.y);
-        // this.size.y = this.size.x;
+        this.mSize = new Point(size);
+        this.mSize.setX(this.mSize.getX() - (diagramContentMargin.get(1) + diagramContentMargin.get(CONSTANT)));
+        this.mSize.setY(this.mSize.getY() - (diagramContentMargin.get(0) + diagramContentMargin.get(2)));
+        // this.mSize.x = Math.min(this.mSize.x, this.mSize.y);
+        // this.mSize.y = this.mSize.x;
 
-        xAxis = new NominalAxis(xCategories, this.size.getX(), xUnit);
-        yAxis = new MetricAxis(yRange, this.size.getY(), yRange.getName(), yUnit);
+        mXAxis = new NominalAxis(xCategories, this.mSize.getX(), xUnit);
+        mYAxis = new MetricAxis(yRange, this.mSize.getY(), yRange.getName(), yUnit);
 
-        this.pi = false;
+        this.mPi = false;
     }
 
-    public CoordinateSystem(Range xRange, Range yRange, Point size, List<Integer> margin, String xUnit, String yUnit) {
+    public CoordinateSystem(final Range xRange, final Range yRange, final Point size, final List<Integer> margin, final String xUnit, final String yUnit) {
         this(xRange, yRange, size, margin, false, xUnit, yUnit);
     }
 
@@ -61,19 +63,19 @@ public class CoordinateSystem {
      * @param diagramContentMargin
      * @param pi
      */
-    public CoordinateSystem(Range xRange, Range yRange, Point size, List<Integer> diagramContentMargin, boolean pi, String xUnit, String yUnit) {
-        origin = new Point(diagramContentMargin.get(3), diagramContentMargin.get(0));
+    public CoordinateSystem(final Range xRange, final Range yRange, final Point size, final List<Integer> diagramContentMargin, final boolean pi, final String xUnit, final String yUnit) {
+        mOrigin = new Point(diagramContentMargin.get(CONSTANT), diagramContentMargin.get(0));
 
-        this.size = new Point(size);
-        this.size.setX(this.size.getX() - (diagramContentMargin.get(1) + diagramContentMargin.get(3)));
-        this.size.setY(this.size.getY() - (diagramContentMargin.get(0) + diagramContentMargin.get(2)));
-        // this.size.x = Math.min(this.size.x, this.size.y);
-        // this.size.y = this.size.x;
+        this.mSize = new Point(size);
+        this.mSize.setX(this.mSize.getX() - (diagramContentMargin.get(1) + diagramContentMargin.get(CONSTANT)));
+        this.mSize.setY(this.mSize.getY() - (diagramContentMargin.get(0) + diagramContentMargin.get(2)));
+        // this.mSize.x = Math.min(this.mSize.x, this.mSize.y);
+        // this.mSize.y = this.mSize.x;
 
-        xAxis = new MetricAxis(xRange, this.size.getX(), xRange.getName(), xUnit);
-        yAxis = new MetricAxis(yRange, this.size.getY(), yRange.getName(), yUnit);
+        mXAxis = new MetricAxis(xRange, this.mSize.getX(), xRange.getName(), xUnit);
+        mYAxis = new MetricAxis(yRange, this.mSize.getY(), yRange.getName(), yUnit);
 
-        this.pi = pi;
+        this.mPi = pi;
     }
 
     /**
@@ -85,11 +87,11 @@ public class CoordinateSystem {
      *            | virtual y coordinate
      * @return real point
      */
-    public Point convert(double x, double y) {
-        double newX = origin.getX()
-                + (x - xAxis.range.getFrom()) * size.getX() / (xAxis.range.getTo() - xAxis.range.getFrom());
-        double newY = origin.getY() + size.getY()
-                - ((y - yAxis.range.getFrom()) * size.getY() / (yAxis.range.getTo() - yAxis.range.getFrom()));
+    public Point convert(final double x, final double y) {
+        double newX = mOrigin.getX()
+                + (x - mXAxis.mRange.getFrom()) * mSize.getX() / (mXAxis.mRange.getTo() - mXAxis.mRange.getFrom());
+        double newY = mOrigin.getY() + mSize.getY()
+                - ((y - mYAxis.mRange.getFrom()) * mSize.getY() / (mYAxis.mRange.getTo() - mYAxis.mRange.getFrom()));
         return new Point(newX, newY);
     }
 
@@ -102,8 +104,8 @@ public class CoordinateSystem {
      *            | virtual y coordinate
      * @return real point
      */
-    public Point convertWithOffset(double x, double y) {
-        return convert(x + xAxis.getPointOffset(), y + yAxis.getPointOffset());
+    public Point convertWithOffset(final double x, final double y) {
+        return convert(x + mXAxis.getPointOffset(), y + mYAxis.getPointOffset());
     }
 
     /**
@@ -113,7 +115,7 @@ public class CoordinateSystem {
      *            | virtual coordinates
      * @return real point
      */
-    public Point convert(Point point) {
+    public Point convert(final Point point) {
         return convert(point.getX(), point.getY());
     }
 
@@ -124,7 +126,7 @@ public class CoordinateSystem {
      *            | virtual coordinates
      * @return real point
      */
-    public Point convertWithOffset(Point point) {
+    public Point convertWithOffset(final Point point) {
         return convertWithOffset(point.getX(), point.getY());
     }
 
@@ -142,7 +144,7 @@ public class CoordinateSystem {
      *            | real y transformation
      * @return real point
      */
-    public Point convert(double x, double y, double dx, double dy) {
+    public Point convert(final double x, final double y, final double dx, final double dy) {
         Point real = convert(x, y);
         real.translate(dx, dy);
         return real;
@@ -160,7 +162,7 @@ public class CoordinateSystem {
      *            | real y transformation
      * @return real point
      */
-    public Point convert(Point point, double dx, double dy) {
+    public Point convert(final Point point, final double dx, final double dy) {
         return convert(point.getX(), point.getY(), dx, dy);
     }
 
@@ -171,8 +173,8 @@ public class CoordinateSystem {
      *            | virtual distance
      * @return real distance
      */
-    public double convertXDistance(double distance) {
-        return distance * size.getX() / (xAxis.range.getTo() - xAxis.range.getFrom());
+    public double convertXDistance(final double distance) {
+        return distance * mSize.getX() / (mXAxis.mRange.getTo() - mXAxis.mRange.getFrom());
     }
 
     /**
@@ -182,18 +184,18 @@ public class CoordinateSystem {
      *            | virtual distance
      * @return real distance
      */
-    public double convertYDistance(double distance) {
-        return distance * size.getY() / (yAxis.range.getTo() - yAxis.range.getFrom());
+    public double convertYDistance(final double distance) {
+        return distance * mSize.getY() / (mYAxis.mRange.getTo() - mYAxis.mRange.getFrom());
     }
 
     /**
-     * Converts two virtual points and calculates their real distance
+     * Converts two virtual points and calculates their real distance.
      *
      * @param point1
      * @param point2
      * @return real distance
      */
-    public double convertDistance(Point point1, Point point2) {
+    public double convertDistance(final Point point1, final Point point2) {
         return convert(point1).distance(convert(point2));
     }
 
@@ -205,10 +207,10 @@ public class CoordinateSystem {
      *            x-value
      * @return formated string for the point
      */
-    public String formatX(double x) {
-        String str = xAxis.formatForAxisLabel(x);
-        if (pi && !"0".equals(str)) {
-            str += " pi";
+    public String formatX(final double x) {
+        String str = mXAxis.formatForAxisLabel(x);
+        if (mPi && !"0".equals(str)) {
+            str += " mPi";
         }
         return str;
     }
@@ -221,10 +223,10 @@ public class CoordinateSystem {
      *            x-value
      * @return formated string for the point
      */
-    public String formatXForAxisSpeech(double x) {
-        String str = xAxis.formatForAxisAudioLabel(x);
-        if (pi && !"0".equals(str)) {
-            str += " pi";
+    public String formatXForAxisSpeech(final double x) {
+        String str = mXAxis.formatForAxisAudioLabel(x);
+        if (mPi && !"0".equals(str)) {
+            str += " mPi";
         }
         return str;
     }
@@ -237,10 +239,10 @@ public class CoordinateSystem {
      *            x-value
      * @return formated string for the point
      */
-    public String formatXForSymbolSpeech(double x) {
-        String str = xAxis.formatForSymbolAudioLabel(x);
-        if (pi && !"0".equals(str)) {
-            str += " pi";
+    public String formatXForSymbolSpeech(final double x) {
+        String str = mXAxis.formatForSymbolAudioLabel(x);
+        if (mPi && !"0".equals(str)) {
+            str += " mPi";
         }
         return str;
     }
@@ -252,8 +254,8 @@ public class CoordinateSystem {
      *            y-value
      * @return formated string for the point
      */
-    public String formatY(double y) {
-        return yAxis.formatForAxisLabel(y);
+    public String formatY(final double y) {
+        return mYAxis.formatForAxisLabel(y);
     }
 
     /**
@@ -264,9 +266,13 @@ public class CoordinateSystem {
      *            representation
      * @return formated string for the point with '/' as delimiter
      */
-    public String formatForSpeech(Point point) {
-        return ((point.getName() != null && !point.getName().isEmpty()) ? point.getName() + " " : "")
-                + formatXForSymbolSpeech(point.getX()) + " / " + formatY(point.getY());
+    public String formatForSpeech(final Point point) {
+        if (point.getName() != null && !point.getName().isEmpty()) {
+            return point.getName() + " " + formatXForSymbolSpeech(point.getX()) + " / " + formatY(point.getY());
+        } else {
+            return "" + formatXForSymbolSpeech(point.getX()) + " / " + formatY(point.getY());
+        }
+
     }
 
     /**
@@ -277,8 +283,11 @@ public class CoordinateSystem {
      *            representation
      * @return formated string for the point with '/' as delimiter
      */
-    public String formatForAxisSpeech(Point point) {
-        return ((point.getName() != null && !point.getName().isEmpty()) ? point.getName() + " " : "")
-                + formatXForAxisSpeech(point.getX()) + " / " + formatY(point.getY());
+    public String formatForAxisSpeech(final Point point) {
+        if (point.getName() != null && !point.getName().isEmpty()) {
+            return point.getName() + " " + formatXForAxisSpeech(point.getX()) + " / " + formatY(point.getY());
+        } else {
+            return "" + formatXForAxisSpeech(point.getX()) + " / " + formatY(point.getY());
+        }
     }
 }

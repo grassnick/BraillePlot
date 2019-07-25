@@ -4,46 +4,49 @@ import com.opencsv.CSVReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileReader;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Class to represent the overall parser. This parser chooses the corresponding parsing algorithm for the data.
+ */
 public class CsvParser {
 
-    static final Logger log = LoggerFactory.getLogger(CsvParser.class);
+    static final Logger LOG = LoggerFactory.getLogger(CsvParser.class);
 
-    private ArrayList<ArrayList<String>> csvData;
+    private ArrayList<ArrayList<String>> mCsvData;
 
     /**
      * Initiates the parser. The parser reads from the specified {@code reader}
-     * and populates {@link #csvData}.
+     * and populates {@link #mCsvData}.
      *
      * @param reader
-     *            a reader, like {@link FileReader}
+     *            a reader, like {@link Reader}
      * @param separator
      * @param quoteChar
      * @throws IOException
      *             if the {@link CSVReader} has problems parsing
      */
-    public CsvParser(Reader reader, char separator, char quoteChar) throws IOException {
+    public CsvParser(final Reader reader, final char separator, final char quoteChar) throws IOException {
         CSVReader csvReader = new CSVReader(reader, separator, quoteChar);
 
-        csvData = new ArrayList<>();
+        mCsvData = new ArrayList<>();
 
         String[] nextLine;
         while ((nextLine = csvReader.readNext()) != null) {
-            csvData.add(new ArrayList<String>(Arrays.asList(nextLine)));
+            mCsvData.add(new ArrayList<String>(Arrays.asList(nextLine)));
         }
 
         csvReader.close();
     }
 
-    public PointListList parse(CsvType csvType, CsvOrientation csvOrientation) {
+    public final PointListList parse(final CsvType csvType, final CsvOrientation csvOrientation) {
         CsvParseAlgorithm csvParseAlgorithm;
 
-        log.info("Parse die Daten als \"{}\", Orientierung \"{}\"", csvType, csvOrientation);
+        LOG.info("Parse die Daten als \"{}\", Orientierung \"{}\"", csvType, csvOrientation);
 
         switch (csvType) {
         case DOTS:
@@ -61,9 +64,9 @@ public class CsvParser {
 
         switch (csvOrientation) {
         case HORIZONTAL:
-            return csvParseAlgorithm.parseAsHorizontalDataSets(csvData);
+            return csvParseAlgorithm.parseAsHorizontalDataSets(mCsvData);
         case VERTICAL:
-            return csvParseAlgorithm.parseAsVerticalDataSets(csvData);
+            return csvParseAlgorithm.parseAsVerticalDataSets(mCsvData);
         default:
             return null;
         }

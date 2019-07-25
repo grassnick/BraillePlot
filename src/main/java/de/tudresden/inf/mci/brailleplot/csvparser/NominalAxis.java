@@ -45,13 +45,13 @@ public class NominalAxis extends Axis {
         }
 
         // Subdivide the axis into sections for each category
-        ticInterval = 1;
-        gridInterval = 1;
-        labelInterval = 1;
+        mTicInterval = 1;
+        mGridInterval = 1;
+        mLabelInterval = 1;
 
-        ticRange = new Range(0, categories.size());
-        range = ticRange;
-        labelRange = new Range(0, categories.size() - 1);
+        mTicRange = new Range(0, categories.size());
+        mRange = mTicRange;
+        mLabelRange = new Range(0, categories.size() - 1);
 
     }
 

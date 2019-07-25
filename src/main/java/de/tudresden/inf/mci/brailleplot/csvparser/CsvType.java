@@ -10,13 +10,13 @@ import com.beust.jcommander.IStringConverter;
 public enum CsvType {
     DOTS(XType.METRIC), X_ALIGNED(XType.METRIC), X_ALIGNED_CATEGORIES(XType.CATEGORIAL);
 
-    public final XType xType;
+    public final XType mXType;
 
-    private CsvType(XType xType) {
-        this.xType = xType;
+    CsvType(final XType xType) {
+        this.mXType = xType;
     }
 
-    public static CsvType fromString(String value) {
+    public static CsvType fromString(final String value) {
         switch (value.toLowerCase()) {
         case "x_aligned":
         case "xa":
@@ -36,6 +36,9 @@ public enum CsvType {
         return super.toString().toLowerCase();
     }
 
+    /**
+     * Converter class that converts strings to CsvType.
+     */
     public static class CsvTypeConverter implements IStringConverter<CsvType> {
 
         public CsvTypeConverter() {
@@ -43,7 +46,7 @@ public enum CsvType {
         }
 
         @Override
-        public CsvType convert(String value) {
+        public CsvType convert(final String value) {
             CsvType convertedValue = CsvType.fromString(value);
             return convertedValue;
         }

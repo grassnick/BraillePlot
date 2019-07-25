@@ -38,7 +38,7 @@ public class BarChart {
      * @param name
      */
     public void addCategory(final String name) {
-        p.categoryNames.add(name);
+        p.mCategoryNames.add(name);
     }
 
     /**

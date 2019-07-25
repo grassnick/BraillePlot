@@ -37,7 +37,7 @@ public abstract class CsvParseAlgorithm {
      * @param point
      *            the point which shall be added
      */
-    protected void addPointToPointListList(PointListList pointListList, int listIndex, Point point) {
+    protected void addPointToPointListList(final PointListList pointListList, final int listIndex, final Point point) {
         while (pointListList.size() < listIndex) {
             pointListList.add(new PointListList.PointList());
         }
