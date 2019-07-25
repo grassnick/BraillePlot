@@ -22,7 +22,7 @@ public class FunctionalRenderingBase {
 
     public FunctionalRenderingBase() {
         mRasterizingAlgorithms = new HashMap<>();
-        mLogger.info("FunctionalRenderingBase instance [{}] created", hashCode());
+        mLogger.info("FunctionalRenderingBase instance created");
     }
 
     /**
@@ -34,15 +34,15 @@ public class FunctionalRenderingBase {
      * @exception IllegalArgumentException If no rasterizer is registered for the given renderable type.
      */
     public void rasterize(final Renderable renderData) throws InsufficientRenderingAreaException {
-        mLogger.info("[{}] Starting new rasterizing task for {}", hashCode(), renderData.getClass().getSimpleName());
+        mLogger.info("Starting new rasterizing task for {}", renderData.getClass().getSimpleName());
         // First, check if a raster is set. No rasterizing without raster.
         if (Objects.isNull(mRaster)) {
-            mLogger.error("[{}] No raster set.", hashCode());
+            mLogger.error("No target raster set.");
             throw new IllegalStateException("No raster was set. The method 'setRasterCanvas' must be called before invoking the 'rasterize' method.");
         }
         // Then, look at the type of the renderData
         Class<? extends Renderable> renderableClass = renderData.getClass();
-        mLogger.info("[{}] Selecting FunctionalRasterizer for {}", hashCode(), renderableClass.getSimpleName());
+        mLogger.info("Selecting FunctionalRasterizer for {}", renderableClass.getSimpleName());
 
         // Is a rasterizer for the given renderData type available?
         if (mRasterizingAlgorithms.containsKey(renderableClass)) {
@@ -50,7 +50,7 @@ public class FunctionalRenderingBase {
             FunctionalRasterizer selectedRasterizer = mRasterizingAlgorithms.get(renderableClass);
             selectedRasterizer.rasterize(renderData, mRaster);
         } else {
-            mLogger.error("[{}] No rasterizer found for type.", hashCode());
+            mLogger.error("No rasterizer found for given renderable type.");
             throw new IllegalArgumentException("No rasterizer registered for renderData class: '"
                     + renderableClass.getCanonicalName() + "'");
         }
@@ -63,9 +63,18 @@ public class FunctionalRenderingBase {
      * @param rasterizer The instance of {@link FunctionalRasterizer} to be registered.
      */
     public void registerRasterizer(final FunctionalRasterizer<? extends Renderable> rasterizer) {
-        mRasterizingAlgorithms.put(rasterizer.getSupportedDiagramClass(), rasterizer);
-        mLogger.info("[{}] FunctionalRasterizer has been registered for renderable type {}", hashCode(),
-                rasterizer.getSupportedDiagramClass().getSimpleName());
+        mLogger.trace("Registering new rasterizer {} for type {}", rasterizer,
+                rasterizer.getSupportedRenderableClass().getSimpleName());
+        if (mRasterizingAlgorithms.containsKey(rasterizer.getSupportedRenderableClass())) {
+            mLogger.trace("Already registered rasterizer {} will be overwritten!",
+                    mRasterizingAlgorithms.get(rasterizer.getSupportedRenderableClass()));
+        }
+
+        mRasterizingAlgorithms.put(rasterizer.getSupportedRenderableClass(), rasterizer);
+
+        mLogger.info("FunctionalRasterizer has been registered for renderable type {}",
+                rasterizer.getSupportedRenderableClass().getSimpleName());
+        mLogger.trace("Current count of registered rasterizers: {}", mRasterizingAlgorithms.size());
     }
 
     /**
@@ -76,7 +85,7 @@ public class FunctionalRenderingBase {
      */
     public void setRasterCanvas(final RasterCanvas raster) {
         mRaster = Objects.requireNonNull(raster);
-        mLogger.info("[{}] RasterCanvas has been set to instance [{}]", hashCode(), raster.hashCode());
+        mLogger.info("RasterCanvas has been set to instance [{}]", raster.hashCode());
     }
 
     /**

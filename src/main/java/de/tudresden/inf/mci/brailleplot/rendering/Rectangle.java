@@ -306,6 +306,10 @@ public class Rectangle {
 
         private Rectangle mRectangle;
 
+        /**
+         * Constructor. Creates a wrapper as proxy object for an integer coordinate representation of the given rectangle.
+         * @param rectangle The rectangle to be wrapped.
+         */
         public IntWrapper(final Rectangle rectangle) {
             this.mRectangle = Objects.requireNonNull(rectangle);
         }
@@ -315,29 +319,62 @@ public class Rectangle {
             return Math.toIntExact(round(value));
         }
 
+        /**
+         * Gets the rectangles x position.
+         * @return The x coordinate of the upper left corner.
+         */
         public int getX() {
             return wrapInt(mRectangle.getX());
         }
 
+        /**
+         * Gets the rectangles y position.
+         * @return The y coordinate of the upper left corner.
+         */
         public int getY() {
             return wrapInt(mRectangle.getY());
         }
 
+        /**
+         * Gets the rectangles width.
+         * @return The distance between the rectangles left and right edge.
+         */
         public int getWidth() {
             return wrapInt(mRectangle.getWidth());
         }
 
+        /**
+         * Gets the rectangles height.
+         * @return The distance between the rectangles top and bottom edge.
+         */
         public int getHeight() {
             return wrapInt(mRectangle.getHeight());
         }
 
+        /**
+         * Gets the rectangles right edges position (<b>Important:</b> The IntWrapper treats the rectangle as
+         * representation of a 'whole' area composed of single countable units (e.g. dots or cells) so this method will
+         * return the position of the rightmost contained coordinate, which is x+width-1)
+         * @return The x coordinate of the inner contained right edge.
+         */
         public int getRight() {
             return wrapInt(mRectangle.getRight()) - 1;
         }
+
+        /**
+         * Gets the rectangles bottom edges position (<b>Important:</b> The IntWrapper treats the rectangle as
+         * representation of a 'whole' area composed of single countable units (e.g. dots or cells) so this method will
+         * return the position of the bottommost contained coordinate, which is y+height-1)
+         * @return The y coordinate of the inner contained bottom edge.
+         */
         public int getBottom() {
             return wrapInt(mRectangle.getBottom()) - 1;
         }
 
+        /**
+         * Get the original rectangle, wrapped by this IntWrapper.
+         * @return The wrapped instance of {@link Rectangle}.
+         */
         public Rectangle getRectangle() {
             return mRectangle;
         }

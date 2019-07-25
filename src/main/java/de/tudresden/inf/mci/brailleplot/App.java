@@ -9,6 +9,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.rendering.Image;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
