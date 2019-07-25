@@ -162,7 +162,7 @@
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
 
-<!-- Checks for class design                         -->
+        <!-- Checks for class design                         -->
         <!-- See http://checkstyle.sf.net/config_design.html -->
         <module name="DesignForExtension">
             <!-- Ignore this rule on functions annotated with certain annotations -->
