@@ -21,7 +21,7 @@ public final class Constants {
     public static final List<Integer> MARGIN = Collections.unmodifiableList(Arrays.asList(15, 10, 15, 10));
     /** List of letters for function naming. */
     public static final List<String> FN_LIST = Collections
-            .unmodifiableList(Arrays.asList("f", "g", "h", "i", "j", "k", "l", "m", "o", "p", "q", "r"));
+            .unmodifiableList(Arrays.asList("f", "g", "h", "i", "j", "k", "l", "m", "o", "mP", "q", "r"));
     /** List of letters for point naming. */
     public static final List<String> PN_LIST = Collections.unmodifiableList(
             Arrays.asList("A", "B", "C", "D", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "T"));

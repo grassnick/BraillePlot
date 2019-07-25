@@ -26,7 +26,7 @@ public class CoordinateSystem {
     public static final int CONSTANT = 3;
 
     /**
-     * Constructor for a coordinate system with a nominal x axis. TODO replace
+     * Constructor for a coordinate system with a nominal mX axis. TODO replace
      * by a factory in order to avoid code duplication
      *
      * @param xCategories
@@ -40,8 +40,8 @@ public class CoordinateSystem {
         this.mSize = new Point(size);
         this.mSize.setX(this.mSize.getX() - (diagramContentMargin.get(1) + diagramContentMargin.get(CONSTANT)));
         this.mSize.setY(this.mSize.getY() - (diagramContentMargin.get(0) + diagramContentMargin.get(2)));
-        // this.mSize.x = Math.min(this.mSize.x, this.mSize.y);
-        // this.mSize.y = this.mSize.x;
+        // this.mSize.mX = Math.min(this.mSize.mX, this.mSize.mY);
+        // this.mSize.mY = this.mSize.mX;
 
         mXAxis = new NominalAxis(xCategories, this.mSize.getX(), xUnit);
         mYAxis = new MetricAxis(yRange, this.mSize.getY(), yRange.getName(), yUnit);
@@ -69,8 +69,8 @@ public class CoordinateSystem {
         this.mSize = new Point(size);
         this.mSize.setX(this.mSize.getX() - (diagramContentMargin.get(1) + diagramContentMargin.get(CONSTANT)));
         this.mSize.setY(this.mSize.getY() - (diagramContentMargin.get(0) + diagramContentMargin.get(2)));
-        // this.mSize.x = Math.min(this.mSize.x, this.mSize.y);
-        // this.mSize.y = this.mSize.x;
+        // this.mSize.mX = Math.min(this.mSize.mX, this.mSize.mY);
+        // this.mSize.mY = this.mSize.mX;
 
         mXAxis = new MetricAxis(xRange, this.mSize.getX(), xRange.getName(), xUnit);
         mYAxis = new MetricAxis(yRange, this.mSize.getY(), yRange.getName(), yUnit);
@@ -82,9 +82,9 @@ public class CoordinateSystem {
      * Converts a point from virtual to real coordinates.
      *
      * @param x
-     *            | virtual x coordinate
+     *            | virtual mX coordinate
      * @param y
-     *            | virtual y coordinate
+     *            | virtual mY coordinate
      * @return real point
      */
     public Point convert(final double x, final double y) {
@@ -99,9 +99,9 @@ public class CoordinateSystem {
      * Converts a point from virtual to real coordinates using an offset from the axes.
      *
      * @param x
-     *            | virtual x coordinate
+     *            | virtual mX coordinate
      * @param y
-     *            | virtual y coordinate
+     *            | virtual mY coordinate
      * @return real point
      */
     public Point convertWithOffset(final double x, final double y) {
@@ -135,13 +135,13 @@ public class CoordinateSystem {
      * space.
      *
      * @param x
-     *            | virtual x coordinate
+     *            | virtual mX coordinate
      * @param y
-     *            | virtual y coordinate
+     *            | virtual mY coordinate
      * @param dx
-     *            | real x transformation
+     *            | real mX transformation
      * @param dy
-     *            | real y transformation
+     *            | real mY transformation
      * @return real point
      */
     public Point convert(final double x, final double y, final double dx, final double dy) {
@@ -157,9 +157,9 @@ public class CoordinateSystem {
      * @param point
      *            | virtual coordinates
      * @param dx
-     *            | real x transformation
+     *            | real mX transformation
      * @param dy
-     *            | real y transformation
+     *            | real mY transformation
      * @return real point
      */
     public Point convert(final Point point, final double dx, final double dy) {
@@ -167,7 +167,7 @@ public class CoordinateSystem {
     }
 
     /**
-     * Converts a distance on the x axis from virtual to real.
+     * Converts a distance on the mX axis from virtual to real.
      *
      * @param distance
      *            | virtual distance
@@ -178,7 +178,7 @@ public class CoordinateSystem {
     }
 
     /**
-     * Converts a distance on the y axis from virtual to real.
+     * Converts a distance on the mY axis from virtual to real.
      *
      * @param distance
      *            | virtual distance
@@ -200,11 +200,11 @@ public class CoordinateSystem {
     }
 
     /**
-     * Formats the x value of a point with respect to if Pi is set in the
+     * Formats the mX value of a point with respect to if Pi is set in the
      * coordinate system.
      *
      * @param x
-     *            x-value
+     *            mX-value
      * @return formated string for the point
      */
     public String formatX(final double x) {
@@ -216,11 +216,11 @@ public class CoordinateSystem {
     }
 
     /**
-     * Formats the x value of a point with respect to if Pi is set in the
+     * Formats the mX value of a point with respect to if Pi is set in the
      * coordinate system, for axis audio labels.
      *
      * @param x
-     *            x-value
+     *            mX-value
      * @return formated string for the point
      */
     public String formatXForAxisSpeech(final double x) {
@@ -232,11 +232,11 @@ public class CoordinateSystem {
     }
 
     /**
-     * Formats the x value of a point with respect to if Pi is set in the
-     * coordinate system, for symbol audio labels.
+     * Formats the mX value of a point with respect to if Pi is set in the
+     * coordinate system, for mSymbol audio labels.
      *
      * @param x
-     *            x-value
+     *            mX-value
      * @return formated string for the point
      */
     public String formatXForSymbolSpeech(final double x) {
@@ -248,10 +248,10 @@ public class CoordinateSystem {
     }
 
     /**
-     * Formats the y value of a point.
+     * Formats the mY value of a point.
      *
      * @param y
-     *            y-value
+     *            mY-value
      * @return formated string for the point
      */
     public String formatY(final double y) {
@@ -259,7 +259,7 @@ public class CoordinateSystem {
     }
 
     /**
-     * Formats a Point that it is optimized for speech output. E.g. (x / y)
+     * Formats a Point that it is optimized for speech output. E.g. (mX / mY)
      *
      * @param point
      *            The point that should be transformed into a textual

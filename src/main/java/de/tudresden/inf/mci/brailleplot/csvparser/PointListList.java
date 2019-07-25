@@ -16,11 +16,15 @@ import com.beust.jcommander.IStringConverter;
 public class PointListList extends ArrayList<PointListList.PointList> {
 
     private static final long serialVersionUID = 6902232865786868851L;
-    protected Double maxX = Double.NEGATIVE_INFINITY;
-    protected Double maxY = Double.NEGATIVE_INFINITY;
-    protected Double minX = Double.POSITIVE_INFINITY;
-    protected Double minY = Double.POSITIVE_INFINITY;
+    protected Double mMaxX = Double.NEGATIVE_INFINITY;
+    protected Double mMaxY = Double.NEGATIVE_INFINITY;
+    protected Double mMinX = Double.POSITIVE_INFINITY;
+    protected Double mMinY = Double.POSITIVE_INFINITY;
 
+    /**
+     * May be extended.
+     * @return
+     */
     public XType getXType() {
         return XType.METRIC;
     }
@@ -29,10 +33,11 @@ public class PointListList extends ArrayList<PointListList.PointList> {
         this("");
     }
 
-    public PointListList(String pointLists) {
+    public PointListList(final String pointLists) {
 
-        if (pointLists == null || pointLists.isEmpty())
+        if (pointLists == null || pointLists.isEmpty()) {
             return;
+        }
 
         // TODO: load from file
 
@@ -47,55 +52,61 @@ public class PointListList extends ArrayList<PointListList.PointList> {
     }
 
     @Override
-    public boolean add(PointList pl) {
+    public boolean add(final PointList pl) {
         boolean success = super.add(pl);
         updateMinMax();
         return success;
     }
 
-    public boolean add(List<Point> points) {
+    public final boolean add(final List<Point> points) {
         PointList pl = new PointList(points);
         return add(pl);
     }
 
+    /**
+     * May be extended.
+     */
     public void updateMinMax() {
-        for(PointList checkPl : this) {
-            maxX = Math.max(getMaxX(), checkPl.getMaxX());
-            maxY = Math.max(getMaxY(), checkPl.getMaxY());
-            minX = Math.min(getMinX(), checkPl.getMinX());
-            minY = Math.min(getMinY(), checkPl.getMinY());
+        for (PointList checkPl : this) {
+            mMaxX = Math.max(getMaxX(), checkPl.getMaxX());
+            mMaxY = Math.max(getMaxY(), checkPl.getMaxY());
+            mMinX = Math.min(getMinX(), checkPl.getMinX());
+            mMinY = Math.min(getMinY(), checkPl.getMinY());
         }
     }
 
-    public double getMaxX() {
-        return maxX;
+    public final double getMaxX() {
+        return mMaxX;
     }
 
-    public double getMaxY() {
-        return maxY;
+    public final double getMaxY() {
+        return mMaxY;
     }
 
-    public double getMinX() {
-        return minX;
+    public final double getMinX() {
+        return mMinX;
     }
 
-    public double getMinY() {
-        return minY;
+    public final double getMinY() {
+        return mMinY;
     }
 
-    public boolean hasValidMinMaxValues() {
-        return maxX > minX && maxY > minY;
+    public final boolean hasValidMinMaxValues() {
+        return mMaxX > mMinX && mMaxY > mMinY;
     }
 
+    /**
+     * Converts a string value to a corresponding PointListList.
+     */
     public static class Converter implements IStringConverter<PointListList> {
         @Override
-        public PointListList convert(String value) {
+        public PointListList convert(final String value) {
             return new PointListList(value);
         }
     }
 
     /**
-     * List of Points including max values
+     * List of Points including max values.
      *
      * @author Jens Bornschein
      *
@@ -103,13 +114,13 @@ public class PointListList extends ArrayList<PointListList.PointList> {
     public static class PointList extends ArrayList<Point> {
 
         private static final long serialVersionUID = -2318768874799315111L;
-        private Double maxX = Double.NEGATIVE_INFINITY;
-        private Double maxY = Double.NEGATIVE_INFINITY;
-        private Double minX = Double.POSITIVE_INFINITY;
-        private Double minY = Double.POSITIVE_INFINITY;
-        private String name = "";
+        private Double mMaxX = Double.NEGATIVE_INFINITY;
+        private Double mMaxY = Double.NEGATIVE_INFINITY;
+        private Double mMinX = Double.POSITIVE_INFINITY;
+        private Double mMinY = Double.POSITIVE_INFINITY;
+        private String mName = "";
 
-        public PointList(List<Point> points) {
+        public PointList(final List<Point> points) {
             if (points != null && !points.isEmpty()) {
                 for (Point p : points) {
                     this.insertSorted(p);
@@ -117,9 +128,10 @@ public class PointListList extends ArrayList<PointListList.PointList> {
             }
         }
 
-        public PointList(String points) {
-            if (points == null || points.isEmpty())
+        public PointList(final String points) {
+            if (points == null || points.isEmpty()) {
                 return;
+            }
 
             String[] pl = points.split("::");
 
@@ -147,54 +159,55 @@ public class PointListList extends ArrayList<PointListList.PointList> {
             this("");
         }
 
-        public boolean insertSorted(Point p) {
-            maxX = Math.max(getMaxX(), p.getX());
-            maxY = Math.max(getMaxY(), p.getY());
-            minX = Math.min(getMinX(), p.getX());
-            minY = Math.min(getMinY(), p.getY());
+        public final boolean insertSorted(final Point p) {
+            mMaxX = Math.max(getMaxX(), p.getX());
+            mMaxY = Math.max(getMaxY(), p.getY());
+            mMinX = Math.min(getMinX(), p.getX());
+            mMinY = Math.min(getMinY(), p.getY());
             boolean returnVal = super.add(p);
 
             Comparable<Point> cmp = (Comparable<Point>) p;
-            for (int i = size()-1; i > 0 && cmp.compareTo(get(i-1)) < 0; i--)
-                Collections.swap(this, i, i-1);
+            for (int i = size() - 1; i > 0 && cmp.compareTo(get(i - 1)) < 0; i--) {
+                Collections.swap(this, i, i - 1);
+            }
             return returnVal;
         }
 
 
         @Deprecated
-        public void add(int index, Point element) {
-//			throw new UnsupportedOperationException("Only insertions via insertSorted are allowed");
+        public final void add(final int index, final Point element) {
+//          throw new UnsupportedOperationException("Only insertions via insertSorted are allowed");
             this.insertSorted(element);
         }
 
         @Deprecated
-        public boolean add(Point e) {
-//			throw new UnsupportedOperationException("Only insertions via insertSorted are allowed");
+        public final boolean add(final Point e) {
+//          throw new UnsupportedOperationException("Only insertions via insertSorted are allowed");
             return this.insertSorted(e);
         }
 
-        public double getMaxX() {
-            return maxX;
+        public final double getMaxX() {
+            return mMaxX;
         }
 
-        public double getMaxY() {
-            return maxY;
+        public final double getMaxY() {
+            return mMaxY;
         }
 
-        public double getMinX() {
-            return minX;
+        public final double getMinX() {
+            return mMinX;
         }
 
-        public double getMinY() {
-            return minY;
+        public final double getMinY() {
+            return mMinY;
         }
 
-        public String getName() {
-            return name;
+        public final String getName() {
+            return mName;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public final void setName(final String name) {
+            this.mName = name;
         }
 
         /**
@@ -203,14 +216,16 @@ public class PointListList extends ArrayList<PointListList.PointList> {
          * @return first maximum point
          */
         public Point getFirstMaximum() {
-            if(this.isEmpty())
+            if (this.isEmpty()) {
                 return null;
+            }
 
             Point maxPoint = get(0);
 
-            for(Point p : this) {
-                if(maxPoint.getY() < p.getY())
+            for (Point p : this) {
+                if (maxPoint.getY() < p.getY()) {
                     maxPoint = p;
+                }
             }
 
             return maxPoint;
@@ -222,22 +237,27 @@ public class PointListList extends ArrayList<PointListList.PointList> {
          * @return first minimum point
          */
         public Point getFirstMinimum() {
-            if(this.isEmpty())
+            if (this.isEmpty()) {
                 return null;
+            }
 
             Point minPoint = get(0);
 
-            for(Point p : this) {
-                if(minPoint.getY() > p.getY())
+            for (Point p : this) {
+                if (minPoint.getY() > p.getY()) {
                     minPoint = p;
+                }
             }
 
             return minPoint;
         }
 
+        /**
+         * Converts a string value to the corresponding PointList.
+         */
         public class Converter implements IStringConverter<PointList> {
             @Override
-            public PointList convert(String value) {
+            public PointList convert(final String value) {
                 return new PointList(value.trim());
             }
         }

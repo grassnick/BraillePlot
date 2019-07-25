@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A {@link PointListList} storing a list of category names. The x values of the
+ * A {@link PointListList} storing a list of category names. The mX values of the
  * added points should correspond to the index of their category in the category
  * list.
  */

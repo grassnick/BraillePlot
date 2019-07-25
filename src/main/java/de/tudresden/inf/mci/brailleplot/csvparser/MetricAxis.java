@@ -11,14 +11,26 @@ import java.util.List;
  *
  */
 public class MetricAxis extends Axis {
-    public final double atom;
-    public final int atomCount;
-    public final List<Double> intervalSteps;
+    public final double mAtom;
+    public final int mAtomCount;
+    public final List<Double> mIntervalSteps;
+    public static final double LABEL_OFFSET_HORIZONTAL_X = -5;
+    public static final double LABEL_OFFSET_HORIZONTAL_Y = 20;
+    public static final double LABEL_OFFSET_VERTICAL_X = -10;
+    public static final double LABEL_OFFSET_VERTICAL_Y = 5;
+    public static final double POINT_OFFSET = 0;
+    public static final double CONSTANT_0 = 0.5;
+    public static final double CONSTANT_1 = 10;
+    public static final double CONSTANT_2 = 100;
+    public static final double CONSTANT_3 = 2.5;
+    public static final double CONSTANT_4 = 0.1;
+    public static final double CONSTANT_5 = 0.05;
+    public static final double CONSTANT_6 = 0.01;
 
-    public MetricAxis(Range axisRange, double size, String title, String unit) {
+    public MetricAxis(final Range axisRange, final double size, final String title, final String unit) {
 
         // Set the label offsets
-        super(-5, 20, -10, 5, 0, title, unit);
+        super(LABEL_OFFSET_HORIZONTAL_X, LABEL_OFFSET_HORIZONTAL_Y, LABEL_OFFSET_VERTICAL_X, LABEL_OFFSET_VERTICAL_Y, POINT_OFFSET, title, unit);
 
         boolean finished = false;
         double interval = 0;
@@ -36,14 +48,21 @@ public class MetricAxis extends Axis {
             // Calculate which interval (virtual) the tics must minimally have.
             interval = axisRange.distance() / maxTics;
             dimensionExp = 0;
-            int direction = interval < 1 ? -1 : 1;
-            while (direction * 0.5 * Math.pow(10, dimensionExp) < direction * interval) {
+
+            int direction;
+            if (interval < 1) {
+                direction = -1;
+            } else {
+                direction = 1;
+            }
+
+            while (direction * CONSTANT_0 * Math.pow(CONSTANT_1, dimensionExp) < direction * interval) {
                 dimensionExp += direction;
             }
             if (direction == 1) {
                 dimensionExp--;
             }
-            dimension = Math.pow(10, dimensionExp);
+            dimension = Math.pow(CONSTANT_1, dimensionExp);
             factor = getFactorForIntervalAndDimension(interval, dimension);
             finished = true;
             interval = factor * dimension * 2;
@@ -70,26 +89,30 @@ public class MetricAxis extends Axis {
 
         mDecimalFormat.setMaximumFractionDigits(Math.max(0, -dimensionExp + 2));
 
-        atom = dimension / 100;
-        atomCount = (int) (mRange.distance() / atom + 1);
+        mAtom = dimension / CONSTANT_2;
+        mAtomCount = (int) (mRange.distance() / mAtom + 1);
 
-        intervalSteps = new ArrayList<>();
+        mIntervalSteps = new ArrayList<>();
         calculateIntervalSteps(dimension, factor);
     }
 
     @Override
-    public String formatForAxisLabel(double value) {
+    public String formatForAxisLabel(final double value) {
         String str = mDecimalFormat.format(value);
-        return "-0".equals(str) ? "0" : str;
+        if ("-0".equals(str)) {
+            return "0";
+        } else {
+            return str;
+        }
     }
 
     @Override
-    public String formatForAxisAudioLabel(double value) {
+    public String formatForAxisAudioLabel(final double value) {
         return formatForAxisLabel(value);
     }
 
     @Override
-    public String formatForSymbolAudioLabel(double value) {
+    public String formatForSymbolAudioLabel(final double value) {
         return formatForAxisLabel(value);
     }
 
@@ -97,19 +120,19 @@ public class MetricAxis extends Axis {
      * @param dimension
      * @param factor
      */
-    private void calculateIntervalSteps(double dimension, double factor) {
+    private void calculateIntervalSteps(final double dimension, final double factor) {
         int i = 0;
-        if (Math.abs(factor - 2.5) < Constants.EPSILON) {
-            intervalSteps.add(i++, 2.5 * dimension);
-            intervalSteps.add(i++, dimension);
+        if (Math.abs(factor - CONSTANT_3) < Constants.EPSILON) {
+            mIntervalSteps.add(i++, CONSTANT_3 * dimension);
+            mIntervalSteps.add(i++, dimension);
         } else if (Math.abs(factor - 1) < Constants.EPSILON) {
-            intervalSteps.add(i++, dimension);
+            mIntervalSteps.add(i++, dimension);
         }
 
-        intervalSteps.add(i++, 0.5 * dimension);
-        intervalSteps.add(i++, 0.1 * dimension);
-        intervalSteps.add(i++, 0.05 * dimension);
-        intervalSteps.add(i, 0.01 * dimension);
+        mIntervalSteps.add(i++, CONSTANT_0 * dimension);
+        mIntervalSteps.add(i++, CONSTANT_4 * dimension);
+        mIntervalSteps.add(i++, CONSTANT_5 * dimension);
+        mIntervalSteps.add(i, CONSTANT_6 * dimension);
     }
 
     /**
@@ -117,14 +140,14 @@ public class MetricAxis extends Axis {
      * @param dimension
      * @return the calculated factor
      */
-    private double getFactorForIntervalAndDimension(double interval, double dimension) {
+    private double getFactorForIntervalAndDimension(final double interval, final double dimension) {
         double factor;
         if (interval > dimension) {
-            factor = 2.5;
-        } else if (interval > 0.5 * dimension) {
+            factor = CONSTANT_3;
+        } else if (interval > CONSTANT_0 * dimension) {
             factor = 1;
         } else {
-            factor = 0.5;
+            factor = CONSTANT_0;
         }
         return factor;
     }

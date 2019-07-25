@@ -8,8 +8,8 @@ package de.tudresden.inf.mci.brailleplot.configparser;
 interface ConfigurationValidator {
     /**
      * Check whether a given pair of key and value is valid as a property or not.
-     * This method should check the key to be a legal property name and the corresponding type.
-     * @param key The property key/name
+     * This method should check the key to be a legal property mName and the corresponding type.
+     * @param key The property key/mName
      * @param value The property value
      * @return A {@link ValidProperty} object representing the validated property.
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.

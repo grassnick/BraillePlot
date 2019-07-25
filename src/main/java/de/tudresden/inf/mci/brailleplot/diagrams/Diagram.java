@@ -3,18 +3,18 @@ package de.tudresden.inf.mci.brailleplot.diagrams;
 import de.tudresden.inf.mci.brailleplot.csvparser.PointListList;
 
 /**
- * General representation of both scatter and line plots.
+ * General representation of both scatter and line plots with basic data functions. Classes LinePlot and ScatterPlot extend this class.
  * @author Richard Schmidt
  */
-public class Diagram {
-    public PointListList p;
+public class Diagram /*implements Renderable*/ {
+    public PointListList mP;
 
     /**
      * Get the minimum x-value.
      * @return
      */
     public double getMinX() {
-        return p.getMinX();
+        return mP.getMinX();
     }
 
     /**
@@ -22,7 +22,7 @@ public class Diagram {
      * @return
      */
     public double getMaxX() {
-        return p.getMaxX();
+        return mP.getMaxX();
     }
 
     /**
@@ -30,7 +30,7 @@ public class Diagram {
      * @return
      */
     public double getMinY() {
-        return p.getMinY();
+        return mP.getMinY();
     }
 
     /**
@@ -38,7 +38,7 @@ public class Diagram {
      * @return
      */
     public double getMaxY() {
-        return p.getMaxY();
+        return mP.getMaxY();
     }
 
     /**
@@ -47,7 +47,7 @@ public class Diagram {
      * @return
      */
     public PointListList.PointList getDataSet(final int index) {
-        return (PointListList.PointList) p.get(index);
+        return (PointListList.PointList) mP.get(index);
     }
 
     /**
@@ -56,6 +56,6 @@ public class Diagram {
      * @return
      */
     public String getDataSetName(final int index) {
-        return p.get(index).getName();
+        return mP.get(index).getName();
     }
 }

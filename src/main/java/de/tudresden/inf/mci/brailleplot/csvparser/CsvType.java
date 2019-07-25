@@ -5,7 +5,7 @@ import com.beust.jcommander.IStringConverter;
 /**
  * Determines what data is represented how by the CSV file. The values are
  * structural properties, whereas the {@link XType} held by every value
- * determines whether the x values are metric or categorial.
+ * determines whether the mX values are metric or categorial.
  */
 public enum CsvType {
     DOTS(XType.METRIC), X_ALIGNED(XType.METRIC), X_ALIGNED_CATEGORIES(XType.CATEGORIAL);

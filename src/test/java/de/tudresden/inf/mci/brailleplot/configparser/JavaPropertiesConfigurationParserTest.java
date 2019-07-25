@@ -49,7 +49,7 @@ public class JavaPropertiesConfigurationParserTest {
         Assertions.assertEquals(0, mFormatConfig.getProperty("margin.left").toInt());
 
         // values without default
-        Assertions.assertEquals("Dummy Printer", mPrinterConfig.getProperty("name").toString());
+        Assertions.assertEquals("Dummy Printer", mPrinterConfig.getProperty("mName").toString());
         Assertions.assertEquals(0.05, mPrinterConfig.getProperty("floatingDot.resolution").toDouble());
 
     }
@@ -63,7 +63,7 @@ public class JavaPropertiesConfigurationParserTest {
     @Test
     public void testFallbackProperties() {
 
-        String specifiedByConfig[] = {"name", "mode", "brailletable", "floatingDot.support", "floatingDot.resolution", "constraint.top", "constraint.left", "raster.dotDistance.horizontal", "raster.dotDistance.vertical", "raster.cellDistance.horizontal", "raster.cellDistance.vertical", "raster.dotDiameter"};
+        String specifiedByConfig[] = {"mName", "mode", "brailletable", "floatingDot.support", "floatingDot.resolution", "constraint.top", "constraint.left", "raster.dotDistance.horizontal", "raster.dotDistance.vertical", "raster.cellDistance.horizontal", "raster.cellDistance.vertical", "raster.dotDiameter"};
         String specifiedByFallback[] = {"mode", "brailletable", "floatingDot.support", "constraint.top", "constraint.left", "raster.constraint.top", "raster.constraint.left", "raster.constraint.width", "raster.constraint.height", "raster.type", "raster.dotDistance.horizontal", "raster.dotDistance.vertical", "raster.cellDistance.horizontal", "raster.cellDistance.vertical", "raster.dotDiameter"};
 
         // config shall extend the fallback
@@ -127,7 +127,7 @@ public class JavaPropertiesConfigurationParserTest {
     public void testIncompatibleTypeConversion() {
         Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("floatingDot.support").toInt());
         Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("raster.cellDistance.horizontal").toInt());
-        Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("name").toDouble());
+        Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("mName").toDouble());
     }
 
 }

@@ -9,31 +9,34 @@ import com.beust.jcommander.IStringConverter;
  *
  */
 public class Range {
-    /** Start of the range */
-    private double from;
-    /** End of the range */
-    private double to;
+    /** Start of the range. */
+    private double mFrom;
+    /** End of the range. */
+    private double mTo;
 
-    private String name;
+    private String mName;
+
+    public static final double CONSTANT_0 = -8;
+    public static final double CONSTANT_1 = 8;
 
     /**
-     * Constructor with name.
-     * @param from	|	start of the range
-     * @param to	|	end of the range
+     * Constructor with mName.
+     * @param from  |   start of the range
+     * @param to    |   end of the range
      * @param name
      */
-    public Range(double from, double to, String name) {
-        this.from = from;
-        this.to = to;
-        this.name = name;
+    public Range(final double from, final double to, final String name) {
+        this.mFrom = from;
+        this.mTo = to;
+        this.mName = name;
     }
 
     /**
-     * Constructor without name.
-     * @param from	|	start of the range
-     * @param to	|	end of the range
+     * Constructor without mName.
+     * @param from  |   start of the range
+     * @param to    |   end of the range
      */
-    public Range(double from, double to)  {
+    public Range(final double from, final double to)  {
         this(from, to, "");
     }
 
@@ -42,76 +45,79 @@ public class Range {
      * @return distance
      */
     public double distance() {
-        return to - from;
+        return mTo - mFrom;
     }
 
     @Override
     public String toString() {
-        return name + " " + from + ":" + to;
+        return mName + " " + mFrom + ":" + mTo;
     }
 
     /**
-     * Converter class for parsing ranges from strings.
+     * Converter class for parsing ranges mFrom strings.
      */
     public static class Converter implements IStringConverter<Range> {
         /**
-         * Converts a range specified by a string to a {@link Range} instance.
-         * The syntax is: {@code [["]<name>["]::]<from>:<to>[:<name>]}.
-         * The second name parameter is preferred.
-         * The from and to parameters should be parsable as Double.
+         * Converts a range specified by a string mTo a {@link Range} instance.
+         * The syntax is: {@code [["]<mName>["]::]<mFrom>:<mTo>[:<mName>]}.
+         * The second mName parameter is preferred.
+         * The mFrom and mTo parameters should be parsable as Double.
          *
-         * @param value	|	correctly formatted range string
+         * @param value |   correctly formatted range string
          */
         @Override
-        public Range convert(String value) {
+        public Range convert(final String value) {
             String[] parts = value.split("::");
             String[] s;
             String name = "";
 
-            // Extract the name if specified and remove quotations
-            if(parts.length > 1){
+            // Extract the mName if specified and remove quotations
+            if (parts.length > 1) {
                 name = parts[0].replace("\"", "").trim();
                 s = parts[1].split(":");
-            }else{
+            } else {
                 s = parts[0].split(":");
             }
 
             // There were not enough parameters specified.
-            if (s.length < 2)
-                return new Range(-8, 8);
-
-            /*
-             * If there are two parameters, use the first name string,
-             * if there are more, use the second one.
-             */
-            return s.length > 2 ? new Range(Double.parseDouble(s[0]),
-                    Double.parseDouble(s[1]), s[2]) : new Range(
-                    Double.parseDouble(s[0]), Double.parseDouble(s[1]), name);
+            if (s.length < 2) {
+                return new Range(CONSTANT_0, CONSTANT_1);
             }
 
+            /*
+             * If there are two parameters, use the first mName string,
+             * if there are more, use the second one.
+             */
+            if (s.length > 2) {
+                return new Range(Double.parseDouble(s[0]), Double.parseDouble(s[1]), s[2]);
+            } else {
+                return new Range(Double.parseDouble(s[0]), Double.parseDouble(s[1]), name);
+            }
+        }
+
     }
 
-    public double getFrom() {
-        return from;
+    public final double getFrom() {
+        return mFrom;
     }
 
-    public void setFrom(double from) {
-        this.from = from;
+    public final void setFrom(final double from) {
+        this.mFrom = from;
     }
 
-    public double getTo() {
-        return to;
+    public final double getTo() {
+        return mTo;
     }
 
-    public void setTo(double to) {
-        this.to = to;
+    public final void setTo(final double to) {
+        this.mTo = to;
     }
 
-    public String getName() {
-        return name;
+    public final String getName() {
+        return mName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public final void setName(final String name) {
+        this.mName = name;
     }
 }

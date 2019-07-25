@@ -114,7 +114,7 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
         private final int mCellWidth;
         private final int mCellHeight;
 
-        // We use indices starting at 1, so that we do not have to check for the x-index to be 0 in the next() method call
+        // We use indices starting at 1, so that we do not have to check for the mX-index to be 0 in the next() method call
         private int mCurrentX = 1;
         private int mCurrentY = 1;
 
@@ -145,7 +145,7 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
                 // Staying in the current cell, move down
                 mCurrentY++;
             } else if (mCurrentX % mCellWidth != 0) {
-                // Staying in current cell, move right, set y to the top most index of the current cell
+                // Staying in current cell, move right, set mY to the top most index of the current cell
                 mCurrentX++;
                 mCurrentY = (((mCurrentY / mCellHeight) - 1) * mCellHeight) + 1;
             } else if (mCurrentX < mMatrix.getColumnCount()) { // Moving on to the next cell

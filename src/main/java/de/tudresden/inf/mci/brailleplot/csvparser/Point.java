@@ -6,8 +6,8 @@ import com.beust.jcommander.IStringConverter;
 
 
 /**
- * A point in a coordinate system specified by an x and y coordinate. Can also
- * have a name and an SVG symbol. Provides helper methods, e.g. for calculating
+ * A point in a coordinate system specified by an mX and mY coordinate. Can also
+ * have a mName and an SVG mSymbol. Provides helper methods, e.g. for calculating
  * the distance between two points.
  *
  * @author Gregor Harlan Idea and supervising by Jens Bornschein
@@ -17,75 +17,84 @@ import com.beust.jcommander.IStringConverter;
  */
 public class Point implements Comparable<Point> {
 
-    protected double x;
-    protected double y;
-    protected String name;
-    protected Element symbol;
+    protected double mX;
+    protected double mY;
+    protected String mName;
+    protected Element mSymbol;
 
     /**
-     * Copy constructor
+     * Copy constructor.
      *
      * @param otherPoint
      *            the point to copy
      */
-    public Point(Point otherPoint) {
-        this(otherPoint.getX(), otherPoint.getY(), otherPoint.getName(),
-                 otherPoint.getSymbol() != null ? (Element) otherPoint.getSymbol().cloneNode(true) : null);
+    public Point(final Point otherPoint) {
+        this.setX(otherPoint.getX());
+        this.setY(otherPoint.getY());
+        this.setName(otherPoint.getName());
+
+        Element symbol;
+        if (otherPoint.getSymbol() != null) {
+            symbol = (Element) otherPoint.getSymbol().cloneNode(true);
+        } else {
+            symbol = null;
+        }
+        this.setSymbol(symbol);
     }
 
     /**
-     * Represents a two dimensional Point in the plot
+     * Represents a two dimensional Point in the plot.
      *
      * @param x
-     *            | x (horizontal) position of the point
+     *            | mX (horizontal) position of the point
      * @param y
-     *            | y (vertical) position of the point
+     *            | mY (vertical) position of the point
      */
-    public Point(double x, double y) {
+    public Point(final double x, final double y) {
         this(x, y, "", null);
     }
 
     /**
-     * Represents a two dimensional Point in the plot
+     * Represents a two dimensional Point in the plot.
      *
      * @param x
-     *            | x (horizontal) position of the point
+     *            | mX (horizontal) position of the point
      * @param y
-     *            | y (vertical) position of the point
+     *            | mY (vertical) position of the point
      * @param name
-     *            | the name of the point
+     *            | the mName of the point
      */
-    public Point(double x, double y, String name) {
+    public Point(final double x, final double y, final String name) {
         this(x, y, name, null);
     }
 
     /**
-     * Represents a two dimensional Point in the plot
+     * Represents a two dimensional Point in the plot.
      *
      * @param x
-     *            | x (horizontal) position of the point
+     *            | mX (horizontal) position of the point
      * @param y
-     *            | y (vertical) position of the point
+     *            | mY (vertical) position of the point
      * @param symbol
-     *            | the symbol to use for the point
+     *            | the mSymbol to use for the point
      */
-    public Point(double x, double y, Element symbol) {
+    public Point(final double x, final double y, final Element symbol) {
         this(x, y, "", symbol);
     }
 
     /**
-     * Represents a two dimensional Point in the plot
+     * Represents a two dimensional Point in the plot.
      *
      * @param x
-     *            | x (horizontal) position of the point
+     *            | mX (horizontal) position of the point
      * @param y
-     *            | y (vertical) position of the point
+     *            | mY (vertical) position of the point
      * @param name
-     *            | the name of the point
+     *            | the mName of the point
      * @param symbol
-     *            | the symbol to use for the point
+     *            | the mSymbol to use for the point
      */
-    public Point(double x, double y, String name, Element symbol) {
+    public Point(final double x, final double y, final String name, final Element symbol) {
         this.setX(x);
         this.setY(y);
         this.setName(name);
@@ -93,20 +102,20 @@ public class Point implements Comparable<Point> {
     }
 
     /**
-     * Move the point
+     * Move the point.
      *
      * @param dx
-     *            | movement in x (horizontal) direction
+     *            | movement in mX (horizontal) direction
      * @param dy
-     *            | movement in y (vertical) direction
+     *            | movement in mY (vertical) direction
      */
-    public void translate(double dx, double dy) {
+    public void translate(final double dx, final double dy) {
         setX(getX() + dx);
         setY(getY() + dy);
     }
 
     /**
-     * formats the x value as an svg compatible decimal value.
+     * formats the mX value as an svg compatible decimal value.
      *
      * @return
      */
@@ -115,7 +124,7 @@ public class Point implements Comparable<Point> {
     }
 
     /**
-     * formats the y value as an svg compatible decimal value.
+     * formats the mY value as an svg compatible decimal value.
      *
      * @return
      */
@@ -125,10 +134,10 @@ public class Point implements Comparable<Point> {
 
     @Override
     /**
-     * formats the x and y values as svg compatible decimal values and combine
+     * formats the mX and mY values as svg compatible decimal values and combine
      * them by a comma.
      *
-     * @return x,y
+     * @return mX,mY
      */
     public String toString() {
         return x() + "," + y();
@@ -140,103 +149,138 @@ public class Point implements Comparable<Point> {
      * @param other
      *            | second point
      * @return the two dimensional euclidean distance between this and the other
-     *         point.
+     *         point
      */
-    public double distance(Point other) {
+    public double distance(final Point other) {
         return Math.sqrt(Math.pow(other.getX() - getX(), 2) + Math.pow(other.getY() - getY(), 2));
     }
 
+    /**
+     * Converts a string value to the corresponding point object.
+     *
+     */
     public static class Converter implements IStringConverter<Point> {
         /**
          * Convert a formatted string to a point. The format is:
-         * {@code [<x>][,<y>]} Omitted values will default to 0.
+         * {@code [<mX>][,<mY>]} Omitted values will default to 0.
          *
          * @param value
          *            | formatted string
          */
         @Override
-        public Point convert(String value) {
+        public Point convert(final String value) {
             String[] s = value.split(",");
-            return new Point(s.length > 0 ? Double.parseDouble(s[0]) : 0, s.length > 1 ? Double.parseDouble(s[1]) : 0);
+             double x;
+             double y;
+
+            if (s.length > 0) {
+                x = Double.parseDouble(s[0]);
+            } else {
+                x = 0;
+            }
+
+            if (s.length > 1) {
+                y = Double.parseDouble(s[1]);
+            } else {
+                y = 0;
+            }
+            return new Point(x, y);
         }
     }
 
     /**
-     * Compares with x priority. Returns -1 if p2 is null.
+     * Compares with mX priority. Returns -1 if p2 is null.
      *
      * @param p2
      *            | other point
      * @return
      */
     @Override
-    public int compareTo(Point p2) {
+    public int compareTo(final Point p2) {
         if (p2 != null) {
             if (Math.abs(p2.getX() - getX()) < Constants.EPSILON) {
-                return getY() < p2.getY() ? -1 : 1;
-            } else
-                return getX() < p2.getX() ? -1 : 1;
+                if (getY() < p2.getY()) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            } else {
+                if (getX() < p2.getX()) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
         }
         return -1;
     }
 
     /**
-     * Compare the y values of two points. Returns -1 if p2 is null.
+     * Compare the mY values of two points. Returns -1 if p2 is null.
      *
      * @param p2
      *            | other point
      * @return
      */
-    public int compareToY(Point p2) {
+    public int compareToY(final Point p2) {
         if (p2 != null) {
-            return getY() < p2.getY() ? -1 : 1;
+            if (getY() < p2.getY()) {
+                return -1;
+            } else {
+                return 1;
+            }
         }
         return -1;
     }
 
     /**
-     * Compare the x values of two points. Returns -1 if p2 is null.
+     * Compare the mX values of two points. Returns -1 if p2 is null.
      *
      * @param p2
      *            | other point
      * @return
      */
-    public int compareToX(Point p2) {
+    public int compareToX(final Point p2) {
         if (p2 != null) {
-            return getX() < p2.getX() ? -1 : 1;
+            if (getX() < p2.getX()) {
+                return -1;
+            } else {
+                return 1;
+            }
         }
         return -1;
     }
 
-    public double getX() {
-        return x;
+    public final double getX() {
+        return mX;
     }
 
-    public void setX(double x) {
-        this.x = x;
+    public final void setX(final double x) {
+        this.mX = x;
     }
 
-    public double getY() {
-        return y;
+    public final double getY() {
+        return mY;
     }
 
-    public void setY(double y) {
-        this.y = y;
+    public final void setY(final double y) {
+        this.mY = y;
     }
 
-    public String getName() {
-        return name;
+    public final String getName() {
+        return mName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public final void setName(final String name) {
+        this.mName = name;
     }
 
-    public Element getSymbol() {
-        return symbol;
+    public final Element getSymbol() {
+        return mSymbol;
     }
 
-    public void setSymbol(Element symbol) {
-        this.symbol = symbol;
+    public final void setSymbol(final Element symbol) {
+        this.mSymbol = symbol;
     }
 
 }

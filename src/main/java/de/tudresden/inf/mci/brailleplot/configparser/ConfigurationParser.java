@@ -63,7 +63,7 @@ public abstract class ConfigurationParser {
 
     /**
      * Get the names of all available format configurations.
-     * @return A {@link Set}&lt;{@link String}&gt; containing the name of each format.
+     * @return A {@link Set}&lt;{@link String}&gt; containing the mName of each format.
      */
     public final Set<String> getFormatNames() {
         return mFormats.keySet();
@@ -71,9 +71,9 @@ public abstract class ConfigurationParser {
 
     /**
      * Get a specific format configuration.
-     * @param formatName The name of the format.
+     * @param formatName The mName of the format.
      * @return A {@link Format} object, representing the formats properties.
-     * @throws NoSuchElementException If no format has the specified name.
+     * @throws NoSuchElementException If no format has the specified mName.
      */
     public final Format getFormat(final String formatName) {
         if (!mFormats.containsKey(formatName)) {

@@ -12,8 +12,8 @@ import java.util.List;
 public class CsvDotParser extends CsvParseAlgorithm {
 
     /**
-     * Parses scattered point data in horizontal data sets, alternating x and y. The
-     * first column contains the row name in the x row.
+     * Parses scattered point data in horizontal data sets, alternating mX and mY. The
+     * first column contains the row mName in the mX row.
      *
      * @return the parsed data
      */
@@ -31,7 +31,7 @@ public class CsvDotParser extends CsvParseAlgorithm {
 
             row += 2;
 
-            // Get the row name
+            // Get the row mName
             if (xRowIterator.hasNext() && yRowIterator.hasNext()) {
                 rowPoints.setName(xRowIterator.next());
                 yRowIterator.next();
@@ -63,8 +63,8 @@ public class CsvDotParser extends CsvParseAlgorithm {
     }
 
     /**
-     * Parses scattered point data in vertical data sets, alternating x and y. The
-     * first row contains the column name in the x column.
+     * Parses scattered point data in vertical data sets, alternating mX and mY. The
+     * first row contains the column mName in the mX column.
      *
      * @return the parsed data
      */

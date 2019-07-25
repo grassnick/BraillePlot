@@ -38,7 +38,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
 
         // Definition of valid printer properties
         Map<String, Predicate<String>> p = new HashMap<>();
-        definePrinterProperty("name", requireNotEmpty);
+        definePrinterProperty("mName", requireNotEmpty);
         definePrinterProperty("mode", requireNotEmpty);
         definePrinterProperty("brailletable", requireFileExists);
         definePrinterProperty("floatingDot.support", requireBoolean);
@@ -72,7 +72,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
     /**
      * Use this function in the validators constructor to add a printer property definition to the internal validation table.
      * The property will be treated as 'required'.
-     * @param propertyName The name of the property. (The prefix 'printer.' must be omitted.)
+     * @param propertyName The mName of the property. (The prefix 'printer.' must be omitted.)
      * @param validation The validation predicate. {@link Predicate}&lt;{@link String}&gt;
      */
     private void definePrinterProperty(final String propertyName, final Predicate<String> validation) {
@@ -80,7 +80,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
     }
     /**
      * Use this function in the validators constructor to add a printer property definition to the internal validation table.
-     * @param propertyName The name of the property. (The prefix 'printer.' must be omitted.)
+     * @param propertyName The mName of the property. (The prefix 'printer.' must be omitted.)
      * @param validation The validation predicate. {@link Predicate}&lt;{@link String}&gt;
      * @param required Signals whether this is a required property or not.
      */
@@ -90,7 +90,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
     /**
      * Use this function in the validators constructor to add a format property definition to the internal validation table.
      * The property will be treated as 'required'.
-     * @param propertyName The name of the property. (The prefix 'format.[name].' must be omitted.)
+     * @param propertyName The mName of the property. (The prefix 'format.[mName].' must be omitted.)
      * @param validation The validation predicate. {@link Predicate}&lt;{@link String}&gt;
      */
     private void defineFormatProperty(final String propertyName, final Predicate<String> validation) {
@@ -98,7 +98,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
     }
     /**
      * Use this function in the validators constructor to add a format property definition to the internal validation table.
-     * @param propertyName The name of the property. (The prefix 'format.[name].' must be omitted.)
+     * @param propertyName The mName of the property. (The prefix 'format.[mName].' must be omitted.)
      * @param validation The validation predicate. {@link Predicate}&lt;{@link String}&gt;
      * @param required Signals whether this is a required property or not.
      */
@@ -184,7 +184,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
     ) throws ConfigurationValidationException {
         // Is the property valid?
         if (!validation.containsKey(propertyName)) {
-            throw new ConfigurationValidationException("Invalid property name: " + propertyName);
+            throw new ConfigurationValidationException("Invalid property mName: " + propertyName);
         }
         // Check against its type requirement predicate
         if (!validation.get(propertyName).test(value)) {

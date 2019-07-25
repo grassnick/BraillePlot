@@ -6,14 +6,14 @@ import de.tudresden.inf.mci.brailleplot.csvparser.PointListList;
 import java.util.List;
 
 /**
- * Representation of a bar chart.
+ * Representation of a bar chart with basic data functions.
  * @author Richard Schmidt
  */
-public class BarChart {
-    private CategorialPointListList p;
+public class BarChart /*implements Renderable*/ {
+    private CategorialPointListList mP;
 
     public BarChart(final CategorialPointListList p) {
-        this.p = p;
+        this.mP = p;
         p.updateMinMax();
     }
 
@@ -22,7 +22,7 @@ public class BarChart {
      * @return
      */
     public int getCategoryCount() {
-        return p.getCategoryCount();
+        return mP.getCategoryCount();
     }
 
     /**
@@ -30,7 +30,7 @@ public class BarChart {
      * @return
      */
     public List<String> getCategoryNames() {
-        return p.getCategoryNames();
+        return mP.getCategoryNames();
     }
 
     /**
@@ -38,16 +38,16 @@ public class BarChart {
      * @param name
      */
     public void addCategory(final String name) {
-        p.mCategoryNames.add(name);
+        mP.mCategoryNames.add(name);
     }
 
     /**
-     * Get catery name by index.
+     * Get category name by index.
      * @param index
      * @return
      */
     public String getCategoryName(final int index) {
-        return p.getCategoryName(index);
+        return mP.getCategoryName(index);
     }
 
     /**
@@ -56,7 +56,7 @@ public class BarChart {
      * @return
      */
     public double getCategorySum(final int index) {
-        return p.getCategorySum(index);
+        return mP.getCategorySum(index);
     }
 
     /**
@@ -64,7 +64,7 @@ public class BarChart {
      * @return
      */
     public double getMaxYSum() {
-        return p.getMaxYSum();
+        return mP.getMaxYSum();
     }
 
     /**
@@ -72,7 +72,7 @@ public class BarChart {
      * @return
      */
     public double getMinY() {
-        return p.getMinY();
+        return mP.getMinY();
     }
 
     /**
@@ -80,7 +80,7 @@ public class BarChart {
      * @return
      */
     public double getMaxY() {
-        return p.getMaxY();
+        return mP.getMaxY();
     }
 
     /**
@@ -89,7 +89,7 @@ public class BarChart {
      * @return
      */
     public PointListList.PointList getDataSet(final int index) {
-        return (PointListList.PointList) p.get(index);
+        return (PointListList.PointList) mP.get(index);
     }
 
     /**
@@ -98,7 +98,7 @@ public class BarChart {
      * @return
      */
     public String getDataSetName(final int index) {
-        return p.get(index).getName();
+        return mP.get(index).getName();
     }
 
 }
