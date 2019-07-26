@@ -1,22 +1,13 @@
 package de.tudresden.inf.mci.brailleplot;
 
-import ch.qos.logback.classic.Level;
 import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
-import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
-import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
-import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
-import de.tudresden.inf.mci.brailleplot.rendering.Image;
-import de.tudresden.inf.mci.brailleplot.rendering.ImageRasterizer;
-import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -105,11 +96,6 @@ public final class App {
         System.exit(EXIT_ERROR);
     }
 
-    public static void setLoggingLevel(final ch.qos.logback.classic.Level level) {
-        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
-        root.setLevel(level);
-    }
-
     /**
      * Main loop of the application.
      * @param args Command line parameters.
@@ -125,7 +111,6 @@ public final class App {
         try {
             // Logging example
             mLogger.info("Application started");
-            setLoggingLevel(Level.TRACE);
 
             // Parse command line parameters
             CommandLineParser cliParser = new CommandLineParser();
@@ -143,24 +128,7 @@ public final class App {
             // Parse csv data
 
             // ...
-            ConfigurationParser parser = new JavaPropertiesConfigurationParser(
-                    getClass().getClassLoader().getResource("config/index_everest_d_v4.properties").getFile(),
-                    getClass().getClassLoader().getResource("config/default.properties").getFile()
-            );
-            MasterRenderer renderer = new MasterRenderer(parser.getPrinter(), parser.getFormat("A4"));
 
-            // Replace default Image rasterizer
-            renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<>(
-                    Image.class,
-                    new ImageRasterizer(
-                            false, false, false,
-                            25
-                    )
-            ));
-
-            renderer.rasterize(new Image(
-                    new File(getClass().getClassLoader().getResource("examples/img/2_image_chart.png").toURI())
-            ));
         } catch (final Exception e) {
             terminateWithException(e);
         }
