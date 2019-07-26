@@ -12,3 +12,7 @@ out
 *.class
 *.jar
 *.tar
+
+# Miscellaneous
+*.DS_Store
+*.db
