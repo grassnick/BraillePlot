@@ -43,6 +43,10 @@ public final class Constants {
     private Constants() {
     }
 
+    /**
+     * Getter for SVG decimal format.
+     * @return DecimalFormat
+     */
     private static DecimalFormat getSvgDecimalFormat() {
         DecimalFormat decimalFormat = new DecimalFormat("0.###");
         DecimalFormatSymbols dfs = new DecimalFormatSymbols();

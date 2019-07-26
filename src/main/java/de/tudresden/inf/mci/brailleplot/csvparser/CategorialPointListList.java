@@ -15,7 +15,11 @@ public class CategorialPointListList extends PointListList {
     public List<String> mCategoryNames;
     private double mMaxYSum = Double.NEGATIVE_INFINITY;
 
-    public final XType getXType() {
+    /**
+     * Getter for XType.
+     * @return XType
+     */
+    public XType getXType() {
         return XType.CATEGORIAL;
     }
 
@@ -23,11 +27,20 @@ public class CategorialPointListList extends PointListList {
         mCategoryNames = new ArrayList<>();
     }
 
-    public final void addCategory(final String name) {
+    /**
+     * Adds a category name to mCategoryNames.
+     * @param name String
+     */
+    public void addCategory(final String name) {
         mCategoryNames.add(name);
     }
 
-    public final String getCategoryName(final int index) {
+    /**
+     * Getter for category name by index.
+     * @param index int
+     * @return String name
+     */
+    public String getCategoryName(final int index) {
         try {
             return mCategoryNames.get(index);
         } catch (Exception e) {
@@ -35,19 +48,36 @@ public class CategorialPointListList extends PointListList {
         }
     }
 
-    public final int getCategoryCount() {
+    /**
+     * Getter for category count.
+     * @return int count
+     */
+    public int getCategoryCount() {
         return mCategoryNames.size();
     }
 
-    public final void setCategoryNames(final List<String> categoryNames) {
+    /**
+     * Setter for category names.
+     * @param categoryNames List(String)
+     */
+    public void setCategoryNames(final List<String> categoryNames) {
         this.mCategoryNames = categoryNames;
     }
 
-    public final List<String> getCategoryNames() {
+    /**
+     * Getter for list with category names as strings.
+     * @return List(String) with category names.
+     */
+    public List<String> getCategoryNames() {
         return mCategoryNames;
     }
 
-    public final double getCategorySum(final int index) {
+    /**
+     * Getter for category sum by index.
+     * @param index int
+     * @return double sum.
+     */
+    public double getCategorySum(final int index) {
         double sum = 0;
         for (PointList pointList : this) {
             if (pointList.size() > index) {
@@ -65,7 +95,11 @@ public class CategorialPointListList extends PointListList {
         }
     }
 
-    public final double getMaxYSum() {
+    /**
+     * Getter for maximum y-value sum.
+     * @return double sum
+     */
+    public double getMaxYSum() {
         return mMaxYSum;
     }
 }

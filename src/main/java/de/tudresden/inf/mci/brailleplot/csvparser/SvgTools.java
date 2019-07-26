@@ -12,8 +12,8 @@ public final class SvgTools {
     /**
      * Format a number for svg usage according to the constant DECIMAL_FORMAT.
      *
-     * @param value
-     * @return
+     * @param value double
+     * @return String
      */
     public static String format2svg(final double value) {
         return Constants.DECIMAL_FORMAT.format(value);

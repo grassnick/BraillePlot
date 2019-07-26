@@ -23,7 +23,7 @@ public class Range {
      * Constructor with mName.
      * @param from  |   start of the range
      * @param to    |   end of the range
-     * @param name
+     * @param name  |   String
      */
     public Range(final double from, final double to, final String name) {
         this.mFrom = from;
@@ -97,27 +97,51 @@ public class Range {
 
     }
 
-    public final double getFrom() {
+    /**
+     * Getter for mFrom.
+     * @return double mFrom.
+     */
+    public double getFrom() {
         return mFrom;
     }
 
-    public final void setFrom(final double from) {
+    /**
+     * Setter for mFrom.
+     * @param from double
+     */
+    public void setFrom(final double from) {
         this.mFrom = from;
     }
 
-    public final double getTo() {
+    /**
+     * Getter for mTo.
+     * @return double mTo.
+     */
+    public double getTo() {
         return mTo;
     }
 
-    public final void setTo(final double to) {
+    /**
+     * Setter for mTo.
+     * @param to double
+     */
+    public void setTo(final double to) {
         this.mTo = to;
     }
 
-    public final String getName() {
+    /**
+     * Getter for mName.
+     * @return String mName.
+     */
+    public String getName() {
         return mName;
     }
 
-    public final void setName(final String name) {
+    /**
+     * Setter for mName.
+     * @param name String
+     */
+    public void setName(final String name) {
         this.mName = name;
     }
 }

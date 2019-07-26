@@ -117,8 +117,8 @@ public class MetricAxis extends Axis {
     }
 
     /**
-     * @param dimension
-     * @param factor
+     * @param dimension double
+     * @param factor double
      */
     private void calculateIntervalSteps(final double dimension, final double factor) {
         int i = 0;
@@ -136,8 +136,8 @@ public class MetricAxis extends Axis {
     }
 
     /**
-     * @param interval
-     * @param dimension
+     * @param interval double
+     * @param dimension double
      * @return the calculated factor
      */
     private double getFactorForIntervalAndDimension(final double interval, final double dimension) {

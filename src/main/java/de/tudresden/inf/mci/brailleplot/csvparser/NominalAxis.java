@@ -26,9 +26,9 @@ public class NominalAxis extends Axis {
      * The nominal axis gets constructed so that each tic corresponds to one
      * category. The tics are however shown.
      *
-     * @param categories
-     * @param size
-     * @param unit
+     * @param categories List(String)
+     * @param size double
+     * @param unit String
      */
     public NominalAxis(final List<String> categories, final double size, final String unit) {
         // TODO: upon implementation of vertical nominal axes set the values

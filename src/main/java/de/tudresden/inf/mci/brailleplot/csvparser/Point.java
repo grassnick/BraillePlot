@@ -117,7 +117,7 @@ public class Point implements Comparable<Point> {
     /**
      * formats the mX value as an svg compatible decimal value.
      *
-     * @return
+     * @return String
      */
     public String x() {
         return SvgTools.format2svg(getX());
@@ -126,7 +126,7 @@ public class Point implements Comparable<Point> {
     /**
      * formats the mY value as an svg compatible decimal value.
      *
-     * @return
+     * @return String
      */
     public String y() {
         return SvgTools.format2svg(getY());
@@ -193,7 +193,7 @@ public class Point implements Comparable<Point> {
      *
      * @param p2
      *            | other point
-     * @return
+     * @return int
      */
     @Override
     public int compareTo(final Point p2) {
@@ -220,7 +220,7 @@ public class Point implements Comparable<Point> {
      *
      * @param p2
      *            | other point
-     * @return
+     * @return int
      */
     public int compareToY(final Point p2) {
         if (p2 != null) {
@@ -238,7 +238,7 @@ public class Point implements Comparable<Point> {
      *
      * @param p2
      *            | other point
-     * @return
+     * @return int
      */
     public int compareToX(final Point p2) {
         if (p2 != null) {
@@ -251,35 +251,67 @@ public class Point implements Comparable<Point> {
         return -1;
     }
 
-    public final double getX() {
+    /**
+     * Getter for mX.
+     * @return double mX
+     */
+    public double getX() {
         return mX;
     }
 
-    public final void setX(final double x) {
+    /**
+     * Setter for mX.
+     * @param x double
+     */
+    public void setX(final double x) {
         this.mX = x;
     }
 
-    public final double getY() {
+    /**
+     * Getter for mY.
+     * @return double mY
+     */
+    public double getY() {
         return mY;
     }
 
-    public final void setY(final double y) {
+    /**
+     * Setter for mY.
+     * @param y double
+     */
+    public void setY(final double y) {
         this.mY = y;
     }
 
-    public final String getName() {
+    /**
+     * Getter for mName.
+     * @return String mName
+     */
+    public String getName() {
         return mName;
     }
 
-    public final void setName(final String name) {
+    /**
+     * Setter for mName.
+     * @param name String
+     */
+    public void setName(final String name) {
         this.mName = name;
     }
 
-    public final Element getSymbol() {
+    /**
+     * Getter for mSymbol.
+     * @return Element mSymbol
+     */
+    public Element getSymbol() {
         return mSymbol;
     }
 
-    public final void setSymbol(final Element symbol) {
+    /**
+     * Setter for mSymbol.
+     * @param symbol Element
+     */
+    public void setSymbol(final Element symbol) {
         this.mSymbol = symbol;
     }
 

@@ -29,10 +29,12 @@ public class CoordinateSystem {
      * Constructor for a coordinate system with a nominal mX axis. TODO replace
      * by a factory in order to avoid code duplication
      *
-     * @param xCategories
-     * @param yRange
-     * @param size
-     * @param diagramContentMargin
+     * @param xCategories List(String)
+     * @param yRange Range
+     * @param size Point
+     * @param diagramContentMargin List(Integer)
+     * @param xUnit String
+     * @param yUnit String
      */
     public CoordinateSystem(final List<String> xCategories, final Range yRange, final Point size, final List<Integer> diagramContentMargin, final String xUnit, final String yUnit) {
         mOrigin = new Point(diagramContentMargin.get(CONSTANT), diagramContentMargin.get(0));
@@ -57,11 +59,13 @@ public class CoordinateSystem {
      * Constructor for a coordinate system with metric axes. TODO replace by a
      * factory in order to avoid code duplication
      *
-     * @param xRange
-     * @param yRange
-     * @param size
-     * @param diagramContentMargin
-     * @param pi
+     * @param xRange Range
+     * @param yRange Range
+     * @param size Point
+     * @param diagramContentMargin List(Integer)
+     * @param pi boolean
+     * @param xUnit String
+     * @param yUnit String
      */
     public CoordinateSystem(final Range xRange, final Range yRange, final Point size, final List<Integer> diagramContentMargin, final boolean pi, final String xUnit, final String yUnit) {
         mOrigin = new Point(diagramContentMargin.get(CONSTANT), diagramContentMargin.get(0));
@@ -191,8 +195,8 @@ public class CoordinateSystem {
     /**
      * Converts two virtual points and calculates their real distance.
      *
-     * @param point1
-     * @param point2
+     * @param point1 Point
+     * @param point2 Point
      * @return real distance
      */
     public double convertDistance(final Point point1, final Point point2) {

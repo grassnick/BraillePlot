@@ -27,6 +27,7 @@ public final class App {
      * Main method.
      * Instantiate application and execute it.
      * @param args Command line parameters.
+     * @throws IOException May throw Exception.
      */
     public static void main(final String[] args) throws IOException {
         App app = App.getInstance();

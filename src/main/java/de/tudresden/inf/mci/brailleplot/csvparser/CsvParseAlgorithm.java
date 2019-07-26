@@ -11,8 +11,8 @@ public abstract class CsvParseAlgorithm {
      * If the data sets are oriented horizontally, i.e. in rows, parse the rows
      * into {@link PointListList.PointList PointLists}.
      *
-     * @param csvData
-     * @return
+     * @param csvData List(? extends List(String))
+     * @return PointListList
      */
     public abstract PointListList parseAsHorizontalDataSets(List<? extends List<String>> csvData);
 
@@ -20,8 +20,8 @@ public abstract class CsvParseAlgorithm {
      * If the data sets are oriented vertically, i.e. in columns, parse the
      * columns into {@link PointListList.PointList PointLists}.
      *
-     * @param csvData
-     * @return
+     * @param csvData List(? extends List(String))
+     * @return PointListList
      */
     public abstract PointListList parseAsVerticalDataSets(List<? extends List<String>> csvData);
 

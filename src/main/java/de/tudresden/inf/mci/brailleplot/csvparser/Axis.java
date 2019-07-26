@@ -10,13 +10,13 @@ public abstract class Axis {
 
     // The following offsets can and shall be overwritten by child classes
     /** X offset of horizontal axis labels. */
-    public final double mLabelOffsetHorizontalX;
+    public double mLabelOffsetHorizontalX;
     /** Y offset of horizontal axis labels. */
-    public final double mLabelOffsetHorizontalY;
+    public double mLabelOffsetHorizontalY;
     /** X offset of vertical axis labels. */
-    public final double mLabelOffsetVerticalX;
+    public double mLabelOffsetVerticalX;
     /** Y offset of vertical axis labels. */
-    public final double mLabelOffsetVerticalY;
+    public double mLabelOffsetVerticalY;
 
     protected double mTicInterval;
     protected Range mTicRange;
@@ -24,24 +24,26 @@ public abstract class Axis {
     protected Range mRange;
     protected double mLabelInterval;
     protected Range mLabelRange;
-    protected final DecimalFormat mDecimalFormat = (DecimalFormat) DecimalFormat.getInstance(Constants.LOCALE);
+    protected DecimalFormat mDecimalFormat = (DecimalFormat) DecimalFormat.getInstance(Constants.LOCALE);
 
     protected String mUnit;
     protected String mTitle;
 
     /** How much the point position shall be shifted - used for nominal axes.*/
-    protected final double mPointOffset;
+    protected double mPointOffset;
 
     /**
      * Constructor setting the label and point offsets.
-     * @param labelOffsetHorizontalX
-     * @param labelOffsetHorizontalY
-     * @param labelOffsetVerticalX
-     * @param labelOffsetVerticalY
-     * @param pointOffset
+     * @param labelOffsetHorizontalX double
+     * @param labelOffsetHorizontalY double
+     * @param labelOffsetVerticalX double
+     * @param labelOffsetVerticalY double
+     * @param pointOffset double
+     * @param title String
+     * @param unit String
      */
     public Axis(final double labelOffsetHorizontalX, final double labelOffsetHorizontalY, final double labelOffsetVerticalX,
-                final double labelOffsetVerticalY, final double pointOffset, final String title, final String unit) {
+    final double labelOffsetVerticalY, final double pointOffset, final String title, final String unit) {
         this.mLabelOffsetHorizontalX = labelOffsetHorizontalX;
         this.mLabelOffsetHorizontalY = labelOffsetHorizontalY;
         this.mLabelOffsetVerticalX = labelOffsetVerticalX;
@@ -51,15 +53,27 @@ public abstract class Axis {
         this.mUnit = unit;
     }
 
-    public final AxisIterator ticLines() {
+    /**
+     * Iterator for tic lines.
+     * @return AxisIterator
+     */
+    public AxisIterator ticLines() {
         return new AxisIterator(mTicRange, mTicInterval);
     }
 
-    public final AxisIterator gridLines() {
+    /**
+     * Iterator for grid lines.
+     * @return AxisIterator
+     */
+    public AxisIterator gridLines() {
         return new AxisIterator(mRange, mGridInterval);
     }
 
-    public final AxisIterator labelPositions() {
+    /**
+     * Iterator for label positions.
+     * @return AxisIterator
+     */
+    public AxisIterator labelPositions() {
         return new AxisIterator(mLabelRange, mLabelInterval);
     }
 
@@ -120,39 +134,75 @@ public abstract class Axis {
 
     }
 
-    public final double getTicInterval() {
+    /**
+     * Getter for mTicInterval.
+     * @return double mTicInterval
+     */
+    public double getTicInterval() {
         return mTicInterval;
     }
 
-    public final Range getTicRange() {
+    /**
+     * Getter for mTicRange.
+     * @return double mTicRange
+     */
+    public Range getTicRange() {
         return mTicRange;
     }
 
-    public final double getmGridInterval() {
+    /**
+     * Getter for mGridInterval.
+     * @return double mGridInterval
+     */
+    public double getmGridInterval() {
         return mGridInterval;
     }
 
-    public final Range getRange() {
+    /**
+     * Getter for mRange.
+     * @return Range mRange
+     */
+    public Range getRange() {
         return mRange;
     }
 
-    public final double getLabelInterval() {
+    /**
+     * Getter for mLabelInterval.
+     * @return double mLabelInterval
+     */
+    public double getLabelInterval() {
         return mLabelInterval;
     }
 
-    public final Range getLabelRange() {
+    /**
+     * Getter for mLabelRange.
+     * @return double mLabelRange
+     */
+    public Range getLabelRange() {
         return mLabelRange;
     }
 
-    public final String getUnit() {
+    /**
+     * Getter for mUnit.
+     * @return double mUnit
+     */
+    public String getUnit() {
         return mUnit;
     }
 
-    public final String getTitle() {
+    /**
+     * Getter for mTitle.
+     * @return double mTitle
+     */
+    public String getTitle() {
         return mTitle;
     }
 
-    public final double getPointOffset() {
+    /**
+     * Getter for mPointOffset.
+     * @return double mPointOffset
+     */
+    public double getPointOffset() {
         return mPointOffset;
     }
 }

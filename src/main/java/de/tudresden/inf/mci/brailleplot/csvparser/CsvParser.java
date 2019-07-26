@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Class to represent the overall parser. This parser chooses the corresponding parsing algorithm for the data.
+ * Class to represent the main parser. This parser chooses the corresponding parsing algorithm for the data.
  */
 public class CsvParser {
 
@@ -25,8 +25,8 @@ public class CsvParser {
      *
      * @param reader
      *            a reader, like {@link Reader}
-     * @param separator
-     * @param quoteChar
+     * @param separator char
+     * @param quoteChar char
      * @throws IOException
      *             if the {@link CSVReader} has problems parsing
      */
@@ -43,7 +43,13 @@ public class CsvParser {
         csvReader.close();
     }
 
-    public final PointListList parse(final CsvType csvType, final CsvOrientation csvOrientation) {
+    /**
+     * Chooses the right parsing algorithm.
+     * @param csvType CsvType
+     * @param csvOrientation CsvOrientation
+     * @return PointListList
+     */
+    public PointListList parse(final CsvType csvType, final CsvOrientation csvOrientation) {
         CsvParseAlgorithm csvParseAlgorithm;
 
         LOG.info("Parse die Daten als \"{}\", Orientierung \"{}\"", csvType, csvOrientation);

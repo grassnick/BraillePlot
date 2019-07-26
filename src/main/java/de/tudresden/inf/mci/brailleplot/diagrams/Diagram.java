@@ -10,50 +10,50 @@ public class Diagram /*implements Renderable*/ {
     public PointListList mP;
 
     /**
-     * Get the minimum x-value.
-     * @return
+     * Getter for the minimum x-value.
+     * @return double minimum x-value
      */
     public double getMinX() {
         return mP.getMinX();
     }
 
     /**
-     * Get the maximum x-value.
-     * @return
+     * Getter for the maximum x-value.
+     * @return double maximum x-value
      */
     public double getMaxX() {
         return mP.getMaxX();
     }
 
     /**
-     * Get the minimum y-value.
-     * @return
+     * Getter for the minimum y-value.
+     * @return double minimum y-value
      */
     public double getMinY() {
         return mP.getMinY();
     }
 
     /**
-     * Get the maximum y-value.
-     * @return
+     * Getter for the maximum y-value.
+     * @return double maximum y-value
      */
     public double getMaxY() {
         return mP.getMaxY();
     }
 
     /**
-     * Get a data set by index.
-     * @param index
-     * @return
+     * Getter for a data set by index.
+     * @param index int
+     * @return PointList with the corresponding data set
      */
     public PointListList.PointList getDataSet(final int index) {
         return (PointListList.PointList) mP.get(index);
     }
 
     /**
-     * Get the name of a data set by index.
-     * @param index
-     * @return
+     * Getter for the name of a data set by index.
+     * @param index int
+     * @return name of the data set as a string
      */
     public String getDataSetName(final int index) {
         return mP.get(index).getName();

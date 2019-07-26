@@ -15,6 +15,7 @@ public class CsvDotParser extends CsvParseAlgorithm {
      * Parses scattered point data in horizontal data sets, alternating mX and mY. The
      * first column contains the row mName in the mX row.
      *
+     * @param csvData List(? extends List(String))
      * @return the parsed data
      */
     public PointListList parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
@@ -66,6 +67,7 @@ public class CsvDotParser extends CsvParseAlgorithm {
      * Parses scattered point data in vertical data sets, alternating mX and mY. The
      * first row contains the column mName in the mX column.
      *
+     * @param csvData List(? extends List(String))
      * @return the parsed data
      */
     @Override

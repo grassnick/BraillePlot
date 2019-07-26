@@ -22,8 +22,9 @@ public class PointListList extends ArrayList<PointListList.PointList> {
     protected Double mMinY = Double.POSITIVE_INFINITY;
 
     /**
-     * May be extended.
-     * @return
+     * Getter for XType.
+     *
+     * @return XType
      */
     public XType getXType() {
         return XType.METRIC;
@@ -58,13 +59,19 @@ public class PointListList extends ArrayList<PointListList.PointList> {
         return success;
     }
 
-    public final boolean add(final List<Point> points) {
+    /**
+     * Adds a list of points to the PointListList.
+     *
+     * @param points List(Point)
+     * @return true if success, false if not
+     */
+    public boolean add(final List<Point> points) {
         PointList pl = new PointList(points);
         return add(pl);
     }
 
     /**
-     * May be extended.
+     * Updates mMaxX, mMaxY, mMinX, mMinY.
      */
     public void updateMinMax() {
         for (PointList checkPl : this) {
@@ -75,23 +82,43 @@ public class PointListList extends ArrayList<PointListList.PointList> {
         }
     }
 
-    public final double getMaxX() {
+    /**
+     * Getter for mMaxX.
+     * @return double mMaxX
+     */
+    public double getMaxX() {
         return mMaxX;
     }
 
-    public final double getMaxY() {
+    /**
+     * Getter for mMaxY.
+     * @return double mMaxY
+     */
+    public double getMaxY() {
         return mMaxY;
     }
 
-    public final double getMinX() {
+    /**
+     * Getter for mMinX.
+     * @return double mMinX
+     */
+    public double getMinX() {
         return mMinX;
     }
 
-    public final double getMinY() {
+    /**
+     * Getter for mMinY.
+     * @return double mMinY
+     */
+    public double getMinY() {
         return mMinY;
     }
 
-    public final boolean hasValidMinMaxValues() {
+    /**
+     * Checks if min- and max-values are valid.
+     * @return true if yes, false if no
+     */
+    public boolean hasValidMinMaxValues() {
         return mMaxX > mMinX && mMaxY > mMinY;
     }
 
@@ -159,7 +186,13 @@ public class PointListList extends ArrayList<PointListList.PointList> {
             this("");
         }
 
-        public final boolean insertSorted(final Point p) {
+        /**
+         * Sorted insertion of a Point into the PointList.
+         *
+         * @param p Point
+         * @return true if success, false if not
+         */
+        public boolean insertSorted(final Point p) {
             mMaxX = Math.max(getMaxX(), p.getX());
             mMaxY = Math.max(getMaxY(), p.getY());
             mMinX = Math.min(getMinX(), p.getX());
@@ -173,40 +206,75 @@ public class PointListList extends ArrayList<PointListList.PointList> {
             return returnVal;
         }
 
-
+        /**
+         * Wrapper for insertSorted.
+         *
+         * @param index int
+         * @param element Point
+         */
         @Deprecated
-        public final void add(final int index, final Point element) {
+        public void add(final int index, final Point element) {
 //          throw new UnsupportedOperationException("Only insertions via insertSorted are allowed");
             this.insertSorted(element);
         }
 
+        /**
+         * Wrapper for insertSorted.
+         *
+         * @param e Point
+         * @return true if success, false if not
+         */
         @Deprecated
-        public final boolean add(final Point e) {
+        public boolean add(final Point e) {
 //          throw new UnsupportedOperationException("Only insertions via insertSorted are allowed");
             return this.insertSorted(e);
         }
 
-        public final double getMaxX() {
+        /**
+         * Getter for mMaxX.
+         * @return double mMaxX
+         */
+        public double getMaxX() {
             return mMaxX;
         }
 
-        public final double getMaxY() {
+        /**
+         * Getter for mMaxY.
+         * @return double mMaxY
+         */
+        public double getMaxY() {
             return mMaxY;
         }
 
-        public final double getMinX() {
+        /**
+         * Getter for mMinX.
+         * @return double mMinX
+         */
+        public double getMinX() {
             return mMinX;
         }
 
-        public final double getMinY() {
+        /**
+         * Getter for mMinY.
+         * @return double mMinY
+         */
+        public double getMinY() {
             return mMinY;
         }
 
-        public final String getName() {
+        /**
+         * Getter for mName.
+         * @return double mName
+         */
+        public String getName() {
             return mName;
         }
 
-        public final void setName(final String name) {
+        /**
+         * Setter for mName.
+         * @param name String
+         */
+        public void setName(final String name) {
             this.mName = name;
         }
 
