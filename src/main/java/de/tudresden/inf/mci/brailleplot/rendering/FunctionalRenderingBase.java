@@ -37,7 +37,7 @@ public class FunctionalRenderingBase {
         mLogger.info("Starting new rasterizing task for {}", renderData.getClass().getSimpleName());
         // First, check if a raster is set. No rasterizing without raster.
         if (Objects.isNull(mRaster)) {
-            mLogger.error("No target raster set.");
+            mLogger.error("No target raster set!");
             throw new IllegalStateException("No raster was set. The method 'setRasterCanvas' must be called before invoking the 'rasterize' method.");
         }
         // Then, look at the type of the renderData
@@ -50,7 +50,7 @@ public class FunctionalRenderingBase {
             FunctionalRasterizer selectedRasterizer = mRasterizingAlgorithms.get(renderableClass);
             selectedRasterizer.rasterize(renderData, mRaster);
         } else {
-            mLogger.error("No rasterizer found for given renderable type.");
+            mLogger.error("No rasterizer found for given renderable type!");
             throw new IllegalArgumentException("No rasterizer registered for renderData class: '"
                     + renderableClass.getCanonicalName() + "'");
         }
