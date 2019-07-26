@@ -2,14 +2,15 @@ package de.tudresden.inf.mci.brailleplot.diagrams;
 
 import de.tudresden.inf.mci.brailleplot.datacontainers.CategorialPointListList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListList;
+import de.tudresden.inf.mci.brailleplot.rendering.Renderable;
 
 import java.util.List;
 
 /**
- * Representation of a bar chart with basic data functions.
+ * Representation of a bar chart with basic data functions. Implements Renderable.
  * @author Richard Schmidt
  */
-public class BarChart /*implements Renderable*/ {
+public class BarChart implements Renderable {
     private CategorialPointListList mP;
 
     public BarChart(final CategorialPointListList p) {

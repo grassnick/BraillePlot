@@ -1,12 +1,15 @@
 package de.tudresden.inf.mci.brailleplot.diagrams;
 
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListList;
+import de.tudresden.inf.mci.brailleplot.rendering.Renderable;
 
 /**
  * General representation of both scatter and line plots with basic data functions. Classes LinePlot and ScatterPlot extend this class.
+ * Implements Renderable.
+ *
  * @author Richard Schmidt
  */
-public class Diagram /*implements Renderable*/ {
+public class Diagram implements Renderable {
     public PointListList mP;
 
     /**
