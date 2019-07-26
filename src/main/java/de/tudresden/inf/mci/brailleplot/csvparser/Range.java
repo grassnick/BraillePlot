@@ -1,6 +1,5 @@
 package de.tudresden.inf.mci.brailleplot.csvparser;
 
-import com.beust.jcommander.IStringConverter;
 /**
  *
  * @author Gregor Harlan, Jens Bornschein
@@ -56,7 +55,7 @@ public class Range {
     /**
      * Converter class for parsing ranges mFrom strings.
      */
-    public static class Converter implements IStringConverter<Range> {
+    public static class Converter {
         /**
          * Converts a range specified by a string mTo a {@link Range} instance.
          * The syntax is: {@code [["]<mName>["]::]<mFrom>:<mTo>[:<mName>]}.
@@ -64,8 +63,8 @@ public class Range {
          * The mFrom and mTo parameters should be parsable as Double.
          *
          * @param value |   correctly formatted range string
+         * @return converted Range
          */
-        @Override
         public Range convert(final String value) {
             String[] parts = value.split("::");
             String[] s;

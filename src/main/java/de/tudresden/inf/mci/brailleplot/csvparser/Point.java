@@ -2,8 +2,6 @@ package de.tudresden.inf.mci.brailleplot.csvparser;
 
 import org.w3c.dom.Element;
 
-import com.beust.jcommander.IStringConverter;
-
 
 /**
  * A point in a coordinate system specified by an mX and mY coordinate. Can also
@@ -159,15 +157,15 @@ public class Point implements Comparable<Point> {
      * Converts a string value to the corresponding point object.
      *
      */
-    public static class Converter implements IStringConverter<Point> {
+    public static class Converter {
         /**
          * Convert a formatted string to a point. The format is:
          * {@code [<mX>][,<mY>]} Omitted values will default to 0.
          *
          * @param value
          *            | formatted string
+         * @return converted Range
          */
-        @Override
         public Point convert(final String value) {
             String[] s = value.split(",");
              double x;

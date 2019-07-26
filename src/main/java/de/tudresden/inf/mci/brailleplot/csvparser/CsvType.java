@@ -1,7 +1,5 @@
 package de.tudresden.inf.mci.brailleplot.csvparser;
 
-import com.beust.jcommander.IStringConverter;
-
 /**
  * Determines what data is represented how by the CSV file. The values are
  * structural properties, whereas the {@link XType} held by every value
@@ -39,13 +37,17 @@ public enum CsvType {
     /**
      * Converter class that converts strings to CsvType.
      */
-    public static class CsvTypeConverter implements IStringConverter<CsvType> {
+    public static class CsvTypeConverter {
 
         public CsvTypeConverter() {
             super();
         }
 
-        @Override
+        /**
+         * Converts a String value into the corresponding CsvType.
+         * @param value String
+         * @return CsvType
+         */
         public CsvType convert(final String value) {
             CsvType convertedValue = CsvType.fromString(value);
             return convertedValue;

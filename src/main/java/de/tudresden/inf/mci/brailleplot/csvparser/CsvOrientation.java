@@ -1,7 +1,5 @@
 package de.tudresden.inf.mci.brailleplot.csvparser;
 
-import com.beust.jcommander.IStringConverter;
-
 /**
  * Enumeration of the two possible CSV orientations.
  */
@@ -25,13 +23,17 @@ public enum CsvOrientation {
     /**
      * Converter class that converts strings to CsvOrientation.
      */
-    public static class CsvOrientationConverter implements IStringConverter<CsvOrientation> {
+    public static class CsvOrientationConverter {
 
         public CsvOrientationConverter() {
             super();
         }
 
-        @Override
+        /**
+         * Converts a String value into the corresponding CsvOrientation.
+         * @param value String
+         * @return CsvOrientation
+         */
         public CsvOrientation convert(final String value) {
             CsvOrientation convertedValue = CsvOrientation.fromString(value);
             return convertedValue;

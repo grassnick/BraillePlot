@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.beust.jcommander.IStringConverter;
-
 /**
  *
  * @author Gregor Harlan, Jens Bornschein Idea and supervising by Jens
@@ -125,8 +123,13 @@ public class PointListList extends ArrayList<PointListList.PointList> {
     /**
      * Converts a string value to a corresponding PointListList.
      */
-    public static class Converter implements IStringConverter<PointListList> {
-        @Override
+    public static class Converter {
+
+        /**
+         * Converts a String value into the corresponding PointListList.
+         * @param value String
+         * @return PointListList
+         */
         public PointListList convert(final String value) {
             return new PointListList(value);
         }
@@ -323,8 +326,13 @@ public class PointListList extends ArrayList<PointListList.PointList> {
         /**
          * Converts a string value to the corresponding PointList.
          */
-        public class Converter implements IStringConverter<PointList> {
-            @Override
+        public class Converter {
+
+            /**
+             * Converts a String value into the corresponding PointList.
+             * @param value String
+             * @return PointList
+             */
             public PointList convert(final String value) {
                 return new PointList(value.trim());
             }
