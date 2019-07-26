@@ -45,7 +45,7 @@ public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
     }
 
     @SuppressWarnings("unchecked")
-    // This is allowed, because the code that calls the rasterize method does a lookup based on the diagram class beforehand
+    // This is allowed, because the code that calls the rasterize method does a lookup based on the renderable class beforehand
     // and will only select the appropriate rasterizer. (See FunctionalRenderingBase)
     // Since the FunctionalRasterizer is package private, there is no way to invoke it with the wrong type from 'outside'.
     // Should somebody still force this to happen by intentional tampering, we have no choice but to catch this disgrace.

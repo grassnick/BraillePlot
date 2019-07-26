@@ -34,6 +34,7 @@ public class RasterCanvas extends AbstractCanvas {
 
     // Printing area rectangle
     private Rectangle mPrintingAreaCells;
+    private Rectangle mPrintingAreaDots;
 
     // Cell size
     private int mCellWidth; // dots
@@ -160,8 +161,9 @@ public class RasterCanvas extends AbstractCanvas {
         mVerticalCellCount = mPrintingAreaCells.intWrapper().getBottom() + 1; // How many full cells fit vertically?
 
         // To how many dots does this raster size correspond?
-        mColumnCount = mHorizontalCellCount * mCellWidth;
-        mRowCount = mVerticalCellCount * mCellHeight;
+        mPrintingAreaDots = toDotRectangle(mPrintingAreaCells);
+        mColumnCount = mPrintingAreaDots.intWrapper().getWidth();
+        mRowCount = mPrintingAreaDots.intWrapper().getHeight();
         mLogger.trace("Determined raster dimensions (dots): {} columns x {} rows", mColumnCount, mRowCount);
 
     }
@@ -222,7 +224,7 @@ public class RasterCanvas extends AbstractCanvas {
         return new Rectangle(mPrintingAreaCells);
     }
     public final Rectangle getDotRectangle() {
-        return toDotRectangle(mPrintingAreaCells);
+        return mPrintingAreaDots;
     }
     public final Rectangle toDotRectangle(final Rectangle cellRectangle) {
         return cellRectangle.scaledBy(mCellWidth, mCellHeight);
