@@ -11,8 +11,8 @@ public final class FormatProperty extends ValidProperty {
     /**
      * Constructor.
      *
-     * @param format The mName of the format.
-     * @param name The mName of the property.
+     * @param format The name of the format.
+     * @param name The name of the property.
      * @param value The value of the property.
      */
     public FormatProperty(final String format, final String name, final String value) {
@@ -21,8 +21,8 @@ public final class FormatProperty extends ValidProperty {
     }
 
     /**
-     * Get the mName of the format.
-     * @return A {@link String} containing the format mName.
+     * Get the name of the format.
+     * @return A {@link String} containing the format name.
      */
     public String getFormat() {
         return mFormat;

@@ -1,7 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
 /**
- * Representation of a property consisting of a legal property mName and value.
+ * Representation of a property consisting of a legal property name and value.
  * @author Leonard Kupper
  * @version 2019.06.04
  */
@@ -18,8 +18,8 @@ public abstract class ValidProperty {
     }
 
     /**
-     * Get the mName of the property.
-     * @return A {@link String} containing the property mName.
+     * Get the name of the property.
+     * @return A {@link String} containing the property name.
      */
     public final String getName() {
         return mName;

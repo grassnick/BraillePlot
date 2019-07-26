@@ -6,7 +6,7 @@ import java.util.Objects;
 
 /**
  * Representation of a 2 dimensional point.
- * Encapsulates a position on mX and mY axis.
+ * Encapsulates a position on x and y axis.
  * @author Georg Graßnick
  * @version 2019.06.26
  */
@@ -17,8 +17,8 @@ public class Point2D {
 
     /**
      * Constructor.
-     * @param x Position on the mX axis.
-     * @param y Position on the mY axis.
+     * @param x Position on the x axis.
+     * @param y Position on the y axis.
      */
     public Point2D(final Quantity<Length> x, final Quantity<Length> y) {
         if (x == null || y == null) {
@@ -30,7 +30,7 @@ public class Point2D {
 
     /**
      * Getter.
-     * @return The position on the mX axis.
+     * @return The position on the x axis.
      */
     public final Quantity<Length> getX() {
         return mX;
@@ -38,7 +38,7 @@ public class Point2D {
 
     /**
      * Getter.
-     * @return The position on the mY axis.
+     * @return The position on the y axis.
      */
     public final Quantity<Length> getY() {
         return mY;

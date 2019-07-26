@@ -10,7 +10,7 @@ public final class PrinterProperty extends ValidProperty {
     /**
      * Constructor.
      *
-     * @param name The mName of the property.
+     * @param name The name of the property.
      * @param value The value of the property.
      */
     public PrinterProperty(final String name, final String value) {

@@ -25,7 +25,7 @@ public final class Format extends Configurable {
     /**
      * Constructor.
      * @param properties A {@link List} of {@link FormatProperty} objects.
-     * @param formatName The mName of the format. (e.g. 'A4')
+     * @param formatName The name of the format. (e.g. 'A4')
      */
     public Format(final List<FormatProperty> properties, final String formatName) {
         mFormatName = Objects.requireNonNull(formatName);

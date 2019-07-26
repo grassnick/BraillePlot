@@ -1,6 +1,5 @@
 package de.tudresden.inf.mci.brailleplot;
 
-
 import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
@@ -10,9 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
-import java.io.IOException;
 import java.util.concurrent.ConcurrentLinkedDeque;
-
 
 /**
  * Main class.
@@ -27,28 +24,9 @@ public final class App {
      * Main method.
      * Instantiate application and execute it.
      * @param args Command line parameters.
-     * @throws IOException May throw Exception.
      */
-    public static void main(final String[] args) throws IOException {
+    public static void main(final String[] args) {
         App app = App.getInstance();
-        /**String csvPath = "parser_bar.csv";
-        CsvType csvType = CsvType.X_ALIGNED_CATEGORIES;
-        CsvOrientation csvOrientation = CsvOrientation.HORIZONTAL;
-        CsvParser parser = new CsvParser(new FileReader(csvPath), ',', '"');
-        CategorialPointListList points = (CategorialPointListList) parser.parse(csvType, csvOrientation);
-        BarChart point = new BarChart(points);
-        System.out.print(parser.csvData + "\n");
-        System.out.print(point.getDataSetName(0) + ": ");
-        System.out.print(point.getDataSet(0)+ "\n");
-        System.out.print(point.getDataSetName(1) + ": ");
-        System.out.print(point.getDataSet(1)+ "\n");
-        System.out.print(point.getDataSetName(2) + ": ");
-        System.out.print(point.getDataSet(2)+ "\n");
-        System.out.print(point.getCategoryName(0)+ "\n");
-        System.out.print(point.getCategoryName(1)+ "\n");
-        System.out.print(point.getCategoryName(2)+ "\n");
-        System.out.print(point.getMinY() + "\n");
-        System.out.print(point.getMaxY() + "\n");**/
         System.exit(app.run(args));
     }
 

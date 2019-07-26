@@ -6,7 +6,7 @@ import java.util.Objects;
 
 /**
  * Representation of a 2 dimensional point with an associated value.
- * Encapsulates both the position on mX and mY axis, as well as a value (think of embossing intensity).
+ * Encapsulates both the position on x and y axis, as well as a value (think of embossing intensity).
  * @param <T> The type used for representing the intensity. Could be set to {@link Boolean} for basic Braille support,
  *           but could also by set to {@link Short} if different embossing strengths are required.
  * @author Georg Graßnick
@@ -18,8 +18,8 @@ public class Point2DValued<T> extends Point2D {
 
     /**
      * Constructor.
-     * @param x Position on the mX axis.
-     * @param y Position on the mY axis.
+     * @param x Position on the x axis.
+     * @param y Position on the y axis.
      * @param val The value of the dot
      */
     public Point2DValued(final Quantity<Length> x, final Quantity<Length> y, final T val) {
