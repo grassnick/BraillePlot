@@ -1,4 +1,6 @@
-package de.tudresden.inf.mci.brailleplot.csvparser;
+package de.tudresden.inf.mci.brailleplot.datacontainers;
+
+import de.tudresden.inf.mci.brailleplot.csvparser.XType;
 
 import java.util.ArrayList;
 import java.util.Collections;

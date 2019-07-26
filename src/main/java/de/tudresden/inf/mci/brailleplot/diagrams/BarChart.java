@@ -1,7 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.diagrams;
 
-import de.tudresden.inf.mci.brailleplot.csvparser.CategorialPointListList;
-import de.tudresden.inf.mci.brailleplot.csvparser.PointListList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.CategorialPointListList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListList;
 
 import java.util.List;
 

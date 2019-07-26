@@ -1,6 +1,9 @@
 package de.tudresden.inf.mci.brailleplot.csvparser;
 
-import de.tudresden.inf.mci.brailleplot.csvparser.PointListList.PointList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.CategorialPointListList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.Point;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListList.PointList;
 
 import java.text.ParseException;
 import java.util.Iterator;

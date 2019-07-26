@@ -1,6 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.diagrams;
 
-import de.tudresden.inf.mci.brailleplot.csvparser.PointListList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListList;
 
 /**
  * General representation of both scatter and line plots with basic data functions. Classes LinePlot and ScatterPlot extend this class.

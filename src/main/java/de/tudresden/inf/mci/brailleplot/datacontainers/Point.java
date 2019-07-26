@@ -1,5 +1,6 @@
-package de.tudresden.inf.mci.brailleplot.csvparser;
+package de.tudresden.inf.mci.brailleplot.datacontainers;
 
+import de.tudresden.inf.mci.brailleplot.csvparser.Constants;
 import org.w3c.dom.Element;
 
 
@@ -110,35 +111,6 @@ public class Point implements Comparable<Point> {
     public void translate(final double dx, final double dy) {
         setX(getX() + dx);
         setY(getY() + dy);
-    }
-
-    /**
-     * formats the mX value as an svg compatible decimal value.
-     *
-     * @return String
-     */
-    public String x() {
-        return SvgTools.format2svg(getX());
-    }
-
-    /**
-     * formats the mY value as an svg compatible decimal value.
-     *
-     * @return String
-     */
-    public String y() {
-        return SvgTools.format2svg(getY());
-    }
-
-    @Override
-    /**
-     * formats the mX and mY values as svg compatible decimal values and combine
-     * them by a comma.
-     *
-     * @return mX,mY
-     */
-    public String toString() {
-        return x() + "," + y();
     }
 
     /**

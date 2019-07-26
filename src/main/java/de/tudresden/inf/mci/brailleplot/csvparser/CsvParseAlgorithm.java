@@ -1,5 +1,8 @@
 package de.tudresden.inf.mci.brailleplot.csvparser;
 
+import de.tudresden.inf.mci.brailleplot.datacontainers.Point;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListList;
+
 import java.util.List;
 
 /**

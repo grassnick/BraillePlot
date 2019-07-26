@@ -1,5 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.csvparser;
 
+import de.tudresden.inf.mci.brailleplot.datacontainers.Point;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;

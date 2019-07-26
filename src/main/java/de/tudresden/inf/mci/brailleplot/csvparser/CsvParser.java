@@ -1,6 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.csvparser;
 
 import com.opencsv.CSVReader;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
