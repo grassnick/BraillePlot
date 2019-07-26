@@ -89,7 +89,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
 
         mLogger.info("Rasterizing Image {}", imgData);
 
-        mLogger.trace("Retrieving buffered image.");
+        mLogger.trace("Retrieving buffered image");
         // First, a readable representation of the is retrieved.
         BufferedImage imgBuf = imgData.getBufferedImage();
 
@@ -159,7 +159,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
                 }
             }
         }
-        mLogger.trace("Done!");
+        mLogger.trace("Finished scanning the image");
     }
 
     private void quantifiedPositionMapping(final BufferedImage imgBuf, final RasterCanvas canvas) {
@@ -170,8 +170,8 @@ public class ImageRasterizer implements Rasterizer<Image> {
 
         // Instead of using the dot rectangle a rectangle representing the target printing space in millimeters
         // is built from the canvas information.
-        mLogger.trace("Determining available area (in mm):");
         Rectangle availableArea = new Rectangle(0, 0, canvas.getPrintableWidth(), canvas.getPrintableHeight());
+        mLogger.trace("Determined available area (in mm): {}", availableArea);
 
         // Calculate the ratios between original image and target printable area. (mm / pixel)
         double hRatio =  (availableArea.getWidth() / imgBuf.getWidth());
@@ -212,7 +212,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
                 }
             }
         }
-        mLogger.trace("Done!");
+        mLogger.trace("Finished scanning the image");
     }
 
 
