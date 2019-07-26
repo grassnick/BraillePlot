@@ -10,13 +10,13 @@ public abstract class Axis {
 
     // The following offsets can and shall be overwritten by child classes
     /** X offset of horizontal axis labels. */
-    public double mLabelOffsetHorizontalX;
+    public final double mLabelOffsetHorizontalX;
     /** Y offset of horizontal axis labels. */
-    public double mLabelOffsetHorizontalY;
+    public final double mLabelOffsetHorizontalY;
     /** X offset of vertical axis labels. */
-    public double mLabelOffsetVerticalX;
+    public final double mLabelOffsetVerticalX;
     /** Y offset of vertical axis labels. */
-    public double mLabelOffsetVerticalY;
+    public final double mLabelOffsetVerticalY;
 
     protected double mTicInterval;
     protected Range mTicRange;
@@ -24,13 +24,13 @@ public abstract class Axis {
     protected Range mRange;
     protected double mLabelInterval;
     protected Range mLabelRange;
-    protected DecimalFormat mDecimalFormat = (DecimalFormat) DecimalFormat.getInstance(Constants.LOCALE);
+    protected final DecimalFormat mDecimalFormat = (DecimalFormat) DecimalFormat.getInstance(Constants.LOCALE);
 
     protected String mUnit;
     protected String mTitle;
 
     /** How much the point position shall be shifted - used for nominal axes.*/
-    protected double mPointOffset;
+    protected final double mPointOffset;
 
     /**
      * Constructor setting the label and point offsets.
