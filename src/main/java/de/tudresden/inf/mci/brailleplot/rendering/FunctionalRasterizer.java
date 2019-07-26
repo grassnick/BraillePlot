@@ -26,7 +26,7 @@ public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
     public FunctionalRasterizer(
             final Class<T> supportedRenderableClass,
             final Rasterizer<T> rasterizer) {
-        mLogger.info("Creating new FunctionalRasterizer: Binding {} rasterizer {}.",
+        mLogger.info("Creating new FunctionalRasterizer: Binding rasterizer reference (renderable type {}): {}.",
                 supportedRenderableClass.getSimpleName(), rasterizer);
         mSupportedRenderableClass = supportedRenderableClass;
         mRasterizingAlgorithm = rasterizer::rasterize;

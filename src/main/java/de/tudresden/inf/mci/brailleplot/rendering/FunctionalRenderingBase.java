@@ -66,7 +66,7 @@ public class FunctionalRenderingBase {
         mLogger.trace("Registering new rasterizer {} for type {}", rasterizer,
                 rasterizer.getSupportedRenderableClass().getSimpleName());
         if (mRasterizingAlgorithms.containsKey(rasterizer.getSupportedRenderableClass())) {
-            mLogger.trace("Already registered rasterizer {} will be overwritten!",
+            mLogger.warn("Already registered rasterizer {} will be overwritten!",
                     mRasterizingAlgorithms.get(rasterizer.getSupportedRenderableClass()));
         }
 

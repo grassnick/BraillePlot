@@ -8,7 +8,9 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
 import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
+import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.Image;
+import de.tudresden.inf.mci.brailleplot.rendering.ImageRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 
 import org.slf4j.Logger;
@@ -146,6 +148,16 @@ public final class App {
                     getClass().getClassLoader().getResource("config/default.properties").getFile()
             );
             MasterRenderer renderer = new MasterRenderer(parser.getPrinter(), parser.getFormat("A4"));
+
+            // Replace default Image rasterizer
+            renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<>(
+                    Image.class,
+                    new ImageRasterizer(
+                            false, false, false,
+                            25
+                    )
+            ));
+
             renderer.rasterize(new Image(
                     new File(getClass().getClassLoader().getResource("examples/img/2_image_chart.png").toURI())
             ));

@@ -51,6 +51,7 @@ public abstract class AbstractCanvas {
         mLogger.trace("Determined page box: {}", pageBox);
 
         // Create a margin box
+        mLogger.trace("Cropping edges by defined margins:");
         int marginTop = mFormat.getProperty("margin.top").toInt();
         int marginLeft = mFormat.getProperty("margin.left").toInt();
         int marginBottom = mFormat.getProperty("margin.bottom").toInt();

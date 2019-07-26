@@ -38,7 +38,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
      */
     public ImageRasterizer() {
         this(true, true, true, DEFAULT_THRESHOLD);
-        mLogger.trace("Created ImageRasterizer with default settings");
+        mLogger.trace("ImageRasterizer has been setup with default settings");
     }
 
     /**
@@ -105,7 +105,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
 
     private void linearMapping(final BufferedImage imgBuf, final RasterCanvas canvas) {
 
-        mLogger.trace("Apply linear mapping algorithm.");
+        mLogger.trace("Applying linear mapping algorithm.");
 
         // A canvas is basically a wrapper for multiple representations of printable data, each representing a page.
         // These representations can be acquired by either requesting the current page or creating a new page.
@@ -143,6 +143,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
         // This can lead to distortions because the original pixel raster is equidistant, but the output raster
         // does not have to be equidistant.
 
+        mLogger.trace("Scanning through image pixel values...");
         // Scan through each pixel of the original image
         for (int x = 0; x < imgBuf.getWidth(); x++) {
             // Convert from original pixel x-position to braille dot x-position.
@@ -158,16 +159,18 @@ public class ImageRasterizer implements Rasterizer<Image> {
                 }
             }
         }
+        mLogger.trace("Done!");
     }
 
     private void quantifiedPositionMapping(final BufferedImage imgBuf, final RasterCanvas canvas) {
 
-        mLogger.trace("Apply quantified position algorithm.");
+        mLogger.trace("Applying quantified position algorithm.");
 
         MatrixData<Boolean> data = canvas.getNewPage();
 
         // Instead of using the dot rectangle a rectangle representing the target printing space in millimeters
         // is built from the canvas information.
+        mLogger.trace("Determining available area (in mm):");
         Rectangle availableArea = new Rectangle(0, 0, canvas.getPrintableWidth(), canvas.getPrintableHeight());
 
         // Calculate the ratios between original image and target printable area. (mm / pixel)
@@ -190,6 +193,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
         // In a second step, the calculated exact position is quantified to fit a dot position on the raster.
         // Distortions can still be introduced but are minimized.
 
+        mLogger.trace("Scanning through image pixel values...");
         // Scan through all pixels of the original image
         for (int x = 0; x < imgBuf.getWidth(); x++) {
             // Convert from original pixel x-position to printed dot x-position in millimeters.
@@ -208,6 +212,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
                 }
             }
         }
+        mLogger.trace("Done!");
     }
 
 

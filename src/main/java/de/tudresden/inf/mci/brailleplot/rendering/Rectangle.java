@@ -113,6 +113,7 @@ public class Rectangle {
      * @throws OutOfSpaceException If the requested partition is greater than the underlying rectangle itself.
      */
     public Rectangle fromTop(final double height) throws OutOfSpaceException {
+        mLogger.trace("Getting partition of height {} from top of {}", height, this);
         checkHeight(height);
         return new Rectangle(getX(), getY(), getWidth(), height);
     }
@@ -124,6 +125,7 @@ public class Rectangle {
      * @throws OutOfSpaceException If the requested partition is greater than the underlying rectangle itself.
      */
     public Rectangle fromLeft(final double width) throws OutOfSpaceException {
+        mLogger.trace("Getting partition of width {} from left side of {}", width, this);
         checkWidth(width);
         return new Rectangle(getX(), getY(), width, getHeight());
     }
@@ -135,6 +137,7 @@ public class Rectangle {
      * @throws OutOfSpaceException If the requested partition is greater than the underlying rectangle itself.
      */
     public Rectangle fromBottom(final double height) throws OutOfSpaceException {
+        mLogger.trace("Getting partition of height {} from bottom of {}", height, this);
         checkHeight(height);
         double newY = (getY() + (getHeight() - height));
         return new Rectangle(getX(), newY, getWidth(), height);
@@ -147,6 +150,7 @@ public class Rectangle {
      * @throws OutOfSpaceException If the requested partition is greater than the underlying rectangle itself.
      */
     public Rectangle fromRight(final double width) throws OutOfSpaceException {
+        mLogger.trace("Getting partition of width {} from right side of {}", width, this);
         checkWidth(width);
         double newX = (getX() + (getWidth() - width));
         return new Rectangle(newX, getY(), width, getHeight());
@@ -262,6 +266,7 @@ public class Rectangle {
      * @return New rectangle with scaled position and size.
      */
     public Rectangle scaledBy(final double xScale, final double yScale) {
+        mLogger.trace("Scaling rectangle {} by {}x{}", this, xScale, yScale);
         return new Rectangle(mX * xScale, mY * yScale, mW * xScale, mH * yScale);
     }
 
@@ -271,6 +276,7 @@ public class Rectangle {
      * @return New rectangle representing the intersection.
      */
     public Rectangle intersectedWith(final Rectangle otherRectangle) {
+        mLogger.trace("Intersecting rectangles: {} & {}", this, otherRectangle);
         double itsctX = max(getX(), otherRectangle.getX());
         double itsctY = max(getY(), otherRectangle.getY());
         double itsctB = min(getBottom(), otherRectangle.getBottom());
@@ -285,6 +291,7 @@ public class Rectangle {
      * @return A new rectangle representing a translated copy of this rectangle.
      */
     public Rectangle translatedBy(final double alongX, final double alongY) {
+        mLogger.trace("Translating rectangle {} along {},{}", this, alongX, alongY);
         return new Rectangle(getX() + alongX, getY() + alongY, getWidth(), getHeight());
     }
 
