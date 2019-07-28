@@ -4,6 +4,8 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
@@ -18,6 +20,8 @@ import static java.lang.Math.floor;
  * @version 2019.07.22
  */
 public class RasterCanvas extends AbstractCanvas {
+
+    private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
 
     private ArrayList<Double> mXPositions;
     private ArrayList<Double> mYPositions;
@@ -65,11 +69,13 @@ public class RasterCanvas extends AbstractCanvas {
         // Cell size in dots
         mCellWidth = cellWidth;
         mCellHeight = cellHeight;
+        mLogger.trace("Cell size set to {}x{}", mCellWidth, mCellHeight);
 
         readConfig();
         calculateRasterSize();
         calculateSpacing();
 
+        mLogger.info("New RasterCanvas created from config: {}, {}", printer, format);
     }
 
     public final MatrixData<Boolean> getNewPage() {
@@ -89,6 +95,8 @@ public class RasterCanvas extends AbstractCanvas {
 
     private void readConfig() {
 
+        mLogger.trace("Reading raster specific configuration");
+
         // What are the dot and cell distances in mm?
         mHorizontalDotDistance = mPrinter.getProperty("raster.dotDistance.horizontal").toDouble();
         mVerticalDotDistance = mPrinter.getProperty("raster.dotDistance.vertical").toDouble();
@@ -106,6 +114,7 @@ public class RasterCanvas extends AbstractCanvas {
 
         // New approach using a box model:
 
+        mLogger.trace("Fitting raster into available printing area");
         // Dividing the printable area into cells to create a cell raster box.
         int cellRasterX = (int) ceil(mPrintableArea.getX() / mCellHorizontalMM);
         int cellRasterY = (int) ceil(mPrintableArea.getY() / mCellVerticalMM);
@@ -116,6 +125,7 @@ public class RasterCanvas extends AbstractCanvas {
                 cellRasterR - cellRasterX,
                 cellRasterB - cellRasterY
         );
+        mLogger.trace("Determined cellRasterBox: {}", cellRasterBox);
 
         // The following properties impact the printing area, but are specific to rasterizing. (That's why they weren't read before in the AbstractCanvas)
         // The abstract parent class (AbstractCanvas) already calculated indentations based on millimeters, but it is
@@ -137,8 +147,10 @@ public class RasterCanvas extends AbstractCanvas {
         }
         Rectangle rasterConstraintBox = new Rectangle(rasterConstraintLeft, rasterConstraintTop,
                 rasterConstraintWidth, rasterConstraintHeight);
+        mLogger.trace("Determined rasterConstraintBox: {}", rasterConstraintBox);
 
         mPrintingAreaCells = calculatePrintingArea(cellRasterBox, rasterConstraintBox);
+        mLogger.trace("Determined printable raster: {}", mPrintingAreaCells);
 
         // The following values are set to keep track of the 'real' size of the internal data representation, because
         // the margins are created virtually by printing some empty cells at the pages top / left edge.
@@ -152,14 +164,17 @@ public class RasterCanvas extends AbstractCanvas {
         mPrintingAreaDots = toDotRectangle(mPrintingAreaCells);
         mColumnCount = mPrintingAreaDots.intWrapper().getWidth();
         mRowCount = mPrintingAreaDots.intWrapper().getHeight();
-
+        mLogger.trace("Determined raster dimensions (dots): {} columns x {} rows", mColumnCount, mRowCount);
 
     }
 
     private void calculateSpacing() {
 
+        mLogger.trace("Pre calculating quantified raster positions");
         mXPositions = calculateQuantizedPositions(mHorizontalDotDistance, mHorizontalCellDistance, mCellWidth, mHorizontalCellCount);
+        mLogger.trace("X coordinates: {}", mXPositions);
         mYPositions = calculateQuantizedPositions(mVerticalDotDistance, mVerticalCellDistance, mCellHeight, mVerticalCellCount);
+        mLogger.trace("Y coordinates: {}", mYPositions);
 
     }
 

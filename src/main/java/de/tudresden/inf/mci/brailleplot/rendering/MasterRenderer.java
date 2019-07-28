@@ -1,5 +1,8 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
@@ -14,19 +17,27 @@ import java.util.Objects;
  */
 public final class MasterRenderer {
 
+    private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
+
     Printer mPrinter;
     Format mFormat;
     FunctionalRenderingBase mRenderingBase;
 
     public MasterRenderer(final Printer printer, final Format format) {
+
+        mLogger.info("Creating MasterRenderer with default context");
+
+        mLogger.trace("Instantiating default rendering base");
         // if no rendering base is given, create own rendering base with default set of algorithms
         FunctionalRenderingBase renderingBase = new FunctionalRenderingBase();
 
+        mLogger.trace("Instantiating default rasterizers");
         // Default Algorithms:
 
         // Rasterizer<BarChart> uniformTexture = new UniformTextureBarChartRasterizer();
         Rasterizer<Image> linearImageMapping = new ImageRasterizer();
 
+        mLogger.trace("Registering default rasterizers");
         // renderingBase.registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, uniformTexture));
         renderingBase.registerRasterizer(new FunctionalRasterizer<Image>(Image.class, linearImageMapping));
         //renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, ScatterPlotRasterizing::fooRasterizing));
@@ -36,18 +47,23 @@ public final class MasterRenderer {
     }
 
     public MasterRenderer(final Printer printer, final Format format, final FunctionalRenderingBase renderingBase) {
+        mLogger.info("Creating MasterRenderer with custom context");
         setRenderingContext(printer, format, renderingBase);
     }
 
     public RasterCanvas rasterize(final Renderable data) throws InsufficientRenderingAreaException {
+        mLogger.info("Preparing a new {} rasterizing on RenderingBase {}",
+                data.getClass().getSimpleName(), mRenderingBase);
         RasterCanvas canvas = createCompatibleRasterCanvas();
         mRenderingBase.setRasterCanvas(canvas);
         mRenderingBase.rasterize(data);
+        mLogger.info("Rasterizing of {} on RenderingBase {} has finished, result containing {} pages",
+                data.getClass().getSimpleName(), mRenderingBase, canvas.getPageCount());
         return canvas;
     }
 
     private RasterCanvas createCompatibleRasterCanvas() throws InsufficientRenderingAreaException {
-
+        mLogger.info("Creating compatible RasterCanvas for current rendering context");
         return new SixDotBrailleRasterCanvas(mPrinter, mFormat);
 
         /*
@@ -71,6 +87,7 @@ public final class MasterRenderer {
 
     public void setPrinter(final Printer printer) {
         mPrinter = Objects.requireNonNull(printer);
+        mLogger.info("Rendering context: Printer was set to {}", mPrinter);
     }
     public Printer getPrinter() {
         return mPrinter;
@@ -78,6 +95,7 @@ public final class MasterRenderer {
 
     public void setFormat(final Format format) {
         mFormat = Objects.requireNonNull(format);
+        mLogger.info("Rendering context: Format was set to {}", mFormat);
     }
     public Format getFormat() {
         return mFormat;
@@ -85,6 +103,7 @@ public final class MasterRenderer {
 
     public void setRenderingBase(final FunctionalRenderingBase renderingBase) {
         mRenderingBase = Objects.requireNonNull(renderingBase);
+        mLogger.info("Rendering context: Set RenderingBase to instance {}", mRenderingBase);
     }
     public FunctionalRenderingBase getRenderingBase() {
         return mRenderingBase;
