@@ -39,7 +39,8 @@ dependencies {
     compile group: 'javax.measure', name: 'unit-api', version: '2.0-PRD'
     compile group: 'tec.units', name: 'unit-ri', version: '1.0.3'
 
-    compile "com.opencsv:opencsv:4.0"
+    // CSV parsing
+    compile "com.opencsv:opencsv:4.6"
 }
 
 test {
