@@ -63,7 +63,7 @@ public final class MasterRenderer {
     }
 
     private RasterCanvas createCompatibleRasterCanvas() throws InsufficientRenderingAreaException {
-        mLogger.info("Creating compatible RasterCanvas for current rendering context.");
+        mLogger.info("Creating compatible RasterCanvas for current rendering context");
         return new SixDotBrailleRasterCanvas(mPrinter, mFormat);
 
         /*

@@ -170,7 +170,7 @@ public class RasterCanvas extends AbstractCanvas {
 
     private void calculateSpacing() {
 
-        mLogger.trace("Pre calculating quantified raster positions.");
+        mLogger.trace("Pre calculating quantified raster positions");
         mXPositions = calculateQuantizedPositions(mHorizontalDotDistance, mHorizontalCellDistance, mCellWidth, mHorizontalCellCount);
         mLogger.trace("X coordinates: {}", mXPositions);
         mYPositions = calculateQuantizedPositions(mVerticalDotDistance, mVerticalCellDistance, mCellHeight, mVerticalCellCount);
