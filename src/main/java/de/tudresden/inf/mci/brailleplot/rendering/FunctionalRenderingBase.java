@@ -1,5 +1,8 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -12,11 +15,14 @@ import java.util.Objects;
  */
 public class FunctionalRenderingBase {
 
+    private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
+
     private HashMap<Class<? extends Renderable>, FunctionalRasterizer> mRasterizingAlgorithms;
     private RasterCanvas mRaster;
 
     public FunctionalRenderingBase() {
         mRasterizingAlgorithms = new HashMap<>();
+        mLogger.info("FunctionalRenderingBase instance created");
     }
 
     /**
@@ -28,20 +34,25 @@ public class FunctionalRenderingBase {
      * @exception IllegalArgumentException If no rasterizer is registered for the given renderable type.
      */
     public void rasterize(final Renderable renderData) throws InsufficientRenderingAreaException {
+        mLogger.info("Starting new rasterizing task for {}", renderData.getClass().getSimpleName());
         // First, check if a raster is set. No rasterizing without raster.
         if (Objects.isNull(mRaster)) {
+            mLogger.error("No target raster set!");
             throw new IllegalStateException("No raster was set. The method 'setRasterCanvas' must be called before invoking the 'rasterize' method.");
         }
         // Then, look at the type of the renderData
-        Class<? extends Renderable> diagramClass = renderData.getClass();
+        Class<? extends Renderable> renderableClass = renderData.getClass();
+        mLogger.info("Selecting FunctionalRasterizer for {}", renderableClass.getSimpleName());
+
         // Is a rasterizer for the given renderData type available?
-        if (mRasterizingAlgorithms.containsKey(diagramClass)) {
+        if (mRasterizingAlgorithms.containsKey(renderableClass)) {
             // dispatch to concrete rasterizer implementation
-            FunctionalRasterizer selectedRasterizer = mRasterizingAlgorithms.get(diagramClass);
+            FunctionalRasterizer selectedRasterizer = mRasterizingAlgorithms.get(renderableClass);
             selectedRasterizer.rasterize(renderData, mRaster);
         } else {
+            mLogger.error("No rasterizer found for given renderable type!");
             throw new IllegalArgumentException("No rasterizer registered for renderData class: '"
-                    + diagramClass.getCanonicalName() + "'");
+                    + renderableClass.getCanonicalName() + "'");
         }
     }
 
@@ -52,7 +63,18 @@ public class FunctionalRenderingBase {
      * @param rasterizer The instance of {@link FunctionalRasterizer} to be registered.
      */
     public void registerRasterizer(final FunctionalRasterizer<? extends Renderable> rasterizer) {
+        mLogger.trace("Registering new rasterizer {} for type {}", rasterizer,
+                rasterizer.getSupportedRenderableClass().getSimpleName());
+        if (mRasterizingAlgorithms.containsKey(rasterizer.getSupportedRenderableClass())) {
+            mLogger.warn("Already registered rasterizer {} will be overwritten!",
+                    mRasterizingAlgorithms.get(rasterizer.getSupportedRenderableClass()));
+        }
+
         mRasterizingAlgorithms.put(rasterizer.getSupportedRenderableClass(), rasterizer);
+
+        mLogger.info("FunctionalRasterizer has been registered for renderable type {}",
+                rasterizer.getSupportedRenderableClass().getSimpleName());
+        mLogger.trace("Current count of registered rasterizers: {}", mRasterizingAlgorithms.size());
     }
 
     /**
@@ -63,6 +85,7 @@ public class FunctionalRenderingBase {
      */
     public void setRasterCanvas(final RasterCanvas raster) {
         mRaster = Objects.requireNonNull(raster);
+        mLogger.info("RasterCanvas has been set to instance {}", raster);
     }
 
     /**
