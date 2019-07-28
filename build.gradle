@@ -40,9 +40,6 @@ dependencies {
     compile group: 'tec.units', name: 'unit-ri', version: '1.0.3'
 
     compile "com.opencsv:opencsv:4.0"
-    
-    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.24'
 }
 
 test {
