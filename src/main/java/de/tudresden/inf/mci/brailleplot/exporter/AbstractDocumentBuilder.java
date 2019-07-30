@@ -7,13 +7,14 @@ import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
  * and Protocol Building for Documents that need to be send to the printer.
  * The common Interface is the getDocument() and assemble method.
  * Its usable for all Braille printers.
+ * @param <T> Type of MatrixData.
  * @author Andrey Ruzhanskiy
  * @version 28.05.2019
  */
 
-public abstract class AbstractDocumentBuilder {
+public abstract class AbstractDocumentBuilder<T> {
 
-    MatrixData mData;
+    MatrixData<T> mData;
 
 
     AbstractBrailleTableParser mParser;
@@ -23,7 +24,7 @@ public abstract class AbstractDocumentBuilder {
      * @param data Raw Data to be printed without any escapesequences
      * @return Fully build Document as byte[]
      */
-    public byte[] assemble(final MatrixData data) {
+    public byte[] assemble(final MatrixData<T> data)  {
         return null;
     }
 
@@ -31,9 +32,9 @@ public abstract class AbstractDocumentBuilder {
     /**
      * Method for setting the correct Parser. Reads the file from the printer configuration, then checks
      * if the fileextension is supported.
-     * @throws NotSupportedFileExtension If the Fileextension is not supported.
+     * @throws NotSupportedFileExtensionException If the Fileextension is not supported.
      */
-    protected void setParser() throws NotSupportedFileExtension {
+    protected void setParser() throws NotSupportedFileExtensionException {
         //read brailletablepath
         Printer printer = mData.getPrinterConfig();
         String brailleTablePath = printer.getProperty("brailletable").toString();
@@ -44,7 +45,7 @@ public abstract class AbstractDocumentBuilder {
             case "properties": mParser = new PropertiesParser(printer.getProperty("brailletable").toString()); break;
             case "json": mParser = new JsonParser(printer.getProperty("brailletable").toString()); break;
             case "xml": mParser = new XmlParser(printer.getProperty("brailletable").toString()); break;
-            default: throw new NotSupportedFileExtension("The Fileextension " + fileEnding + "is currently not supported.");
+            default: throw new NotSupportedFileExtensionException("The Fileextension " + fileEnding + "is currently not supported.");
         }
     }
 }
