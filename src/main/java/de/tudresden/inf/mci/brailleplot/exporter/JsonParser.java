@@ -12,7 +12,7 @@ public class JsonParser implements AbstractBrailleTableParser {
      * @param filePath File path to the Brailletable.
      */
     JsonParser(final String filePath) {
-
+        throw new UnsupportedOperationException();
     }
 
 
@@ -23,6 +23,6 @@ public class JsonParser implements AbstractBrailleTableParser {
      */
     @Override
     public int getValue(final String key) {
-        return 0;
+        throw new UnsupportedOperationException();
     }
 }
