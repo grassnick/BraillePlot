@@ -10,7 +10,8 @@ package de.tudresden.inf.mci.brailleplot.printerbackend;
 
 public class FloatingDotAreaBuilder extends AbstractIndexV4Builder {
 
-    public FloatingDotAreaBuilder() {
-
-    }
+    /**
+     * Constructor. Does not have any functionality. Should only be used in  {@link de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector}
+     */
+    FloatingDotAreaBuilder() { }
 }

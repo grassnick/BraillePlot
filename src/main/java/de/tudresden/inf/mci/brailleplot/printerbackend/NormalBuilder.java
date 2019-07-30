@@ -9,7 +9,7 @@ import java.util.Objects;
 
 
 /**
- * Class representing a normal Document (for example a .txt) to print without
+ * Class representing a normal Document (for example a .txt) that should be printed without
  * any Escapesequences.
  * @author Andrey Ruzhanskiy
  * @version 12.07.2019
@@ -17,6 +17,11 @@ import java.util.Objects;
 @SuppressWarnings("checkstyle:MagicNumber")
 public class NormalBuilder extends AbstractDocumentBuilder<Boolean> {
 
+
+    /**
+     * Constructor. Does not have any functionality. Should only be used in  {@link de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector}
+     */
+    NormalBuilder() { }
 
     /**
      * Method for assembling the final document from the data parameter.

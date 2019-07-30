@@ -5,7 +5,7 @@ import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 /**
  * This Class provides an Extension Point for further implementation
  * and Protocol Building for Documents that need to be send to the printer.
- * The common Interface is the getDocument() and assemble method.
+ * The common Interface is the getDocument() and assemble() method.
  * Its usable for all Braille printers.
  * @param <T> Type of MatrixData.
  * @author Andrey Ruzhanskiy
@@ -27,7 +27,6 @@ public abstract class AbstractDocumentBuilder<T> {
     public byte[] assemble(final MatrixData<T> data)  {
         return null;
     }
-
 
     /**
      * Method for setting the correct Parser. Reads the file from the printer configuration, then checks

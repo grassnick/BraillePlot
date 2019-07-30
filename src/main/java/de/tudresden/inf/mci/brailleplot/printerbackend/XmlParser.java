@@ -21,7 +21,7 @@ public class XmlParser implements AbstractBrailleTableParser {
     /**
      * Method for querying the BrailleTable.
      * @param key Braillecell, represented as String ("111000).
-     * @return
+     * @return The Byte(int) representing the Braillecell specified in the BrailleTable.
      */
     @Override
     public int getValue(final String key) {

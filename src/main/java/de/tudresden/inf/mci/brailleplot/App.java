@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 /**
  * Main class.
  * Set up the application and run it.
- * @author Georg Graßnick
+ * @author Georg Graßnick, Andrey Ruzhanskiy
  * @version 06.06.19
  */
 
@@ -144,14 +144,12 @@ public final class App {
                 throw new Exception("Can't find any Printservices on this System.");
             }
 
-            // TODO make it default if nothing is found in p.
+            // Parse properties File
             Optional<String> configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH);
             JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get(), "src/main/resources/config/default.properties");
             Printer printer = configParser.getPrinter();
             printer.getProperty("brailletable").toString();
             Format formatA4 = configParser.getFormat("A4");
-
-
 
             // Last Step: Printing
             @SuppressWarnings("checkstyle:MagicNumber")

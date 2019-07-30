@@ -29,15 +29,15 @@ public class PrintDirector {
     private PrintService mService;
     private String mPrinterName;
     private DocFlavor mDocflavor;
-    public DocPrintJob mPrintJob;
+    private DocPrintJob mPrintJob;
 
 
     /**
      * Constructor for the PrintDirector. Main Class for printing. The class takes care of the complex Protocol to build
      * the document for the given configuration.
-     * @param printerCap Which printerconfiguration should be used. Normalprinter assumes that no special Features like
+     * @param printerCap Which {@link de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability} should be used. Normalprinter assumes that no special features like
      *                GraphicMode or FloatindDotArea will be used.
-     * @param printerConfig The Printer object, used for extracting the name of the printer.
+     * @param printerConfig The {@link de.tudresden.inf.mci.brailleplot.configparser.Printer} object, used for extracting the name of the printer.
      */
     public PrintDirector(final PrinterCapability printerCap, final Printer printerConfig) {
         Objects.requireNonNull(printerCap);
@@ -60,13 +60,13 @@ public class PrintDirector {
 
     /**
      * Public method for printing the given Document with the given data.
-     * @param data Data to be printed.
+     * @param data {@link de.tudresden.inf.mci.brailleplot.printabledata.MatrixData} to be printed.
+     * @param <T> The type of MatrixData.
      */
 
-    /*
-        Needed if someone tries to use a normalbuilder with something that is not a boolean.
 
-     */
+    // Needed if someone tries to use a normalbuilder with something that is not a boolean.
+
     @SuppressWarnings("unchecked")
     public <T> void print(final MatrixData<T> data)  {
         Objects.requireNonNull(data);
@@ -131,6 +131,10 @@ public class PrintDirector {
 
     }
 
+    /**
+     * Static Method to verify if the printservice is activated on the System.
+     * @return true, if activated, false if not.
+     */
     public static boolean isPrintServiceOn() {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         if (services.length == 0) {

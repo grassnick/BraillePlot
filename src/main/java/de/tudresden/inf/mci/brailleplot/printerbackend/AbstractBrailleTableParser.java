@@ -1,7 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.printerbackend;
 
 /**
- * Abstract class for extending purposes.
+ * Defines an Interface which should be implemented in all Parsers of Brailletables.
  */
 public interface AbstractBrailleTableParser {
 
