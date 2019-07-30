@@ -1,7 +1,9 @@
 package de.tudresden.inf.mci.brailleplot;
 
+import de.tudresden.inf.mci.brailleplot.configparser.Format;
+import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
+import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
-import de.tudresden.inf.mci.brailleplot.configparser.*;
 import de.tudresden.inf.mci.brailleplot.exporter.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.exporter.PrinterCapability;
 
@@ -22,8 +24,8 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 /**
  * Main class.
  * Set up the application and run it.
- * @author Georg Graßnick, Andrey Ruzhanskiy
- * @version 28.06.19
+ * @author Georg Graßnick
+ * @version 06.06.19
  */
 
 public final class App {
@@ -109,7 +111,6 @@ public final class App {
      * @param args Command line parameters.
      * @return 0 if Application exited successfully, 1 on error.
      */
-    @SuppressWarnings("checkstyle:MagicNumber")
     int run(final String[] args) {
 
         // Has to be the first finalizer to be added, so that it is run last
@@ -145,7 +146,7 @@ public final class App {
 
             // TODO make it default if nothing is found in p.
             Optional<String> configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH);
-            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get(), "src/main/resources/default.properties");
+            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get(), "src/main/resources/config/default.properties");
             Printer printer = configParser.getPrinter();
             printer.getProperty("brailletable").toString();
             Format formatA4 = configParser.getFormat("A4");
@@ -153,7 +154,7 @@ public final class App {
 
 
             // Last Step: Printing
-
+            @SuppressWarnings("checkstyle:MagicNumber")
             MatrixData<Boolean> data = new SimpleMatrixDataImpl<>(printer, formatA4, 18, 20, true);
             String printerConfigUpperCase = printer.getProperty("mode").toString().toUpperCase();
             PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), printer);

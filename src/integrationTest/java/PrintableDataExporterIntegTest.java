@@ -47,8 +47,8 @@ public class PrintableDataExporterIntegTest {
     @BeforeAll
     public static void setUp() {
         Assertions.assertDoesNotThrow(() -> {
-            String correct = getResource("correct.properties").getAbsolutePath();
-            String standard = getResource("default.properties").getAbsolutePath();
+            String correct = getResource("config/correct.properties").getAbsolutePath();
+            String standard = getResource("config/default.properties").getAbsolutePath();
             JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(correct, standard);
             printer = configParser.getPrinter();
             printer.getProperty("brailletable").toString();

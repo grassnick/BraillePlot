@@ -43,23 +43,6 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         Predicate<String> requireEnum = JavaPropertiesConfigurationValidator::checkIfEnum;
         Predicate<String> requirePrinterExists = JavaPropertiesConfigurationValidator::checkIfPrinterExists;
 
-
- /*
-        Map<String, Predicate<String>> p = new HashMap<>();
-        p.put("name", requireNotEmpty.and(requirePrinterExists));
-        p.put("min.charsPerLine", requireInteger.and(requirePositive));
-        p.put("max.charsPerLine", requireInteger.and(requirePositive));
-        p.put("min.linesPerPage", requireInteger.and(requirePositive));
-        p.put("max.linesPerPage", requireInteger.and(requirePositive));
-        p.put("equidistantSupport", requireBoolean);
-        p.put("min.characterDistance", requireDouble.and(requirePositive));
-        p.put("max.characterDistance", requireDouble.and(requirePositive));
-        p.put("min.lineDistance", requireDouble.and(requirePositive));
-        p.put("max.lineDistance", requireDouble.and(requirePositive));
-        p.put("brailletable", requireFileExists);
-        p.put("mode", requireNotEmpty.and(requireEnum));
-  */
-
         // Definition of valid printer properties
         Map<String, Predicate<String>> p = new HashMap<>();
         definePrinterProperty("name", requireNotEmpty.and(requirePrinterExists));
