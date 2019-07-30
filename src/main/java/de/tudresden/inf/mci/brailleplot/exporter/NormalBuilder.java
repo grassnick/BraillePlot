@@ -15,7 +15,7 @@ import java.util.Objects;
  * @version 12.07.2019
  */
 @SuppressWarnings("checkstyle:MagicNumber")
-public class NormalBuilder extends AbstractDocumentBuilder {
+public class NormalBuilder extends AbstractDocumentBuilder<Boolean> {
 
 
     /**
@@ -27,15 +27,15 @@ public class NormalBuilder extends AbstractDocumentBuilder {
      * @return the final, printable document.
      */
     @Override
-    public byte[] assemble(final MatrixData data) {
+    public byte[] assemble(final MatrixData<Boolean> data) {
+
 
         //Check if Null Object was given.
         mData = Objects.requireNonNull(data);
-
         // Setting the right parser, catch if not found and throw RuntimeException which can be handled.
         try {
             setParser();
-        } catch (NotSupportedFileExtension e) {
+        } catch (NotSupportedFileExtensionException e) {
             throw new RuntimeException();
         }
 
@@ -45,7 +45,7 @@ public class NormalBuilder extends AbstractDocumentBuilder {
         // Set stream for final output.
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-        // Getting Width in BrailleCells
+        // Getting Width in BrailleCells.
         int width = mData.getColumnCount() / 2;
 
         // Declaration of  local variables for better readability.
@@ -53,12 +53,11 @@ public class NormalBuilder extends AbstractDocumentBuilder {
         String key;
         int value;
 
-        //
+        // Count Variable for the loop
         int i = 0;
 
         // Loop through data and write to stream.
         while (iter.hasNext()) {
-
             current = iter.next();
             key = current.getBitRepresentationFromBool();
             value = mParser.getValue(key);
