@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot.exporter;
+package de.tudresden.inf.mci.brailleplot.printerbackend;
 
 /**
  * Exception Class for not recogniced/not supported FIleExtension for brailletables.

@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot.exporter;
+package de.tudresden.inf.mci.brailleplot.printerbackend;
 
 import de.tudresden.inf.mci.brailleplot.printabledata.BrailleCell6;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;

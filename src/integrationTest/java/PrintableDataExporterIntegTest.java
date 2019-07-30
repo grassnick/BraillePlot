@@ -1,12 +1,11 @@
 import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
-import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
-import de.tudresden.inf.mci.brailleplot.exporter.PrintDirector;
-import de.tudresden.inf.mci.brailleplot.exporter.PrinterCapability;
+import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
+import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 
@@ -19,7 +18,6 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Optional;
 
 /**
  * Integrationtests for the components PrintableData and Exporter.

@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot.exporter;
+package de.tudresden.inf.mci.brailleplot.printerbackend;
 
 
 import org.junit.jupiter.api.Assertions;

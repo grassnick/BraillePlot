@@ -4,8 +4,8 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
-import de.tudresden.inf.mci.brailleplot.exporter.PrintDirector;
-import de.tudresden.inf.mci.brailleplot.exporter.PrinterCapability;
+import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
+import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;

@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot.exporter;
+package de.tudresden.inf.mci.brailleplot.printerbackend;
 
 /**
  * Abstract Class for Documents, that need special Escape Sequences for the Index Everest-V4.

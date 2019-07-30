@@ -1,7 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
 
-import de.tudresden.inf.mci.brailleplot.exporter.PrinterCapability;
+import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;

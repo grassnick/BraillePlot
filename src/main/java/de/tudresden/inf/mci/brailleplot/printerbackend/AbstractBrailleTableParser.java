@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot.exporter;
+package de.tudresden.inf.mci.brailleplot.printerbackend;
 
 /**
  * Abstract class for extending purposes.
