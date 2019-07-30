@@ -1,5 +1,8 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
+import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
+
 /**
  * A rasterizer for text on braille grids. This class is still a stub and must be implemented!
  * @version 2019.07.21

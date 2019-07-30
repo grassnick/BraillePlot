@@ -1,5 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
+
 import java.util.Map;
 import java.util.Objects;
 

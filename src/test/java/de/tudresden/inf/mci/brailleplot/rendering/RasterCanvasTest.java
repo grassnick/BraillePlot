@@ -2,6 +2,9 @@ package de.tudresden.inf.mci.brailleplot.rendering;
 
 import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
+import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
+import de.tudresden.inf.mci.brailleplot.layout.SixDotBrailleRasterCanvas;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
