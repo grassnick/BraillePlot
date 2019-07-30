@@ -22,7 +22,7 @@ public class CsvDotParser extends CsvParseAlgorithm {
      * Parses scattered point data in horizontal data sets, alternating mX and mY. The
      * first column contains the row mName in the mX row.
      * @param csvData The parsed input String.
-     * @return A {@link PointListContainer<PointList>} representing the data.
+     * @return A {@link PointListContainer}{@literal <}{@link PointList}{@literal >} representing the data.
      */
     public PointListContainer<PointList> parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
         Objects.requireNonNull(csvData);
@@ -76,7 +76,7 @@ public class CsvDotParser extends CsvParseAlgorithm {
      * Parses scattered point data in vertical data sets, alternating mX and mY. The
      * first row contains the column mName in the mX column.
      * @param csvData The parsed input String.
-     * @return A {@link PointListContainer<PointList>} representing the data.
+     * @return A {@link PointListContainer}{@literal <}{@link PointList}{@literal >} representing the data.
      */
     @Override
     public PointListContainer<PointList> parseAsVerticalDataSets(final List<? extends List<String>> csvData) {

@@ -1,7 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.point;
 
 /**
- * An instance of a {@link Point2D<Double>}.
+ * An instance of a {@link Point2D}{@literal <}{@link Double}{@literal >}.
  * @author Georg Graßnick
  * @version 2019.07.29
  */

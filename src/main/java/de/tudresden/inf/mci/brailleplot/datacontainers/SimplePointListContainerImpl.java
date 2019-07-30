@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * A low effort implementation of {@link PointListContainer<PointList>}.
+ * A low effort implementation of {@link PointListContainer}{@literal <}{@link PointList}{@literal >}.
  * @author Georg Graßnick
  * @version 2019.07.29
  */

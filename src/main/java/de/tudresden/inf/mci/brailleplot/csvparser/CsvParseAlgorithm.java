@@ -19,25 +19,25 @@ public abstract class CsvParseAlgorithm {
 
     /**
      * If the data sets are oriented horizontally, i.e. in rows, parse the rows into
-     * {@link @link PointListContainer<PointList>}.
+     * {@link PointListContainer}{@literal <}{@link PointList}{@literal >}.
      * @param csvData The parsed input String.
-     * @return A {@link PointListContainer<PointList>} representing the data.
+     * @return A {@link PointListContainer}{@literal <PointList>} representing the data.
      */
     public abstract PointListContainer<PointList> parseAsHorizontalDataSets(List<? extends List<String>> csvData);
 
     /**
      * If the data sets are oriented horizontally, i.e. in rows, parse the rows into
-     * {@link @link PointListContainer<PointList>}.
+     * {@link PointListContainer}{@literal <}{@link PointList}{@literal >}.
      * @param csvData The parsed input String.
-     * @return A {@link PointListContainer<PointList>} representing the data.
+     * @return A {@link PointListContainer}{@literal <}{@link PointList}{@literal >} representing the data.
      */
     public abstract PointListContainer<PointList> parseAsVerticalDataSets(List<? extends List<String>> csvData);
 
     /**
-     * Adds a {@link Point2DDouble} to a {@link PointList} in a {@link PointListContainer<PointList>},
+     * Adds a {@link Point2DDouble} to a {@link PointList} in a {@link PointListContainer}{@literal <}{@link PointList}{@literal >},
      * specified by {@code listIndex}. Adds more {@link PointList PointLists} if
      * needed.
-     * @param container The {@link PointListContainer<PointList>} to which the point shall be added
+     * @param container The {@link PointListContainer}{@literal <}{@link PointList}{@literal >} to which the point shall be added
      * @param index The index of the list to which the point shall be added
      * @param point The {@link Point2DDouble} which shall be added
      */
