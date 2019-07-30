@@ -1,4 +1,3 @@
-import de.tudresden.inf.mci.brailleplot.App;
 import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
@@ -10,21 +9,29 @@ import de.tudresden.inf.mci.brailleplot.exporter.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.exporter.PrinterCapability;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
-import org.junit.jupiter.api.AfterAll;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import javax.print.DocFlavor;
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Objects;
 import java.util.Optional;
+
+/**
+ * Integrationtests for the components PrintableData and Exporter.
+ * Because most of the Exporter Unit tests depend heavily on the packages PrintableData and configParser,
+ * these are also located here. Most, if not all unittests for the exporter are tested via Reflection. It is
+ * contestable if these tests are really needed, but the with more LOC Coverage, there comes more possible stability.
+ * @author Andrey Ruzhanskiy
+ * @version 30.07.2019
+ */
 
 public class PrintableDataExporterIntegTest {
 
-    private static App mApp;
     private static String[] args;
     private static CommandLineParser cliParser;
     private static SettingsWriter settings;
@@ -34,28 +41,31 @@ public class PrintableDataExporterIntegTest {
     private static MatrixData<Boolean> data;
 
 
+    /**
+     * Setup Method for testing the exporter package.
+     */
     @BeforeAll
     public static void setUp() {
         Assertions.assertDoesNotThrow(() -> {
-            args = new String[]{"-p", "src/integrationTest/resources/correct.properties"};
-            mApp = App.getInstance();
-            cliParser = new CommandLineParser();
-            settings = cliParser.parse(args);
-            settingsReader = settings;
-            Optional<String> configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH);
-            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get(), "default.properties");
+            String correct = getResource("correct.properties").getAbsolutePath();
+            String standard = getResource("default.properties").getAbsolutePath();
+            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(correct, standard);
             printer = configParser.getPrinter();
             printer.getProperty("brailletable").toString();
             format = configParser.getFormat("A4");
             data = new SimpleMatrixDataImpl<>(printer, format, 18, 20, true);
-
         });
     }
 
-    @AfterAll
-    public static void tearDown() {
+    public static File getResource(String fileName) {
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        File resourceFile = new File(classLoader.getResource(fileName).getFile());
+        return resourceFile;
     }
-
+    /**
+     * Unittest/Integrationtest for the private Print method with a Null Servive.
+     * Expected: Nullpointerexception.
+     */
     @Test
     public void testPrivatePrintWithNullService() {
         Assertions.assertThrows(NullPointerException.class, () -> {
@@ -66,10 +76,13 @@ public class PrintableDataExporterIntegTest {
             } catch (InvocationTargetException e) {
                 throw e.getTargetException();
             }
-
         });
     }
 
+    /**
+     * Unittest/Integrationtest for private print method with a null byte.
+     * Expected: Nullpointerexception.
+     */
     @Test
     public void testPrivatePrintWithNullByte() {
         Assertions.assertThrows(NullPointerException.class, () -> {
@@ -83,6 +96,10 @@ public class PrintableDataExporterIntegTest {
         });
     }
 
+    /**
+     * Unittest/Integrationtest for private print method with non existing Docflavour.
+     * Expected: Nullpointerexception.
+     */
     @Test
     public void testPrivatePrintWithNoDocFlavour() {
         Assertions.assertThrows(NullPointerException.class, () -> {
@@ -99,6 +116,11 @@ public class PrintableDataExporterIntegTest {
             }
         });
     }
+
+    /**
+     * Unittest/Integrationtest for private print Method with non existing Printer.
+     * Expected: RuntimeException
+     */
 
     @Test
     public void testPrivateSetUpServiceWithNotExistentPrinter() {
@@ -117,6 +139,10 @@ public class PrintableDataExporterIntegTest {
         });
     }
 
+    /**
+     * Unittest/Integrationtest for Method SetUpService with NullPrinter.
+     * Expected: Nullpointerexception.
+     */
     @Test
     public void testPrivateSetUpServiceWithNullPrinter() {
         Assertions.assertThrows(NullPointerException.class, () -> {
@@ -135,7 +161,10 @@ public class PrintableDataExporterIntegTest {
     }
 
 
-
+    /**
+     * Unittest/Integrationtest for setting a Wrong Doc Flavor and trying to print with it.
+     * Expected: RuntimeException.
+     */
     @Test
     public void testWrongDocFlavor() {
         Assertions.assertThrows(RuntimeException.class, () -> {
@@ -145,30 +174,35 @@ public class PrintableDataExporterIntegTest {
             mDocflavor.set(printD, new DocFlavor("text/html", "[B"));
             Method setUpService = PrintDirector.class.getDeclaredMethod("setUpService");
             setUpService.setAccessible(true);
+            Method privatePrint = PrintDirector.class.getDeclaredMethod("print", byte[].class);
+            privatePrint.setAccessible(true);
             try {
                 setUpService.invoke(printD);
-                Method privatePrint = PrintDirector.class.getDeclaredMethod("print", byte[].class);
-                privatePrint.setAccessible(true);
                 privatePrint.invoke(printD, new byte[] {0x50});
             } catch (InvocationTargetException e){
                 throw e.getTargetException();
             }
-
         });
     }
 
     // Positve Testcases
 
     @Test
-    public void testIfPrintJobIsExistent() {
-        Assertions.assertDoesNotThrow(() ->{
-            PrintDirector printD = new PrintDirector(PrinterCapability.NORMALPRINTER, printer);
-            printD.print(data);
+    public void testFloatingDotCapability() {
+        Assertions.assertDoesNotThrow(() -> {
+            PrintDirector printD = new PrintDirector(PrinterCapability.INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER, printer);
         });
-
     }
 
+    @Test
+    public void testGraphicPrintCapability() {
+        Assertions.assertDoesNotThrow(() -> {
+            PrintDirector printD = new PrintDirector(PrinterCapability.INDEX_EVEREST_D_V4_GRAPHIC_PRINTER, printer);
+        });
+    }
 
-
-
+    @Test
+    public void testIsPrintServiceOn() {
+        Assertions.assertTrue(PrintDirector.isPrintServiceOn());
+    }
 }
