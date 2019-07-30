@@ -16,8 +16,8 @@ import java.util.regex.Pattern;
 
 /**
  * Concrete validator for properties parsed from configuration files in Java Property File format.
- * @author Leonard Kupper
- * @version 2019.07.18
+ * @author Leonard Kupper, Andrey Ruzhanskiy
+ * @version 2019.07.30
  */
 class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
 
@@ -42,6 +42,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         Predicate<String> requireFileExists = JavaPropertiesConfigurationValidator::checkIfFileExists;
         Predicate<String> requireEnum = JavaPropertiesConfigurationValidator::checkIfEnum;
         Predicate<String> requirePrinterExists = JavaPropertiesConfigurationValidator::checkIfPrinterExists;
+
 
  /*
         Map<String, Predicate<String>> p = new HashMap<>();
@@ -210,11 +211,16 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
             throw new ConfigurationValidationException("Invalid property name: " + propertyName);
         }
         // Check against its type requirement predicate
-        if (!validation.get(propertyName).test(value)) {
-            throw new ConfigurationValidationException(
-                    "Invalid value '" + value + "' for property '" + propertyName + "'"
-            );
+        try {
+            if (!validation.get(propertyName).test(value)) {
+                throw new ConfigurationValidationException(
+                        "Invalid value '" + value + "' for property '" + propertyName + "'"
+                );
+            }
+        } catch (RuntimeException e) {
+            throw new ConfigurationValidationException(e.getMessage(), e);
         }
+
     }
 
     // Validation Predicates
@@ -291,6 +297,9 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
 
     private static boolean checkIfPrinterExists(final String printerName) {
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        if (services.length == 0) {
+            throw new RuntimeException("Cant find any print services on this system.");
+        }
         for (PrintService service: services) {
             // Second check needed for testing purposes
             if (service.getName().equals(printerName) || printerName.equals("Dummy Printer")) {
