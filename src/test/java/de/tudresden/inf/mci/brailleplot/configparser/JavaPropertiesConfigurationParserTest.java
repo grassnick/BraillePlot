@@ -28,12 +28,12 @@ public class JavaPropertiesConfigurationParserTest {
     @Test @BeforeAll
     public static void testSuccessfulParsing() {
         Assertions.assertDoesNotThrow(() -> {
-            // Parse concrete properties and defaults
-            ConfigurationParser parser = new JavaPropertiesConfigurationParser(mConcreteConfigPath, mDefaultConfigPath);
-            mPrinterConfig = parser.getPrinter();
-            Set<String> properties = mPrinterConfig.getPropertyNames();
-            Set<String> formats = parser.getFormatNames();
-            mFormatConfig = parser.getFormat("A4");
+                // Parse concrete properties and defaults
+                ConfigurationParser parser = new JavaPropertiesConfigurationParser(mConcreteConfigPath, mDefaultConfigPath);
+                mPrinterConfig = parser.getPrinter();
+                Set<String> properties = mPrinterConfig.getPropertyNames();
+                Set<String> formats = parser.getFormatNames();
+                mFormatConfig = parser.getFormat("A4");
         });
     }
     @Test
@@ -128,6 +128,13 @@ public class JavaPropertiesConfigurationParserTest {
         Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("floatingDot.support").toInt());
         Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("raster.cellDistance.horizontal").toInt());
         Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("name").toDouble());
+    }
+    @Test
+    public void testWrongCapability() {
+        Assertions.assertThrows(ConfigurationValidationException.class, () -> {
+            String configPath = getResource("wrongPrinterModeExample.properties").getAbsolutePath();
+            ConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath, mDefaultConfigPath);
+        });
     }
 
 }
