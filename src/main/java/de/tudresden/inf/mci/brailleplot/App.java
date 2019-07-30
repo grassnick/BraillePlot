@@ -145,7 +145,7 @@ public final class App {
 
             // TODO make it default if nothing is found in p.
             Optional<String> configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH);
-            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get(), "default.properties");
+            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get(), "src/main/resources/default.properties");
             Printer printer = configParser.getPrinter();
             printer.getProperty("brailletable").toString();
             Format formatA4 = configParser.getFormat("A4");
