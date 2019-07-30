@@ -138,6 +138,11 @@ public final class App {
 
             // Config Parsing
 
+            // Check if some SpoolerService/Printservice exists
+            if (!PrintDirector.isPrintServiceOn()) {
+                throw new Exception("Can't find any Printservices on this System.");
+            }
+
             // TODO make it default if nothing is found in p.
             Optional<String> configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH);
             JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get(), "default.properties");
