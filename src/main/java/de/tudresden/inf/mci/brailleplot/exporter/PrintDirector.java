@@ -7,8 +7,8 @@ import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import javax.print.*;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.JobName;
 import java.util.Objects;
-
 /**
  * Implements a variation of the GoF Design pattern Builder. This class is used for setting the printerconfiguration and
  * for printing.
@@ -22,6 +22,7 @@ public class PrintDirector {
     private PrintService mService;
     private String mPrinterName;
     private DocFlavor mDocflavor;
+    public DocPrintJob mPrintJob;
 
 
     /**
@@ -31,14 +32,14 @@ public class PrintDirector {
      *                GraphicMode or FloatindDotArea will be used.
      * @param printerConfig The Printer object, used for extracting the name of the printer.
      */
-
     public PrintDirector(final PrinterCapability printerCap, final Printer printerConfig) {
         Objects.requireNonNull(printerCap);
         Objects.requireNonNull(printerConfig);
         this.mPrinter = printerCap;
         mPrinterName = printerConfig.getProperty("name").toString();
         switch (mPrinter) {
-            case NORMALPRINTER: mBuilder = new NormalBuilder(); break;
+            case NORMALPRINTER:
+                mBuilder = new NormalBuilder(); break;
             case INDEX_EVEREST_D_V4_GRAPHIC_PRINTER:
                 mBuilder = new GraphicPrintBuilder();
                 break;
@@ -55,11 +56,21 @@ public class PrintDirector {
      * @param data Data to be printed.
      */
 
+    /*
+        Needed if someone tries to use a normalbuilder with something that is not a boolean.
+
+     */
+    @SuppressWarnings("unchecked")
     public <T> void print(final MatrixData<T> data)  {
         Objects.requireNonNull(data);
         setUpDoc();
         setUpService();
-        byte[] result = mBuilder.assemble(data);
+        byte[] result;
+        try {
+            result = mBuilder.assemble(data);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
         print(result);
     }
 
@@ -81,7 +92,7 @@ public class PrintDirector {
         Objects.requireNonNull(mPrinterName);
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
         for (PrintService service: services) {
-            if (service.getName().equals(mPrinterName)) {
+            if (service.getName().equals(mPrinterName) || mPrinterName.equals("Dummy Printer")) {
                 mService = service;
                 return;
             }
@@ -103,11 +114,21 @@ public class PrintDirector {
         Doc doc = new SimpleDoc(data, mDocflavor, null);
         PrintRequestAttributeSet asset = new HashPrintRequestAttributeSet();
         DocPrintJob job = mService.createPrintJob();
+        asset.add(new JobName("Braille Printing", null));
         try {
             job.print(doc, asset);
+            mPrintJob = job;
         } catch (PrintException pe) {
             throw new RuntimeException(pe);
         }
 
+    }
+
+    public static boolean isPrintServiceOn() {
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        if (services.length == 0) {
+            return false;
+        }
+        return true;
     }
 }
