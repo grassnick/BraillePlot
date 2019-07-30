@@ -1,105 +1,72 @@
 package de.tudresden.inf.mci.brailleplot.diagrams;
 
-import de.tudresden.inf.mci.brailleplot.datacontainers.CategorialPointListList;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointListList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.Named;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointContainer;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.rendering.Renderable;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Representation of a bar chart with basic data functions. Implements Renderable.
- * @author Richard Schmidt
+ * @author Richard Schmidt, Georg Graßnick
+ * @version 2019.07.29
  */
 public class BarChart implements Renderable {
-    private CategorialPointListList mP;
+    private PointListContainer<PointList> mData;
 
-    public BarChart(final CategorialPointListList p) {
-        this.mP = p;
-        p.updateMinMax();
+    public BarChart(final PointListContainer<PointList> data) {
+        Objects.requireNonNull(data);
+        mData = data;
     }
 
     /**
      * Getter for the total number of categories.
+     *
      * @return int number of categories
      */
     public int getCategoryCount() {
-        return mP.getCategoryCount();
+        return mData.getSize();
     }
 
     /**
      * Getter for the category names in a list.
+     *
      * @return list with category names as strings
      */
     public List<String> getCategoryNames() {
-        return mP.getCategoryNames();
-    }
-
-    /**
-     * Add a category.
-     * @param name String
-     */
-    public void addCategory(final String name) {
-        mP.mCategoryNames.add(name);
-    }
-
-    /**
-     * Getter for a category name by index.
-     * @param index int
-     * @return category name as a string
-     */
-    public String getCategoryName(final int index) {
-        return mP.getCategoryName(index);
-    }
-
-    /**
-     * Getter for the sum of all the values of a category chosen by index.
-     * @param index int
-     * @return double category sum
-     */
-    public double getCategorySum(final int index) {
-        return mP.getCategorySum(index);
-    }
-
-    /**
-     * Getter for the the highest sum of y-values.
-     * @return double maximum y-sum
-     */
-    public double getMaxYSum() {
-        return mP.getMaxYSum();
+        return mData.stream()
+                .map(Named::getName)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     /**
      * Getter for the minimum y-value.
+     *
      * @return double minimum y-value
      */
     public double getMinY() {
-        return mP.getMinY();
+        return mData.getMinY();
     }
 
     /**
      * Getter for the maximum y-value.
+     *
      * @return double maximum y-value
      */
     public double getMaxY() {
-        return mP.getMaxY();
+        return mData.getMaxY();
     }
 
     /**
      * Getter for a list with x-y-Pairs: x is the index (always just counts from 0 up), y is the value.
-     * @param index int
      * @return PointList with the corresponding data set
      */
-    public PointListList.PointList getDataSet(final int index) {
-        return (PointListList.PointList) mP.get(index);
+    public PointContainer<PointList> getDataSet() {
+        return mData;
     }
-
-    /**
-     * Getter for a data set by index.
-     * @param index int
-     * @return name of the data set as a string
-     */
-    public String getDataSetName(final int index) {
-        return mP.get(index).getName();
-    }
-
 }
+

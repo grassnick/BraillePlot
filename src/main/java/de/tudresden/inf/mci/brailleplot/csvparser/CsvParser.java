@@ -1,7 +1,10 @@
 package de.tudresden.inf.mci.brailleplot.csvparser;
 
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointListList;
+import com.opencsv.CSVReaderBuilder;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,35 +13,42 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Class to represent the main parser. This parser chooses the corresponding parsing algorithm for the data.
+ * @author SVGPlott-Team, Georg Graßnick
+ * @version 2019.07.29
  */
 public class CsvParser {
 
-    static final Logger LOG = LoggerFactory.getLogger(CsvParser.class);
+    private final Logger mLogger = LoggerFactory.getLogger(CsvParser.class);
 
     private ArrayList<ArrayList<String>> mCsvData;
 
     /**
      * Initiates the parser. The parser reads from the specified {@code reader}
-     * and populates {@link #mCsvData}.
+     * and populates the internal data structures.
      *
-     * @param reader
-     *            a reader, like {@link Reader}
-     * @param separator char
-     * @param quoteChar char
-     * @throws IOException
-     *             if the {@link CSVReader} has problems parsing
+     * @param reader The {@link Reader} interfacing the actual csv file object. Must not be null.
+     * @param separator char The character which is used to separate the values in the csv file.
+     * @param quoteChar char The character which is used to quote text paragraphs.
+     * @throws IOException Is thrown, if an error occurs while performing read operations on the reader.
      */
     public CsvParser(final Reader reader, final char separator, final char quoteChar) throws IOException {
-        CSVReader csvReader = new CSVReader(reader, separator, quoteChar);
+        Objects.requireNonNull(reader);
+        CSVReader csvReader = new CSVReaderBuilder(reader)
+                .withCSVParser(new CSVParserBuilder()
+                        .withQuoteChar(quoteChar)
+                        .withSeparator(separator)
+                        .build())
+                .build();
 
         mCsvData = new ArrayList<>();
 
-        String[] nextLine;
-        while ((nextLine = csvReader.readNext()) != null) {
-            mCsvData.add(new ArrayList<String>(Arrays.asList(nextLine)));
+        for (String[] line : csvReader) {
+            mCsvData.add(new ArrayList<>(Arrays.asList(line)));
+            mLogger.trace("Read line: {}", Arrays.toString(line));
         }
 
         csvReader.close();
@@ -50,10 +60,10 @@ public class CsvParser {
      * @param csvOrientation CsvOrientation
      * @return PointListList
      */
-    public PointListList parse(final CsvType csvType, final CsvOrientation csvOrientation) {
+    public PointListContainer<PointList> parse(final CsvType csvType, final CsvOrientation csvOrientation) {
         CsvParseAlgorithm csvParseAlgorithm;
 
-        LOG.info("Parse die Daten als \"{}\", Orientierung \"{}\"", csvType, csvOrientation);
+        mLogger.debug("Parsing data as \"{}\", orientation \"{}\"", csvType, csvOrientation);
 
         switch (csvType) {
         case DOTS:

@@ -1,47 +1,56 @@
 package de.tudresden.inf.mci.brailleplot.csvparser;
 
-import de.tudresden.inf.mci.brailleplot.datacontainers.CategorialPointListList;
-import de.tudresden.inf.mci.brailleplot.datacontainers.Point;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointListList;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointListList.PointList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
+import de.tudresden.inf.mci.brailleplot.datacontainers.SimplePointListContainerImpl;
+import de.tudresden.inf.mci.brailleplot.datacontainers.SimplePointListImpl;
+import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 
 import java.text.ParseException;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Parser for CSV files with bar chart data. Inherits from CsvParseAlgorithm.
+ * @author SVGPlott-Team, Georg Graßnick
+ * @version 2019.07.29
  */
 public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
 
     @Override
-    public PointListList parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
-        CategorialPointListList pointListList = new CategorialPointListList();
+    public PointListContainer<PointList> parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
+        Objects.requireNonNull(csvData);
+
+        PointListContainer<PointList> container = new SimplePointListContainerImpl();
 
         Iterator<? extends List<String>> rowIterator = csvData.iterator();
 
         if (!rowIterator.hasNext()) {
-            return pointListList;
+            return container;
         }
 
         Iterator<String> lineIterator = rowIterator.next().iterator();
 
-        // Move the iterator to the first category mName
+        // Move the iterator to the first category name
         if (!lineIterator.hasNext()) {
-            return pointListList;
+            return container;
         }
 
         lineIterator.next();
 
         if (!lineIterator.hasNext()) {
-            return pointListList;
+            return container;
         }
 
-        // Store all mCategories
+        // Store all categories
+        List<String> categories = new LinkedList<>();
         while (lineIterator.hasNext()) {
-            pointListList.addCategory(lineIterator.next());
+            categories.add(lineIterator.next());
         }
 
+        Iterator<String> categoriesIt = categories.iterator();
         // Store each row's data set
         while (rowIterator.hasNext()) {
             lineIterator = rowIterator.next().iterator();
@@ -50,14 +59,14 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
             if (!lineIterator.hasNext()) {
                 continue;
             }
-            PointList pointList = new PointList();
-            pointList.setName(lineIterator.next());
-            pointListList.add(pointList);
+            String category = categoriesIt.next();
+            PointList pointList = new SimplePointListImpl(category);
+            container.pushBack(pointList);
 
             // Add all the points
             int colPosition = 0;
             while (lineIterator.hasNext()) {
-                if (colPosition >= pointListList.getCategoryCount()) {
+                if (colPosition >= container.getSize()) {
                     break;
                 }
 
@@ -71,46 +80,50 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
                 }
 
                 // Add the new point
-                Point newPoint = new Point(colPosition, yValue.doubleValue());
-                pointList.insertSorted(newPoint);
+                Point2DDouble newPoint = new Point2DDouble(colPosition, yValue.doubleValue());
+                pointList.pushBack(newPoint);
                 colPosition++;
             }
         }
-
-        return pointListList;
+        // TODO First add points to PointList, then add PointList to PointListContainer, so that there is no need for a calculateExtrema call
+        container.calculateExtrema();
+        return container;
     }
 
     @Override
-    public PointListList parseAsVerticalDataSets(final List<? extends List<String>> csvData) {
-        CategorialPointListList pointListList = new CategorialPointListList();
+    public PointListContainer<PointList> parseAsVerticalDataSets(final List<? extends List<String>> csvData) {
+        Objects.requireNonNull(csvData);
+
+        PointListContainer<PointList> container = new SimplePointListContainerImpl();
         Iterator<? extends List<String>> rowIterator = csvData.iterator();
 
 
         if (!rowIterator.hasNext()) {
-            return pointListList;
+            return container;
         }
 
         Iterator<String> lineIterator = rowIterator.next().iterator();
 
         // Move the iterator to the first title
         if (!lineIterator.hasNext()) {
-            return pointListList;
+            return container;
         }
 
         lineIterator.next();
 
         if (!lineIterator.hasNext()) {
-            return pointListList;
+            return container;
         }
 
         // Add a PointList for each title
         while (lineIterator.hasNext()) {
-            PointList pointList = new PointList();
+            PointList pointList = new SimplePointListImpl();
             pointList.setName(lineIterator.next());
-            pointListList.add(pointList);
+            container.pushBack(pointList);
         }
 
         // Add the data
+        Iterator<PointList> it = container.iterator();
         int categoryCounter = 0;
         while (rowIterator.hasNext()) {
             lineIterator = rowIterator.next().iterator();
@@ -121,7 +134,7 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
 
             // Find out the category title
             String currentCategory = lineIterator.next();
-            pointListList.addCategory(currentCategory);
+            it.next().setName(currentCategory);
 
             // Find out the mY values and add the points to the respective lists
             int currentDataSet = 0;
@@ -134,15 +147,16 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
                     continue;
                 }
 
-                Point newPoint = new Point(categoryCounter, yValue.doubleValue());
-                addPointToPointListList(pointListList, currentDataSet, newPoint);
+                Point2DDouble newPoint = new Point2DDouble(categoryCounter, yValue.doubleValue());
+                addPointToPointListList(container, currentDataSet, newPoint);
                 currentDataSet++;
             }
 
             categoryCounter++;
         }
-
-        return pointListList;
+        // TODO First add points to PointList, then add PointList to PointListContainer, so that there is no need for a calculateExtrema call
+        container.calculateExtrema();
+        return container;
     }
 
 }

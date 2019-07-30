@@ -1,37 +1,45 @@
 package de.tudresden.inf.mci.brailleplot.csvparser;
 
-import de.tudresden.inf.mci.brailleplot.datacontainers.Point;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointListList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
+import de.tudresden.inf.mci.brailleplot.datacontainers.SimplePointListContainerImpl;
+import de.tudresden.inf.mci.brailleplot.datacontainers.SimplePointListImpl;
+import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Parser for CSV files with aligned mX-values. Inherits from CsvParseAlgorithm.
+ * @author SVGPlott-Team, Georg Graßnick
+ * @version 2019.07.29
  */
 public class CsvXAlignedParser extends CsvParseAlgorithm {
 
     @Override
-    public PointListList parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
-        PointListList pointListList = new PointListList();
+    public PointListContainer<PointList> parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
+        Objects.requireNonNull(csvData);
+
+        PointListContainer<PointList> container = new SimplePointListContainerImpl();
         List<Number> xValues = new ArrayList<>();
         Iterator<? extends List<String>> rowIterator = csvData.iterator();
 
         if (!rowIterator.hasNext()) {
-            return pointListList;
+            return container;
         }
 
         Iterator<String> lineIterator = rowIterator.next().iterator();
 
         // Move the iterator to the mX value
         if (!lineIterator.hasNext()) {
-            return pointListList;
+            return container;
         }
         lineIterator.next();
         if (!lineIterator.hasNext()) {
-            return pointListList;
+            return container;
         }
 
         // Store all mX values, if one is not specified store NaN
@@ -53,9 +61,9 @@ public class CsvXAlignedParser extends CsvParseAlgorithm {
             if (!lineIterator.hasNext()) {
                 continue;
             }
-            PointListList.PointList pointList = new PointListList.PointList();
+            PointList pointList = new SimplePointListImpl();
             pointList.setName(lineIterator.next());
-            pointListList.add(pointList);
+            container.pushBack(pointList);
 
             // Add all the points
             int colPosition = 0;
@@ -80,40 +88,44 @@ public class CsvXAlignedParser extends CsvParseAlgorithm {
                 }
 
                 // Add the new point
-                Point newPoint = new Point(xValue.doubleValue(), yValue.doubleValue());
-                pointList.insertSorted(newPoint);
+                Point2DDouble newPoint = new Point2DDouble(xValue.doubleValue(), yValue.doubleValue());
+                pointList.pushBack(newPoint);
                 colPosition++;
             }
         }
 
-        return pointListList;
+        // TODO First add points to PointList, then add PointList to PointListContainer, so that there is no need for a calculateExtrema call
+        container.calculateExtrema();
+        return container;
     }
 
     @Override
-    public PointListList parseAsVerticalDataSets(final List<? extends List<String>> csvData) {
-        PointListList pointListList = new PointListList();
+    public PointListContainer<PointList> parseAsVerticalDataSets(final List<? extends List<String>> csvData) {
+        Objects.requireNonNull(csvData);
+
+        PointListContainer<PointList> container = new SimplePointListContainerImpl();
         Iterator<? extends List<String>> rowIterator = csvData.iterator();
 
         if (!rowIterator.hasNext()) {
-            return pointListList;
+            return container;
         }
 
         Iterator<String> lineIterator = rowIterator.next().iterator();
 
         // Move the iterator to the first title
         if (!lineIterator.hasNext()) {
-            return pointListList;
+            return container;
         }
         lineIterator.next();
         if (!lineIterator.hasNext()) {
-            return pointListList;
+            return container;
         }
 
         // Add a PointList for each title
         while (lineIterator.hasNext()) {
-            PointListList.PointList pointList = new PointListList.PointList();
+            PointList pointList = new SimplePointListImpl();
             pointList.setName(lineIterator.next());
-            pointListList.add(pointList);
+            container.pushBack(pointList);
         }
 
         // Add the data
@@ -142,14 +154,16 @@ public class CsvXAlignedParser extends CsvParseAlgorithm {
                     continue;
                 }
 
-                Point newPoint = new Point(xValue.doubleValue(), yValue.doubleValue());
-                addPointToPointListList(pointListList, currentDataSet, newPoint);
+                Point2DDouble newPoint = new Point2DDouble(xValue.doubleValue(), yValue.doubleValue());
+                addPointToPointListList(container, currentDataSet, newPoint);
                 currentDataSet++;
             }
 
         }
 
-        return pointListList;
+        // TODO First add points to PointList, then add PointList to PointListContainer, so that there is no need for a calculateExtrema call
+        container.calculateExtrema();
+        return container;
     }
 
 }

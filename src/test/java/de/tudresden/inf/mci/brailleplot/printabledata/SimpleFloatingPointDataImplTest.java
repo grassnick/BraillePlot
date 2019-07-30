@@ -2,10 +2,13 @@ package de.tudresden.inf.mci.brailleplot.printabledata;
 
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import tec.units.ri.quantity.Quantities;
 
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -17,7 +20,7 @@ class SimpleFloatingPointDataImplTest {
         return new SimpleFloatingPointDataImpl<>(new Printer(new ArrayList<>()), new Format(new ArrayList<>()));
     }
 
-    Point2DValued<Integer> point2dInt(Integer one, Integer two, Integer val) {
+    Point2DValued<Quantity<Length>, Integer> point2dInt(Integer one, Integer two, Integer val) {
         return new Point2DValued<>(Quantities.getQuantity(one, METRE), Quantities.getQuantity(two, METRE), val);
     }
 
@@ -35,10 +38,10 @@ class SimpleFloatingPointDataImplTest {
         for (int i = 0; i < 5; i++) {
             data.addPoint(point2dInt(i, i, i));
         }
-        Iterator<Point2DValued<Integer>> it = data.getIterator();
+        Iterator<Point2DValued<Quantity<Length>, Integer>> it = data.getIterator();
         int i = 0;
         while (it.hasNext()) {
-            Point2DValued<Integer> point = it.next();
+            Point2DValued<Quantity<Length>, Integer> point = it.next();
             Assertions.assertEquals(point, point2dInt(i, i, i));
             i++;
         }

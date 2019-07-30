@@ -4,6 +4,8 @@ package de.tudresden.inf.mci.brailleplot.csvparser;
  * Determines what data is represented how by the CSV file. The values are
  * structural properties, whereas the {@link XType} held by every value
  * determines whether the mX values are metric or categorial.
+ * @author SVGPlott-Team
+ * @version 2019.07.29
  */
 public enum CsvType {
     DOTS(XType.METRIC), X_ALIGNED(XType.METRIC), X_ALIGNED_CATEGORIES(XType.CATEGORIAL);

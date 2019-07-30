@@ -1,33 +1,38 @@
 package de.tudresden.inf.mci.brailleplot.csvparser;
 
-import de.tudresden.inf.mci.brailleplot.datacontainers.Point;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointListList;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointListList.PointList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
+import de.tudresden.inf.mci.brailleplot.datacontainers.SimplePointListContainerImpl;
+import de.tudresden.inf.mci.brailleplot.datacontainers.SimplePointListImpl;
+import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 
 import java.text.ParseException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * Parser for CSV files that contain data for a scatter plot. Inherits from CsvParseAlgorithm.
+ * Parser for CSV files that contain data for a scatter plot.
+ * @author SVGPlott-Team, Georg Graßnick
+ * @version 2019.07.29
  */
 public class CsvDotParser extends CsvParseAlgorithm {
 
     /**
      * Parses scattered point data in horizontal data sets, alternating mX and mY. The
      * first column contains the row mName in the mX row.
-     *
-     * @param csvData List(? extends List(String))
-     * @return the parsed data
+     * @param csvData The parsed input String.
+     * @return A {@link PointListContainer<PointList>} representing the data.
      */
-    public PointListList parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
+    public PointListContainer<PointList> parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
+        Objects.requireNonNull(csvData);
         int row = 0;
 
-        PointListList pointListList = new PointListList();
+        PointListContainer<PointList> container = new SimplePointListContainerImpl();
 
         // Continue as long as there are at least two further rows left
         while (csvData.size() >= row + 2) {
-            PointList rowPoints = new PointList();
+            PointList rowPoints = new SimplePointListImpl();
 
             Iterator<String> xRowIterator = csvData.get(row).iterator();
             Iterator<String> yRowIterator = csvData.get(row + 1).iterator();
@@ -52,43 +57,45 @@ public class CsvDotParser extends CsvParseAlgorithm {
                 } catch (ParseException e) {
                     continue;
                 }
-                Point newPoint = new Point(xValue.doubleValue(), yValue.doubleValue());
-                rowPoints.insertSorted(newPoint);
+                Point2DDouble newPoint = new Point2DDouble(xValue.doubleValue(), yValue.doubleValue());
+                rowPoints.pushBack(newPoint);
             }
 
             // If there were no points found, do not add the row to the list
-            if (!rowPoints.isEmpty()) {
-                pointListList.add(rowPoints);
+            if (rowPoints.getSize() > 0) {
+                container.pushBack(rowPoints);
             }
         }
 
-        return pointListList;
+        // TODO First add points to PointList, then add PointList to PointListContainer, so that there is no need for a calculateExtrema call
+        container.calculateExtrema();
+        return container;
     }
 
     /**
      * Parses scattered point data in vertical data sets, alternating mX and mY. The
      * first row contains the column mName in the mX column.
-     *
-     * @param csvData List(? extends List(String))
-     * @return the parsed data
+     * @param csvData The parsed input String.
+     * @return A {@link PointListContainer<PointList>} representing the data.
      */
     @Override
-    public PointListList parseAsVerticalDataSets(final List<? extends List<String>> csvData) {
+    public PointListContainer<PointList> parseAsVerticalDataSets(final List<? extends List<String>> csvData) {
+        Objects.requireNonNull(csvData);
         int row = 0;
 
-        PointListList pointListList = new PointListList();
+        PointListContainer<PointList> container = new SimplePointListContainerImpl();
 
         if (csvData.isEmpty()) {
-            return pointListList;
+            return container;
         }
 
         // Iterate over the first row in order to get the headers
         int col = 0;
         for (String header : csvData.get(0)) {
             if (col % 2 == 0) {
-                PointList pointList = new PointList();
+                PointList pointList = new SimplePointListImpl();
                 pointList.setName(header);
-                pointListList.add(pointList);
+                container.pushBack(pointList);
             }
             col++;
         }
@@ -125,9 +132,9 @@ public class CsvDotParser extends CsvParseAlgorithm {
                     continue;
                 }
 
-                Point point = new Point(xValue.doubleValue(), yValue.doubleValue());
+                Point2DDouble point = new Point2DDouble(xValue.doubleValue(), yValue.doubleValue());
 
-                addPointToPointListList(pointListList, col / 2, point);
+                addPointToPointListList(container, col / 2, point);
 
                 col++;
             }
@@ -135,6 +142,8 @@ public class CsvDotParser extends CsvParseAlgorithm {
             row++;
         }
 
-        return pointListList;
+        // TODO First add points to PointList, then add PointList to PointListContainer, so that there is no need for a calculateExtrema call
+        container.calculateExtrema();
+        return container;
     }
 }

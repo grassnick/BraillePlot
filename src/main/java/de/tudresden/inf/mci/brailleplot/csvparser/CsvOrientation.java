@@ -2,6 +2,8 @@ package de.tudresden.inf.mci.brailleplot.csvparser;
 
 /**
  * Enumeration of the two possible CSV orientations.
+ * @author SVGPlott-Team
+ * @version 2019.07.29
  */
 public enum CsvOrientation {
 
