@@ -7,19 +7,19 @@ package de.tudresden.inf.mci.brailleplot.exporter;
  * @version 11.07.2019
  */
 
-public class NotSupportedFileExtension extends Exception {
+public class NotSupportedFileExtensionException extends Exception {
 
-    public NotSupportedFileExtension() { }
+    public NotSupportedFileExtensionException() { }
 
-    public NotSupportedFileExtension(final String message) {
+    public NotSupportedFileExtensionException(final String message) {
         super(message);
     }
 
-    public NotSupportedFileExtension(final Throwable cause) {
+    public NotSupportedFileExtensionException(final Throwable cause) {
         super(cause);
     }
 
-    public NotSupportedFileExtension(final String message, final Throwable cause) {
+    public NotSupportedFileExtensionException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }
