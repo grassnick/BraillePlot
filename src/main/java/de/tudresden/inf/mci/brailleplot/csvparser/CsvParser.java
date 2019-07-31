@@ -8,7 +8,6 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
