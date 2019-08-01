@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot.printerbackend;
+package de.tudresden.inf.mci.brailleplot.brailleparser;
 
 import java.io.FileInputStream;
 import java.util.Objects;
@@ -18,7 +18,7 @@ public class PropertiesParser implements AbstractBrailleTableParser {
      * @param filePath The Path to the BrailleTable.
      * @throws RuntimeException if the file Path does not exists.
      */
-    PropertiesParser(final String filePath) {
+    public PropertiesParser(final String filePath) {
         Objects.requireNonNull(filePath);
 
         FileInputStream stream;

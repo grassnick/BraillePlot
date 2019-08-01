@@ -1,4 +1,8 @@
 package de.tudresden.inf.mci.brailleplot.printerbackend;
+import de.tudresden.inf.mci.brailleplot.brailleparser.AbstractBrailleTableParser;
+import de.tudresden.inf.mci.brailleplot.brailleparser.JsonParser;
+import de.tudresden.inf.mci.brailleplot.brailleparser.PropertiesParser;
+import de.tudresden.inf.mci.brailleplot.brailleparser.XmlParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
@@ -24,9 +28,7 @@ public abstract class AbstractDocumentBuilder<T> {
      * @param data Raw Data to be printed without any escapesequences
      * @return Fully build Document as byte[]
      */
-    public byte[] assemble(final MatrixData<T> data)  {
-        return null;
-    }
+    public abstract byte[] assemble(MatrixData<T> data);
 
     /**
      * Method for setting the correct Parser. Reads the file from the printer configuration, then checks

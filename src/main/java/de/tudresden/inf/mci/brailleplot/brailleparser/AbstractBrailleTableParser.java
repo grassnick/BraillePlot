@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot.printerbackend;
+package de.tudresden.inf.mci.brailleplot.brailleparser;
 
 /**
  * Defines an Interface which should be implemented in all Parsers of Brailletables.

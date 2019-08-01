@@ -11,7 +11,7 @@ package de.tudresden.inf.mci.brailleplot.printerbackend;
  */
 
 @SuppressWarnings("checkstyle:MagicNumber")
-public class AbstractIndexV4Builder extends AbstractDocumentBuilder {
+public abstract class AbstractIndexV4Builder extends AbstractDocumentBuilder {
 
 
 

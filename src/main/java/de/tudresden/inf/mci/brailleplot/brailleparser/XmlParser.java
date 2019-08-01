@@ -1,23 +1,26 @@
-package de.tudresden.inf.mci.brailleplot.printerbackend;
+package de.tudresden.inf.mci.brailleplot.brailleparser;
+
 
 /**
- * Class representing a Json Parser entity.
+ * Class representing a Xmp Parser entity.
  * @author Andrey Ruzhanskiy
  * @version 12.07.2019
  */
-public class JsonParser implements AbstractBrailleTableParser {
+public class XmlParser implements AbstractBrailleTableParser {
+
 
     /**
-     * Constructer for an Json Parser.
-     * @param filePath File path to the Brailletable.
+     * Currently not supported.
+     *
+     * @param filePath
      */
-    JsonParser(final String filePath) {
+    public XmlParser(final String filePath) {
         throw new UnsupportedOperationException();
     }
 
 
     /**
-     * Method for querying the BrailleTable.
+     * Currently not supported.
      * @param key Braillecell, represented as String ("111000).
      * @return The Byte(int) representing the Braillecell specified in the BrailleTable.
      */

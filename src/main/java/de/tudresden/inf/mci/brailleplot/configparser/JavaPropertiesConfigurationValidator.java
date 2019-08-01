@@ -3,8 +3,6 @@ package de.tudresden.inf.mci.brailleplot.configparser;
 
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -40,13 +38,11 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         Predicate<String> requireBoolean = JavaPropertiesConfigurationValidator::checkIfBoolean;
         Predicate<String> requirePositive = JavaPropertiesConfigurationValidator::checkIfPositive;
         Predicate<String> requireFileExists = JavaPropertiesConfigurationValidator::checkIfFileExists;
-        Predicate<String> requireEnum = JavaPropertiesConfigurationValidator::checkIfEnum;
-        Predicate<String> requirePrinterExists = JavaPropertiesConfigurationValidator::checkIfPrinterExists;
 
         // Definition of valid printer properties
         Map<String, Predicate<String>> p = new HashMap<>();
-        definePrinterProperty("name", requireNotEmpty.and(requirePrinterExists));
-        definePrinterProperty("mode", requireNotEmpty.and(requireEnum));
+        definePrinterProperty("name", requireNotEmpty);
+        definePrinterProperty("mode", requireNotEmpty);
         definePrinterProperty("brailletable", requireFileExists);
         definePrinterProperty("floatingDot.support", requireBoolean);
         definePrinterProperty("floatingDot.resolution", requireDouble.and(requirePositive), false);
@@ -277,18 +273,4 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
      * @param printerName The name of the printer to check.
      * @return True if printer exists. False if not.
      */
-
-    private static boolean checkIfPrinterExists(final String printerName) {
-        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
-        if (services.length == 0) {
-            throw new RuntimeException("Cant find any print services on this system.");
-        }
-        for (PrintService service: services) {
-            // Second check needed for testing purposes
-            if (service.getName().equals(printerName) || printerName.equals("Dummy Printer")) {
-                return true;
-            }
-        }
-        return false;
-    }
 }
