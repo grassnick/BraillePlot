@@ -10,13 +10,13 @@ import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 public class GraphicPrintBuilder extends AbstractIndexV4Builder {
 
     /**
-     * Constructor. Does not have any functionality. Should only be used in  {@link de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector}
+     * Constructor. Does not have any functionality. Should only be used in  {@link PrintDirector}
      */
      GraphicPrintBuilder() { }
 
     /**
      * Currently not implemented.
-     * @param data Raw Data to be printed without any escapesequences
+     * @param data Raw Data to be printed without any escape sequences
      * @return Exception.
      */
     @Override

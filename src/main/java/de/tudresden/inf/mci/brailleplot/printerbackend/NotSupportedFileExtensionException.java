@@ -1,8 +1,8 @@
 package de.tudresden.inf.mci.brailleplot.printerbackend;
 
 /**
- * Exception Class for not recogniced/not supported FileExtension for brailletables.
- * Used in  {@link de.tudresden.inf.mci.brailleplot.printerbackend.NormalBuilder}.
+ * Exception Class for not recogniced/not supported FileExtension for braille tables.
+ * Used in  {@link NormalBuilder}.
  * @author Andrey Ruzhanskiy
  * @version 11.07.2019
  */

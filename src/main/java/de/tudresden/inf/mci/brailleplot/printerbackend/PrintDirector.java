@@ -17,7 +17,7 @@ import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.JobName;
 import java.util.Objects;
 /**
- * Implements a variation of the GoF Design pattern Builder. This class is used for setting the printerconfiguration and
+ * Implements a variation of the GoF Design pattern Builder. This class is used for setting the printer configuration and
  * for printing.
  * @author Andrey Ruzhanskiy
  * @version 17.07.2019
@@ -35,9 +35,9 @@ public class PrintDirector {
     /**
      * Constructor for the PrintDirector. Main Class for printing. The class takes care of the complex Protocol to build
      * the document for the given configuration.
-     * @param printerCap Which {@link de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability} should be used. Normalprinter assumes that no special features like
+     * @param printerCap Which {@link PrinterCapability} should be used. Normal printer assumes that no special features like
      *                GraphicMode or FloatindDotArea will be used.
-     * @param printerConfig The {@link de.tudresden.inf.mci.brailleplot.configparser.Printer} object, used for extracting the name of the printer.
+     * @param printerConfig The {@link Printer} object, used for extracting the name of the printer.
      */
     public PrintDirector(final PrinterCapability printerCap, final Printer printerConfig) {
         Objects.requireNonNull(printerCap);
@@ -65,7 +65,7 @@ public class PrintDirector {
      */
 
 
-    // Needed if someone tries to use a normalbuilder with something that is not a boolean.
+    // Needed if someone tries to use a normal builder with something that is not a boolean.
 
     @SuppressWarnings("unchecked")
     public <T> void print(final MatrixData<T> data)  {
@@ -91,7 +91,7 @@ public class PrintDirector {
 
 
     /**
-     * Method for setting the correct printer Service for the Printername.
+     * Method for setting the correct printer Service for the Printer name.
      * @throws RuntimeException if the System cant find the service.
      */
 
@@ -111,7 +111,7 @@ public class PrintDirector {
      * Private Method for sending the data to the printer. Separated from the public method so that the assemble process
      * and the printing process are separated logically, but from outside it looks like it all happens in one method.
      * @param data to be printed.
-     * @throws PrintException If the printingjob could not be completed.
+     * @throws PrintException If the printing job could not be completed.
      */
 
     private void print(final byte[] data) {
@@ -132,7 +132,7 @@ public class PrintDirector {
     }
 
     /**
-     * Static Method to verify if the printservice is activated on the System.
+     * Static Method to verify if the print service is activated on the System.
      * @return true, if activated, false if not.
      */
     public static boolean isPrintServiceOn() {

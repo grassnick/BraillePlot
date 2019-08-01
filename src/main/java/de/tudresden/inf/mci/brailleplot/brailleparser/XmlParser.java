@@ -12,7 +12,7 @@ public class XmlParser implements AbstractBrailleTableParser {
     /**
      * Currently not supported.
      *
-     * @param filePath
+     * @param filePath Path to the braille table.
      */
     public XmlParser(final String filePath) {
         throw new UnsupportedOperationException();

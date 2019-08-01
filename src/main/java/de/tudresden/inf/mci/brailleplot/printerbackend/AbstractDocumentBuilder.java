@@ -32,11 +32,11 @@ public abstract class AbstractDocumentBuilder<T> {
 
     /**
      * Method for setting the correct Parser. Reads the file from the printer configuration, then checks
-     * if the fileextension is supported.
-     * @throws NotSupportedFileExtensionException If the Fileextension is not supported.
+     * if the file extension is supported.
+     * @throws NotSupportedFileExtensionException If the File extension is not supported.
      */
     protected void setParser() throws NotSupportedFileExtensionException {
-        //read brailletablepath
+        //read braille table path
         Printer printer = mData.getPrinterConfig();
         String brailleTablePath = printer.getProperty("brailletable").toString();
 

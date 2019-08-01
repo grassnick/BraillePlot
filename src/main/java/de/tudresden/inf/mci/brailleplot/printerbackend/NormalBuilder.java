@@ -10,7 +10,7 @@ import java.util.Objects;
 
 /**
  * Class representing a normal Document (for example a .txt) that should be printed without
- * any Escapesequences.
+ * any Escape sequences.
  * @author Andrey Ruzhanskiy
  * @version 12.07.2019
  */
@@ -19,7 +19,7 @@ public class NormalBuilder extends AbstractDocumentBuilder<Boolean> {
 
 
     /**
-     * Constructor. Does not have any functionality. Should only be used in  {@link de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector}
+     * Constructor. Does not have any functionality. Should only be used in  {@link PrintDirector}
      */
     NormalBuilder() { }
 
@@ -28,7 +28,7 @@ public class NormalBuilder extends AbstractDocumentBuilder<Boolean> {
      * In Normalbuilder, it first sets the correct parser according to the file extension, then initializes the iterator
      * from the Matrixdata object and the Stream for writing bytes into an array and lastly loops through the Matrixdata
      * to build the correct Document.
-     * @param data Raw Data to be printed without any escapesequences
+     * @param data Raw Data to be printed without any escape sequences
      * @return the final, printable document.
      */
     @Override
