@@ -129,12 +129,4 @@ public class JavaPropertiesConfigurationParserTest {
         Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("raster.cellDistance.horizontal").toInt());
         Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("name").toDouble());
     }
-    @Test
-    public void testWrongCapability() {
-        Assertions.assertThrows(ConfigurationValidationException.class, () -> {
-            String configPath = getResource("config/wrongPrinterModeExample.properties").getAbsolutePath();
-            ConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath, mDefaultConfigPath);
-        });
-    }
-
 }

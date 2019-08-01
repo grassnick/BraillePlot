@@ -15,5 +15,3 @@ task integrationTest(type: Test) {
     mustRunAfter test
     checkstyleIntegrationTest.enabled = false
 }
-
-check.dependsOn integrationTest

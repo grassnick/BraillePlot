@@ -190,16 +190,11 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
             throw new ConfigurationValidationException("Invalid property name: " + propertyName);
         }
         // Check against its type requirement predicate
-        try {
-            if (!validation.get(propertyName).test(value)) {
-                throw new ConfigurationValidationException(
-                        "Invalid value '" + value + "' for property '" + propertyName + "'"
-                );
-            }
-        } catch (RuntimeException e) {
-            throw new ConfigurationValidationException(e.getMessage(), e);
+        if (!validation.get(propertyName).test(value)) {
+            throw new ConfigurationValidationException(
+                    "Invalid value '" + value + "' for property '" + propertyName + "'"
+            );
         }
-
     }
 
     // Validation Predicates
