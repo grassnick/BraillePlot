@@ -14,7 +14,7 @@ public class PropertiesParser implements AbstractBrailleTableParser {
     private Properties mProperties = new Properties();
 
     /**
-     * Constructor for PropertiesParser. Takes an filePath to the Brailletable file with the .properties filextension.
+     * Constructor for PropertiesParser. Takes an filePath to the Braille table file with the .properties file xtension.
      * @param filePath The Path to the BrailleTable.
      * @throws RuntimeException if the file Path does not exists.
      */
@@ -33,9 +33,9 @@ public class PropertiesParser implements AbstractBrailleTableParser {
     }
 
     /**
-     * Method for querying the Byte (represented via int) for a given Cell from the BrailleTable.
-     * @param key The Braillecell, represented as a String (for example "111000" for 6 BrailleCell).
-     * @return The Byte(int) representing the Braillecell specified in the BrailleTable,
+     * Method for querying the Byte (represented via int) for a given Cell from the braille table.
+     * @param key The Braille cell, represented as a String (for example "111000" for 6 BrailleCell).
+     * @return The Byte(int) representing the Braille cell specified in the braille table,
      */
     @Override
     public int getValue(final String key) {

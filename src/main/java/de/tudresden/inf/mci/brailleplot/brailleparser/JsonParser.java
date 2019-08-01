@@ -9,7 +9,7 @@ public class JsonParser implements AbstractBrailleTableParser {
 
     /**
      * Currently not supported.
-     * @param filePath File path to the Brailletable.
+     * @param filePath File path to the Braille table.
      */
     public JsonParser(final String filePath) {
         throw new UnsupportedOperationException();
@@ -18,8 +18,8 @@ public class JsonParser implements AbstractBrailleTableParser {
 
     /**
      * Currently not supported.
-     * @param key Braillecell, represented as String ("111000).
-     * @return The Byte(int) representing the Braillecell specified in the BrailleTable.
+     * @param key Braille cell, represented as String ("111000).
+     * @return The Byte(int) representing the Braille cell specified in the BrailleTable.
      */
     @Override
     public int getValue(final String key) {
