@@ -4,7 +4,7 @@ package de.tudresden.inf.mci.brailleplot.printerbackend;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
 /**
- * Class representing the Graphic-Mode-Protocol from Braille Index Everest D4.
+ * Class representing the graphic mode protocol from braille Index Everest D4.
  * @author Andrey Ruzhanskiy
  */
 public class GraphicPrintBuilder extends AbstractIndexV4Builder {
@@ -16,7 +16,7 @@ public class GraphicPrintBuilder extends AbstractIndexV4Builder {
 
     /**
      * Currently not implemented.
-     * @param data Raw Data to be printed without any escape sequences
+     * @param data Raw data to be printed without any escape sequences
      * @return Exception.
      */
     @Override

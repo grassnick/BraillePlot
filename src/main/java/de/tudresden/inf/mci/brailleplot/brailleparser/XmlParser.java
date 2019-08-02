@@ -2,7 +2,7 @@ package de.tudresden.inf.mci.brailleplot.brailleparser;
 
 
 /**
- * Class representing a Xmp Parser entity.
+ * Class representing a XML parser entity.
  * @author Andrey Ruzhanskiy
  * @version 12.07.2019
  */
@@ -22,7 +22,7 @@ public class XmlParser implements AbstractBrailleTableParser {
     /**
      * Currently not supported.
      * @param key braille cell, represented as String ("111000).
-     * @return The Byte(int) representing the Braille cell specified in the braille table.
+     * @return The byte(int) representing the braille cell specified in the braille table.
      */
     @Override
     public int getValue(final String key) {

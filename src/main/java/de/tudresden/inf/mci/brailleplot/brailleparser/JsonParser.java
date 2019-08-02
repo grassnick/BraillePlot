@@ -1,7 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.brailleparser;
 
 /**
- * Class representing a Json Parser entity.
+ * Class representing a Json parser entity.
  * @author Andrey Ruzhanskiy
  * @version 12.07.2019
  */
@@ -9,7 +9,7 @@ public class JsonParser implements AbstractBrailleTableParser {
 
     /**
      * Currently not supported.
-     * @param filePath File path to the Braille table.
+     * @param filePath File path to the braille table.
      */
     public JsonParser(final String filePath) {
         throw new UnsupportedOperationException();
@@ -18,8 +18,8 @@ public class JsonParser implements AbstractBrailleTableParser {
 
     /**
      * Currently not supported.
-     * @param key Braille cell, represented as String ("111000).
-     * @return The Byte(int) representing the Braille cell specified in the BrailleTable.
+     * @param key Braille cell, represented as string ("111000).
+     * @return The byte(int) representing the Braille cell specified in the braille table.
      */
     @Override
     public int getValue(final String key) {

@@ -7,10 +7,10 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
 /**
- * This Class provides an Extension Point for further implementation
- * and Protocol Building for Documents that need to be send to the printer.
+ * This class provides an extension point for further implementation
+ * and protocol building for documents that need to be send to the printer.
  * The common Interface is the getDocument() and assemble() method.
- * Its usable for all Braille printers.
+ * Its usable for all braille printers.
  * @param <T> Type of MatrixData.
  * @author Andrey Ruzhanskiy
  * @version 28.05.2019
@@ -24,16 +24,16 @@ public abstract class AbstractDocumentBuilder<T> {
     AbstractBrailleTableParser mParser;
 
     /**
-     * Complex method for complex construction of an Document for the printer.
-     * @param data Raw Data to be printed without any escapesequences
-     * @return Fully build Document as byte[]
+     * Complex method for complex construction of an document for the printer.
+     * @param data Raw data to be printed without any escapes equences
+     * @return Fully build document as byte[]
      */
     public abstract byte[] assemble(MatrixData<T> data);
 
     /**
-     * Method for setting the correct Parser. Reads the file from the printer configuration, then checks
+     * Method for setting the correct parser. Reads the file from the printer configuration, then checks
      * if the file extension is supported.
-     * @throws NotSupportedFileExtensionException If the File extension is not supported.
+     * @throws NotSupportedFileExtensionException If the file extension is not supported.
      */
     protected void setParser() throws NotSupportedFileExtensionException {
         //read braille table path

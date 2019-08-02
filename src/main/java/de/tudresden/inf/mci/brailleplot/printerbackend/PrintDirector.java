@@ -17,7 +17,7 @@ import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.JobName;
 import java.util.Objects;
 /**
- * Implements a variation of the GoF Design pattern Builder. This class is used for setting the printer configuration and
+ * Implements a variation of the GoF design pattern Builder. This class is used for setting the printer configuration and
  * for printing.
  * @author Andrey Ruzhanskiy
  * @version 17.07.2019
@@ -33,7 +33,7 @@ public class PrintDirector {
 
 
     /**
-     * Constructor for the PrintDirector. Main Class for printing. The class takes care of the complex Protocol to build
+     * Constructor for the PrintDirector. Main class for printing. The class takes care of the complex Protocol to build
      * the document for the given configuration.
      * @param printerCap Which {@link PrinterCapability} should be used. Normal printer assumes that no special features like
      *                GraphicMode or FloatindDotArea will be used.
@@ -59,9 +59,9 @@ public class PrintDirector {
     }
 
     /**
-     * Public method for printing the given Document with the given data.
+     * Public method for printing the given document with the given data.
      * @param data {@link de.tudresden.inf.mci.brailleplot.printabledata.MatrixData} to be printed.
-     * @param <T> The type of MatrixData.
+     * @param <T> The type of {@link MatrixData}.
      */
 
 
@@ -91,8 +91,8 @@ public class PrintDirector {
 
 
     /**
-     * Method for setting the correct printer Service for the Printer name.
-     * @throws RuntimeException if the System cant find the service.
+     * Method for setting the correct printer service for the printer name.
+     * @throws RuntimeException If the system cant find the service.
      */
 
     private void setUpService() {
@@ -108,9 +108,9 @@ public class PrintDirector {
     }
 
     /**
-     * Private Method for sending the data to the printer. Separated from the public method so that the assemble process
+     * Private method for sending the data to the printer. Separated from the public method so that the assemble process
      * and the printing process are separated logically, but from outside it looks like it all happens in one method.
-     * @param data to be printed.
+     * @param data Data to be printed.
      * @throws PrintException If the printing job could not be completed.
      */
 
@@ -132,7 +132,7 @@ public class PrintDirector {
     }
 
     /**
-     * Static Method to verify if the print service is activated on the System.
+     * Static method to verify if the print service is activated on the system.
      * @return true, if activated, false if not.
      */
     public static boolean isPrintServiceOn() {

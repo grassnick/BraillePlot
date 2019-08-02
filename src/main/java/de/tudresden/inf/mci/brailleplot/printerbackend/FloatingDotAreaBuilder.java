@@ -4,8 +4,8 @@ package de.tudresden.inf.mci.brailleplot.printerbackend;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
 /**
- * Class representing the FloatingDotAre-Protocol form the Braille Index Everest V4 for printing
- * variable Areas on paper via Coordinates.
+ * Class representing the FloatingDotAre protocol for the braille Index Everest V4 for printing
+ * variable areas on paper via coordinates.
  * @author Andrey Ruzhanskiy, Leonard Kupper
  * @version 29.05.2019
  */
@@ -19,7 +19,7 @@ public class FloatingDotAreaBuilder extends AbstractIndexV4Builder {
 
     /**
      * Currently not implemented.
-     * @param data Raw Data to be printed without any escape sequences
+     * @param data Raw data to be printed without any escape sequences
      * @return Exception.
      */
     public byte[] assemble(final MatrixData data) {

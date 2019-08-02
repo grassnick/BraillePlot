@@ -9,8 +9,8 @@ import java.util.Objects;
 
 
 /**
- * Class representing a normal Document (for example a .txt) that should be printed without
- * any Escape sequences.
+ * Class representing a normal document (for example a .txt) that should be printed without
+ * any escape sequences.
  * @author Andrey Ruzhanskiy
  * @version 12.07.2019
  */
@@ -25,17 +25,17 @@ public class NormalBuilder extends AbstractDocumentBuilder<Boolean> {
 
     /**
      * Method for assembling the final document from the data parameter.
-     * In Normalbuilder, it first sets the correct parser according to the file extension, then initializes the iterator
-     * from the Matrixdata object and the Stream for writing bytes into an array and lastly loops through the Matrixdata
-     * to build the correct Document.
-     * @param data Raw Data to be printed without any escape sequences
+     * In normalbuilder, it first sets the correct parser according to the file extension, then initializes the iterator
+     * from the {@link MatrixData} object and the stream for writing bytes into an array and lastly loops through the {@link MatrixData}
+     * to build the correct document.
+     * @param data Raw data to be printed without any escape sequences
      * @return the final, printable document.
      */
     @Override
     public byte[] assemble(final MatrixData<Boolean> data) {
 
 
-        //Check if Null Object was given.
+        //Check if null object was given.
         mData = Objects.requireNonNull(data);
         // Setting the right parser, catch if not found and throw RuntimeException which can be handled.
         try {
@@ -44,13 +44,13 @@ public class NormalBuilder extends AbstractDocumentBuilder<Boolean> {
             throw new RuntimeException();
         }
 
-        // Get Iterator for Cells.
+        // Get iterator for cells.
         Iterator<BrailleCell6<Boolean>> iter = mData.getBrailleCell6Iterator();
 
         // Set stream for final output.
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-        // Getting Width in BrailleCells.
+        // Getting width in braille cells.
         int width = mData.getColumnCount() / 2;
 
         // Declaration of  local variables for better readability.
@@ -58,7 +58,7 @@ public class NormalBuilder extends AbstractDocumentBuilder<Boolean> {
         String key;
         int value;
 
-        // Count Variable for the loop
+        // Count variable for the loop
         int i = 0;
 
         // Loop through data and write to stream.
