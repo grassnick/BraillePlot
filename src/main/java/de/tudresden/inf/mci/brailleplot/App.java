@@ -1,5 +1,15 @@
 package de.tudresden.inf.mci.brailleplot;
 
+import de.tudresden.inf.mci.brailleplot.configparser.Format;
+import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
+import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+
+import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
+import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
+
+import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
+import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
+
 import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
@@ -30,7 +40,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 /**
  * Main class.
  * Set up the application and run it.
- * @author Georg Graßnick
+ * @author Georg Graßnick, Andrey Ruzhanskiy
  * @version 06.06.19
  */
 
@@ -164,7 +174,26 @@ public final class App {
             SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
             mLogger.debug("Render preview:\n" + mat.toBoolString());
 
-            // ...
+            // Config Parsing
+
+            // Check if some SpoolerService/Printservice exists
+            if (!PrintDirector.isPrintServiceOn()) {
+                throw new Exception("Can't find any Printservices on this System.");
+            }
+
+            // Parse properties File
+            Optional<String> configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH);
+            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get(), "src/main/resources/config/default.properties");
+            Printer printer = configParser.getPrinter();
+            printer.getProperty("brailletable").toString();
+            Format formatA4 = configParser.getFormat("A4");
+
+            // Last Step: Printing
+            @SuppressWarnings("checkstyle:MagicNumber")
+            MatrixData<Boolean> data = new SimpleMatrixDataImpl<>(printer, formatA4, 18, 20, true);
+            String printerConfigUpperCase = printer.getProperty("mode").toString().toUpperCase();
+            PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), printer);
+            printD.print(data);
 
         } catch (final Exception e) {
             terminateWithException(e);
@@ -174,5 +203,4 @@ public final class App {
 
         return EXIT_SUCCESS;
     }
-
 }
