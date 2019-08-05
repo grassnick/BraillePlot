@@ -4,6 +4,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
+import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 
@@ -15,6 +16,11 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
+import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
+import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRenderingBase;
+import de.tudresden.inf.mci.brailleplot.rendering.LineChartRasterizer;
+import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
+import de.tudresden.inf.mci.brailleplot.rendering.Rasterizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,8 +154,13 @@ public final class App {
             Optional<String> configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH);
             JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get(), "src/main/resources/config/default.properties");
             Printer printer = configParser.getPrinter();
-            printer.getProperty("brailletable").toString();
             Format formatA4 = configParser.getFormat("A4");
+
+            // Rasterize
+            FunctionalRasterizer funcRast = new FunctionalRasterizer(LineChart.class, new LineChartRasterizer());
+            FunctionalRenderingBase funcBase = new FunctionalRenderingBase();
+            MasterRenderer renderer = new MasterRenderer(printer, formatA4, funcBase);
+            renderer.getRenderingBase().registerRasterizer(funcRast);
 
             // Last Step: Printing
             @SuppressWarnings("checkstyle:MagicNumber")
