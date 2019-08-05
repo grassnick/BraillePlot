@@ -4,6 +4,9 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
+import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
+import de.tudresden.inf.mci.brailleplot.dataparser.CategoricalBarChartCsvParser;
+import de.tudresden.inf.mci.brailleplot.dataparser.DataParser;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 
@@ -15,21 +18,13 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
-import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
-import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
-import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import de.tudresden.inf.mci.brailleplot.rendering.RasterCanvas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -155,13 +150,11 @@ public final class App {
             Printer indexV4Printer = configParser.getPrinter();
             Format a4Format = configParser.getFormat("A4");
 
-            // Parse csv data
+            // CSV Parsing
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart.csv");
-            Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
-
-            CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
-            PointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
+            DataParser<CategoricalPointListContainer<PointList>> csv = new CategoricalBarChartCsvParser();
+            CategoricalPointListContainer<PointList> container = csv.parse(classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical.csv"));
+            mLogger.debug("Internal data representation:\n {}", container.toString());
             BarChart barChart = new BarChart(container);
 
             // Render diagram
