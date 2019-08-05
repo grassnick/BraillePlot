@@ -15,7 +15,7 @@ import java.util.Objects;
  * @version 12.07.2019
  */
 @SuppressWarnings("checkstyle:MagicNumber")
-public class NormalBuilder extends AbstractDocumentBuilder<Boolean> {
+class NormalBuilder extends AbstractDocumentBuilder<Boolean> {
 
 
     /**
@@ -32,7 +32,7 @@ public class NormalBuilder extends AbstractDocumentBuilder<Boolean> {
      * @return the final, printable document.
      */
     @Override
-    public byte[] assemble(final MatrixData<Boolean> data) {
+    byte[] assemble(final MatrixData<Boolean> data) {
 
 
         //Check if null object was given.
