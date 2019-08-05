@@ -16,7 +16,7 @@ import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
  * @version 28.05.2019
  */
 
-public abstract class AbstractDocumentBuilder<T> {
+abstract class AbstractDocumentBuilder<T> {
 
     MatrixData<T> mData;
 
