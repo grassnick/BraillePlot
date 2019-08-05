@@ -10,7 +10,7 @@ import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
  * @version 29.05.2019
  */
 
-public class FloatingDotAreaBuilder extends AbstractIndexV4Builder {
+class FloatingDotAreaBuilder extends AbstractIndexV4Builder {
 
     /**
      * Constructor. Does not have any functionality. Should only be used in  {@link PrintDirector}
@@ -22,7 +22,7 @@ public class FloatingDotAreaBuilder extends AbstractIndexV4Builder {
      * @param data Raw data to be printed without any escape sequences
      * @return Exception.
      */
-    public byte[] assemble(final MatrixData data) {
+    byte[] assemble(final MatrixData data) {
         throw new UnsupportedOperationException();
     }
 }
