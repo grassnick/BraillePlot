@@ -32,7 +32,7 @@ public class NormalBuilder extends AbstractDocumentBuilder<Boolean> {
      * @return the final, printable document.
      */
     @Override
-    public byte[] assemble(final MatrixData<Boolean> data) {
+    byte[] assemble(final MatrixData<Boolean> data) {
 
 
         //Check if null object was given.

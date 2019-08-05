@@ -28,14 +28,14 @@ public abstract class AbstractDocumentBuilder<T> {
      * @param data Raw data to be printed without any escapes equences
      * @return Fully build document as byte[]
      */
-    public abstract byte[] assemble(MatrixData<T> data);
+    abstract byte[] assemble(MatrixData<T> data);
 
     /**
      * Method for setting the correct parser. Reads the file from the printer configuration, then checks
      * if the file extension is supported.
      * @throws NotSupportedFileExtensionException If the file extension is not supported.
      */
-    protected void setParser() throws NotSupportedFileExtensionException {
+    void setParser() throws NotSupportedFileExtensionException {
         //read braille table path
         Printer printer = mData.getPrinterConfig();
         String brailleTablePath = printer.getProperty("brailletable").toString();

@@ -20,7 +20,7 @@ public class GraphicPrintBuilder extends AbstractIndexV4Builder {
      * @return Exception.
      */
     @Override
-    public byte[] assemble(final MatrixData data) {
+    byte[] assemble(final MatrixData data) {
         throw new UnsupportedOperationException();
     }
 }

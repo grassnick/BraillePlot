@@ -22,7 +22,7 @@ public class FloatingDotAreaBuilder extends AbstractIndexV4Builder {
      * @param data Raw data to be printed without any escape sequences
      * @return Exception.
      */
-    public byte[] assemble(final MatrixData data) {
+    byte[] assemble(final MatrixData data) {
         throw new UnsupportedOperationException();
     }
 }
