@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 public class CsvXAlignedParserTest {
-
+/*
     CsvXAlignedParser parser = new CsvXAlignedParser();
     List<? extends List<String>> csvDataHorizontal = ;
     List<? extends List<String>> csvDataVertical = ;
@@ -28,4 +28,5 @@ public class CsvXAlignedParserTest {
             parser.parseAsHorizontalDataSets(csvDataVertical);
         });
     }
+ */
 }
