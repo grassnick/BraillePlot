@@ -4,9 +4,9 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
-import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
-import de.tudresden.inf.mci.brailleplot.dataparser.CategoricalBarChartCsvParser;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.dataparser.DataParser;
+import de.tudresden.inf.mci.brailleplot.dataparser.GenericNamedDoubleListCsvParser;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 
@@ -152,9 +152,10 @@ public final class App {
 
             // CSV Parsing
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            DataParser<CategoricalPointListContainer<PointList>> csv = new CategoricalBarChartCsvParser();
-            CategoricalPointListContainer<PointList> container = csv.parse(classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical.csv"));
+            DataParser<PointListContainer<PointList>> csv = new GenericNamedDoubleListCsvParser();
+            PointListContainer<PointList> container = csv.parse(classloader.getResourceAsStream("examples/csv/1_line_chart.csv"));
             mLogger.debug("Internal data representation:\n {}", container.toString());
+
             BarChart barChart = new BarChart(container);
 
             // Render diagram

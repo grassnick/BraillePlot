@@ -17,8 +17,7 @@ public class CategoricalBarChartElement extends CsvElement {
     @CsvBindByPosition(required = true, position = 0)
     public String category;
 
-
     @CsvBindAndJoinByPosition(required = true, elementType = Double.class, position = "1-", locale = "de-DE")
-    public MultiValuedMap<String, Double> xVals;
+    public MultiValuedMap<Integer, Double> xVals;
 
 }

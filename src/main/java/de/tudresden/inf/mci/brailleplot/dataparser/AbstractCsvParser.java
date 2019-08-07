@@ -39,6 +39,8 @@ public abstract class AbstractCsvParser<T extends CsvElement> {
                 .withQuoteChar(mConfig.quotation)
                 .withEscapeChar(mConfig.escape)
                 .withSkipLines(mConfig.skipLines)
+                .withIgnoreLeadingWhiteSpace(true)
+                .withOrderedResults(true)
                 .withType(csvElementClass)
                 .build();
 
