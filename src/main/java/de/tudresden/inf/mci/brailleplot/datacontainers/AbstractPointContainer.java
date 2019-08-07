@@ -11,7 +11,7 @@ import java.util.stream.Stream;
  * Abstract parent class for {@link SimplePointListContainerImpl} and {@link SimplePointListImpl}.
  * @param <T> The type of the elements stored in this container.
  * @author Georg Graßnick
- * @version 2019.07.29
+ * @version 2019.08.02
  */
 public abstract class AbstractPointContainer<T extends MinMaxPos2D<Double>> implements PointContainer<T>, MinMaxPos2D<Double> {
 
@@ -81,5 +81,44 @@ public abstract class AbstractPointContainer<T extends MinMaxPos2D<Double>> impl
         mMinX = Math.min(element.getMinX(), mMinX);
         mMaxY = Math.max(element.getMaxY(), mMaxY);
         mMinY = Math.min(element.getMinY(), mMinY);
+    }
+
+    private String getRecursiveIndentation(final int depth) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            sb.append("    ");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Generates a String representing the data structure.
+     * This function is called recursively on the child elements of a container, so that in the end,
+     * the caller receives a visual overview of the contents of this container down to the leaf nodes (@link Point2DDouble).
+     * @param depth The recursion depth of the current call.
+     * @return A recursive String representation of the container.
+     */
+    protected String toRecursiveString(final int depth) {
+        StringBuilder sb = new StringBuilder();
+
+        if (depth == 0) {
+            sb.append(this.getClass()).append(":\n");
+        }
+            for (T e: mElements) {
+                sb.append(getRecursiveIndentation(depth + 1)).append(e.getClass()).append(":\n");
+                if (e instanceof AbstractPointContainer) {
+                    @SuppressWarnings("unchecked")
+                    AbstractPointContainer<T> a = ((AbstractPointContainer<T>) e);
+                    sb.append(a.toRecursiveString(depth + 1));
+                } else {
+                    sb.append(getRecursiveIndentation(depth + 2)).append(e.toString()).append("\n");
+                }
+            }
+        return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        return toRecursiveString(0);
     }
 }

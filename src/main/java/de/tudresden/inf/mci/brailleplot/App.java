@@ -156,6 +156,7 @@ public final class App {
 
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
             PointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
+            mLogger.debug("Internal data representation:\n {}", container.toString());
             BarChart barChart = new BarChart(container);
 
             // Render diagram
