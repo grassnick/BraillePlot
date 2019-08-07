@@ -8,6 +8,7 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class CsvParser {
 
     private final Logger mLogger = LoggerFactory.getLogger(CsvParser.class);
 
-    public ArrayList<ArrayList<String>> mCsvData;
+    private ArrayList<ArrayList<String>> mCsvData;
 
     /**
      * Initiates the parser. The parser reads from the specified {@code reader}

@@ -151,13 +151,11 @@ public final class App {
 
             // Parse csv data
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream csvStream = classloader.getResourceAsStream("examples/csv/1_scatter_plot.csv");
+            InputStream csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart.csv");
             Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
 
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
             PointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
-            System.out.print(csvParser.mCsvData);
-            System.out.print(container);
             BarChart barChart = new BarChart(container);
 
             // Render diagram
