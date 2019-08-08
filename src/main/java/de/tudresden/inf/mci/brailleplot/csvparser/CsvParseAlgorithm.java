@@ -4,6 +4,8 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimplePointListImpl;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +18,8 @@ import java.util.Objects;
  * @version 2019.07.29
  */
 public abstract class CsvParseAlgorithm {
+
+    protected final Logger mLogger = LoggerFactory.getLogger(getClass());
 
     /**
      * If the data sets are oriented horizontally, i.e. in rows, parse the rows into

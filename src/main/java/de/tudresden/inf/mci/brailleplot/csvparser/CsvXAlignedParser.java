@@ -100,69 +100,43 @@ public class CsvXAlignedParser extends CsvParseAlgorithm {
     }
 
     @Override
+    /**
+     * This method has been implemented from scratch, as there is no documentation about the structure of the CSV files whatsoever.
+     */
     public PointListContainer<PointList> parseAsVerticalDataSets(final List<? extends List<String>> csvData) {
         Objects.requireNonNull(csvData);
 
         PointListContainer<PointList> container = new SimplePointListContainerImpl();
-        Iterator<? extends List<String>> rowIterator = csvData.iterator();
+        Iterator<? extends List<String>> rowIt = csvData.iterator();
 
-        if (!rowIterator.hasNext()) {
-            return container;
-        }
-
-        Iterator<String> lineIterator = rowIterator.next().iterator();
-
-        // Move the iterator to the first title
-        if (!lineIterator.hasNext()) {
-            return container;
-        }
-        lineIterator.next();
-        if (!lineIterator.hasNext()) {
-            return container;
-        }
-
-        // Add a PointList for each title
-        while (lineIterator.hasNext()) {
-            PointList pointList = new SimplePointListImpl();
-            pointList.setName(lineIterator.next());
-            container.pushBack(pointList);
-        }
-
-        // Add the data
-        while (rowIterator.hasNext()) {
-            lineIterator = rowIterator.next().iterator();
-            if (!lineIterator.hasNext()) {
-                continue;
+        int rowNum = 0; // Keep track of the row number, so that we can include the erroneous row number in the exception.
+        while (rowIt.hasNext()) {
+            Iterator<String> lineIt = rowIt.next().iterator();
+            rowNum++;
+            if (!lineIt.hasNext()) {
+                throw new MalformedCsvException("Line: " + rowNum + ": Data set must contain a name for a value");
             }
+                String name = lineIt.next().trim();
+            if (!lineIt.hasNext()) {
+                throw new MalformedCsvException("Line: " + rowNum + ": Data set must contain a name for a value");
+            }
+                String value = lineIt.next().trim();
 
-            // Find out the mX value
-            Number xValue;
+            // Log if there are more inputs that are not parsed
+            if (lineIt.hasNext()) {
+                mLogger.debug("Skipping additional column in line {}", rowNum);
+            }
+            Number val;
             try {
-                xValue = Constants.NUMBER_FORMAT.parse(lineIterator.next());
-            } catch (ParseException e) {
-                continue;
+                val = Constants.NUMBER_FORMAT.parse(value);
+            } catch (final ParseException pe) {
+                throw new MalformedCsvException("Line: " + rowNum + ": Could not parse value", pe);
             }
-
-            // Find out the mY values and add the points to the respective lists
-            int currentDataSet = 0;
-            while (lineIterator.hasNext()) {
-                Number yValue;
-                try {
-                    yValue = Constants.NUMBER_FORMAT.parse(lineIterator.next());
-                } catch (ParseException e) {
-                    currentDataSet++;
-                    continue;
-                }
-
-                Point2DDouble newPoint = new Point2DDouble(xValue.doubleValue(), yValue.doubleValue());
-                addPointToPointListList(container, currentDataSet, newPoint);
-                currentDataSet++;
-            }
-
+            Point2DDouble p = new Point2DDouble(0, val.doubleValue());
+            PointList pl = new SimplePointListImpl(name);
+            pl.pushBack(p);
+            container.pushBack(pl);
         }
-
-        // TODO First add points to PointList, then add PointList to PointListContainer, so that there is no need for a calculateExtrema call
-        container.calculateExtrema();
         return container;
     }
 
