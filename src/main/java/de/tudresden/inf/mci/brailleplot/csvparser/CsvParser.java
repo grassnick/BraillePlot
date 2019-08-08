@@ -24,7 +24,7 @@ public class CsvParser {
 
     private final Logger mLogger = LoggerFactory.getLogger(CsvParser.class);
 
-    public ArrayList<ArrayList<String>> mCsvData;
+    private ArrayList<ArrayList<String>> mCsvData;
 
     /**
      * Initiates the parser. The parser reads from the specified {@code reader}
