@@ -81,6 +81,11 @@ public class CsvDotParser extends CsvParseAlgorithm<PointListContainer<PointList
     @Override
     public PointListContainer<PointList> parseAsVerticalDataSets(final List<? extends List<String>> csvData) {
         Objects.requireNonNull(csvData);
+
+        if (true) {
+            throw new UnsupportedOperationException("Vertical parsing is currently not supported");
+        }
+
         int row = 0;
 
         PointListContainer<PointList> container = new SimplePointListContainerImpl();

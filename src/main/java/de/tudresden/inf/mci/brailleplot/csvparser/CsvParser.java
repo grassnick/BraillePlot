@@ -55,7 +55,7 @@ public final class CsvParser {
 
     /**
      * Chooses the right parsing algorithm.
-     * Casting in this method is not guaranteed to be safe, so use at your own risk.
+     * Casting in this method is not guaranteed to be safe, use at your own risk.
      * @param csvType CsvType
      * @param csvOrientation CsvOrientation
      * @return PointListList

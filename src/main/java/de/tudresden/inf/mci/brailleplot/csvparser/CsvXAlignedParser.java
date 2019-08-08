@@ -23,6 +23,10 @@ public class CsvXAlignedParser extends CsvParseAlgorithm<PointListContainer<Poin
     public PointListContainer<PointList> parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
         Objects.requireNonNull(csvData);
 
+        if (true) {
+            throw new UnsupportedOperationException("Horizontal parsing is currently not supported");
+        }
+
         PointListContainer<PointList> container = new SimplePointListContainerImpl();
         List<Number> xValues = new ArrayList<>();
         Iterator<? extends List<String>> rowIterator = csvData.iterator();
