@@ -33,12 +33,6 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
 
         Iterator<String> lineIterator = rowIterator.next().iterator();
 
-        // Move the iterator to the first category name
-        /*if (!lineIterator.hasNext()) {
-            return container;
-        }
-
-        lineIterator.next();*/
 
         if (!lineIterator.hasNext()) {
             return container;
@@ -61,10 +55,9 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
             }
 
             if (!categoriesIt.hasNext()) {
-                System.out.print(categories);
-                System.out.print("fail");
-                return container;
+                continue;
             }
+
             String category = categoriesIt.next();
             PointList pointList = new SimplePointListImpl(category);
             container.pushBack(pointList);
@@ -111,11 +104,11 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
         Iterator<String> lineIterator = rowIterator.next().iterator();
 
         // Move the iterator to the first title
-        if (!lineIterator.hasNext()) {
+        /*if (!lineIterator.hasNext()) {
             return container;
         }
 
-        lineIterator.next();
+        lineIterator.next();*/
 
         if (!lineIterator.hasNext()) {
             return container;

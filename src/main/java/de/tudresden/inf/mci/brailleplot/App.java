@@ -151,7 +151,7 @@ public final class App {
 
             // Parse csv data
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart_vertical.csv");
+            InputStream csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical.csv");
             Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
 
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
