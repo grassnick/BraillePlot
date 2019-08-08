@@ -151,13 +151,12 @@ public final class App {
 
             // Parse csv data
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical.csv");
+            InputStream csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart_vertical.csv");
             Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
 
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
-            PointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
+            PointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.HORIZONTAL);
             System.out.print("mCscData: " + csvParser.mCsvData + "\n");
-            System.out.print("container: " + container + "\n" + "fertig");
             mLogger.debug("Internal data representation:\n {}", container.toString());
             BarChart barChart = new BarChart(container);
             System.out.print("names: " + barChart.getCategoryNames() + "\n");

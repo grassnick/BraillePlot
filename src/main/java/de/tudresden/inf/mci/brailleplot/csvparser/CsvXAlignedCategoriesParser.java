@@ -34,11 +34,11 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
         Iterator<String> lineIterator = rowIterator.next().iterator();
 
         // Move the iterator to the first category name
-        if (!lineIterator.hasNext()) {
+        /*if (!lineIterator.hasNext()) {
             return container;
         }
 
-        lineIterator.next();
+        lineIterator.next();*/
 
         if (!lineIterator.hasNext()) {
             return container;
@@ -58,6 +58,12 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
             // Create a PointList with the title of the data set
             if (!lineIterator.hasNext()) {
                 continue;
+            }
+
+            if (!categoriesIt.hasNext()) {
+                System.out.print(categories);
+                System.out.print("fail");
+                return container;
             }
             String category = categoriesIt.next();
             PointList pointList = new SimplePointListImpl(category);
@@ -134,7 +140,9 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm {
 
             // Find out the category title
             String currentCategory = lineIterator.next();
-            it.next().setName(currentCategory);
+            if (it.hasNext()) {
+                it.next().setName(currentCategory);
+            }
 
             // Find out the mY values and add the points to the respective lists
             int currentDataSet = 0;
