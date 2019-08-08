@@ -51,4 +51,15 @@ public class SimpleCategoricalPointListContainerImpl extends SimplePointListCont
         }
         return mCategories.get(index);
     }
+
+    @Override
+    protected String toRecursiveString(final int depth) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Categories:\n");
+        for (String s : mCategories) {
+            sb.append(s).append("\n");
+        }
+        sb.append(super.toRecursiveString(depth));
+        return sb.toString();
+    }
 }

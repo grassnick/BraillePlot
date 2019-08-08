@@ -16,7 +16,7 @@ import java.util.Objects;
  * @author SVGPlott-Team, Georg Graßnick
  * @version 2019.07.29
  */
-public class CsvDotParser extends CsvParseAlgorithm {
+public class CsvDotParser extends CsvParseAlgorithm<PointListContainer<PointList>> {
 
     /**
      * Parses scattered point data in horizontal data sets, alternating mX and mY. The

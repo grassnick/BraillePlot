@@ -14,10 +14,11 @@ import java.util.Objects;
 /**
  * An algorithm for parsing CSV data. Contains implementations for two
  * orientations of the data in the file.
+ * @param <T> The type of PointContainer, that is parsed to.
  * @author SVGPlott-Team, Georg Graßnick
  * @version 2019.07.29
  */
-public abstract class CsvParseAlgorithm {
+public abstract class CsvParseAlgorithm<T extends PointListContainer<PointList>> {
 
     protected final Logger mLogger = LoggerFactory.getLogger(getClass());
 
@@ -27,7 +28,7 @@ public abstract class CsvParseAlgorithm {
      * @param csvData The parsed input String.
      * @return A {@link PointListContainer}{@literal <PointList>} representing the data.
      */
-    public abstract PointListContainer<PointList> parseAsHorizontalDataSets(List<? extends List<String>> csvData);
+    public abstract T parseAsHorizontalDataSets(List<? extends List<String>> csvData);
 
     /**
      * If the data sets are oriented horizontally, i.e. in rows, parse the rows into
@@ -35,7 +36,7 @@ public abstract class CsvParseAlgorithm {
      * @param csvData The parsed input String.
      * @return A {@link PointListContainer}{@literal <}{@link PointList}{@literal >} representing the data.
      */
-    public abstract PointListContainer<PointList> parseAsVerticalDataSets(List<? extends List<String>> csvData);
+    public abstract T parseAsVerticalDataSets(List<? extends List<String>> csvData);
 
     /**
      * Adds a {@link Point2DDouble} to a {@link PointList} in a {@link PointListContainer}{@literal <}{@link PointList}{@literal >},

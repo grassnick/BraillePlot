@@ -11,8 +11,8 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
+import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
@@ -151,11 +151,11 @@ public final class App {
 
             // Parse csv data
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart.csv");
+            InputStream csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_vertical.csv");
             Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
 
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
-            PointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED, CsvOrientation.VERTICAL);
+            CategoricalPointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
             mLogger.debug("Internal data representation:\n {}", container.toString());
             BarChart barChart = new BarChart(container);
 

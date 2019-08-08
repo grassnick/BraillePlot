@@ -17,7 +17,7 @@ import java.util.Objects;
  * @author SVGPlott-Team, Georg Graßnick
  * @version 2019.07.29
  */
-public class CsvXAlignedParser extends CsvParseAlgorithm {
+public class CsvXAlignedParser extends CsvParseAlgorithm<PointListContainer<PointList>> {
 
     @Override
     public PointListContainer<PointList> parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {

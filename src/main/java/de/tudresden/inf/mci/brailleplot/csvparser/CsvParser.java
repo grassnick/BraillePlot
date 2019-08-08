@@ -8,7 +8,6 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.Objects;
  * @author SVGPlott-Team, Georg Graßnick
  * @version 2019.07.29
  */
-public class CsvParser {
+public final class CsvParser {
 
     private final Logger mLogger = LoggerFactory.getLogger(CsvParser.class);
 
@@ -56,27 +55,29 @@ public class CsvParser {
 
     /**
      * Chooses the right parsing algorithm.
+     * Casting in this method is not guaranteed to be safe, so use at your own risk.
      * @param csvType CsvType
      * @param csvOrientation CsvOrientation
      * @return PointListList
      */
-    public PointListContainer<PointList> parse(final CsvType csvType, final CsvOrientation csvOrientation) {
-        CsvParseAlgorithm csvParseAlgorithm;
+    @SuppressWarnings("unchecked")
+    public <T extends PointListContainer<PointList>> T parse(final CsvType csvType, final CsvOrientation csvOrientation) {
+        CsvParseAlgorithm<T> csvParseAlgorithm;
 
         mLogger.debug("Parsing data as \"{}\", orientation \"{}\"", csvType, csvOrientation);
 
         switch (csvType) {
         case DOTS:
-            csvParseAlgorithm = new CsvDotParser();
+            csvParseAlgorithm = ((CsvParseAlgorithm<T>) new CsvDotParser());
             break;
         case X_ALIGNED:
-            csvParseAlgorithm = new CsvXAlignedParser();
+            csvParseAlgorithm = ((CsvParseAlgorithm<T>) new CsvXAlignedParser());
             break;
         case X_ALIGNED_CATEGORIES:
-            csvParseAlgorithm = new CsvXAlignedCategoriesParser();
+            csvParseAlgorithm = ((CsvParseAlgorithm<T>) new CsvXAlignedCategoriesParser());
             break;
         default:
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         switch (csvOrientation) {
@@ -85,7 +86,7 @@ public class CsvParser {
         case VERTICAL:
             return csvParseAlgorithm.parseAsVerticalDataSets(mCsvData);
         default:
-            return null;
+            throw new UnsupportedOperationException();
         }
     }
 }
