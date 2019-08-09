@@ -102,6 +102,24 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
         return sb.toString();
     }
 
+    // TODO: Remove, once svgexporter is implemented
+    public final String toBoolString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < getRowCount(); i++) {
+            for (int j = 0; j < getColumnCount(); j++) {
+                Boolean val = (Boolean) getValue(i, j);
+                if (val) {
+                    sb.append("o");
+                } else {
+                    sb.append(" ");
+                }
+                sb.append(" ");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
+
     /**
      * Iterator that iterates all elements of the matrix in a pattern that iterates Braille cells of specified height
      * and width from left to right and top to bottom.

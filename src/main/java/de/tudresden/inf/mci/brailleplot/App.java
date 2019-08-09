@@ -7,7 +7,6 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 
-import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 
 import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
@@ -15,9 +14,21 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
+import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
+import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
+import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
+import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
+import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
+import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
+import de.tudresden.inf.mci.brailleplot.rendering.RasterCanvas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -135,7 +146,29 @@ public final class App {
                 return EXIT_SUCCESS;
             }
 
+            // Config Parsing
+            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(
+                    getClass().getClassLoader().getResource("config/index_everest_d_v4.properties").getFile(),
+                    getClass().getClassLoader().getResource("config/default.properties").getFile()
+            );
+            Printer indexV4Printer = configParser.getPrinter();
+            Format a4Format = configParser.getFormat("A4");
+
             // Parse csv data
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            InputStream csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_vertical.csv");
+            Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
+
+            CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
+            CategoricalPointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
+            mLogger.debug("Internal data representation:\n {}", container.toString());
+            BarChart barChart = new BarChart(container);
+
+            // Render diagram
+            MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
+            RasterCanvas canvas = renderer.rasterize(barChart);
+            SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
+            mLogger.debug("Render preview:\n" + mat.toBoolString());
 
             // Config Parsing
 
@@ -144,19 +177,21 @@ public final class App {
                 throw new Exception("Can't find any Printservices on this System.");
             }
 
-            // Parse properties File
-            Optional<String> configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH);
-            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get(), "src/main/resources/config/default.properties");
-            Printer printer = configParser.getPrinter();
-            printer.getProperty("brailletable").toString();
-            Format formatA4 = configParser.getFormat("A4");
+            /*
+             We do not want to actually print on each run.
+            Until CLI parsing is fully integrated, you will have to disable this check by hand if you actually do
+            want to print.
+            Please do not commit changes to this.
+            */
+            if (true) {
+                return EXIT_SUCCESS;
+            }
 
             // Last Step: Printing
             @SuppressWarnings("checkstyle:MagicNumber")
-            MatrixData<Boolean> data = new SimpleMatrixDataImpl<>(printer, formatA4, 18, 20, true);
-            String printerConfigUpperCase = printer.getProperty("mode").toString().toUpperCase();
-            PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), printer);
-            printD.print(data);
+            String printerConfigUpperCase = indexV4Printer.getProperty("mode").toString().toUpperCase();
+            PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), indexV4Printer);
+            printD.print(mat);
 
         } catch (final Exception e) {
             terminateWithException(e);

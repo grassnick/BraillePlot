@@ -1,20 +1,19 @@
-package de.tudresden.inf.mci.brailleplot.printabledata;
+package de.tudresden.inf.mci.brailleplot.point;
 
-import javax.measure.Quantity;
-import javax.measure.quantity.Length;
 import java.util.Objects;
 
 /**
  * Representation of a 2 dimensional point with an associated value.
  * Encapsulates both the position on x and y axis, as well as a value (think of embossing intensity).
- * @param <T> The type used for representing the intensity. Could be set to {@link Boolean} for basic Braille support,
+ * @param <T> The type used to represent the position.
+ * @param <U> The type used for representing the intensity. Could be set to {@link Boolean} for basic Braille support,
  *           but could also by set to {@link Short} if different embossing strengths are required.
  * @author Georg Graßnick
- * @version 2019.06.26
+ * @version 2019.07.28
  */
-public class Point2DValued<T> extends Point2D {
+public class Point2DValued<T, U> extends Point2D<T> {
 
-    private final T mVal;
+    private final U mVal;
 
     /**
      * Constructor.
@@ -22,11 +21,9 @@ public class Point2DValued<T> extends Point2D {
      * @param y Position on the y axis.
      * @param val The value of the dot
      */
-    public Point2DValued(final Quantity<Length> x, final Quantity<Length> y, final T val) {
+    public Point2DValued(final T x, final T y, final U val) {
         super(x, y);
-        if (val == null) {
-            throw new NullPointerException();
-        }
+        Objects.requireNonNull(val);
         mVal = val;
     }
 
@@ -34,7 +31,7 @@ public class Point2DValued<T> extends Point2D {
      * Getter.
      * @return The value that is associated with this point.
      */
-    public final T getVal() {
+    public final U getVal() {
         return mVal;
     }
 
@@ -52,7 +49,7 @@ public class Point2DValued<T> extends Point2D {
             return false;
         }
         Point2D point = (Point2DValued) other;
-        return super.equals(other) && mVal.equals(((Point2DValued) other).mVal);
+        return super.equals(point) && mVal.equals(((Point2DValued) other).mVal);
     }
 
     @Override
