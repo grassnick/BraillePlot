@@ -1,5 +1,8 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
+
+import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -11,8 +14,8 @@ import java.util.regex.Pattern;
 
 /**
  * Concrete validator for properties parsed from configuration files in Java Property File format.
- * @author Leonard Kupper
- * @version 2019.07.18
+ * @author Leonard Kupper, Andrey Ruzhanskiy
+ * @version 2019.07.30
  */
 class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
 
@@ -240,4 +243,29 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         }
         return true;
     }
+
+
+
+    private static boolean checkIfEnum(final String name) {
+        for (PrinterCapability p : PrinterCapability.values()) {
+            if (p.toString().toLowerCase().equals(name)) {
+                return true;
+            }
+        }
+        PrinterCapability[] possibleValues = PrinterCapability.values();
+        StringBuilder sBuilder = new StringBuilder();
+        for (int i = 0; i < possibleValues.length; i++) {
+            sBuilder.append(possibleValues[i]).append(",");
+        }
+        String result =  sBuilder.deleteCharAt(sBuilder.length() - 1).toString();
+        throw new RuntimeException("The given mode '"
+                + name + "' is currently not supported/not found in"
+                + " the system. Currently, the possible values are: " + result);
+    }
+
+    /**
+     * Static method for checking if the printer, which was given, exists in the Printer System Dialog.
+     * @param printerName The name of the printer to check.
+     * @return True if printer exists. False if not.
+     */
 }
