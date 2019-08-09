@@ -7,7 +7,6 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 
-import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 
 import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
@@ -15,16 +14,12 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
-import de.tudresden.inf.mci.brailleplot.configparser.Format;
-import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
-import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
 import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
-import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import de.tudresden.inf.mci.brailleplot.rendering.RasterCanvas;
 import org.slf4j.Logger;
@@ -182,19 +177,21 @@ public final class App {
                 throw new Exception("Can't find any Printservices on this System.");
             }
 
-            // Parse properties File
-            Optional<String> configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH);
-            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get(), "src/main/resources/config/default.properties");
-            Printer printer = configParser.getPrinter();
-            printer.getProperty("brailletable").toString();
-            Format formatA4 = configParser.getFormat("A4");
+            /*
+             We do not want to actually print on each run.
+            Until CLI parsing is fully integrated, you will have to disable this check by hand if you actually do
+            want to print.
+            Please do not commit changes to this.
+            */
+            if (true) {
+                return EXIT_SUCCESS;
+            }
 
             // Last Step: Printing
             @SuppressWarnings("checkstyle:MagicNumber")
-            MatrixData<Boolean> data = new SimpleMatrixDataImpl<>(printer, formatA4, 18, 20, true);
-            String printerConfigUpperCase = printer.getProperty("mode").toString().toUpperCase();
-            PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), printer);
-            printD.print(data);
+            String printerConfigUpperCase = indexV4Printer.getProperty("mode").toString().toUpperCase();
+            PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), indexV4Printer);
+            printD.print(mat);
 
         } catch (final Exception e) {
             terminateWithException(e);
