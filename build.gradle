@@ -30,7 +30,7 @@ dependencies {
     // Use JUnit test framework
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
     testImplementation('org.junit.jupiter:junit-jupiter:5.4.2')
-
+    
     // Logging
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.26'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
@@ -38,9 +38,12 @@ dependencies {
     // Units
     compile group: 'javax.measure', name: 'unit-api', version: '2.0-PRD'
     compile group: 'tec.units', name: 'unit-ri', version: '1.0.3'
+
+    // CSV parsing
+    compile "com.opencsv:opencsv:4.6"
 }
 
-test {
+tasks.withType(Test) {
     useJUnitPlatform()
 }
 
@@ -57,7 +60,11 @@ jar {
     }
 }
 
-checkstyleTest{
+checkstyleTest {
     showViolations = true
     checkstyleTest.enabled = false
 }
+
+    // Needed for Integrationtests
+
+apply from: "$rootDir/integrationTest.gradle"

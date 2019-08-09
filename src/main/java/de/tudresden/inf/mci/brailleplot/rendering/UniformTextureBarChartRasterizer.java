@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 
@@ -7,13 +8,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
+import static java.lang.Math.floor;
+import static java.lang.Math.log10;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.Math.pow;
+import static java.lang.Math.round;
+import static java.lang.StrictMath.ceil;
 
 /**
  * A rasterizer for instances of {@link BarChart} which is based on an algorithm that constructs horizontal category
  * bars that are filled with a uniform texture. The rasterizer is 'cell' based, working on 6-dot or 8-dot layouts.
- * @author Leonard Kupper
- * @version 2019.07.20
+ * @author Leonard Kupper, Georg Graßnick
+ * @version 2019.07.29
  */
 final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
 
@@ -142,8 +150,8 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         // 2. Draw the individual bars for each category.
         int refCellX = xAxisOriginPosition; // align bars with y-axis.
         int refCellY = barArea.intWrapper().getBottom(); // start with the bottommost bar.
-        for (int i = 0; i < mDiagram.getCategoryCount(); i++) {
-            double value = mDiagram.getDataSet(0).get(i).getY();
+        for (PointList pl : mDiagram.getDataSet()) {
+            double value = pl.iterator().next().getY();
             // calculate how to represent value with the current scaling
             int barLength = (int) round(value / xAxisStepWidth) * mTextureUnitSize;
             // draw the bar including its caption and then move the reference cell y position up
@@ -185,6 +193,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
 
     // Layout help methods
 
+    @SuppressWarnings("checkstyle:MagicNumber")
     private double findAxisScaling(final double valueRangeSize, final int availableUnits) {
         double minRangePerUnit = valueRangeSize / availableUnits; // this range must fit into one 'axis step'
         double orderOfMagnitude = pow(10, ceil(log10(minRangePerUnit)));
@@ -290,6 +299,8 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         return mCanvas.getCellYFromDotY(upperY - (mBarDotPadding + 1)) - mExtraBarCellPadding;
     }
 
+    @SuppressWarnings("checkstyle:MagicNumber")
+    // TODO: use BrailleCell6 and BrailleCell8 class constants
     private void checkValidBrailleRaster() throws InsufficientRenderingAreaException {
         boolean isValidBrailleRaster = ((mCanvas.getCellWidth() == 2)
                 && (mCanvas.getCellHeight() >= 3) && (mCanvas.getCellHeight() <= 4));
