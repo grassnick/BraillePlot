@@ -1,6 +1,9 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
+import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
+import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 
