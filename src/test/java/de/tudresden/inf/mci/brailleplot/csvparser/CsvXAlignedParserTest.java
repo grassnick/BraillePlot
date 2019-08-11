@@ -14,6 +14,9 @@ import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * @author Richard Schmidt
+ */
 public class CsvXAlignedParserTest {
 
     public static CsvParser parser;
