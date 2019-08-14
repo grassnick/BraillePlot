@@ -4,6 +4,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
+import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 
@@ -22,10 +23,13 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import de.tudresden.inf.mci.brailleplot.rendering.RasterCanvas;
+import de.tudresden.inf.mci.brailleplot.svgexporter.BoolMatrixDataSvgExporter;
+import de.tudresden.inf.mci.brailleplot.svgexporter.SvgExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -170,7 +174,12 @@ public final class App {
             SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
             mLogger.debug("Render preview:\n" + mat.toBoolString());
 
-            // Config Parsing
+            // SVG exporting
+            SvgExporter<MatrixData<Boolean>> svgExporter = new BoolMatrixDataSvgExporter(canvas);
+            svgExporter.renderSvg();
+            FileOutputStream fs = new FileOutputStream("boolMat.svg");
+            svgExporter.dump(fs);
+            fs.close();
 
             // Check if some SpoolerService/Printservice exists
             if (!PrintDirector.isPrintServiceOn()) {

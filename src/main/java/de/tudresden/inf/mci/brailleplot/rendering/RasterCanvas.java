@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.ceil;
@@ -255,6 +257,14 @@ public class RasterCanvas extends AbstractCanvas {
      */
     public int getCellYFromDotY(final int dotY) {
         return dotY / mCellHeight;
+    }
+
+    public final List<Double> getXPositions() {
+        return Collections.unmodifiableList(mXPositions);
+    }
+
+    public final List<Double> getYPositions() {
+        return Collections.unmodifiableList(mYPositions);
     }
 
 
