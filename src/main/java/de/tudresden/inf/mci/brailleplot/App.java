@@ -175,11 +175,9 @@ public final class App {
             mLogger.debug("Render preview:\n" + mat.toBoolString());
 
             // SVG exporting
-            SvgExporter<MatrixData<Boolean>> svgExporter = new BoolMatrixDataSvgExporter(canvas);
-            svgExporter.renderSvg();
-            FileOutputStream fs = new FileOutputStream("boolMat.svg");
-            svgExporter.dump(fs);
-            fs.close();
+            SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
+            svgExporter.render();
+            svgExporter.dump("boolMat");
 
             // Check if some SpoolerService/Printservice exists
             if (!PrintDirector.isPrintServiceOn()) {
