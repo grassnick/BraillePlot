@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot.rendering;
+package de.tudresden.inf.mci.brailleplot.layout;
 
 /**
  * Exception that indicates too few space available to display the amount of data contained in the given renderable representation.
