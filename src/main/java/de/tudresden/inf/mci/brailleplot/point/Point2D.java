@@ -1,29 +1,27 @@
-package de.tudresden.inf.mci.brailleplot.printabledata;
+package de.tudresden.inf.mci.brailleplot.point;
 
-import javax.measure.Quantity;
-import javax.measure.quantity.Length;
 import java.util.Objects;
 
 /**
  * Representation of a 2 dimensional point.
  * Encapsulates a position on x and y axis.
+ * @param <T> The type used to represent the position.
  * @author Georg Graßnick
- * @version 2019.06.26
+ * @version 2019.07.29
  */
-public class Point2D {
+public class Point2D<T> implements MinMaxPos2D<T> {
 
-    private final Quantity<Length> mX;
-    private final Quantity<Length> mY;
+    private final T mX;
+    private final T mY;
 
     /**
      * Constructor.
      * @param x Position on the x axis.
      * @param y Position on the y axis.
      */
-    public Point2D(final Quantity<Length> x, final Quantity<Length> y) {
-        if (x == null || y == null) {
-            throw new NullPointerException();
-        }
+    public Point2D(final T x, final T y) {
+        Objects.requireNonNull(x);
+        Objects.requireNonNull(y);
         mX = x;
         mY = y;
     }
@@ -32,7 +30,7 @@ public class Point2D {
      * Getter.
      * @return The position on the x axis.
      */
-    public final Quantity<Length> getX() {
+    public final T getX() {
         return mX;
     }
 
@@ -40,7 +38,7 @@ public class Point2D {
      * Getter.
      * @return The position on the y axis.
      */
-    public final Quantity<Length> getY() {
+    public final T getY() {
         return mY;
     }
 
@@ -73,5 +71,30 @@ public class Point2D {
     @Override
     public String toString() {
         return "(" + mX + ", " + mY + ")";
+    }
+
+    @Override
+    public T getMinX() {
+        return mX;
+    }
+
+    @Override
+    public T getMaxX() {
+        return mX;
+    }
+
+    @Override
+    public T getMinY() {
+        return mY;
+    }
+
+    @Override
+    public T getMaxY() {
+        return mY;
+    }
+
+    @Override
+    public void calculateExtrema() {
+
     }
 }

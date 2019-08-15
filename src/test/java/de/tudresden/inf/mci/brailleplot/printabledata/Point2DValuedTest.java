@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.printabledata;
 
+import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import tec.units.ri.quantity.Quantities;
@@ -31,7 +32,7 @@ class Point2DValuedTest {
 
     @Test
     void testSetGet() {
-        Point2DValued<Integer> point = new Point2DValued<>(length(), length(), integer());
+        Point2DValued<Quantity<Length>, Integer> point = new Point2DValued<>(length(), length(), integer());
         Assertions.assertEquals(point.getVal(), integer());
         Assertions.assertEquals(point.getX(), length());
         Assertions.assertEquals(point.getY(), length());

@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,11 +35,11 @@ public final class MasterRenderer {
         mLogger.trace("Instantiating default rasterizers");
         // Default Algorithms:
 
-        // Rasterizer<BarChart> uniformTexture = new UniformTextureBarChartRasterizer();
+        Rasterizer<BarChart> uniformTexture = new UniformTextureBarChartRasterizer();
         Rasterizer<Image> linearImageMapping = new ImageRasterizer();
 
         mLogger.trace("Registering default rasterizers");
-        // renderingBase.registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, uniformTexture));
+        renderingBase.registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, uniformTexture));
         renderingBase.registerRasterizer(new FunctionalRasterizer<Image>(Image.class, linearImageMapping));
         //renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, ScatterPlotRasterizing::fooRasterizing));
         //...
