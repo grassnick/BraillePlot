@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.printerbackend;
 
+import de.tudresden.inf.mci.brailleplot.brailleparser.AbstractBrailleTableParser;
 import de.tudresden.inf.mci.brailleplot.printabledata.BrailleCell6;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
@@ -39,7 +40,7 @@ class NormalBuilder extends AbstractDocumentBuilder<Boolean> {
         mData = Objects.requireNonNull(data);
         // Setting the right parser, catch if not found and throw RuntimeException which can be handled.
         try {
-            setParser();
+            mParser = AbstractBrailleTableParser.getParser(mData.getPrinterConfig());
         } catch (NotSupportedFileExtensionException e) {
             throw new RuntimeException();
         }

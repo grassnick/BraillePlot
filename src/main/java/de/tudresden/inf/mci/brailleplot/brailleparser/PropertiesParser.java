@@ -10,7 +10,7 @@ import java.util.Properties;
  * @version 12.07.2019
  */
 
-public class PropertiesParser implements AbstractBrailleTableParser {
+public class PropertiesParser extends AbstractBrailleTableParser {
     private Properties mProperties = new Properties();
 
     /**

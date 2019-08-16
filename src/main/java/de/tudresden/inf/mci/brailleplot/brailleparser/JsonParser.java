@@ -5,7 +5,7 @@ package de.tudresden.inf.mci.brailleplot.brailleparser;
  * @author Andrey Ruzhanskiy
  * @version 12.07.2019
  */
-public class JsonParser implements AbstractBrailleTableParser {
+public class JsonParser extends AbstractBrailleTableParser {
 
     /**
      * Currently not supported.

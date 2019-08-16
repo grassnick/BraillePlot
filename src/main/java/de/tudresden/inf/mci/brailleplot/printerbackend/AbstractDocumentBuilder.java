@@ -30,23 +30,4 @@ abstract class AbstractDocumentBuilder<T> {
      */
     abstract byte[] assemble(MatrixData<T> data);
 
-    /**
-     * Method for setting the correct parser. Reads the file from the printer configuration, then checks
-     * if the file extension is supported.
-     * @throws NotSupportedFileExtensionException If the file extension is not supported.
-     */
-    void setParser() throws NotSupportedFileExtensionException {
-        //read braille table path
-        Printer printer = mData.getPrinterConfig();
-        String brailleTablePath = printer.getProperty("brailletable").toString();
-
-        //read which kind of parser is needed (properties, json, xml,...)
-        String fileEnding = brailleTablePath.split("\\.")[1];
-        switch (fileEnding) {
-            case "properties": mParser = new PropertiesParser(printer.getProperty("brailletable").toString()); break;
-            case "json": mParser = new JsonParser(printer.getProperty("brailletable").toString()); break;
-            case "xml": mParser = new XmlParser(printer.getProperty("brailletable").toString()); break;
-            default: throw new NotSupportedFileExtensionException("The Fileextension " + fileEnding + "is currently not supported.");
-        }
-    }
 }
