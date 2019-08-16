@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot.rendering;
+package de.tudresden.inf.mci.brailleplot.layout;
 
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;

@@ -1,5 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
+import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +83,7 @@ public class FunctionalRenderingBase {
      * Sets a new canvas for any rasterizing operations performed by this rendering base. The rasterizing results are
      * 'drawn' on the currently selected canvas instance. There are no restrictions on the raster canvas. It is also
      * possible to pass a canvas which already contains data to 'overlay' the new data.
-     * @param raster The {@link AbstractCanvas} instance which will be used for all subsequent rasterizing operations.
+     * @param raster The {@link RasterCanvas} instance which will be used for all subsequent rasterizing operations.
      */
     public void setRasterCanvas(final RasterCanvas raster) {
         mRaster = Objects.requireNonNull(raster);
@@ -89,8 +91,8 @@ public class FunctionalRenderingBase {
     }
 
     /**
-     * Gets the currently set {@link AbstractCanvas} of the rendering base.
-     * @return An instance of {@link AbstractCanvas}.
+     * Gets the currently set {@link RasterCanvas} of the rendering base.
+     * @return An instance of {@link RasterCanvas}.
      */
     public RasterCanvas getRaster() {
         return mRaster;

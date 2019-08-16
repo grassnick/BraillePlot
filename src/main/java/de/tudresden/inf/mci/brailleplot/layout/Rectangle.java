@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot.rendering;
+package de.tudresden.inf.mci.brailleplot.layout;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
