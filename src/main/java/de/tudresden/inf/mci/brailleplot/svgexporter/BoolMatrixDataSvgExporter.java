@@ -1,7 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.svgexporter;
 
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
-import de.tudresden.inf.mci.brailleplot.rendering.RasterCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import java.util.ArrayList;
 import java.util.List;
 

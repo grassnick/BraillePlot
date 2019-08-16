@@ -1,6 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.svgexporter;
 
-import de.tudresden.inf.mci.brailleplot.rendering.AbstractCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.AbstractCanvas;
 
 import java.io.IOException;
 import java.io.OutputStream;

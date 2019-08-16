@@ -1,7 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.svgexporter;
 
 import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
-import de.tudresden.inf.mci.brailleplot.rendering.AbstractCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.AbstractCanvas;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
 import org.jfree.graphics2d.svg.SVGUnits;
 import org.slf4j.Logger;
