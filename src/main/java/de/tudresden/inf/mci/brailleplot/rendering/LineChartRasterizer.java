@@ -6,6 +6,7 @@ import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
+import static java.lang.StrictMath.floor;
 
 public class LineChartRasterizer implements Rasterizer<LineChart> {
     private MatrixData mData;
@@ -14,8 +15,18 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     private BrailleTextRasterizer mTextRasterizer;
     private LinearMappingAxisRasterizer mAxisRasterizer;
 
+
+    /*
+        Parameters which should be read somewhere, not be hardcoded.
+        For the time beeing, these constants will be used.
+     */
+    private String mDiagramTitle =  "I am a line chart";
+    private String mXAxisUnit = "Units per Memes";
+    private String mYAxisUnit = "Pepes per Wojacks";
+
+
     // Layout Variables
-    private String mDiagramTitle;
+
     private Rectangle mLineArea;
 
     public LineChartRasterizer() {
@@ -37,14 +48,18 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         mData = mCanvas.getCurrentPage();
         mLineArea = mCanvas.getCellRectangle();
         // Not good, this needs to be discussed
-        mDiagramTitle = "I am a line chart";
         Rectangle titleArea = calculateTitle();
-        Rectangle xAxisAres = calculateXAxis();
+        Rectangle xAxisAreas = calculateXAxis();
         addSpaceLeft();
-        placeYAxis();
+        double rangeOfXValues = valueRangeOfXAxis();
+        int xUnitsAvailable = calculateUnitsWidth(xAxisAreas);
+        findXAxisScaling(rangeOfXValues, xUnitsAvailable);
 
+
+
+
+        double rangeOfYValues = valueRangeOfYAxis();
     }
-
 
     private Rectangle calculateTitle() throws InsufficientRenderingAreaException {
         if(mDiagramTitle.isEmpty()) {
@@ -75,13 +90,10 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         }
     }
 
-    private void placeYAxis() {
-        double minX = mDiagram.getMinX();
-        double maxX = mDiagram.getMaxX();
+    private double valueRangeOfYAxis() {
         double minY = mDiagram.getMinY();
         double maxY = mDiagram.getMaxY();
 
-        double xCoordOfYAxis;
         double valueRangeOfYAxis;
 
 
@@ -91,11 +103,30 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         } else {
             valueRangeOfYAxis = abs(maxY) + abs(minY);
         }
+        return valueRangeOfYAxis;
+    }
 
-        if (minX == 0) {
-            xCoordOfYAxis = 0;
+    private int calculateUnitsWidth(Rectangle rectangle) {
+        return (int) floor(rectangle.getWidth()*mCanvas.getCellWidth());
+    }
+
+    private double valueRangeOfXAxis() {
+        double minX = mDiagram.getMinX();
+        double maxX = mDiagram.getMaxX();
+
+        double valueRangeOfXAxis;
+        //Needs testing
+        if (minX>=0) {
+            valueRangeOfXAxis = maxX -minX;
         } else {
-            xCoordOfYAxis = minX/maxX;
+            valueRangeOfXAxis = abs(maxX) + abs(minX);
         }
+        return valueRangeOfXAxis;
+    }
+
+    private double findXAxisScaling(double rangeOfXValues, int xUnitsAvailable) {
+        double minRange = rangeOfXValues / xUnitsAvailable;
+        int length = String.valueOf(mDiagram.getMaxX()).length();
+        return 0;
     }
 }

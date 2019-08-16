@@ -4,6 +4,12 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
+import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
+import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
+import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
+import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
@@ -20,10 +26,15 @@ import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRenderingBase;
 import de.tudresden.inf.mci.brailleplot.rendering.LineChartRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
+import de.tudresden.inf.mci.brailleplot.rendering.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.rendering.Rasterizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -142,6 +153,14 @@ public final class App {
             }
 
             // Parse csv data
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            InputStream csvStream = classloader.getResourceAsStream("examples/csv/2_line_plot.csv");
+            Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
+
+            CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
+            PointListContainer<PointList> container = csvParser.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
+            mLogger.debug("Internal data representation:\n {}", container.toString());
+            LineChart lineChart = new LineChart(container);
 
             // Config Parsing
 
@@ -155,13 +174,12 @@ public final class App {
             JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get(), "src/main/resources/config/default.properties");
             Printer printer = configParser.getPrinter();
             Format formatA4 = configParser.getFormat("A4");
-
             // Rasterize
             FunctionalRasterizer funcRast = new FunctionalRasterizer(LineChart.class, new LineChartRasterizer());
             FunctionalRenderingBase funcBase = new FunctionalRenderingBase();
             MasterRenderer renderer = new MasterRenderer(printer, formatA4, funcBase);
             renderer.getRenderingBase().registerRasterizer(funcRast);
-
+            RasterCanvas canvas = renderer.rasterize(lineChart);
             // Last Step: Printing
             @SuppressWarnings("checkstyle:MagicNumber")
             MatrixData<Boolean> data = new SimpleMatrixDataImpl<>(printer, formatA4, 18, 20, true);
