@@ -1,5 +1,6 @@
-package de.tudresden.inf.mci.brailleplot.rendering;
+package de.tudresden.inf.mci.brailleplot.layout;
 
+import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

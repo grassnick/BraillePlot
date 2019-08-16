@@ -4,6 +4,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
+
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
@@ -11,6 +12,9 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListConta
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
+
+import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
+
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 
@@ -26,8 +30,8 @@ import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRenderingBase;
 import de.tudresden.inf.mci.brailleplot.rendering.LineChartRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
-import de.tudresden.inf.mci.brailleplot.rendering.RasterCanvas;
-import de.tudresden.inf.mci.brailleplot.rendering.Rasterizer;
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
