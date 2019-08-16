@@ -134,4 +134,11 @@ public abstract class AbstractCanvas {
         return mPageContainer.listIterator();
     }
 
+    /**
+     * Get the Printer Configuration.
+     * @return A {@link Printer}.
+     */
+    public Printer getPrinter() { return mPrinter; }
+
+
 }
