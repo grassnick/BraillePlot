@@ -18,10 +18,10 @@ import static java.lang.Math.floor;
 /**
  * Representation of a target onto which an image can be rasterized.
  * It wraps a {@link de.tudresden.inf.mci.brailleplot.printabledata.MatrixData} instance and describes the raster size and its (not necessarily equidistant) layout.
- * @author Leonard Kupper
- * @version 2019.07.22
+ * @author Leonard Kupper, georg Graßnick
+ * @version 2019.08.16
  */
-public class RasterCanvas extends AbstractCanvas {
+public class RasterCanvas extends AbstractCanvas<MatrixData<Boolean>> {
 
     private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
 
@@ -85,14 +85,11 @@ public class RasterCanvas extends AbstractCanvas {
         return getCurrentPage();
     }
 
-    @SuppressWarnings("unchecked")
-    // This is allowed because the mPageContainer fields are always initialized with the correct type by the page getters,
-    // cannot be accessed from the outside and are never changed anywhere else.
     public final MatrixData<Boolean> getCurrentPage() {
         if (mPageContainer.size() < 1) {
             return getNewPage();
         }
-        return (MatrixData<Boolean>) mPageContainer.get(mPageContainer.size() - 1);
+        return mPageContainer.get(mPageContainer.size() - 1);
     }
 
     private void readConfig() {

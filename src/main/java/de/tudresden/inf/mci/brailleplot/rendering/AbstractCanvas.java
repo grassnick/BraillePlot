@@ -12,10 +12,11 @@ import java.util.ListIterator;
 
 /**
  * Representation of a target onto which can be drawn. It wraps a {@link PrintableData} instance and specifies the size of the drawing area (in mm).
- * @author Leonard Kupper
- * @version 2019.07.22
+ * @param <T> The type of the managed {@link PrintableData}
+ * @author Leonard Kupper, Georg Graßnick
+ * @version 2019.08.16
  */
-public abstract class AbstractCanvas {
+public abstract class AbstractCanvas<T extends PrintableData> {
 
     private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
 
@@ -24,7 +25,7 @@ public abstract class AbstractCanvas {
 
     Rectangle mPrintableArea;
 
-    List<PrintableData> mPageContainer;
+    List<T> mPageContainer;
 
     AbstractCanvas(final Printer printer, final Format format) throws InsufficientRenderingAreaException {
 
@@ -126,11 +127,10 @@ public abstract class AbstractCanvas {
     }
 
     /**
-     * Get an Iterator for the PrintableData instances representing the canvas pages. The single instances should be
-     * casted to the regarding concrete type depending on the canvas implementation.
+     * Get an Iterator for the PrintableData instances representing the canvas pages.
      * @return A {@link ListIterator}&lt;{@link PrintableData}&gt;.
      */
-    public ListIterator<PrintableData> getPageIterator() {
+    public ListIterator<T> getPageIterator() {
         return mPageContainer.listIterator();
     }
 

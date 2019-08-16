@@ -4,7 +4,6 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
-import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 
@@ -29,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -40,7 +38,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  * Main class.
  * Set up the application and run it.
  * @author Georg Graßnick, Andrey Ruzhanskiy
- * @version 06.06.19
+ * @version 2019.08.16
  */
 
 public final class App {

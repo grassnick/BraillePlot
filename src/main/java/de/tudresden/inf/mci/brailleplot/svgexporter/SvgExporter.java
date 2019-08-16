@@ -8,6 +8,8 @@ import java.io.OutputStream;
 /**
  * Interface for all classes that support exporting PrintableData to SVG files.
  * @param <T> The type of the supported PrintableData.
+ * @author Georg Graßnick
+ * @version 2019.08.16
  */
 public interface SvgExporter<T extends AbstractCanvas> {
 
