@@ -138,7 +138,9 @@ public abstract class AbstractCanvas {
      * Get the Printer Configuration.
      * @return A {@link Printer}.
      */
-    public Printer getPrinter() { return mPrinter; }
+    public Printer getPrinter() {
+        return mPrinter;
+    }
 
 
 }
