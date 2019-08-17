@@ -8,9 +8,13 @@ import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.max;
 import static java.lang.StrictMath.floor;
 
+/**
+ * Class representing a line chart rasterizer.
+ * @author Andrey Ruzhanskiy
+ * @version 2019.08.17
+ */
 public class LineChartRasterizer implements Rasterizer<LineChart> {
     private MatrixData mData;
     private LineChart mDiagram;
@@ -21,7 +25,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
 
     /*
         Parameters which should be read somewhere, not be hardcoded.
-        For the time beeing, these constants will be used.
+        For the time being, these constants will be used.
      */
     private String mDiagramTitle =  "I am a line chart";
     private String mXAxisUnit = "Units per Memes";
@@ -39,10 +43,10 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
 
     @Override
     public void rasterize(final LineChart data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
-        if (data.equals(null)){
+        if (data.equals(null)) {
             throw new NullPointerException("The given data for the LineChartRasterizer was null!");
         }
-        if (canvas.equals(null)){
+        if (canvas.equals(null)) {
             throw new NullPointerException("The given canvas for the LineChartRasterizer was null!");
         }
         PointListContainer list =  data.getData();
@@ -50,7 +54,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         mDiagram = data;
         mData = mCanvas.getCurrentPage();
         mLineArea = mCanvas.getCellRectangle();
-        // Not good, this needs to be discussed
+
         Rectangle titleArea = calculateTitle();
         Rectangle xAxisAreas = calculateXAxis();
         addSpaceLeft();
@@ -65,7 +69,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     }
 
     private Rectangle calculateTitle() throws InsufficientRenderingAreaException {
-        if(mDiagramTitle.isEmpty()) {
+        if (mDiagramTitle.isEmpty()) {
             throw new IllegalArgumentException("The title in LineChartRasterizer was empty!");
         }
         int widthOfCompleteArea = mLineArea.intWrapper().getWidth() * mCanvas.getCellWidth();
@@ -85,6 +89,8 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         }
     }
 
+    // Please shut up checkstyle
+    @SuppressWarnings("checkstyle:MagicNumber")
     private void addSpaceLeft() throws InsufficientRenderingAreaException {
         try {
             mLineArea.removeFromLeft(6);
@@ -101,16 +107,16 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
 
 
         //Needs testing
-        if (minY>=0) {
-            valueRangeOfYAxis = maxY -minY;
+        if (minY >= 0) {
+            valueRangeOfYAxis = maxY - minY;
         } else {
             valueRangeOfYAxis = abs(maxY) + abs(minY);
         }
         return valueRangeOfYAxis;
     }
 
-    private int calculateUnitsWidth(Rectangle rectangle) {
-        return (int) floor(rectangle.getWidth()*mCanvas.getCellWidth());
+    private int calculateUnitsWidth(final Rectangle rectangle) {
+        return (int) floor(rectangle.getWidth() * mCanvas.getCellWidth());
     }
 
     private double valueRangeOfXAxis() {
@@ -119,15 +125,15 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
 
         double valueRangeOfXAxis;
         //Needs testing
-        if (minX>=0) {
-            valueRangeOfXAxis = maxX -minX;
+        if (minX >= 0) {
+            valueRangeOfXAxis = maxX - minX;
         } else {
             valueRangeOfXAxis = abs(maxX) + abs(minX);
         }
         return valueRangeOfXAxis;
     }
 
-    private double findXAxisScaling(double rangeOfXValues, int xUnitsAvailable) {
+    private double findXAxisScaling(final double rangeOfXValues, final int xUnitsAvailable) {
         double minRange = rangeOfXValues / xUnitsAvailable;
         int length = String.valueOf(mDiagram.getMaxX()).length();
         return 0;
