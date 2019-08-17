@@ -66,7 +66,7 @@ class NormalBuilder extends AbstractDocumentBuilder<Boolean> {
         while (iter.hasNext()) {
             current = iter.next();
             key = current.getBitRepresentationFromBool();
-            value = mParser.getValue(key);
+            value = mParser.getByteAsInt(key);
             stream.write(value);
             i++;
             // Setting the Linebreaks
