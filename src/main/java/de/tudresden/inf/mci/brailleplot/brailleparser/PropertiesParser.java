@@ -1,6 +1,9 @@
 package de.tudresden.inf.mci.brailleplot.brailleparser;
 
+import org.apache.commons.collections.bidimap.DualTreeBidiMap;
+
 import java.io.FileInputStream;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -12,6 +15,7 @@ import java.util.Properties;
 
 public class PropertiesParser extends AbstractBrailleTableParser {
     private Properties mProperties = new Properties();
+    private DualTreeBidiMap map;
 
     /**
      * Constructor for properties parser. Takes a filePath to the braille table file with the .properties file extension.
@@ -29,6 +33,7 @@ public class PropertiesParser extends AbstractBrailleTableParser {
         } catch (java.io.IOException e) {
             throw new RuntimeException(e);
         }
+        map = new DualTreeBidiMap((Map) mProperties);
 
     }
 
@@ -38,8 +43,14 @@ public class PropertiesParser extends AbstractBrailleTableParser {
      * @return The byte(int) representing the braille cell specified in the braille table,
      */
     @Override
-    public int getValue(final String key) {
+    public int getByteAsInt(final String key) {
         Objects.requireNonNull(key);
         return Integer.parseInt(mProperties.getProperty(key));
+    }
+
+    @Override
+    public String getDots(final String string) {
+        int a = (int) (string.charAt(0));
+        return (String) map.getKey(String.valueOf(a));
     }
 }

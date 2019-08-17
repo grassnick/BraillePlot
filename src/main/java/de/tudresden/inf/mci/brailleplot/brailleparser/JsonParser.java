@@ -22,7 +22,17 @@ public class JsonParser extends AbstractBrailleTableParser {
      * @return The byte(int) representing the Braille cell specified in the braille table.
      */
     @Override
-    public int getValue(final String key) {
+    public int getByteAsInt(final String key) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Currently not supported.
+     * @param value Byte, as String represented (property files knows only Strings)
+     * @return Braillecell, as String encoded : 123456.
+     */
+    @Override
+    public String getDots(final String value) {
         throw new UnsupportedOperationException();
     }
 }

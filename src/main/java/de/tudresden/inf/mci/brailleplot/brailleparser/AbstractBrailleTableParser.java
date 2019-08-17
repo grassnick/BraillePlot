@@ -10,12 +10,20 @@ public abstract class AbstractBrailleTableParser {
 
     /**
      * Common method for querying the braille table.
-     * @param key Braille cell, represented as string ("111000).
+     * @param key Braille cell, represented as string ("111000").
      * @return Byte, represented as int, corresponding to the given braille cell.
      */
-    public abstract int getValue(String key);
+    public abstract int getByteAsInt(String key);
 
-    public static AbstractBrailleTableParser getParser(Printer printer) throws NotSupportedFileExtensionException {
+
+    /**
+     * Common method for retrieving the Braillecell to the given byte. Usable only for one char at a time.
+     * @param value Byte, as String represented (property files knows only Strings)
+     * @return Braillecell, as String encoded : 123456.
+     */
+    public abstract String getDots(String value);
+
+    public static AbstractBrailleTableParser getParser(final Printer printer) throws NotSupportedFileExtensionException {
         //read braille table path
         String brailleTablePath = printer.getProperty("brailletable").toString();
 
