@@ -1,25 +1,77 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import de.tudresden.inf.mci.brailleplot.brailleparser.AbstractBrailleTableParser;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
+//import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
+import de.tudresden.inf.mci.brailleplot.printerbackend.NotSupportedFileExtensionException;
 
 /**
  * A rasterizer for text on braille grids. This class is still a stub and must be implemented!
- * @version 2019.07.21
- * @author Leonard Kupper
+ * @version 2019.08.17
+ * @author Leonard Kupper, Andrey Ruzhanskiy
  */
 public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
+    private AbstractBrailleTableParser mParser;
+
     @Override
     public void rasterize(final BrailleText data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
-        // TODO: rasterize the text (Take different grids into consideration! 6-dot / 8-dot)
-        // Until then, we just display dummy characters
+        // Get correct parser according to the config.
+        try {
+            mParser = AbstractBrailleTableParser.getParser(canvas.getPrinter());
+        } catch (NotSupportedFileExtensionException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        String[] letterAsBraille;
+        // Complete Text, saved in an Array for easier retrieval.
+        String[] textAsArray = data.getText().split("");
+        // We need to know where to start
         int x = data.getArea().intWrapper().getX();
-        int y = data.getArea().intWrapper().getY();
+        // Loop through
         for (int i = 0; i < data.getText().length(); i++) {
-            canvas.getCurrentPage().setValue(y, x, true);
-            canvas.getCurrentPage().setValue(y + 1, x + 1, true);
-            canvas.getCurrentPage().setValue(y + 2, x, true);
+
+            // If the char is uppercase, we need to add a special char to signal that the coming braille char is uppercase
+            // Depended on the used brailletable
+            // Currently, it is simply converted to lowercase.
+            if (Character.isUpperCase(textAsArray[i].charAt(0))) {
+                    textAsArray[i] = String.valueOf(Character.toLowerCase(textAsArray[i].charAt(0)));
+            }
+            // Letter to be printed to the canvas (braille string representation).
+            int j = data.getText().length();
+            String letter = textAsArray[i];
+            letterAsBraille = mParser.getDots(textAsArray[i]).split("");
+
+            // First cell width, then cell height.
+            // The string braille is looking like this: 123456
+            // For reference, the real braille is like this:
+            // 1 4
+            // 2 5
+            // 3 6
+            rasterizeBrailleCell(letterAsBraille, x, canvas);
+            //SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl) canvas.getCurrentPage();
+            //System.out.println(mat.toBoolString());
+            // Next BrailleCell
             x += 2;
+        }
+    }
+
+    /**
+     * Helper method to rasterize a single Braille cell on a given canvas with an index.
+     * @param letterAsBraille Braillecell to set on the canvas.
+     * @param offset Offset to ensure that we set the values on the correct positions.
+     * @param canvas Where to set the values.
+     */
+
+    private void rasterizeBrailleCell(final String[] letterAsBraille, final int offset, final RasterCanvas canvas) {
+        int temp = 0;
+        for (int j = 0; j < canvas.getCellWidth(); j++) {
+            for (int k = 0; k < canvas.getCellHeight(); k++) {
+                // If it is 1, returns 1, if not return false
+                canvas.getCurrentPage().setValue(k, j + offset, letterAsBraille[temp].equals("1"));
+                boolean a = canvas.getCurrentPage().getValue(k, j);
+                temp++;
+
+            }
         }
     }
 
