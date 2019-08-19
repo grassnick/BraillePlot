@@ -5,6 +5,7 @@ import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaExceptio
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 //import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
+import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.printerbackend.NotSupportedFileExtensionException;
 
 /**
@@ -15,6 +16,8 @@ import de.tudresden.inf.mci.brailleplot.printerbackend.NotSupportedFileExtension
 public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
     private AbstractBrailleTableParser mParser;
 
+    // TODO use y in helperfunction
+    // TODO add Linebreak
     @Override
     public void rasterize(final BrailleText data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
         // Get correct parser according to the config.
@@ -28,6 +31,9 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
         String[] textAsArray = data.getText().split("");
         // We need to know where to start
         int x = data.getArea().intWrapper().getX();
+        int origX = x;
+        int y = data.getArea().intWrapper().getY();
+        int maxWidth = data.getArea().intWrapper().getWidth();
         // Loop through
         for (int i = 0; i < data.getText().length(); i++) {
 
@@ -46,27 +52,36 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
             // 1 4
             // 2 5
             // 3 6
-            rasterizeBrailleCell(letterAsBraille, x, canvas);
-            //SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl) canvas.getCurrentPage();
-            //System.out.println(mat.toBoolString());
+            rasterizeBrailleCell(letterAsBraille, x, y, canvas);
+
             // Next BrailleCell
             x += 2;
+            // Check if linebreak is needed.
+            if (x == maxWidth) {
+                // Jump into the next line
+                y = y + canvas.getCellHeight();
+                // Reset x
+                x = origX;
+
+            }
         }
+        SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl) canvas.getCurrentPage();
+        System.out.println(mat.toBoolString());
     }
 
     /**
      * Helper method to rasterize a single Braille cell on a given canvas with an index.
      * @param letterAsBraille Braillecell to set on the canvas.
-     * @param offset Offset to ensure that we set the values on the correct positions.
+     * @param offsetX Offset to ensure that we set the values on the correct X positions.
      * @param canvas Where to set the values.
      */
 
-    private void rasterizeBrailleCell(final String[] letterAsBraille, final int offset, final RasterCanvas canvas) {
+    private void rasterizeBrailleCell(final String[] letterAsBraille, final int offsetX, final int offsetY, final RasterCanvas canvas) {
         int temp = 0;
         for (int j = 0; j < canvas.getCellWidth(); j++) {
             for (int k = 0; k < canvas.getCellHeight(); k++) {
                 // If it is 1, returns 1, if not return false
-                canvas.getCurrentPage().setValue(k, j + offset, letterAsBraille[temp].equals("1"));
+                canvas.getCurrentPage().setValue(k + offsetY, j + offsetX, letterAsBraille[temp].equals("1"));
                 boolean a = canvas.getCurrentPage().getValue(k, j);
                 temp++;
 
