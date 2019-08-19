@@ -4,6 +4,7 @@ import de.tudresden.inf.mci.brailleplot.brailleparser.AbstractBrailleTableParser
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 //import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
+import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printerbackend.NotSupportedFileExtensionException;
 
 /**
@@ -37,8 +38,6 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
                     textAsArray[i] = String.valueOf(Character.toLowerCase(textAsArray[i].charAt(0)));
             }
             // Letter to be printed to the canvas (braille string representation).
-            int j = data.getText().length();
-            String letter = textAsArray[i];
             letterAsBraille = mParser.getDots(textAsArray[i]).split("");
 
             // First cell width, then cell height.
@@ -80,12 +79,32 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
                                            final RasterCanvas canvas) {
         // TODO: Add calculations for required height to fit the given text into the given canvas. (Linebreaks!)
         // Until then we use a dummy value assuming one line of text:
-        return canvas.getCellHeight();
+        // Maximum Rectangle intersecting with real one, Leos suggestion.
+        Rectangle rectToIntersect = new Rectangle(xPos, yPos, maxWidth, Integer.MAX_VALUE);
+        Rectangle rect = canvas.getCellRectangle().intersectedWith(rectToIntersect);
+        // Needed for calculating the number of chars (including space)
+        String[] textAsArray = text.split("");
+        int spaceInChars = textAsArray.length;
+        // Get maximum width in cells
+        int availableWidth = rect.intWrapper().getWidth();
+        // Divide them, round up
+        int height = (int) Math.ceil((double)spaceInChars / availableWidth);
+        return height;
     }
 
     public int calculateRequiredWidth(final String text, final int xPos, final int yPos, final RasterCanvas canvas) {
         // TODO: Add calculations for required width to fit the given text into the given canvas. (Extra spacing for equidistant grid!)
         // Until then we use a dummy value assuming single character on braille grid:
-        return canvas.getCellWidth();
+        String mode = canvas.getPrinter().getProperty("mode").toString();
+        switch (mode) {
+            case "normalprinter": return calculateWidthNormal(text, xPos, yPos, canvas);
+            // For the time being
+            default: throw new UnsupportedOperationException();
+        }
+    }
+
+    private int calculateWidthNormal(String text, int xPos, int yPos, RasterCanvas canvas) {
+        String[] textAsArray= text.split("");
+        return textAsArray.length;
     }
 }
