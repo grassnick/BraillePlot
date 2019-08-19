@@ -296,6 +296,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
             captionCellX = mCanvas.getCellXFromDotX(max(lowerX, upperX) + 1);
         }
         Rectangle captionArea = new Rectangle(captionCellX, captionCellY, mCaptionLength, 1);
+        // TODO Something is strange gi
         mTextRasterizer.rasterize(new BrailleText(categoryName,
                 captionArea.scaledBy(mCanvas.getCellWidth(), mCanvas.getCellHeight())), mCanvas);
 
