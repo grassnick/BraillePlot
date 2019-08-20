@@ -17,7 +17,7 @@ public class BrailleText implements Renderable {
     /**
      * Constructor. Creates a braille text field.
      * @param content The actual text of the text field.
-     * @param area The desired area for the text to be rendered on.
+     * @param area The desired area for the text to be rendered on. This must be a Dot Rectangle.
      */
     public BrailleText(final String content, final Rectangle area) {
         setText(content);
