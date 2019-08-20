@@ -33,7 +33,6 @@ public class PropertiesParser extends AbstractBrailleTableParser {
         } catch (java.io.IOException e) {
             throw new RuntimeException(e);
         }
-        map = new DualTreeBidiMap((Map) mProperties);
 
     }
 
@@ -43,14 +42,13 @@ public class PropertiesParser extends AbstractBrailleTableParser {
      * @return The byte(int) representing the braille cell specified in the braille table,
      */
     @Override
-    public int getByteAsInt(final String key) {
+    public int getByteAsIntBackEnd(final String key) {
         Objects.requireNonNull(key);
         return Integer.parseInt(mProperties.getProperty(key));
     }
 
     @Override
-    public String getDots(final String string) {
-        int a = (int) (string.charAt(0));
-        return (String) map.getKey(String.valueOf(a));
+    public String getCharToBraille(String key) {
+        return (String) mProperties.get(key);
     }
 }

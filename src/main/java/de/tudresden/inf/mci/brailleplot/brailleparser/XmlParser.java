@@ -25,17 +25,12 @@ public class XmlParser extends AbstractBrailleTableParser {
      * @return The byte(int) representing the braille cell specified in the braille table.
      */
     @Override
-    public int getByteAsInt(final String key) {
+    public int getByteAsIntBackEnd(final String key) {
         throw new UnsupportedOperationException();
     }
-    @Override
 
-    /**
-      * Currently not supported.
-      * @param value Byte, as String represented (property files knows only Strings)
-      * @return Braillecell, as String encoded : 123456.
-     */
-    public String getDots(final String string) {
+    @Override
+    public String getCharToBraille(String key) {
         throw new UnsupportedOperationException();
     }
 }
