@@ -257,11 +257,11 @@ public class RasterCanvas extends AbstractCanvas<MatrixData<Boolean>> {
     }
 
     public final int getFullConstraintLeft() {
-        return (int) (mPrinter.getProperty("raster.constraint.left").toInt() * mCellHorizontalMM + mPrinter.getProperty("constraint.left").toDouble());
+        return (int) Math.round(mPrinter.getProperty("raster.constraint.left").toInt() * mCellHorizontalMM + mPrinter.getProperty("constraint.left").toDouble());
     }
 
     public final int getFullConstraintTop() {
-        return (int) (mPrinter.getProperty("raster.constraint.top").toInt() * mCellHorizontalMM + mPrinter.getProperty("constraint.top").toDouble());
+        return (int) Math.round(mPrinter.getProperty("raster.constraint.top").toInt() * mCellVerticalMM + mPrinter.getProperty("constraint.top").toDouble());
     }
 
     public final List<Double> getXPositions() {
