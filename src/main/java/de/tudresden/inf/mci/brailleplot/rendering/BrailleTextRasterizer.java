@@ -18,6 +18,7 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
 
     // TODO use y in helperfunction
     // TODO throw unsufficiant if test is bigger
+    // TODO Suspension is only needed, if the number is in the name(ABC93123)
     @Override
     public void rasterize(final BrailleText data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
         // Get correct parser according to the config.
