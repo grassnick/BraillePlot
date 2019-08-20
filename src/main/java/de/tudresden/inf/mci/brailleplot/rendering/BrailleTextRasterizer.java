@@ -38,23 +38,46 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
         // Loop through
         for (int i = 0; i < data.getText().length(); i++) {
 
-            // If the char is uppercase, we need to add a special char to signal that the coming braille char is uppercase
-            // Depended on the used brailletable
-            // Currently, it is simply converted to lowercase.
+            // If the char is uppercase, we need to add a special char(CAP) to signal that the coming braille char is uppercase
+            // Depended on the used brailletable.
             if (Character.isUpperCase(textAsArray[i].charAt(0))) {
-                    textAsArray[i] = String.valueOf(Character.toLowerCase(textAsArray[i].charAt(0)));
-                    isUppercase = true;
-            }
-            // Letter to be printed to the canvas (braille string representation).
-            letterAsBraille = mParser.getCharToBraille(textAsArray[i]).split("");
-            // First cell width, then cell height.
-            // The string braille is looking like this: 123456
-            // For reference, the real braille is like this:
-            // 1 4
-            // 2 5
-            // 3 6
-            rasterizeBrailleCell(letterAsBraille, x, y, canvas);
+                textAsArray[i] = String.valueOf(Character.toLowerCase(textAsArray[i].charAt(0)));
+                isUppercase = true;
+                String[] specialUpperChar = mParser.getCharToBraille("CAP").split("");
+                rasterizeBrailleCell(specialUpperChar,x,y,canvas);
+                // Next BrailleCell
+                x += 2;
+                // Check if linebreak is needed.
+                if (x == maxWidth) {
+                    // Jump into the next line
+                    y = y + canvas.getCellHeight();
+                    // Reset x
+                    x = origX;
+                }
+                letterAsBraille = mParser.getCharToBraille(textAsArray[i]).split("");
+                rasterizeBrailleCell(letterAsBraille, x, y, canvas);
+                // Next BrailleCell
+                x += 2;
+                // Check if linebreak is needed.
+                if (x == maxWidth) {
+                    // Jump into the next line
+                    y = y + canvas.getCellHeight();
+                    // Reset x
+                    x = origX;
+                    }
 
+            } else {
+                // Normalcase
+                // Letter to be printed to the canvas (braille string representation).
+                letterAsBraille = mParser.getCharToBraille(textAsArray[i]).split("");
+                // The string braille is looking like this: 123456
+                // For reference, the real braille is like this:
+                // 1 4
+                // 2 5
+                // 3 6
+                rasterizeBrailleCell(letterAsBraille, x, y, canvas);
+
+                }
             // Next BrailleCell
             x += 2;
             // Check if linebreak is needed.
