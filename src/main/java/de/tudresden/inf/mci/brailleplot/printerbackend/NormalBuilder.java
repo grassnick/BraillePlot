@@ -40,7 +40,7 @@ class NormalBuilder extends AbstractDocumentBuilder<Boolean> {
         mData = Objects.requireNonNull(data);
         // Setting the right parser, catch if not found and throw RuntimeException which can be handled.
         try {
-            mParser = AbstractBrailleTableParser.getParser(mData.getPrinterConfig());
+            mParser = AbstractBrailleTableParser.getParser(mData.getPrinterConfig(), "brailletable");
         } catch (NotSupportedFileExtensionException e) {
             throw new RuntimeException();
         }
@@ -66,7 +66,7 @@ class NormalBuilder extends AbstractDocumentBuilder<Boolean> {
         while (iter.hasNext()) {
             current = iter.next();
             key = current.getBitRepresentationFromBool();
-            value = mParser.getByteAsInt(key);
+            value = mParser.getByteAsIntBackEnd(key);
             stream.write(value);
             i++;
             // Setting the Linebreaks
