@@ -2,6 +2,8 @@ package de.tudresden.inf.mci.brailleplot.svgexporter;
 
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
+import org.jfree.graphics2d.svg.SVGGraphics2D;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,14 +25,16 @@ public class BoolMatrixDataSvgExporter extends AbstractSvgExporter<RasterCanvas,
         List<Double> xPositions = mCanvas.getXPositions();
         List<Double> yPositions = mCanvas.getYPositions();
         int dotDiameter = (int) mCanvas.getDotDiameter();
-        final int mult = 4;
+        mLogger.trace("Dot diameter: {}", dotDiameter);
+        SVGGraphics2D svg = mSvgs.get(dataIndex);
 
         for (int y = 0; y < mat.getRowCount(); y++) {
             for (int x = 0; x < mat.getColumnCount(); x++) {
                 if (mat.getValue(y, x)) {
-                    int xPos = (int) (double) xPositions.get(x);
-                    int yPos = (int) (double) yPositions.get(y);
-                    mSvgs.get(dataIndex).drawOval(xPos * mult, yPos * mult, dotDiameter * mult, dotDiameter * mult);
+                    int xPos = (int) (double) Math.round(xPositions.get(x));
+                    int yPos = (int) (double) Math.round(yPositions.get(y));
+                    svg.drawOval(xPos, yPos, dotDiameter, dotDiameter);
+                    mLogger.trace("Drew dot at position ({},{})", xPos, yPos);
                 }
             }
         }

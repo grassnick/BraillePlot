@@ -4,6 +4,7 @@ import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
 import de.tudresden.inf.mci.brailleplot.layout.AbstractCanvas;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
 import org.jfree.graphics2d.svg.SVGUnits;
+import org.jfree.graphics2d.svg.ViewBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ abstract class AbstractSvgExporter<T extends AbstractCanvas, U extends Printable
         ListIterator it = (mCanvas.getPageIterator());
         int idx = 0;
         while (it.hasNext()) {
-            mSvgs.add(new SVGGraphics2D((int) mCanvas.getPrintableWidth(), (int) mCanvas.getPrintableHeight(), SVGUnits.MM));
+            mSvgs.add(new SVGGraphics2D(((int) Math.ceil(mCanvas.getPrintableWidth())), ((int) Math.ceil(mCanvas.getPrintableHeight())), SVGUnits.MM));
             renderPage((((U) it.next())), idx++);
         }
     }
@@ -47,8 +48,9 @@ abstract class AbstractSvgExporter<T extends AbstractCanvas, U extends Printable
     @Override
     public void dump(final OutputStream os, final int dataIndex) throws IOException {
         Objects.requireNonNull(os);
+        final String doc = mSvgs.get(dataIndex).getSVGElement(null, true, new ViewBox(0, 0, (int) Math.ceil(mCanvas.getPrintableWidth()), (int) Math.ceil(mCanvas.getPrintableHeight())), null, null);
         mLogger.trace("Start dumping file to stream ...");
-        os.write(mSvgs.get(dataIndex).getSVGDocument().getBytes());
+        os.write(doc.getBytes());
         mLogger.trace("Finished dumping file to stream");
     }
 
