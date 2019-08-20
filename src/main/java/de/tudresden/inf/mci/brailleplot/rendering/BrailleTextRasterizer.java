@@ -5,7 +5,6 @@ import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaExceptio
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 //import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
-import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.printerbackend.NotSupportedFileExtensionException;
 
 /**
@@ -15,6 +14,7 @@ import de.tudresden.inf.mci.brailleplot.printerbackend.NotSupportedFileExtension
  */
 public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
     private AbstractBrailleTableParser mParser;
+    private boolean isUppercase = false;
 
     // TODO use y in helperfunction
     // TODO throw unsufficiant if test is bigger
@@ -23,7 +23,7 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
     public void rasterize(final BrailleText data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
         // Get correct parser according to the config.
         try {
-            mParser = AbstractBrailleTableParser.getParser(canvas.getPrinter());
+            mParser = AbstractBrailleTableParser.getParser(canvas.getPrinter(), "semantictable");
         } catch (NotSupportedFileExtensionException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -43,10 +43,10 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
             // Currently, it is simply converted to lowercase.
             if (Character.isUpperCase(textAsArray[i].charAt(0))) {
                     textAsArray[i] = String.valueOf(Character.toLowerCase(textAsArray[i].charAt(0)));
+                    isUppercase = true;
             }
             // Letter to be printed to the canvas (braille string representation).
-            letterAsBraille = mParser.getDots(textAsArray[i]).split("");
-
+            letterAsBraille = mParser.getCharToBraille(textAsArray[i]).split("");
             // First cell width, then cell height.
             // The string braille is looking like this: 123456
             // For reference, the real braille is like this:
@@ -63,7 +63,6 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
                 y = y + canvas.getCellHeight();
                 // Reset x
                 x = origX;
-
             }
         }
     }
