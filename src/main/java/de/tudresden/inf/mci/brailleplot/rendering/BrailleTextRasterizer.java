@@ -17,7 +17,7 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
     private AbstractBrailleTableParser mParser;
 
     // TODO use y in helperfunction
-    // TODO add Linebreak
+    // TODO throw unsufficiant if test is bigger
     @Override
     public void rasterize(final BrailleText data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
         // Get correct parser according to the config.
@@ -65,8 +65,6 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
 
             }
         }
-        SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl) canvas.getCurrentPage();
-        System.out.println(mat.toBoolString());
     }
 
     /**
