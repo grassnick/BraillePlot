@@ -40,7 +40,7 @@ abstract class AbstractSvgExporter<T extends AbstractCanvas, U extends Printable
         ListIterator it = (mCanvas.getPageIterator());
         int idx = 0;
         while (it.hasNext()) {
-            mSvgs.add(new SVGGraphics2D(((int) Math.ceil(mCanvas.getPrintableWidth())), ((int) Math.ceil(mCanvas.getPrintableHeight())), SVGUnits.MM));
+            mSvgs.add(new SVGGraphics2D(((int) Math.ceil(mCanvas.getPageWidth())), ((int) Math.ceil(mCanvas.getPageHeight())), SVGUnits.MM));
             renderPage((((U) it.next())), idx++);
         }
     }
@@ -48,7 +48,7 @@ abstract class AbstractSvgExporter<T extends AbstractCanvas, U extends Printable
     @Override
     public void dump(final OutputStream os, final int dataIndex) throws IOException {
         Objects.requireNonNull(os);
-        final String doc = mSvgs.get(dataIndex).getSVGElement(null, true, new ViewBox(0, 0, (int) Math.ceil(mCanvas.getPrintableWidth()), (int) Math.ceil(mCanvas.getPrintableHeight())), null, null);
+        final String doc = mSvgs.get(dataIndex).getSVGElement(null, true, new ViewBox(0, 0, (int) Math.ceil(mCanvas.getPageWidth()), (int) Math.ceil(mCanvas.getPageHeight())), null, null);
         mLogger.trace("Start dumping file to stream ...");
         os.write(doc.getBytes());
         mLogger.trace("Finished dumping file to stream");

@@ -118,6 +118,14 @@ public abstract class AbstractCanvas<T extends PrintableData> {
         return mPrintableArea.getHeight();
     }
 
+    public final double getPageWidth() {
+        return mFormat.getProperty("page.width").toDouble();
+    }
+
+    public final double getPageHeight() {
+        return mFormat.getProperty("page.height").toDouble();
+    }
+
     /**
      * Get the number of pages in the canvas.
      * @return The number of pages.

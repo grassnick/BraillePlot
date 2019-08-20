@@ -256,6 +256,14 @@ public class RasterCanvas extends AbstractCanvas<MatrixData<Boolean>> {
         return dotY / mCellHeight;
     }
 
+    public final int getRasterConstraintLeft() {
+        return mPrinter.getProperty("raster.constraint.left").toInt();
+    }
+
+    public final int getRasterConstraintTop() {
+        return mPrinter.getProperty("raster.constraint.top").toInt();
+    }
+
     public final List<Double> getXPositions() {
         return Collections.unmodifiableList(mXPositions);
     }
