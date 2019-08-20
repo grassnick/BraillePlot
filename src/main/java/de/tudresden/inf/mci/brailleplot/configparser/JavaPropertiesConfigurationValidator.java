@@ -44,6 +44,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
         definePrinterProperty("name", requireNotEmpty);
         definePrinterProperty("mode", requireNotEmpty);
         definePrinterProperty("brailletable", requireFileExists);
+        definePrinterProperty("semantictable", requireFileExists);
         definePrinterProperty("floatingDot.support", requireBoolean);
         definePrinterProperty("floatingDot.resolution", requireDouble.and(requirePositive), false);
         definePrinterProperty("constraint.top", requireDouble.and(requirePositive));
