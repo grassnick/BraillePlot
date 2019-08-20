@@ -22,18 +22,18 @@ import java.util.Objects;
  * @param <T> The type of the Abstract Canvas that is used.
  * @param <U> The type of the {@link PrintableData} that is used.
  * @author Georg Graßnick
- * @version 2019.08.16
+ * @version 2019.08.20
  */
 abstract class AbstractSvgExporter<T extends AbstractCanvas, U extends PrintableData> implements SvgExporter<T> {
 
-    protected List<SVGGraphics2D> mSvgs;
-    protected final T mCanvas;
     protected final Logger mLogger = LoggerFactory.getLogger(getClass());
-    protected static final int SCALE_FACTOR = 2;
-    protected static final float STROKE_WIDTH = 1f;
 
+    protected final T mCanvas;
+    protected List<SVGGraphics2D> mSvgs;
     private ViewBox mViewBox;
 
+    protected static final int SCALE_FACTOR = 2;
+    protected static final float STROKE_WIDTH = 1f;
 
     AbstractSvgExporter(final T canvas) {
         Objects.requireNonNull(canvas);
@@ -46,11 +46,11 @@ abstract class AbstractSvgExporter<T extends AbstractCanvas, U extends Printable
         final int docWidth = (int) Math.ceil(mCanvas.getPageWidth());
         final int docHeight = (int) Math.ceil(mCanvas.getPageHeight());
 
-        final int viewBoxWidth = (int) Math.ceil(mCanvas.getPageWidth()) * SCALE_FACTOR;
-        final int viewBoxHeight = (int) Math.ceil(mCanvas.getPageHeight()) * SCALE_FACTOR;
+        final int viewBoxWidth = docWidth * SCALE_FACTOR;
+        final int viewBoxHeight = docHeight * SCALE_FACTOR;
         mViewBox = new ViewBox(0, 0, viewBoxWidth, viewBoxHeight);
 
-        ListIterator it = (mCanvas.getPageIterator());
+        ListIterator it = mCanvas.getPageIterator();
         int idx = 0;
         while (it.hasNext()) {
             SVGGraphics2D svg = new SVGGraphics2D(docWidth, docHeight, SVGUnits.MM);
