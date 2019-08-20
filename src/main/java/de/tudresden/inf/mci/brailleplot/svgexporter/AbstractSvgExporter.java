@@ -8,6 +8,8 @@ import org.jfree.graphics2d.svg.ViewBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -27,6 +29,10 @@ abstract class AbstractSvgExporter<T extends AbstractCanvas, U extends Printable
     protected List<SVGGraphics2D> mSvgs;
     protected final T mCanvas;
     protected final Logger mLogger = LoggerFactory.getLogger(getClass());
+    protected static final int SCALE_FACTOR = 2;
+    protected static final float STROKE_WIDTH = 1f;
+
+    private ViewBox mViewBox;
 
 
     AbstractSvgExporter(final T canvas) {
@@ -37,10 +43,24 @@ abstract class AbstractSvgExporter<T extends AbstractCanvas, U extends Printable
     @Override
     @SuppressWarnings("unchecked")
     public void render() {
+        final int docWidth = (int) Math.ceil(mCanvas.getPageWidth());
+        final int docHeight = (int) Math.ceil(mCanvas.getPageHeight());
+
+        final int viewBoxWidth = (int) Math.ceil(mCanvas.getPageWidth()) * SCALE_FACTOR;
+        final int viewBoxHeight = (int) Math.ceil(mCanvas.getPageHeight()) * SCALE_FACTOR;
+        mViewBox = new ViewBox(0, 0, viewBoxWidth, viewBoxHeight);
+
         ListIterator it = (mCanvas.getPageIterator());
         int idx = 0;
         while (it.hasNext()) {
-            mSvgs.add(new SVGGraphics2D(((int) Math.ceil(mCanvas.getPageWidth())), ((int) Math.ceil(mCanvas.getPageHeight())), SVGUnits.MM));
+            SVGGraphics2D svg = new SVGGraphics2D(docWidth, docHeight, SVGUnits.MM);
+
+            svg.setBackground(Color.WHITE);
+            svg.clearRect(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE);
+            svg.setStroke(new BasicStroke(STROKE_WIDTH));
+            mSvgs.add(svg);
+            mLogger.debug("Created SVG with StrokeWitdh {}, ScaleFactor {}, DocumentWidth {}mm, DocumentHeight {}mm, ViewPort: ({},{})", STROKE_WIDTH, SCALE_FACTOR, docWidth, docHeight, viewBoxWidth, viewBoxHeight);
+
             renderPage((((U) it.next())), idx++);
         }
     }
@@ -48,7 +68,7 @@ abstract class AbstractSvgExporter<T extends AbstractCanvas, U extends Printable
     @Override
     public void dump(final OutputStream os, final int dataIndex) throws IOException {
         Objects.requireNonNull(os);
-        final String doc = mSvgs.get(dataIndex).getSVGElement(null, true, new ViewBox(0, 0, (int) Math.ceil(mCanvas.getPageWidth()), (int) Math.ceil(mCanvas.getPageHeight())), null, null);
+        final String doc = mSvgs.get(dataIndex).getSVGElement(null, true, mViewBox, null, null);
         mLogger.trace("Start dumping file to stream ...");
         os.write(doc.getBytes());
         mLogger.trace("Finished dumping file to stream");
