@@ -5,7 +5,7 @@ package de.tudresden.inf.mci.brailleplot.configparser;
  * @author Leonard Kupper
  * @version 2019.07.18
  */
-interface ConfigurationValidator {
+public interface ConfigurationValidator {
     /**
      * Check whether a given pair of key and value is valid as a property or not.
      * This method should check the key to be a legal property name and the corresponding type.
