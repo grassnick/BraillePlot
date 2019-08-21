@@ -71,7 +71,7 @@ abstract class Configurable {
         for (int i = 0; i < mProperties.size(); i++) {
             if (mProperties.get(i).getName().equals(propertyName)) {
                 mProperties.add(i, overridingProperty);
-                mProperties.remove(i+1); // the old property
+                mProperties.remove(i + 1); // the old property
             }
         }
     }

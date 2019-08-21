@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * @author Leonard Kupper, Andrey Ruzhanskiy
  * @version 2019.07.30
  */
-public class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
+public final class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
 
     private final String mPrinterPrefix = "printer";
     private final String mFormatPrefix = "format";
