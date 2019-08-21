@@ -13,7 +13,6 @@ import java.util.Stack;
  */
 public final class JavaPropertiesConfigurationParser extends ConfigurationParser {
 
-    //ArrayList<String> mInclusionStack;
     Stack<File> mInclusionStack = new Stack<>();
 
     /**
@@ -86,6 +85,10 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
                     abstractPath = new File(findIncludePath + ".properties");
                 }
                 includeFile = abstractPath.getCanonicalFile();
+                if (!includeFile.isFile()) {
+                    throw new ConfigurationParsingException("Given include path is not a file: " + includeFile);
+                }
+                System.out.println("Include file: " + includeFile);
             } catch (IOException e) {
                 throw new ConfigurationParsingException("Can not find include file.", e);
             }
