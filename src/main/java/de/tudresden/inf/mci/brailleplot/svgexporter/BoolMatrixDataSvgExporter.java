@@ -31,8 +31,8 @@ public class BoolMatrixDataSvgExporter extends AbstractSvgExporter<RasterCanvas,
         for (int y = 0; y < mat.getRowCount(); y++) {
             for (int x = 0; x < mat.getColumnCount(); x++) {
                 if (mat.getValue(y, x)) {
-                    int xPos = (int) Math.round((xPositions.get(x) + mCanvas.getFullConstraintLeft()) * SCALE_FACTOR);
-                    int yPos = (int) Math.round((yPositions.get(y) + mCanvas.getFullConstraintTop()) * SCALE_FACTOR);
+                    int xPos = (int) Math.round((xPositions.get(x) + mCanvas.getFullConstraintLeft() - dotDiameter / 2) * SCALE_FACTOR);
+                    int yPos = (int) Math.round((yPositions.get(y) + mCanvas.getFullConstraintTop() - dotDiameter / 2) * SCALE_FACTOR);
                     svg.drawOval(xPos, yPos, dotDiameter, dotDiameter);
                     mLogger.trace("Drew dot at position ({},{})", xPos, yPos);
                 }
