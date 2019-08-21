@@ -1,11 +1,14 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
 import de.tudresden.inf.mci.brailleplot.brailleparser.AbstractBrailleTableParser;
+import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 //import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printerbackend.NotSupportedFileExtensionException;
+
+import java.util.Objects;
 
 /**
  * A rasterizer for text on braille grids. This class is still a stub and must be implemented!
@@ -24,26 +27,35 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
     private RasterCanvas mCanvas;
     private boolean writeCharNormaly = true;
 
+
+
+
     // TODO use y in helperfunction
     // TODO throw unsufficiant if test is bigger
-    // TODO Suspension is only needed, if the number is in the name(ABC93123)
+    // TODO:
+
+    public BrailleTextRasterizer(Printer printer) {
+        try {
+            mParser = AbstractBrailleTableParser.getParser(printer, "semantictable");
+        } catch (NotSupportedFileExtensionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void rasterize(final BrailleText data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
-        // Get correct parser according to the config.
-        try {
-            mParser = AbstractBrailleTableParser.getParser(canvas.getPrinter(), "semantictable");
-        } catch (NotSupportedFileExtensionException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-       mCanvas = canvas;
+
+        Rectangle rect = data.getArea().intersectedWith(canvas.getDotRectangle());
+        mCanvas = canvas;
         String[] letterAsBraille;
         // Complete Text, saved in an Array for easier retrieval.
         String[] textAsArray = data.getText().split("");
         // We need to know where to start
-        x = data.getArea().intWrapper().getX();
+        x = rect.intWrapper().getX();
         origX = x;
-        y = data.getArea().intWrapper().getY();
-        maxWidth = data.getArea().intWrapper().getWidth();
+        y = rect.intWrapper().getY();
+        int maxHeight = rect.intWrapper().getHeight();
+        maxWidth = rect.intWrapper().getWidth();
         // Loop through
         for (int i = 0; i < data.getText().length(); i++) {
             // Get current letter as temp.
@@ -65,53 +77,6 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
                 writeChar(letter);
             }
 
-            /*if (Character.isUpperCase(textAsArray[i].charAt(0))) {
-                textAsArray[i] = String.valueOf(Character.toLowerCase(textAsArray[i].charAt(0)));
-                isUppercase = true;
-                String[] specialUpperChar = mParser.getCharToBraille("CAP").split("");
-                rasterizeBrailleCell(specialUpperChar,x,y,canvas);
-                // Next BrailleCell
-                x += 2;
-                // Check if linebreak is needed.
-                if (x == maxWidth) {
-                    // Jump into the next line
-                    y = y + canvas.getCellHeight();
-                    // Reset x
-                    x = origX;
-                }
-                letterAsBraille = mParser.getCharToBraille(textAsArray[i]).split("");
-                rasterizeBrailleCell(letterAsBraille, x, y, canvas);
-                // Next BrailleCell
-                x += 2;
-                // Check if linebreak is needed.
-                if (x == maxWidth) {
-                    // Jump into the next line
-                    y = y + canvas.getCellHeight();
-                    // Reset x
-                    x = origX;
-                    }
-
-            } else {
-                // Normalcase
-                // Letter to be printed to the canvas (braille string representation).
-                letterAsBraille = mParser.getCharToBraille(textAsArray[i]).split("");
-                // The string braille is looking like this: 123456
-                // For reference, the real braille is like this:
-                // 1 4
-                // 2 5
-                // 3 6
-                rasterizeBrailleCell(letterAsBraille, x, y, canvas);
-
-                }
-            // Next BrailleCell
-            x += 2;
-            // Check if linebreak is needed.
-            if (x == maxWidth) {
-                // Jump into the next line
-                y = y + canvas.getCellHeight();
-                // Reset x
-                x = origX;
-             */
         }
     }
 
@@ -191,37 +156,63 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
         }
     }
 
-    // TODO: Completely replace with help methods to calculate suited area for left or right alignment of given text.
+    // TODO: Return in Dots
+    // TODO: Method Signature: Change so that a allignment (x), representing left and right is taken into consideration
+    // TODO: Method Signature: Change so that a allignment (y), representing left and right is taken into consideration
     public int calculateRequiredHeight(final String text, final int xPos, final int yPos, final int maxWidth,
                                            final RasterCanvas canvas) {
         // TODO: Add calculations for required height to fit the given text into the given canvas. (Linebreaks!)
         // Until then we use a dummy value assuming one line of text:
         // Maximum Rectangle intersecting with real one, Leos suggestion.
+
         Rectangle rectToIntersect = new Rectangle(xPos, yPos, maxWidth, Integer.MAX_VALUE);
         Rectangle rect = canvas.getCellRectangle().intersectedWith(rectToIntersect);
         // Needed for calculating the number of chars (including space)
         String[] textAsArray = text.split("");
-        int spaceInChars = textAsArray.length;
         // Get maximum width in cells
         int availableWidth = rect.intWrapper().getWidth();
         // Divide them, round up
-        int height = (int) Math.ceil((double)spaceInChars / availableWidth);
+        // TODO:
+        canvas.getDotRectangle().intWrapper().getX();
+        int height = (int) Math.ceil((double)((int) calculateWidthNormal(text, canvas)) / availableWidth);
         return height;
     }
 
-    public int calculateRequiredWidth(final String text, final int xPos, final int yPos, final RasterCanvas canvas) {
+    // public int calculateRequiredWidth(final String text, final int xPos, final int yPos, final RasterCanvas canvas) {
+    public int calculateRequiredWidth(final String text,  RasterCanvas canvas) {
         // TODO: Add calculations for required width to fit the given text into the given canvas. (Extra spacing for equidistant grid!)
         // Until then we use a dummy value assuming single character on braille grid:
         String mode = canvas.getPrinter().getProperty("mode").toString();
         switch (mode) {
-            case "normalprinter": return calculateWidthNormal(text, xPos, yPos, canvas);
+        //    case "normalprinter": return calculateWidthNormal(text, xPos, yPos, canvas);
+            case "normalprinter": return Math.min((int)calculateWidthNormal(text, canvas), canvas.getCellRectangle().intWrapper().getX());
             // For the time being
             default: throw new UnsupportedOperationException();
         }
     }
 
-    private int calculateWidthNormal(String text, int xPos, int yPos, RasterCanvas canvas) {
-        String[] textAsArray= text.split("");
-        return textAsArray.length;
+    // TODO Remove canvas, not needed
+    public long calculateWidthNormal(String text, RasterCanvas canvas) {
+        String[] textAsArray = text.split("");
+        int length = textAsArray.length;
+        long upperCase = text.codePoints().filter(c-> c>='A' && c<='Z').count();
+        long number = text.codePoints().filter(c-> c>='0' && c<='9').count();
+        int multipleBrailleCells = countMultipleCells(text);
+        long result = length + upperCase + number + multipleBrailleCells;
+        return result;
+    }
+
+    private int countMultipleCells(String text) {
+        int result = 0;
+        text = text.toLowerCase();
+        String[] textAsArray = text.split("");
+        for (int i = 0; i < textAsArray.length ; i++) {
+            if (mParser.getCharToBraille(textAsArray[i]).split(",").length>1) {
+                String[] test = mParser.getCharToBraille(textAsArray[i]).split(",");
+                result += mParser.getCharToBraille(textAsArray[i]).split(",").length;
+                result --;
+            }
+        }
+        return result;
     }
 }

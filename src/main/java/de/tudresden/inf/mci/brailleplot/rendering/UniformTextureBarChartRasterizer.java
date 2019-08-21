@@ -53,7 +53,6 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
      * Constructor. Create a new rasterizer for instances of {@link BarChart}.
      */
     UniformTextureBarChartRasterizer() {
-        mTextRasterizer = new BrailleTextRasterizer();
         mAxisRasterizer = new LinearMappingAxisRasterizer();
         //mLegendRasterizer = new LegendRasterizer();
     }
@@ -70,7 +69,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
             throws InsufficientRenderingAreaException {
 
         // The comments here can only give a very short overview, please see the wiki for a full explanation.
-
+        mTextRasterizer = new BrailleTextRasterizer(canvas.getPrinter());
         mDiagram = Objects.requireNonNull(diagram);
         mCanvas = Objects.requireNonNull(canvas);
         mData = mCanvas.getCurrentPage();
