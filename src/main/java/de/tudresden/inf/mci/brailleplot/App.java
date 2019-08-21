@@ -172,7 +172,7 @@ public final class App {
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
             //RasterCanvas canvas = renderer.rasterize(barChart);
             renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BrailleText>(BrailleText.class ,new BrailleTextRasterizer()));
-            RasterCanvas canvas = renderer.rasterize(new BrailleText("@",new Rectangle(0,0,1000,1000)));
+            RasterCanvas canvas = renderer.rasterize(new BrailleText("1234567890",new Rectangle(0,0,1000,1000)));
             SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
             mLogger.debug("Render preview:\n" + mat.toBoolString());
 

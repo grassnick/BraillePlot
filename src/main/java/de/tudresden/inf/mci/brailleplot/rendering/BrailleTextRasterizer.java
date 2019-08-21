@@ -57,6 +57,8 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
                 // Check if its one of the special encoded chars (seperated via ",")
             } else if (checkForSpecialChars(letter)) {
                 writeCharNormaly = false;
+            } else if (checkForNumbers(letter)) {
+                writeChar("NUM");
             }
             // Write the actual letter, if its a normal letter
             if (writeCharNormaly) {
@@ -111,6 +113,16 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
                 x = origX;
              */
         }
+    }
+
+    // TODO Get Liblouis
+    private boolean checkForNumbers(String possibleNumber) {
+        if (possibleNumber.matches("[0-9]")) {
+            //String[] NUM = mParser.getCharToBraille("NUM").split("");
+            //rasterizeBrailleCell(NUM);
+            return true;
+        }
+        return false;
     }
 
 
