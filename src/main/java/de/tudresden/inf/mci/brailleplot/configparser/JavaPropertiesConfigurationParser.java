@@ -90,12 +90,10 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
                 throw new ConfigurationParsingException("Can not find include file.", e);
             }
             if (mInclusionStack.contains(includeFile)) {
-                System.out.println("Skipping " + includeFile);
                 continue;
             }
             FileInputStream includeInput = openInputStream(includeFile.getAbsolutePath());
             mInclusionStack.push(includeFile);
-            System.out.println("Including " + mInclusionStack);
             parse(includeInput);
             mInclusionStack.pop();
             closeInputStream(includeInput);
