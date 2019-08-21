@@ -162,8 +162,10 @@ public class RasterCanvas extends AbstractCanvas {
 
         // To how many dots does this raster size correspond?
         mPrintingAreaDots = toDotRectangle(mPrintingAreaCells);
-        mColumnCount = mPrintingAreaDots.intWrapper().getWidth();
-        mRowCount = mPrintingAreaDots.intWrapper().getHeight();
+        // X and Y must be added to the size because the margins are created virtually by leaving these cells empty.
+        // They have to be contained in the data representation.
+        mColumnCount = mPrintingAreaDots.intWrapper().getX() + mPrintingAreaDots.intWrapper().getWidth();
+        mRowCount = mPrintingAreaDots.intWrapper().getY() + mPrintingAreaDots.intWrapper().getHeight();
         mLogger.trace("Determined raster dimensions (dots): {} columns x {} rows", mColumnCount, mRowCount);
 
     }
