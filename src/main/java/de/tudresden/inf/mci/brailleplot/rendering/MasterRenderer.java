@@ -46,6 +46,7 @@ public final class MasterRenderer {
         mLogger.trace("Registering default rasterizers");
         renderingBase.registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, uniformTexture));
         renderingBase.registerRasterizer(new FunctionalRasterizer<Image>(Image.class, linearImageMapping));
+        renderingBase.registerRasterizer(new FunctionalRasterizer<LineChart>(LineChart.class, lineChart));
         //renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, ScatterPlotRasterizing::fooRasterizing));
         //...
 

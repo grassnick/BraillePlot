@@ -178,10 +178,8 @@ public final class App {
             Printer printer = configParser.getPrinter();
             Format formatA4 = configParser.getFormat("A4");
             // Rasterize
-            FunctionalRasterizer funcRast = new FunctionalRasterizer(LineChart.class, new LineChartRasterizer());
-            FunctionalRenderingBase funcBase = new FunctionalRenderingBase();
-            MasterRenderer renderer = new MasterRenderer(printer, formatA4, funcBase);
-            renderer.getRenderingBase().registerRasterizer(funcRast);
+
+            MasterRenderer renderer = new MasterRenderer(printer, formatA4);
             RasterCanvas canvas = renderer.rasterize(lineChart);
             // Last Step: Printing
             @SuppressWarnings("checkstyle:MagicNumber")
