@@ -1,7 +1,10 @@
 package de.tudresden.inf.mci.brailleplot.diagrams;
 
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointListList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.rendering.Renderable;
+
+import java.util.Objects;
 
 /**
  * General representation of both scatter and line plots with basic data functions. Classes LinePlot and ScatterPlot extend this class.
@@ -9,15 +12,19 @@ import de.tudresden.inf.mci.brailleplot.rendering.Renderable;
  *
  * @author Richard Schmidt
  */
-public class Diagram implements Renderable {
-    public PointListList mP;
+public abstract class Diagram implements Renderable {
+    private PointListContainer<PointList> mData;
 
+    public Diagram(final PointListContainer<PointList> data) {
+        Objects.requireNonNull(data);
+        mData = data;
+    }
     /**
      * Getter for the minimum x-value.
      * @return double minimum x-value
      */
     public double getMinX() {
-        return mP.getMinX();
+        return mData.getMinX();
     }
 
     /**
@@ -25,7 +32,7 @@ public class Diagram implements Renderable {
      * @return double maximum x-value
      */
     public double getMaxX() {
-        return mP.getMaxX();
+        return mData.getMaxX();
     }
 
     /**
@@ -33,7 +40,7 @@ public class Diagram implements Renderable {
      * @return double minimum y-value
      */
     public double getMinY() {
-        return mP.getMinY();
+        return mData.getMinY();
     }
 
     /**
@@ -41,17 +48,9 @@ public class Diagram implements Renderable {
      * @return double maximum y-value
      */
     public double getMaxY() {
-        return mP.getMaxY();
+        return mData.getMaxY();
     }
 
-    /**
-     * Getter for a data set by index.
-     * @param index int
-     * @return PointList with the corresponding data set
-     */
-    public PointListList.PointList getDataSet(final int index) {
-        return (PointListList.PointList) mP.get(index);
-    }
 
     /**
      * Getter for the name of a data set by index.
@@ -59,6 +58,6 @@ public class Diagram implements Renderable {
      * @return name of the data set as a string
      */
     public String getDataSetName(final int index) {
-        return mP.get(index).getName();
+        return mData.toString();
     }
 }
