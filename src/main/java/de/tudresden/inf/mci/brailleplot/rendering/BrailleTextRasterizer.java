@@ -14,7 +14,15 @@ import de.tudresden.inf.mci.brailleplot.printerbackend.NotSupportedFileExtension
  */
 public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
     private AbstractBrailleTableParser mParser;
-    private boolean isUppercase = false;
+
+
+    // Parameters for rasterizing
+    private int x;
+    private int y;
+    private int origX;
+    private int maxWidth;
+    private RasterCanvas mCanvas;
+    private boolean writeCharNormaly = true;
 
     // TODO use y in helperfunction
     // TODO throw unsufficiant if test is bigger
@@ -27,20 +35,35 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
         } catch (NotSupportedFileExtensionException e) {
             throw new RuntimeException(e.getMessage());
         }
+       mCanvas = canvas;
         String[] letterAsBraille;
         // Complete Text, saved in an Array for easier retrieval.
         String[] textAsArray = data.getText().split("");
         // We need to know where to start
-        int x = data.getArea().intWrapper().getX();
-        int origX = x;
-        int y = data.getArea().intWrapper().getY();
-        int maxWidth = data.getArea().intWrapper().getWidth();
+        x = data.getArea().intWrapper().getX();
+        origX = x;
+        y = data.getArea().intWrapper().getY();
+        maxWidth = data.getArea().intWrapper().getWidth();
         // Loop through
         for (int i = 0; i < data.getText().length(); i++) {
+            // Get current letter as temp.
+            String letter = textAsArray[i];
+            // If its uppercase, write the corresponding char.
+            // Only one of these cases can apply at the same time, all uppercase letters are not special encoded
+            //
+            if (checkAndWriteForUpperCase(letter.charAt(0))) {
+                // Convert letter to lowercase because the map does not include upper case letters
+                letter = letter.toLowerCase();
+                // Check if its one of the special encoded chars (seperated via ",")
+            } else if (checkForSpecialChars(letter)) {
+                writeCharNormaly = false;
+            }
+            // Write the actual letter, if its a normal letter
+            if (writeCharNormaly) {
+                writeChar(letter);
+            }
 
-            // If the char is uppercase, we need to add a special char(CAP) to signal that the coming braille char is uppercase
-            // Depended on the used brailletable.
-            if (Character.isUpperCase(textAsArray[i].charAt(0))) {
+            /*if (Character.isUpperCase(textAsArray[i].charAt(0))) {
                 textAsArray[i] = String.valueOf(Character.toLowerCase(textAsArray[i].charAt(0)));
                 isUppercase = true;
                 String[] specialUpperChar = mParser.getCharToBraille("CAP").split("");
@@ -86,7 +109,53 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
                 y = y + canvas.getCellHeight();
                 // Reset x
                 x = origX;
+             */
+        }
+    }
+
+
+    private boolean checkForSpecialChars(String check) {
+        String possibleMultiString = mParser.getCharToBraille(check);
+        if (possibleMultiString.length() > mCanvas.getCellHeight()*mCanvas.getCellWidth()) {
+            String[] possibleStringArray = possibleMultiString.split(",");
+            for (int i = 0; i < possibleStringArray.length; i++) {
+                rasterizeBrailleCell(possibleStringArray[i].split(""), x, y, mCanvas);
+                jumpToNextCell();
             }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Method for writing the given String, assuming its a char.
+     * @param s
+     */
+    private void writeChar(String s) {
+        String[] braille = mParser.getCharToBraille(s).split("");
+        rasterizeBrailleCell(braille, x, y, mCanvas);
+        jumpToNextCell();
+    }
+
+    private boolean checkAndWriteForUpperCase(char charAt) {
+        // If the char is uppercase, we need to add a special char(CAP) to signal that the coming braille char is uppercase
+        if (Character.isUpperCase(charAt)) {
+            String[] specialUpperChar = mParser.getCharToBraille("CAP").split("");
+            rasterizeBrailleCell(specialUpperChar,x,y,mCanvas);
+            jumpToNextCell();
+            return true;
+        }
+        return false;
+    }
+
+    private void jumpToNextCell() {
+        x += 2;
+        // Check if linebreak is needed.
+        if (x >= maxWidth) {
+            // Jump into the next line
+            y = y + mCanvas.getCellHeight();
+            // Reset x
+            x = origX;
         }
     }
 
