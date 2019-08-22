@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.ceil;
@@ -16,10 +18,10 @@ import static java.lang.Math.floor;
 /**
  * Representation of a target onto which an image can be rasterized.
  * It wraps a {@link de.tudresden.inf.mci.brailleplot.printabledata.MatrixData} instance and describes the raster size and its (not necessarily equidistant) layout.
- * @author Leonard Kupper
- * @version 2019.07.22
+ * @author Leonard Kupper, georg Graßnick
+ * @version 2019.08.16
  */
-public class RasterCanvas extends AbstractCanvas {
+public class RasterCanvas extends AbstractCanvas<MatrixData<Boolean>> {
 
     private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
 
@@ -83,14 +85,11 @@ public class RasterCanvas extends AbstractCanvas {
         return getCurrentPage();
     }
 
-    @SuppressWarnings("unchecked")
-    // This is allowed because the mPageContainer fields are always initialized with the correct type by the page getters,
-    // cannot be accessed from the outside and are never changed anywhere else.
     public final MatrixData<Boolean> getCurrentPage() {
         if (mPageContainer.size() < 1) {
             return getNewPage();
         }
-        return (MatrixData<Boolean>) mPageContainer.get(mPageContainer.size() - 1);
+        return mPageContainer.get(mPageContainer.size() - 1);
     }
 
     private void readConfig() {
@@ -257,6 +256,22 @@ public class RasterCanvas extends AbstractCanvas {
      */
     public int getCellYFromDotY(final int dotY) {
         return dotY / mCellHeight;
+    }
+
+    public final int getFullConstraintLeft() {
+        return (int) Math.round(mPrinter.getProperty("raster.constraint.left").toInt() * mCellHorizontalMM + mPrinter.getProperty("constraint.left").toDouble());
+    }
+
+    public final int getFullConstraintTop() {
+        return (int) Math.round(mPrinter.getProperty("raster.constraint.top").toInt() * mCellVerticalMM + mPrinter.getProperty("constraint.top").toDouble());
+    }
+
+    public final List<Double> getXPositions() {
+        return Collections.unmodifiableList(mXPositions);
+    }
+
+    public final List<Double> getYPositions() {
+        return Collections.unmodifiableList(mYPositions);
     }
 
 
