@@ -41,6 +41,8 @@ abstract class AbstractSvgExporter<T extends AbstractCanvas, U extends Printable
     }
 
     @Override
+    // As long as the implementing class uses the correct generic type,
+    // the cast for the first parameter of renderPage() is safe.
     @SuppressWarnings("unchecked")
     public void render() {
         final int docWidth = (int) Math.ceil(mCanvas.getPageWidth());
