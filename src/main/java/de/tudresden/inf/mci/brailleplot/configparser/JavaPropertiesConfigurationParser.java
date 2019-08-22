@@ -88,7 +88,6 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
                 if (!includeFile.isFile()) {
                     throw new ConfigurationParsingException("Given include path is not a file: " + includeFile);
                 }
-                System.out.println("Include file: " + includeFile);
             } catch (IOException e) {
                 throw new ConfigurationParsingException("Can not find include file.", e);
             }
@@ -96,10 +95,13 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
                 continue;
             }
             FileInputStream includeInput = openInputStream(includeFile.getAbsolutePath());
-            mInclusionStack.push(includeFile);
-            parse(includeInput);
-            mInclusionStack.pop();
-            closeInputStream(includeInput);
+            try {
+                mInclusionStack.push(includeFile);
+                parse(includeInput);
+                mInclusionStack.pop();
+            } finally {
+                closeInputStream(includeInput);
+            }
         }
     }
 }
