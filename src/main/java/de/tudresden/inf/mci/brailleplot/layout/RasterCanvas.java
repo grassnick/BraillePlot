@@ -55,7 +55,7 @@ public class RasterCanvas extends AbstractCanvas<MatrixData<Boolean>> {
      * Constructor. Creates a new RasterCanvas, which is a canvas that represents it pages as instances of
      * {@link MatrixData} and holds information about the layout and spacing of the underlying raster grid.
      * The described grid is build from uniform 'cells' consisting of a variable amount of dots.
-     * It is used as a target on which can be drawn by a {@link Rasterizer}.
+     * It is used as a target on which can be drawn by a {@link de.tudresden.inf.mci.brailleplot.rendering.Rasterizer}.
      * @param printer The {@link Printer} configuration to be used.
      * @param format The {@link Format} configuration to be used.
      * @param cellWidth The horizontal count of dots in a cell.
