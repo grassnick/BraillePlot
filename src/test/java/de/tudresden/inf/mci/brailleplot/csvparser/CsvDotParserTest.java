@@ -28,7 +28,7 @@ public class CsvDotParserTest {
         try {
             parser = new CsvParser(csvReader, ',', '\"');
         } catch (Exception e) {
-
+            Assertions.fail();
         }
 
     }
@@ -36,58 +36,58 @@ public class CsvDotParserTest {
     @Test
     public void testHorizontalParsing() {
         PointListContainer<PointList> container = parser.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
-        Iterator containerIt = container.iterator();
-        PointList list_1 = (PointList) containerIt.next();
+        Iterator<PointList> containerIt = container.iterator();
+        PointList list_1 = containerIt.next();
         Assertions.assertEquals(list_1.getName(), "Linie1");
 
-        Iterator it = list_1.getListIterator();
+        Iterator<Point2DDouble> it = list_1.getListIterator();
 
-        Point2DDouble point = (Point2DDouble) it.next();
+        Point2DDouble point = it.next();
         Assertions.assertEquals(point.getX(), 1.0);
         Assertions.assertEquals(point.getY(), 1.0);
 
-        point = (Point2DDouble) it.next();
+        point = it.next();
         Assertions.assertEquals(point.getX(), 7.0);
         Assertions.assertEquals(point.getY(), 2.0);
 
-        point = (Point2DDouble) it.next();
+        point = it.next();
         Assertions.assertEquals(point.getX(), 9.0);
         Assertions.assertEquals(point.getY(), 5.0);
 
-        point = (Point2DDouble) it.next();
+        point = it.next();
         Assertions.assertEquals(point.getX(), 2.0);
         Assertions.assertEquals(point.getY(), 4.0);
 
-        point = (Point2DDouble) it.next();
+        point = it.next();
         Assertions.assertEquals(point.getX(), 10.0);
         Assertions.assertEquals(point.getY(), 10.0);
 
-        PointList list_2 = (PointList) containerIt.next();
+        PointList list_2 = containerIt.next();
         Assertions.assertEquals(list_2.getName(), "Linie2");
 
         it = list_2.getListIterator();
 
-        point = (Point2DDouble) it.next();
+        point = it.next();
         Assertions.assertEquals(point.getX(), 0.0);
         Assertions.assertEquals(point.getY(), 3.0);
 
-        point = (Point2DDouble) it.next();
+        point = it.next();
         Assertions.assertEquals(point.getX(), 2.0);
         Assertions.assertEquals(point.getY(), 9.0);
 
-        point = (Point2DDouble) it.next();
+        point = it.next();
         Assertions.assertEquals(point.getX(), 7.0);
         Assertions.assertEquals(point.getY(), 4.0);
 
-        point = (Point2DDouble) it.next();
+        point = it.next();
         Assertions.assertEquals(point.getX(), 9.0);
         Assertions.assertEquals(point.getY(), 2.0);
 
-        point = (Point2DDouble) it.next();
+        point = it.next();
         Assertions.assertEquals(point.getX(), 1.0);
         Assertions.assertEquals(point.getY(), 5.0);
 
-        point = (Point2DDouble) it.next();
+        point = it.next();
         Assertions.assertEquals(point.getX(), 4.0);
         Assertions.assertEquals(point.getY(), 7.0);
 

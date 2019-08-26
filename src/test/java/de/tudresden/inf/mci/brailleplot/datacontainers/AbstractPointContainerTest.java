@@ -30,16 +30,16 @@ public class AbstractPointContainerTest {
         container.pushBack(list_1);
         container.pushBack(list_2);
 
-        Iterator container_it = container.iterator();
-        PointList list = (PointList) container_it.next();
-        Iterator list_it = list.getListIterator();
-        Point2DDouble point = (Point2DDouble) list_it.next();
+        Iterator<PointList> container_it = container.iterator();
+        PointList list = container_it.next();
+        Iterator<Point2DDouble> list_it = list.getListIterator();
+        Point2DDouble point = list_it.next();
         Assertions.assertEquals(point.getX(), 1.0);
         Assertions.assertEquals(point.getY(), 2.0);
 
-        list = (PointList) container_it.next();
+        list = container_it.next();
         list_it = list.getListIterator();
-        point = (Point2DDouble) list_it.next();
+        point = list_it.next();
         Assertions.assertEquals(point.getX(), 3.0);
         Assertions.assertEquals(point.getY(), 4.0);
     }

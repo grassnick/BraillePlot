@@ -4,31 +4,22 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.Iterator;
-
 /**
  * @author Richard Schmidt
  */
 public class SimpleCategoricalPointListContainerImplTest {
 
     public static SimpleCategoricalPointListContainerImpl container;
-    public static NullPointerException e;
-    public static IndexOutOfBoundsException b;
 
     @BeforeAll
     public static void initialize() {
         container = new SimpleCategoricalPointListContainerImpl();
-        e = new NullPointerException();
-        b = new IndexOutOfBoundsException();
     }
 
     @Test
     public void testPushBackCategory() {
-        try {
-            container.pushBackCategory(null);}
-        catch (Exception exc) {
-            Assertions.assertEquals(e.getCause(), exc.getCause());
-        }
+
+        Assertions.assertThrows(NullPointerException.class, () -> {container.pushBackCategory(null);});
 
         int a = container.pushBackCategory("Kat. 1");
         int b = container.pushBackCategory("Kat. 2");
@@ -42,18 +33,9 @@ public class SimpleCategoricalPointListContainerImplTest {
 
     @Test
     public void testGetCategory() {
-        try {
-            container.getCategory(-1);}
-        catch (Exception exc) {
-            Assertions.assertEquals(b.getCause(), exc.getCause());
-            System.out.print("hier");
-        }
 
-        try {
-            container.getCategory(2);}
-        catch (Exception exc) {
-            Assertions.assertEquals(b.getCause(), exc.getCause());
-            System.out.print("hier");
-        }
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {container.getCategory(-1);});
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {container.getCategory(2);});
+
     }
 }

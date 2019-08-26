@@ -1,7 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.point;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -9,24 +8,13 @@ import org.junit.jupiter.api.Test;
  */
 public class Point2DValuedTest {
 
-    public static NullPointerException e;
-
-    @BeforeAll
-    public static void initialize() {
-        e = new NullPointerException();
-    }
-
     @Test
     public void testPoint2DValued () {
         int a = 1;
         int b = 2;
         int value = 3;
 
-        try {
-            Point2DValued point = new Point2DValued(a, b, null);
-        } catch (Exception exc) {
-            Assertions.assertEquals(e.getCause(), exc.getCause());
-        }
+        Assertions.assertThrows(NullPointerException.class, () -> {new Point2DValued(a, b, null);});
 
         Point2DValued point = new Point2DValued(a, b, value);
         Assertions.assertEquals(value, point.getVal());

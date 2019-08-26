@@ -22,7 +22,7 @@ public class BarChartTest {
 
     @BeforeAll
     public static void initialize() {
-        outter_list = new LinkedList();
+        outter_list = new LinkedList<>();
         inner_list = new SimplePointListImpl();
         point = new Point2DDouble(1, 2);
         inner_list.pushBack(point);
@@ -33,7 +33,7 @@ public class BarChartTest {
     @Test
     public void testBarChart () {
         BarChart bar = new BarChart(container);
-        Point2DDouble p = (Point2DDouble) bar.getDataSet().iterator().next().getListIterator().next();
+        Point2DDouble p = bar.getDataSet().iterator().next().getListIterator().next();
         Assertions.assertEquals(1, p.getX());
         Assertions.assertEquals(2, p.getY());
     }
