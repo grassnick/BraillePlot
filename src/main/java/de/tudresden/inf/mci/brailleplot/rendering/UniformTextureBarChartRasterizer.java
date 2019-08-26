@@ -181,7 +181,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         xAxis.setBoundary(xAxisBound);
         // a bit more complicated than y-axis here: building a map for the axis labels
         Map<Integer, String> xAxisLabels = new HashMap<>();
-        char labelLetter = 'A';
+        char labelLetter = 'a';
         for (int axisTick = (negUnits / 2) * -1; axisTick <= (posUnits / 2); axisTick++) {
             xAxisLabels.put(axisTick, Character.toString(labelLetter));
             labelLetter++;

@@ -7,6 +7,13 @@ import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 //import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printerbackend.NotSupportedFileExtensionException;
+import org.liblouis.CompilationException;
+import org.liblouis.DisplayException;
+import org.liblouis.DisplayTable;
+import org.liblouis.TranslationException;
+import org.liblouis.TranslationResult;
+import org.liblouis.Translator;
+import org.liblouis.Typeform;
 
 import java.util.Objects;
 
@@ -45,6 +52,12 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
     @Override
     public void rasterize(final BrailleText data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
 
+        Translator translator = null;
+        String test = "123";
+        String testA = "";
+        TranslationResult result = null;
+        System.out.println(testMethod());
+
         Rectangle rect = data.getArea().intersectedWith(canvas.getDotRectangle());
         mCanvas = canvas;
         String[] letterAsBraille;
@@ -78,6 +91,22 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
             }
 
         }
+    }
+
+    public String testMethod() {
+        TranslationResult result = null;
+        TranslationResult wrongResult = null;
+        try {
+        //    Translator translator = new Translator("C:\\Users\\tEST\\Desktop\\FPMCI\\brailleplot\\src\\main\\resources\\mapping\\tables\\de-de-comp8.ctb");
+        //    result = translator.translate("ABCD",null,null,null, DisplayTable.StandardDisplayTables.DEFAULT);
+            // translator = Translator.find("locale: de");
+            Translator wrongTranslator = new Translator("src\\main\\resources\\mapping\\tables\\de.utb");
+            wrongResult = wrongTranslator.translate("123", null, null, null, DisplayTable.StandardDisplayTables.DEFAULT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //System.out.println(wrongResult.getBraille());
+        return wrongResult.getBraille();
     }
 
     // TODO Get Liblouis
