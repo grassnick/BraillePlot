@@ -4,7 +4,6 @@ import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import org.jfree.graphics2d.svg.SVGGraphics2D;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,7 +16,6 @@ public class BoolMatrixDataSvgExporter extends AbstractSvgExporter<RasterCanvas,
 
     public BoolMatrixDataSvgExporter(final RasterCanvas rasterCanvas) {
         super(rasterCanvas);
-        mSvgs = new ArrayList<>(mCanvas.getPageCount());
     }
 
     @Override

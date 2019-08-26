@@ -18,8 +18,8 @@ import static java.lang.Math.floor;
 /**
  * Representation of a target onto which an image can be rasterized.
  * It wraps a {@link de.tudresden.inf.mci.brailleplot.printabledata.MatrixData} instance and describes the raster size and its (not necessarily equidistant) layout.
- * @author Leonard Kupper, georg Graßnick
- * @version 2019.08.16
+ * @author Leonard Kupper, Georg Graßnick
+ * @version 2019.08.26
  */
 public class RasterCanvas extends AbstractCanvas<MatrixData<Boolean>> {
 
@@ -49,13 +49,15 @@ public class RasterCanvas extends AbstractCanvas<MatrixData<Boolean>> {
     private double mVerticalDotDistance;
     private double mHorizontalCellDistance;
     private double mVerticalCellDistance;
-    private double mDotDiameter;
+
+    private int mRasterConstraintLeft; // cells
+    private int mRasterConstraintTop; // cells
 
     /**
      * Constructor. Creates a new RasterCanvas, which is a canvas that represents it pages as instances of
      * {@link MatrixData} and holds information about the layout and spacing of the underlying raster grid.
      * The described grid is build from uniform 'cells' consisting of a variable amount of dots.
-     * It is used as a target on which can be drawn by a {@link Rasterizer}.
+     * It is used as a target on which can be drawn by a {@link de.tudresden.inf.mci.brailleplot.rendering.Rasterizer}.
      * @param printer The {@link Printer} configuration to be used.
      * @param format The {@link Format} configuration to be used.
      * @param cellWidth The horizontal count of dots in a cell.
@@ -85,12 +87,6 @@ public class RasterCanvas extends AbstractCanvas<MatrixData<Boolean>> {
         return getCurrentPage();
     }
 
-    public final MatrixData<Boolean> getCurrentPage() {
-        if (mPageContainer.size() < 1) {
-            return getNewPage();
-        }
-        return mPageContainer.get(mPageContainer.size() - 1);
-    }
 
     private void readConfig() {
 
@@ -101,12 +97,13 @@ public class RasterCanvas extends AbstractCanvas<MatrixData<Boolean>> {
         mVerticalDotDistance = mPrinter.getProperty("raster.dotDistance.vertical").toDouble();
         mHorizontalCellDistance = mPrinter.getProperty("raster.cellDistance.horizontal").toDouble();
         mVerticalCellDistance = mPrinter.getProperty("raster.cellDistance.vertical").toDouble();
-        mDotDiameter = mPrinter.getProperty("raster.dotDiameter").toDouble();
 
         // Calculate cell size in mm
         mCellHorizontalMM = mHorizontalDotDistance * (mCellWidth - 1) + mHorizontalCellDistance; // Full width of one cell + padding in mm
         mCellVerticalMM = mVerticalDotDistance * (mCellHeight - 1) + mVerticalCellDistance; // Full height of one cell + padding in mm
 
+        mRasterConstraintTop = mPrinter.getProperty("raster.constraint.top").toInt();
+        mRasterConstraintLeft = mPrinter.getProperty("raster.constraint.left").toInt();
     }
 
     private void calculateRasterSize() throws InsufficientRenderingAreaException {
@@ -218,9 +215,6 @@ public class RasterCanvas extends AbstractCanvas<MatrixData<Boolean>> {
     public final double getVerticalCellDistance() {
         return mVerticalCellDistance;
     }
-    public final double getDotDiameter() {
-        return mDotDiameter;
-    }
     public final Rectangle getCellRectangle() {
         return new Rectangle(mPrintingAreaCells);
     }
@@ -258,18 +252,42 @@ public class RasterCanvas extends AbstractCanvas<MatrixData<Boolean>> {
         return dotY / mCellHeight;
     }
 
-    public final int getFullConstraintLeft() {
-        return (int) Math.round(mPrinter.getProperty("raster.constraint.left").toInt() * mCellHorizontalMM + mPrinter.getProperty("constraint.left").toDouble());
+    public final int getRasterConstraintLeft() {
+        return mRasterConstraintLeft;
     }
 
-    public final int getFullConstraintTop() {
-        return (int) Math.round(mPrinter.getProperty("raster.constraint.top").toInt() * mCellVerticalMM + mPrinter.getProperty("constraint.top").toDouble());
+    public final int getRasterConstraintTop() {
+        return mRasterConstraintTop;
     }
 
+    /**
+     * Returns the full constraint of the printable Area from the left in mm.
+     * @return The margin to the left of the paper in mm, where printing is not possible.
+     */
+    public final double getFullConstraintLeft() {
+        return getRasterConstraintLeft() * mCellHorizontalMM + getConstraintLeft();
+    }
+
+    /**
+     * Returns the full constraint of the printable Area from the top in mm.
+     * @return The margin to the top of the paper in mm, where printing is not possible.
+     */
+    public final double getFullConstraintTop() {
+        return getRasterConstraintTop() * mCellVerticalMM + getConstraintTop();
+    }
+
+    /**
+     * Get the X coordinates of all dots.
+     * @return The X coordinates of all dots in mm.
+     */
     public final List<Double> getXPositions() {
         return Collections.unmodifiableList(mXPositions);
     }
 
+    /**
+     * Get the Y coordinates of all dots.
+     * @return The Y coordinates of all dots in mm.
+     */
     public final List<Double> getYPositions() {
         return Collections.unmodifiableList(mYPositions);
     }
