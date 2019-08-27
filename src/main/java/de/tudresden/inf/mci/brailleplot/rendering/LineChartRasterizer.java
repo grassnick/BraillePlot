@@ -49,17 +49,24 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         if (canvas.equals(null)) {
             throw new NullPointerException("The given canvas for the LineChartRasterizer was null!");
         }
+
         PointListContainer list =  data.getData();
         mCanvas = canvas;
         mDiagram = data;
         mData = mCanvas.getCurrentPage();
+        // Important: Its a cell rectangle, not a dot rectangle.
         mLineArea = mCanvas.getCellRectangle();
 
+        // Step one: Calculate area needed for Title.
         Rectangle titleArea = calculateTitle();
+        // Step two: Calculate area needed for the x axis.
         Rectangle xAxisAreas = calculateXAxis();
+        // Space reserving, needs testing.
         addSpaceLeft();
+        // Step three: Calculate the range of the x values (example: -5 - 1000)
         double rangeOfXValues = valueRangeOfXAxis();
-        int xUnitsAvailable = calculateUnitsWidth(xAxisAreas);
+        // Step three.5:  Calculate how many units are available for the x Axis. Units are in dots.
+        int xUnitsAvailable = calculateUnitsWidthInDots(xAxisAreas);
         findXAxisScaling(rangeOfXValues, xUnitsAvailable);
 
 
@@ -115,8 +122,20 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         return valueRangeOfYAxis;
     }
 
-    private int calculateUnitsWidth(final Rectangle rectangle) {
+    /**
+     * Calculate the width, measured in dots.
+     * Important: Because the rectangle width is measured in doubles, we need to round off the product of
+     *            the width and the cellwidth.
+     * Important: Only use it with CellRectangles
+     * @param rectangle The cell rectangle which you want to know the width.
+     * @return Width in dots.
+     */
+    private int calculateUnitsWidthInDots(final Rectangle rectangle) {
         return (int) floor(rectangle.getWidth() * mCanvas.getCellWidth());
+    }
+
+    private int calculateUnitsWidhtInCells(final Rectangle rectangle) {
+        return rectangle.get
     }
 
     private double valueRangeOfXAxis() {
@@ -134,7 +153,10 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     }
 
     private double findXAxisScaling(final double rangeOfXValues, final int xUnitsAvailable) {
+        // Divide range by units available, so that we can get a resolution
         double minRange = rangeOfXValues / xUnitsAvailable;
+        // Get the Number, represented as String (-5,23 for example) so that we can adjust the minimum space needed
+        // between two ticks
         int length = String.valueOf(mDiagram.getMaxX()).length();
         return 0;
     }
