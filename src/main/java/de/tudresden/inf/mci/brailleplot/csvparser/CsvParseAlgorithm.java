@@ -52,6 +52,10 @@ public abstract class CsvParseAlgorithm<T extends PointListContainer<PointList>>
 
         // TODO: Check if this actually works --> does not work (ConcurrentModificationException)
 
+        if (true) {
+            throw new UnsupportedOperationException();
+        }
+
         int currentIdx = 0;
         int listsToAddCount = index - container.getSize();
 

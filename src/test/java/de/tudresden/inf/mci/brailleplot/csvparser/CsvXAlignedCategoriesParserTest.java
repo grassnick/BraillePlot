@@ -28,7 +28,7 @@ public class CsvXAlignedCategoriesParserTest {
         try {
             parser = new CsvParser(csvReader, ',', '\"');
         } catch (Exception e) {
-            Assertions.fail();
+
         }
 
     }
