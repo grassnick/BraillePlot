@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Parser for CSV files with aligned mX-values. Inherits from CsvParseAlgorithm.
+ * Parser for CSV files with aligned X-values. Inherits from CsvParseAlgorithm.
  * @author SVGPlott-Team, Georg Graßnick
  * @version 2019.07.29
  */
