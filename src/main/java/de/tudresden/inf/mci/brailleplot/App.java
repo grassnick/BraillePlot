@@ -5,6 +5,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfiguration
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
 
+
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
@@ -13,6 +14,12 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
 
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
+
+
+import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
+import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
+import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
@@ -30,10 +37,17 @@ import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRenderingBase;
 import de.tudresden.inf.mci.brailleplot.rendering.LineChartRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 
+import de.tudresden.inf.mci.brailleplot.svgexporter.BoolFloatingPointDataSvgExporter;
+import de.tudresden.inf.mci.brailleplot.svgexporter.BoolMatrixDataSvgExporter;
+import de.tudresden.inf.mci.brailleplot.svgexporter.SvgExporter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tec.units.ri.quantity.Quantities;
+import tec.units.ri.unit.MetricPrefix;
 
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -41,11 +55,13 @@ import java.io.Reader;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
+import static tec.units.ri.unit.Units.METRE;
+
 /**
  * Main class.
  * Set up the application and run it.
  * @author Georg Graßnick, Andrey Ruzhanskiy
- * @version 06.06.19
+ * @version 2019.08.26
  */
 
 public final class App {
@@ -155,6 +171,11 @@ public final class App {
                 return EXIT_SUCCESS;
             }
 
+            // Parse properties File
+            Optional<String> configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH);
+            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get(), "src/main/resources/config/default.properties");
+            Printer printer = configParser.getPrinter();
+            Format formatA4 = configParser.getFormat("A4");
             // Parse csv data
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
             InputStream csvStream = classloader.getResourceAsStream("examples/csv/2_line_plot.csv");
@@ -165,22 +186,39 @@ public final class App {
             mLogger.debug("Internal data representation:\n {}", container.toString());
             LineChart lineChart = new LineChart(container);
 
-            // Config Parsing
+            // SVG exporting
+            MasterRenderer renderer = new MasterRenderer(printer, formatA4);
+            RasterCanvas canvas = renderer.rasterize(lineChart);
+            SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
+            svgExporter.render();
+            svgExporter.dump("boolMat");
+
+            // FloatingPointData SVG exporting example
+            PlotCanvas floatCanvas = new PlotCanvas(printer, formatA4);
+            FloatingPointData<Boolean> points = floatCanvas.getNewPage();
+
+            final int blockX = 230;
+            final int blockY = 400;
+            for (int y = 0; y < blockY; y += 2) {
+                for (int x = 0; x < blockX; x += 2) {
+                    Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true);
+                    points.addPoint(point);
+                }
+            }
+
+            SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
+            floatSvgExporter.render();
+            floatSvgExporter.dump("floatingPointData");
 
             // Check if some SpoolerService/Printservice exists
             if (!PrintDirector.isPrintServiceOn()) {
                 throw new Exception("Can't find any Printservices on this System.");
             }
 
-            // Parse properties File
-            Optional<String> configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH);
-            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get(), "src/main/resources/config/default.properties");
-            Printer printer = configParser.getPrinter();
-            Format formatA4 = configParser.getFormat("A4");
+
             // Rasterize
 
-            MasterRenderer renderer = new MasterRenderer(printer, formatA4);
-            RasterCanvas canvas = renderer.rasterize(lineChart);
+
             // Last Step: Printing
             @SuppressWarnings("checkstyle:MagicNumber")
             MatrixData<Boolean> data = new SimpleMatrixDataImpl<>(printer, formatA4, 18, 20, true);
