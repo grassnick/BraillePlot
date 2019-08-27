@@ -14,19 +14,19 @@ public class Point2DValuedTest {
         int b = 2;
         int value = 3;
 
-        Assertions.assertThrows(NullPointerException.class, () -> {new Point2DValued(a, b, null);});
+        Assertions.assertThrows(NullPointerException.class, () -> {new Point2DValued<Integer, Integer>(a, b, null);});
 
-        Point2DValued<Integer, Integer> point = new Point2DValued(a, b, value);
+        Point2DValued<Integer, Integer> point = new Point2DValued<>(a, b, value);
         Assertions.assertEquals(value, point.getVal());
     }
 
     @Test
     public void testEquals () {
-        Point2DValued<Integer, Integer> point_1 = new Point2DValued(1, 2, 3);
-        Point2DValued<Integer, Integer> point_2 = new Point2DValued(1, 2, 3);
-        Point2DValued<Integer, Integer> point_3 = new Point2DValued(2, 2, 3);
-        Point2DValued<Integer, Integer> point_4 = new Point2DValued(1, 1, 3);
-        Point2DValued<Integer, Integer> point_5 = new Point2DValued(1, 2, 2);
+        Point2DValued<Integer, Integer> point_1 = new Point2DValued<>(1, 2, 3);
+        Point2DValued<Integer, Integer> point_2 = new Point2DValued<>(1, 2, 3);
+        Point2DValued<Integer, Integer> point_3 = new Point2DValued<>(2, 2, 3);
+        Point2DValued<Integer, Integer> point_4 = new Point2DValued<>(1, 1, 3);
+        Point2DValued<Integer, Integer> point_5 = new Point2DValued<>(1, 2, 2);
         String string = "test";
 
         Assertions.assertEquals(true, point_1.equals(point_2));

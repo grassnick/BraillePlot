@@ -16,18 +16,18 @@ import java.util.LinkedList;
 public class BarChartTest {
 
     public static SimplePointListContainerImpl container;
-    public static LinkedList<PointList> outter_list;
+    public static LinkedList<PointList> outer_list;
     public static PointList inner_list;
     public static Point2DDouble point;
 
     @BeforeAll
     public static void initialize() {
-        outter_list = new LinkedList<>();
+        outer_list = new LinkedList<>();
         inner_list = new SimplePointListImpl();
         point = new Point2DDouble(1, 2);
         inner_list.pushBack(point);
-        outter_list.add(inner_list);
-        container = new SimplePointListContainerImpl(outter_list);
+        outer_list.add(inner_list);
+        container = new SimplePointListContainerImpl(outer_list);
     }
 
     @Test
