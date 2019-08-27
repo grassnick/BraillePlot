@@ -34,7 +34,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
 
     // Layout Variables
 
-    private Rectangle mLineArea;
+    private Rectangle mCellLineArea;
 
     public LineChartRasterizer() {
         mTextRasterizer = new BrailleTextRasterizer();
@@ -55,7 +55,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         mDiagram = data;
         mData = mCanvas.getCurrentPage();
         // Important: Its a cell rectangle, not a dot rectangle.
-        mLineArea = mCanvas.getCellRectangle();
+        mCellLineArea = mCanvas.getCellRectangle();
 
         // Step one: Calculate area needed for Title.
         Rectangle titleArea = calculateTitle();
@@ -79,10 +79,10 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         if (mDiagramTitle.isEmpty()) {
             throw new IllegalArgumentException("The title in LineChartRasterizer was empty!");
         }
-        int widthOfCompleteArea = mLineArea.intWrapper().getWidth() * mCanvas.getCellWidth();
+        int widthOfCompleteArea = mCellLineArea.intWrapper().getWidth() * mCanvas.getCellWidth();
         int titleBarHeight = mTextRasterizer.calculateRequiredHeight(mDiagramTitle, 0, 0, widthOfCompleteArea, mCanvas);
         try {
-            return  mLineArea.removeFromTop(mCanvas.getCellYFromDotY(titleBarHeight));
+            return  mCellLineArea.removeFromTop(mCanvas.getCellYFromDotY(titleBarHeight));
         } catch (Rectangle.OutOfSpaceException e) {
             throw new InsufficientRenderingAreaException("Not enough space to build the title area for the line chart!");
         }
@@ -90,7 +90,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
 
     private Rectangle calculateXAxis() throws InsufficientRenderingAreaException {
         try {
-            return mLineArea.removeFromBottom(2);
+            return mCellLineArea.removeFromBottom(2);
         } catch (Rectangle.OutOfSpaceException e) {
             throw new InsufficientRenderingAreaException("Not enough space to build the X-Axis for the line chart!");
         }
@@ -100,7 +100,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     @SuppressWarnings("checkstyle:MagicNumber")
     private void addSpaceLeft() throws InsufficientRenderingAreaException {
         try {
-            mLineArea.removeFromLeft(6);
+            mCellLineArea.removeFromLeft(6);
         } catch (Rectangle.OutOfSpaceException e) {
             throw new InsufficientRenderingAreaException("Not enough enough space to the left for the line chart!");
         }
@@ -135,7 +135,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     }
 
     private int calculateUnitsWidhtInCells(final Rectangle rectangle) {
-        return rectangle.get
+        return 0;
     }
 
     private double valueRangeOfXAxis() {
