@@ -13,6 +13,7 @@ import java.awt.Color;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
@@ -38,6 +39,7 @@ abstract class AbstractSvgExporter<T extends AbstractCanvas, U extends Printable
     AbstractSvgExporter(final T canvas) {
         Objects.requireNonNull(canvas);
         mCanvas = canvas;
+        mSvgs = new ArrayList<>(mCanvas.getPageCount());
     }
 
     @Override
