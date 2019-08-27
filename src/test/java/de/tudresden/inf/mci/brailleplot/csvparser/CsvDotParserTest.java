@@ -25,11 +25,7 @@ public class CsvDotParserTest {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         InputStream csvStream = classloader.getResourceAsStream("examples/csv/1_scatter_plot.csv");
         Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
-        try {
-            parser = new CsvParser(csvReader, ',', '\"');
-        } catch (Exception e) {
-            throw new Exception();
-        }
+        parser = new CsvParser(csvReader, ',', '\"');
 
     }
 
