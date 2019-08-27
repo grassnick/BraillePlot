@@ -21,14 +21,14 @@ public class CsvXAlignedParserTest {
     public static CsvParser parser;
 
     @BeforeAll
-    public static void initialize() {
+    public static void initialize() throws Exception {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         InputStream csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart.csv");
         Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
         try {
             parser = new CsvParser(csvReader, ',', '\"');
         } catch (Exception e) {
-
+            throw new Exception();
         }
 
     }
