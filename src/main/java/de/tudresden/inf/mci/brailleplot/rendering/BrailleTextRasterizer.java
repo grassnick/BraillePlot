@@ -15,7 +15,6 @@ import org.liblouis.TranslationResult;
 import org.liblouis.Translator;
 import org.liblouis.Typeform;
 */
-import java.util.Objects;
 
 /**
  * A rasterizer for text on braille grids. This class is still a stub and must be implemented!
@@ -203,7 +202,7 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
         // Divide them, round up
         // TODO:
         canvas.getDotRectangle().intWrapper().getX();
-        int height = (int) Math.ceil((double)((int) calculateWidthNormal(text, canvas)) / availableWidth);
+        int height = (int) Math.ceil((double)((int) getBrailleStringLengthInCells(text, canvas)) / availableWidth);
         return height;
     }
 
@@ -214,14 +213,14 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
         String mode = canvas.getPrinter().getProperty("mode").toString();
         switch (mode) {
         //    case "normalprinter": return calculateWidthNormal(text, xPos, yPos, canvas);
-            case "normalprinter": return Math.min((int)calculateWidthNormal(text, canvas), canvas.getCellRectangle().intWrapper().getX());
+            case "normalprinter": return Math.min((int) getBrailleStringLengthInCells(text, canvas), canvas.getCellRectangle().intWrapper().getX());
             // For the time being
             default: throw new UnsupportedOperationException();
         }
     }
 
     // TODO Remove canvas, not needed
-    public long calculateWidthNormal(String text, RasterCanvas canvas) {
+    public long getBrailleStringLengthInCells(String text, RasterCanvas canvas) {
         String[] textAsArray = text.split("");
         int length = textAsArray.length;
         long upperCase = text.codePoints().filter(c-> c>='A' && c<='Z').count();
