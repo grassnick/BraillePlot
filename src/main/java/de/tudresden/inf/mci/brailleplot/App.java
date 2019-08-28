@@ -4,7 +4,10 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
+import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
+import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
+import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 
@@ -22,9 +25,16 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListConta
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
+import de.tudresden.inf.mci.brailleplot.svgexporter.BoolFloatingPointDataSvgExporter;
+import de.tudresden.inf.mci.brailleplot.svgexporter.BoolMatrixDataSvgExporter;
+import de.tudresden.inf.mci.brailleplot.svgexporter.SvgExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tec.units.ri.quantity.Quantities;
+import tec.units.ri.unit.MetricPrefix;
 
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -32,11 +42,13 @@ import java.io.Reader;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
+import static tec.units.ri.unit.Units.METRE;
+
 /**
  * Main class.
  * Set up the application and run it.
  * @author Georg Graßnick, Andrey Ruzhanskiy
- * @version 06.06.19
+ * @version 2019.08.26
  */
 
 public final class App {
@@ -170,7 +182,27 @@ public final class App {
             SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
             mLogger.debug("Render preview:\n" + mat.toBoolString());
 
-            // Config Parsing
+            // SVG exporting
+            SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
+            svgExporter.render();
+            svgExporter.dump("boolMat");
+
+            // FloatingPointData SVG exporting example
+            PlotCanvas floatCanvas = new PlotCanvas(indexV4Printer, a4Format);
+            FloatingPointData<Boolean> points = floatCanvas.getNewPage();
+
+            final int blockX = 230;
+            final int blockY = 400;
+            for (int y = 0; y < blockY; y += 2) {
+                for (int x = 0; x < blockX; x += 2) {
+                    Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true);
+                    points.addPoint(point);
+                }
+            }
+
+            SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
+            floatSvgExporter.render();
+            floatSvgExporter.dump("floatingPointData");
 
             // Check if some SpoolerService/Printservice exists
             if (!PrintDirector.isPrintServiceOn()) {

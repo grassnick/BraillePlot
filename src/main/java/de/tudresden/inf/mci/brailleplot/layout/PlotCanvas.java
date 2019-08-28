@@ -9,11 +9,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Representation of a target onto which an image can be plotted.
- * It wraps a {@link de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData} instance and describes the plot size and its equidistant layout.
- * @author Leonard Kupper and Richard Schmidt
+ * It wraps a {@link de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData} instance and describes the raster size and its layout.
+ * @author Georg Graßnick
+ * @version 2019.08.26
  */
-
-public class PlotCanvas extends AbstractCanvas {
+public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
 
     private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
 
@@ -28,32 +28,23 @@ public class PlotCanvas extends AbstractCanvas {
     private int mCellDistHor;
     private int mCellDistVer;
 
-    /**
-     * Constructor. Creates a new PlotCanvas, which is a canvas that represents it pages as instances of
-     * {@link de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData} and holds information about the layout.
-     * @param printer The {@link Printer} configuration to be used.
-     * @param format The {@link Format} configuration to be used.
-     * @throws InsufficientRenderingAreaException If the given configuration leads to an printable area of negative
-     * size or zero size, e.g. if the sum of defined margins and constraints adds up to be greater than the original page size.
-     */
-    public PlotCanvas(final Printer printer, final Format format, final double resolution) throws InsufficientRenderingAreaException {
+    public PlotCanvas(final Printer printer, final Format format) throws InsufficientRenderingAreaException {
         super(printer, format);
-        mResolution = resolution;
     }
 
     public final FloatingPointData<Boolean> getNewPage() {
-        mPageContainer.add(new SimpleFloatingPointDataImpl<Boolean>(mPrinter, mFormat));
+        mPageContainer.add(new SimpleFloatingPointDataImpl<>(mPrinter, mFormat));
         return getCurrentPage();
     }
 
-    @SuppressWarnings("unchecked")
-    // This is allowed because the mPageContainer fields are always initialized with the correct type by the page getters,
-    // cannot be accessed from the outside and are never changed anywhere else.
-    public final FloatingPointData<Boolean> getCurrentPage() {
-        if (mPageContainer.size() < 1) {
-            return getNewPage();
-        }
-        return (FloatingPointData<Boolean>) mPageContainer.get(mPageContainer.size() - 1);
+    @Override
+    public double getFullConstraintLeft() {
+        return getConstraintLeft();
+    }
+
+    @Override
+    public double getFullConstraintTop() {
+        return getConstraintTop();
     }
 
     /**
@@ -90,6 +81,5 @@ public class PlotCanvas extends AbstractCanvas {
     public final int getCellDistVer() {
         return mCellDistVer;
     }
-
 
 }

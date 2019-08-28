@@ -1,7 +1,10 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Stack;
 
 /**
  * Concrete parser for configuration files in Java Property File format.
@@ -10,7 +13,7 @@ import java.util.Properties;
  */
 public final class JavaPropertiesConfigurationParser extends ConfigurationParser {
 
-    private Properties mProperties = new Properties();
+    Stack<File> mInclusionStack = new Stack<>();
 
     /**
      * Constructor.
@@ -33,23 +36,29 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
 
     /**
      * Concrete internal algorithm used for parsing the Java Property File.
-     * This method is called by ({@link #parseConfigFile(String, boolean)}).
+     * This method is called by ({@link #parseConfigFile(String, boolean)}) and will call itself recursively for every included file.
+     * @param input The input stream to read the configuration properties from.
      * @throws ConfigurationParsingException On any error while accessing the configuration file or syntax.
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
-    protected void parse() throws ConfigurationParsingException, ConfigurationValidationException {
-        // Load properties from the .properties file
+    protected void parse(final FileInputStream input) throws ConfigurationParsingException, ConfigurationValidationException {
+        // Create property instance for current recursion level
+        Properties properties = new Properties();
         try {
-            // Reset java property instance
-            mProperties.clear();
-            mProperties.load(getInput());
+            // Load properties from the .properties file
+            properties.load(input);
         } catch (IOException e) {
             throw new ConfigurationParsingException("Unable to load properties from file.", e);
         }
         // Iterate over all properties as key -> value pairs
-        for (String key : mProperties.stringPropertyNames()) {
-            String value = mProperties.getProperty(key);
-            parseProperty(key, value);
+        for (String key : properties.stringPropertyNames()) {
+            String value = properties.getProperty(key);
+            // check for special property key: 'include'
+            if (("include").equals(key.toLowerCase())) {
+                includeFiles(value);
+            } else {
+                parseProperty(key, value);
+            }
         }
     }
 
@@ -60,6 +69,39 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
         }
         if (property instanceof PrinterProperty) {
             addProperty((PrinterProperty) property);
+        }
+    }
+
+    private void includeFiles(final String fileList) throws ConfigurationParsingException, ConfigurationValidationException {
+        for (String includeName : fileList.split(",")) {
+            if (mInclusionStack.empty()) {
+                mInclusionStack.push(getConfigFile());
+            }
+            File includeFile, parentFile = mInclusionStack.peek().getParentFile();
+            try {
+                String findIncludePath = parentFile.getAbsolutePath() + File.separator + includeName.trim();
+                File abstractPath = new File(findIncludePath);
+                if (!abstractPath.exists()) {
+                    abstractPath = new File(findIncludePath + ".properties");
+                }
+                includeFile = abstractPath.getCanonicalFile();
+                if (!includeFile.isFile()) {
+                    throw new ConfigurationParsingException("Given include path is not a file: " + includeFile);
+                }
+            } catch (IOException e) {
+                throw new ConfigurationParsingException("Can not find include file.", e);
+            }
+            if (mInclusionStack.contains(includeFile)) {
+                continue;
+            }
+            FileInputStream includeInput = openInputStream(includeFile.getAbsolutePath());
+            try {
+                mInclusionStack.push(includeFile);
+                parse(includeInput);
+                mInclusionStack.pop();
+            } finally {
+                closeInputStream(includeInput);
+            }
         }
     }
 }

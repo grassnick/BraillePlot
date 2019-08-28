@@ -17,3 +17,6 @@ out
 # Miscellaneous
 *.DS_Store
 *.db
+
+# Exported SVG files
+*.svg

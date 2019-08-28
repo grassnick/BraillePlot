@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * @author Leonard Kupper, Andrey Ruzhanskiy
  * @version 2019.07.30
  */
-class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
+public final class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
 
     private final String mPrinterPrefix = "printer";
     private final String mFormatPrefix = "format";
@@ -28,7 +28,7 @@ class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
     private final ArrayList<String> mRequiredPrinterProperties = new ArrayList<>();
     private final ArrayList<String> mRequiredFormatProperties = new ArrayList<>();
 
-    JavaPropertiesConfigurationValidator() {
+    public JavaPropertiesConfigurationValidator() {
 
         // Definition of type checker predicates
         Predicate<String> requireEmpty = String::isEmpty;

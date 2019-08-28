@@ -19,11 +19,10 @@ import java.util.Set;
 
 public abstract class ConfigurationParser {
 
-    private FileInputStream mInput;
     private ConfigurationValidator mValidator;
     private Printer mPrinter;
     private Map<String, Format> mFormats = new HashMap<>();
-    private String mConfigFilePath;
+    private File mCurrentConfigFile;
     private List<PrinterProperty> mPrinterProperties = new ArrayList<>();
     private Map<String, List<FormatProperty>> mFormatProperties = new HashMap<>();
     private Printer mDefaultPrinter;
@@ -35,14 +34,15 @@ public abstract class ConfigurationParser {
 
     /**
      * Internal algorithm used for parsing of the configuration file.
-     * Implement this method by parsing information from the configuration file (see {@link #getInput()}), optionally validating it (see {@link ConfigurationValidator}),
+     * Implement this method by parsing information from the given input stream, optionally validating it (see {@link ConfigurationValidator}),
      * constructing {@link PrinterProperty} and {@link FormatProperty} objects from this information and adding them with the methods
      * {@link #addProperty(PrinterProperty)} and {@link #addProperty(FormatProperty)}.
      * This method is called by ({@link #parseConfigFile(String, boolean)}).
+     * @param input The input stream to read the configuration from.
      * @throws ConfigurationParsingException On any error while accessing the configuration file or syntax.
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
-    protected abstract void parse() throws ConfigurationParsingException, ConfigurationValidationException;
+    protected abstract void parse(FileInputStream input) throws ConfigurationParsingException, ConfigurationValidationException;
 
 
     /**
@@ -50,7 +50,7 @@ public abstract class ConfigurationParser {
      * @return A {@link File} object representing the configuration file.
      */
     public final File getConfigFile() {
-        return new File(mConfigFilePath);
+        return mCurrentConfigFile;
     }
 
     /**
@@ -132,14 +132,6 @@ public abstract class ConfigurationParser {
     }
 
     /**
-     * Get the input data from the current configuration file.
-     * @return A {@link FileInputStream} from the current configuration file.
-     */
-    protected FileInputStream getInput() {
-        return mInput;
-    }
-
-    /**
      * Parse the specified configuration file.
      * This method should be called inside the concrete parsers constructor after the optional default configurations
      * ({@link #setDefaults(Printer, Format)}) and the validator ({@link #setValidator(ConfigurationValidator)}) have been set.
@@ -154,8 +146,10 @@ public abstract class ConfigurationParser {
         mPrinterProperties.clear();
         mFormatProperties.clear();
         // load and parse file
-        setConfigFile(filePath);
-        parse();
+        mCurrentConfigFile = new File(filePath);
+        FileInputStream input = openInputStream(filePath);
+        parse(input);
+        closeInputStream(input);
         // build printer object from added properties
         mPrinter = new Printer(mPrinterProperties);
         if (mDefaultPrinter != null) {
@@ -177,15 +171,30 @@ public abstract class ConfigurationParser {
         }
     }
 
-
-
-    private void setConfigFile(final String filePath) throws ConfigurationParsingException {
-        mConfigFilePath = filePath;
+    /**
+     * Opens the input stream for the given file path.
+     * @param filePath The file to read from.
+     * @return A {@link FileInputStream} for the given file path.
+     * @throws ConfigurationParsingException On any error while opening the stream. (e.g. missing file)
+     */
+    final FileInputStream openInputStream(final String filePath) throws ConfigurationParsingException {
         try {
-            mInput = new FileInputStream(mConfigFilePath);
+            return new FileInputStream(filePath);
         } catch (IOException e) {
             throw new ConfigurationParsingException("Unable to read configuration file", e);
         }
     }
 
+    /**
+     * Closes the given input stream.
+     * @param input The {@link FileInputStream} to be closed.
+     * @throws ConfigurationParsingException On any error while closing the stream.
+     */
+    final void closeInputStream(final FileInputStream input) throws ConfigurationParsingException {
+        try {
+            input.close();
+        } catch (IOException e) {
+            throw new ConfigurationParsingException("Unable to close input stream.", e);
+        }
+    }
 }
