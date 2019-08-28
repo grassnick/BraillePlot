@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
  * It wraps a {@link de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData} instance and describes the plot size and its equidistant layout.
  * @author Leonard Kupper and Richard Schmidt
  */
+
 public class PlotCanvas extends AbstractCanvas {
 
     private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
@@ -55,7 +56,11 @@ public class PlotCanvas extends AbstractCanvas {
         return (FloatingPointData<Boolean>) mPageContainer.get(mPageContainer.size() - 1);
     }
 
-    public void readConfigForResolution() {
+    /**
+     * Reads config file to get parameters to calculate class variables.
+     */
+    @SuppressWarnings("MagicNumber")
+    public void readConfig() {
         mLogger.trace("Reading raster specific configuration");
 
         mResolution = mFormat.getProperty("floatingDot.resolution").toDouble();
@@ -66,11 +71,25 @@ public class PlotCanvas extends AbstractCanvas {
 
     }
 
-    public final double getResolution() {return mResolution;}
-    public final int getCellWidth() {return mCellWidth;}
-    public final int getCellHeight() {return mCellHeight;}
-    public final int getCellDistHor() {return mCellDistHor;}
-    public final int getCellDistVer() {return mCellDistVer;}
+    public final double getResolution() {
+        return mResolution;
+    }
+
+    public final int getCellWidth() {
+        return mCellWidth;
+    }
+
+    public final int getCellHeight() {
+        return mCellHeight;
+
+    }
+    public final int getCellDistHor() {
+        return mCellDistHor;
+    }
+
+    public final int getCellDistVer() {
+        return mCellDistVer;
+    }
 
 
 }

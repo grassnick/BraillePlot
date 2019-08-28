@@ -12,6 +12,7 @@ import java.util.Objects;
  * ScatterPlotter. Provides a plotting algorithm for scatter plot data. Extends Plotter.
  * @author Richard Schmidt
  */
+@SuppressWarnings("MagicNumber")
 final class ScatterPlotter implements Plotter<ScatterPlot> {
 
     ScatterPlot mDiagram;
@@ -46,7 +47,7 @@ final class ScatterPlotter implements Plotter<ScatterPlot> {
         mDiagram = Objects.requireNonNull(diagram);
         mCanvas = Objects.requireNonNull(canvas);
         mData = mCanvas.getCurrentPage();
-        mCanvas.readConfigForResolution();
+        mCanvas.readConfig();
         mResolution = mCanvas.getResolution();
         mPageWidth = mCanvas.getPrintableWidth();
         mPageHeight = mCanvas.getPrintableHeight();
@@ -56,55 +57,55 @@ final class ScatterPlotter implements Plotter<ScatterPlot> {
         double yRange = mDiagram.getMaxY() - mDiagram.getMinY();
 
         // margins for axes
-        double left_margin = 3 * mCanvas.getCellWidth() + 3 * mCanvas.getCellDistHor();
-        double bottom_margin = mPageHeight - (2 * mCanvas.getCellHeight() + 2 * mCanvas.getCellDistVer());
+        double leftMargin = 3 * mCanvas.getCellWidth() + 3 * mCanvas.getCellDistHor();
+        double bottomMargin = mPageHeight - (2 * mCanvas.getCellHeight() + 2 * mCanvas.getCellDistVer());
 
         // x-axis:
-        double last_value = left_margin;
-        for (double i = left_margin; i <= mPageWidth; i += mStepSize) {
-            mData.addPoint(new Point2DValued<Double, Boolean>(i, bottom_margin, true));
-            last_value = i;
+        double lastValue = leftMargin;
+        for (double i = leftMargin; i <= mPageWidth; i += mStepSize) {
+            mData.addPoint(new Point2DValued<Double, Boolean>(i, bottomMargin, true));
+            lastValue = i;
         }
 
         // arrows on x-axis
-        mData.addPoint((new Point2DValued<Double, Boolean>(last_value - 0.5, bottom_margin + 0.3, true)));
-        mData.addPoint((new Point2DValued<Double, Boolean>(last_value - 1, bottom_margin + 0.6, true)));
-        mData.addPoint((new Point2DValued<Double, Boolean>(last_value - 0.5, bottom_margin - 0.3, true)));
-        mData.addPoint((new Point2DValued<Double, Boolean>(last_value - 1, bottom_margin - 0.6, true)));
+        mData.addPoint((new Point2DValued<Double, Boolean>(lastValue - 0.5, bottomMargin + 0.3, true)));
+        mData.addPoint((new Point2DValued<Double, Boolean>(lastValue - 1, bottomMargin + 0.6, true)));
+        mData.addPoint((new Point2DValued<Double, Boolean>(lastValue - 0.5, bottomMargin - 0.3, true)));
+        mData.addPoint((new Point2DValued<Double, Boolean>(lastValue - 1, bottomMargin - 0.6, true)));
 
         // tick marks on x-axis
-        double xTickStep = (last_value - left_margin) / mNumberXTics;
+        double xTickStep = (lastValue - leftMargin) / mNumberXTics;
         for (int i = 1; i < mNumberXTics + 1; i++) {
-            mData.addPoint((new Point2DValued<Double, Boolean>(left_margin + i * xTickStep, bottom_margin + 0.5, true)));
-            mData.addPoint((new Point2DValued<Double, Boolean>(left_margin + i * xTickStep, bottom_margin + 1, true)));
-            mData.addPoint((new Point2DValued<Double, Boolean>(left_margin + i * xTickStep, bottom_margin + 1.5, true)));
-            mData.addPoint((new Point2DValued<Double, Boolean>(left_margin + i * xTickStep, bottom_margin - 0.5, true)));
-            mData.addPoint((new Point2DValued<Double, Boolean>(left_margin + i * xTickStep, bottom_margin - 1, true)));
-            mData.addPoint((new Point2DValued<Double, Boolean>(left_margin + i * xTickStep, bottom_margin - 1.5, true)));
+            mData.addPoint((new Point2DValued<Double, Boolean>(leftMargin + i * xTickStep, bottomMargin + 0.5, true)));
+            mData.addPoint((new Point2DValued<Double, Boolean>(leftMargin + i * xTickStep, bottomMargin + 1, true)));
+            mData.addPoint((new Point2DValued<Double, Boolean>(leftMargin + i * xTickStep, bottomMargin + 1.5, true)));
+            mData.addPoint((new Point2DValued<Double, Boolean>(leftMargin + i * xTickStep, bottomMargin - 0.5, true)));
+            mData.addPoint((new Point2DValued<Double, Boolean>(leftMargin + i * xTickStep, bottomMargin - 1, true)));
+            mData.addPoint((new Point2DValued<Double, Boolean>(leftMargin + i * xTickStep, bottomMargin - 1.5, true)));
         }
 
         // y-axis:
-        last_value = bottom_margin;
-        for (double i = bottom_margin; i >= 0; i -= mStepSize) {
-            mData.addPoint(new Point2DValued<Double, Boolean>(left_margin, i, true));
-            last_value = i;
+        lastValue = bottomMargin;
+        for (double i = bottomMargin; i >= 0; i -= mStepSize) {
+            mData.addPoint(new Point2DValued<Double, Boolean>(leftMargin, i, true));
+            lastValue = i;
         }
 
         // arrows on y-axis
-        mData.addPoint((new Point2DValued<Double, Boolean>(left_margin - 0.5, last_value + 0.3, true)));
-        mData.addPoint((new Point2DValued<Double, Boolean>(left_margin - 1, last_value + 0.6, true)));
-        mData.addPoint((new Point2DValued<Double, Boolean>(left_margin + 0.5, last_value + 0.3, true)));
-        mData.addPoint((new Point2DValued<Double, Boolean>(left_margin + 1, last_value + 0.6, true)));
+        mData.addPoint((new Point2DValued<Double, Boolean>(leftMargin - 0.5, lastValue + 0.3, true)));
+        mData.addPoint((new Point2DValued<Double, Boolean>(leftMargin - 1, lastValue + 0.6, true)));
+        mData.addPoint((new Point2DValued<Double, Boolean>(leftMargin + 0.5, lastValue + 0.3, true)));
+        mData.addPoint((new Point2DValued<Double, Boolean>(leftMargin + 1, lastValue + 0.6, true)));
 
         // tick marks on y-axis
-        double yTickStep = (bottom_margin - last_value) / mNumberYTics;
+        double yTickStep = (bottomMargin - lastValue) / mNumberYTics;
         for (int i = 1; i < mNumberYTics + 1; i++) {
-            mData.addPoint((new Point2DValued<Double, Boolean>(left_margin + 0.5, bottom_margin + i * yTickStep, true)));
-            mData.addPoint((new Point2DValued<Double, Boolean>(left_margin + 1, bottom_margin + i * yTickStep, true)));
-            mData.addPoint((new Point2DValued<Double, Boolean>(left_margin + 1.5, bottom_margin + i * yTickStep, true)));
-            mData.addPoint((new Point2DValued<Double, Boolean>(left_margin - 0.5, bottom_margin + i * yTickStep, true)));
-            mData.addPoint((new Point2DValued<Double, Boolean>(left_margin - 1, bottom_margin + i * yTickStep, true)));
-            mData.addPoint((new Point2DValued<Double, Boolean>(left_margin - 1.5, bottom_margin + i * yTickStep, true)));
+            mData.addPoint((new Point2DValued<Double, Boolean>(leftMargin + 0.5, bottomMargin + i * yTickStep, true)));
+            mData.addPoint((new Point2DValued<Double, Boolean>(leftMargin + 1, bottomMargin + i * yTickStep, true)));
+            mData.addPoint((new Point2DValued<Double, Boolean>(leftMargin + 1.5, bottomMargin + i * yTickStep, true)));
+            mData.addPoint((new Point2DValued<Double, Boolean>(leftMargin - 0.5, bottomMargin + i * yTickStep, true)));
+            mData.addPoint((new Point2DValued<Double, Boolean>(leftMargin - 1, bottomMargin + i * yTickStep, true)));
+            mData.addPoint((new Point2DValued<Double, Boolean>(leftMargin - 1.5, bottomMargin + i * yTickStep, true)));
         }
 
     }
