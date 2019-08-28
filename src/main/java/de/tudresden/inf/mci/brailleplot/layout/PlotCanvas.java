@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Representation of a target onto which an image can be plotted.
  * It wraps a {@link de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData} instance and describes the raster size and its layout.
- * @author Georg Graßnick
+ * @author Georg Graßnick and Richard Schmidt
  * @version 2019.08.26
  */
 public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
@@ -20,13 +20,13 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
     //floating dot area resolution
     private double mResolution;
 
-    // diamensions for Braille characters (e.g. axes, title)
-    private int mCellWidth;
-    private int mCellHeight;
+    // dimensions for Braille characters (e.g. axes, title)
+    private double mCellWidth;
+    private double mCellHeight;
 
     // cell distances horizontal and vertical
-    private int mCellDistHor;
-    private int mCellDistVer;
+    private double mCellDistHor;
+    private double mCellDistVer;
 
     public PlotCanvas(final Printer printer, final Format format) throws InsufficientRenderingAreaException {
         super(printer, format);
@@ -52,13 +52,13 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
      */
     @SuppressWarnings("MagicNumber")
     public void readConfig() {
-        mLogger.trace("Reading raster specific configuration");
+        mLogger.trace("Reading plot specific configuration");
 
-        mResolution = mFormat.getProperty("floatingDot.resolution").toDouble();
-        mCellWidth = mFormat.getProperty("raster.dotDistance.horizontal").toInt() + 2 * mFormat.getProperty("raster.dotDiameter").toInt();
-        mCellHeight = 2 * mFormat.getProperty("raster.dotDistance.vertical").toInt() + 3 * mFormat.getProperty("raster.dotDiameter").toInt();
-        mCellDistHor = mFormat.getProperty("raster.cellDistance.horizontal").toInt();
-        mCellDistVer = mFormat.getProperty("raster.cellDistance.vertical").toInt();
+        mResolution = mPrinter.getProperty("floatingDot.resolution").toDouble();
+        mCellWidth = mPrinter.getProperty("raster.dotDistance.horizontal").toDouble() + 2 * mPrinter.getProperty("raster.dotDiameter").toDouble();
+        mCellHeight = 2 * mPrinter.getProperty("raster.dotDistance.vertical").toDouble() + 3 * mPrinter.getProperty("raster.dotDiameter").toDouble();
+        mCellDistHor = mPrinter.getProperty("raster.cellDistance.horizontal").toDouble();
+        mCellDistVer = mPrinter.getProperty("raster.cellDistance.vertical").toDouble();
 
     }
 
@@ -66,19 +66,19 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         return mResolution;
     }
 
-    public final int getCellWidth() {
+    public final double getCellWidth() {
         return mCellWidth;
     }
 
-    public final int getCellHeight() {
+    public final double getCellHeight() {
         return mCellHeight;
-
     }
-    public final int getCellDistHor() {
+
+    public final double getCellDistHor() {
         return mCellDistHor;
     }
 
-    public final int getCellDistVer() {
+    public final double getCellDistVer() {
         return mCellDistVer;
     }
 

@@ -41,12 +41,12 @@ public class JavaPropertiesConfigurationParserTest {
         // default values - not overwritten
         Assertions.assertEquals(200, mPrinterConfig.getProperty("raster.constraint.width").toDouble());
         Assertions.assertEquals("6-dot", mPrinterConfig.getProperty("raster.type").toString());
-        Assertions.assertEquals(10, mFormatConfig.getProperty("margin.bottom").toInt());
+        Assertions.assertEquals(10, mFormatConfig.getProperty("margin.bottom").toDouble());
 
         // overwritten values
 
         Assertions.assertEquals(true, mPrinterConfig.getProperty("floatingDot.support").toBool());
-        Assertions.assertEquals(0, mFormatConfig.getProperty("margin.left").toInt());
+        Assertions.assertEquals(0, mFormatConfig.getProperty("margin.left").toDouble());
 
         // values without default
         Assertions.assertEquals("Dummy Printer", mPrinterConfig.getProperty("name").toString());
@@ -125,8 +125,8 @@ public class JavaPropertiesConfigurationParserTest {
     }
     @Test
     public void testIncompatibleTypeConversion() {
-        Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("floatingDot.support").toInt());
-        Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("raster.cellDistance.horizontal").toInt());
+        Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("floatingDot.support").toDouble());
+        // Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("raster.cellDistance.horizontal").toDouble());
         Assertions.assertThrows(NumberFormatException.class, () -> mPrinterConfig.getProperty("name").toDouble());
     }
 }
