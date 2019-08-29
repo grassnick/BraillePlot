@@ -13,7 +13,7 @@ public final class PrinterProperty extends ValidProperty {
      * @param name The name of the property.
      * @param value The value of the property.
      */
-    public PrinterProperty(final String name, final String value) {
+    PrinterProperty(final String name, final String value) {
         super(name, value);
     }
 

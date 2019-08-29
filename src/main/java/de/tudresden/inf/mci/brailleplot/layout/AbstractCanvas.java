@@ -14,7 +14,7 @@ import java.util.ListIterator;
  * Representation of a target onto which can be drawn. It wraps a {@link PrintableData} instance and specifies the size of the drawing area (in mm).
  * @param <T> The type of the managed {@link PrintableData}
  * @author Leonard Kupper, Georg Graßnick
- * @version 2019.08.16
+ * @version 2019.08.26
  */
 public abstract class AbstractCanvas<T extends PrintableData> {
 
@@ -24,6 +24,10 @@ public abstract class AbstractCanvas<T extends PrintableData> {
     Format mFormat;
 
     Rectangle mPrintableArea;
+
+    private double mDotDiameter;
+    private double mConstraintLeft;
+    private double mConstraintTop;
 
     List<T> mPageContainer;
 
@@ -88,6 +92,12 @@ public abstract class AbstractCanvas<T extends PrintableData> {
         mPrintableArea = calculatePrintingArea(marginBox, constraintBox);
         mLogger.info("The calculated available printing area equals: {}", mPrintableArea);
 
+        mDotDiameter = mPrinter.getProperty("raster.dotDiameter").toDouble();
+
+        // Constraints
+        mConstraintLeft =  mPrinter.getProperty("constraint.left").toDouble();
+        mConstraintTop =  mPrinter.getProperty("constraint.top").toDouble();
+
     }
 
     /**
@@ -127,6 +137,25 @@ public abstract class AbstractCanvas<T extends PrintableData> {
     }
 
     /**
+     * Get the diameter of a dot in mm.
+     * @return The diameter of a dot in mm.
+     */
+    public final double getDotDiameter() {
+        return mDotDiameter;
+    }
+
+    public final double getConstraintLeft() {
+        return mConstraintLeft;
+    }
+
+    public final double getConstraintTop() {
+        return mConstraintTop;
+    }
+
+    public abstract double getFullConstraintLeft();
+    public abstract double getFullConstraintTop();
+
+    /**
      * Get the number of pages in the canvas.
      * @return The number of pages.
      */
@@ -141,5 +170,14 @@ public abstract class AbstractCanvas<T extends PrintableData> {
     public ListIterator<T> getPageIterator() {
         return mPageContainer.listIterator();
     }
+
+    public final T getCurrentPage() {
+        if (mPageContainer.size() < 1) {
+            return getNewPage();
+        }
+        return mPageContainer.get(mPageContainer.size() - 1);
+    }
+
+    public abstract T getNewPage();
 
 }
