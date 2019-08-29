@@ -269,6 +269,16 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         Rasterizer.rectangle(lowerX, lowerY, upperX, upperY, mData, true);
 
         // then the rectangle is filled with the uniform texture
+        /*
+        Texture<Boolean> uniformTexture = new Texture<>(TexturedArea.BOTTOM_T_PATTERN);
+        TextureRasterizer textureRasterizer = new TextureRasterizer();
+        TexturedArea barFace = new TexturedArea(
+                uniformTexture,
+                new Rectangle(lowerX + 1, upperY + 1, length - 2, thickness - 2)
+        );
+        textureRasterizer.rasterize(barFace, mCanvas);
+         */
+
         int textureStep = Integer.signum(upperX - lowerX) * mTextureUnitSize;
         int i = 0;
         for (int dotX = lowerX; dotX != upperX; dotX += textureStep) {
