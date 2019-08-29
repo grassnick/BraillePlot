@@ -1,9 +1,9 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.SixDotBrailleRasterCanvas;
-import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,11 +38,11 @@ public final class MasterRenderer {
         mLogger.trace("Instantiating default rasterizers");
         // Default Algorithms:
 
-        Rasterizer<BarChart> uniformTexture = new UniformTextureBarChartRasterizer();
+        Rasterizer<CategoricalBarChart> barChartRasterizer = new BarChartRasterizer();
         Rasterizer<Image> linearImageMapping = new ImageRasterizer();
 
         mLogger.trace("Registering default rasterizers");
-        renderingBase.registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, uniformTexture));
+        renderingBase.registerRasterizer(new FunctionalRasterizer<CategoricalBarChart>(CategoricalBarChart.class, barChartRasterizer));
         renderingBase.registerRasterizer(new FunctionalRasterizer<Image>(Image.class, linearImageMapping));
         //renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, ScatterPlotRasterizing::fooRasterizing));
         //...
