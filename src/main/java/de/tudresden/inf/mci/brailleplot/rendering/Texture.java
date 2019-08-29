@@ -44,13 +44,14 @@ public class Texture<T> {
      *                       | a b |
      *                       | c d | is a linear transformation matrix.
      */
-    public void setAffineTransformation(final double[] transformation) {
+    public Texture<T> setAffineTransformation(final double[] transformation) {
         if ((transformation.length != TRANSLATION_SIZE) && (transformation.length != TRANSFORMATION_SIZE)) {
             throw new IllegalArgumentException("Invalid transformation description.");
         }
         for (int i = 0; i < Math.min(TRANSFORMATION_SIZE, transformation.length); i++) {
             mAffineTransformation[i] = transformation[i];
         }
+        return this;
     }
 
     /**
@@ -62,7 +63,7 @@ public class Texture<T> {
      *                       | c d | is a linear transformation matrix.
      */
     @SuppressWarnings("checkstyle:MagicNumber")
-    public void applyAffineTransformation(final double[] transformation) {
+    public Texture<T> applyAffineTransformation(final double[] transformation) {
         if (transformation.length != TRANSFORMATION_SIZE) {
             throw new IllegalArgumentException("Invalid transformation description.");
         }
@@ -74,6 +75,7 @@ public class Texture<T> {
         c = mAffineTransformation[2] * transformation[4] + mAffineTransformation[4] * transformation[5];
         d = mAffineTransformation[3] * transformation[4] + mAffineTransformation[5] * transformation[5];
         setAffineTransformation(new double[]{x, y, a, b, c, d});
+        return this;
     }
 
     /**
