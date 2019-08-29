@@ -2,6 +2,7 @@ package de.tudresden.inf.mci.brailleplot.layout;
 
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.printabledata.BrailleCell6;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import org.slf4j.Logger;
@@ -204,6 +205,10 @@ public class RasterCanvas extends AbstractCanvas<MatrixData<Boolean>> {
     }
     public final int getCellHeight() {
         return mCellHeight;
+    }
+
+    public final boolean isSixDotBrailleRaster() {
+        return ((mCellWidth == BrailleCell6.COLUMN_COUNT) && (mCellHeight == BrailleCell6.ROW_COUNT));
     }
 
     public final double getHorizontalDotDistance() {
