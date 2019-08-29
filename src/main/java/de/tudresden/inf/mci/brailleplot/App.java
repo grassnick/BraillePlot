@@ -21,7 +21,6 @@ import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
 import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
-import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolMatrixDataSvgExporter;
 import de.tudresden.inf.mci.brailleplot.svgexporter.SvgExporter;
