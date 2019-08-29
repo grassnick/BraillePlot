@@ -19,17 +19,47 @@ public class TexturedArea implements Renderable {
     private Texture<Boolean> mTexture;
 
     // Predefined texture patterns
+    public static final Boolean[][] UNIFORM_PATTERN = {
+            {false, false},
+            {false, true},
+            {false, false},
+            {true, true}
+    };
+    public static final Boolean[][] BOTTOM_T_PATTERN = {
+            {false, false, false},
+            {false, true, false},
+            {false, true, false},
+            {true, true, true}
+    };
     public static final Boolean[][] DOTTED_PATTERN = {
-        {false, false},
-        {false, true},
-        {false, false},
-        {true, false}
+            {false, false},
+            {false, true},
+            {false, false},
+            {true, false}
+    };
+    public static final Boolean[][] LETTER_Y_PATTERN = {
+        {true, false, true},
+        {false, true, false},
+        {false, true, false},
+        {false, false, false}
     };
     public static final Boolean[][] DASHED_PATTERN = {
         {false, false, false},
         {false, true, true},
         {false, true, true},
         {false, true, true}
+    };
+    public static final Boolean[][] LINE_PATTERN = {
+            {false},
+            {false},
+            {false},
+            {true}
+    };
+    public static final Boolean[][] GRID_PATTERN = {
+            {true, true, true},
+            {false, true, false},
+            {false, true, false},
+            {false, true, false}
     };
 
     /**
