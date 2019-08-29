@@ -4,6 +4,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
+import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
@@ -164,7 +165,7 @@ public final class App {
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
             CategoricalPointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
             mLogger.debug("Internal data representation:\n {}", container.toString());
-            BarChart barChart = new BarChart(container);
+            CategoricalBarChart barChart = new CategoricalBarChart(container);
 
             // Render diagram
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
