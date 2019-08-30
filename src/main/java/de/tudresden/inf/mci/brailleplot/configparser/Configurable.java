@@ -66,4 +66,14 @@ abstract class Configurable {
         mFallback = fallback;
     }
 
+    public final void override(final ValidProperty overridingProperty) {
+        String propertyName = overridingProperty.getName();
+        for (int i = 0; i < mProperties.size(); i++) {
+            if (mProperties.get(i).getName().equals(propertyName)) {
+                mProperties.add(i, overridingProperty);
+                mProperties.remove(i + 1); // the old property
+            }
+        }
+    }
+
 }

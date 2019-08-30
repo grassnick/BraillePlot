@@ -12,10 +12,11 @@ import java.util.ListIterator;
 
 /**
  * Representation of a target onto which can be drawn. It wraps a {@link PrintableData} instance and specifies the size of the drawing area (in mm).
- * @author Leonard Kupper
- * @version 2019.07.22
+ * @param <T> The type of the managed {@link PrintableData}
+ * @author Leonard Kupper, Georg Graßnick
+ * @version 2019.08.26
  */
-public abstract class AbstractCanvas {
+public abstract class AbstractCanvas<T extends PrintableData> {
 
     private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
 
@@ -24,7 +25,11 @@ public abstract class AbstractCanvas {
 
     Rectangle mPrintableArea;
 
-    List<PrintableData> mPageContainer;
+    private double mDotDiameter;
+    private double mConstraintLeft;
+    private double mConstraintTop;
+
+    List<T> mPageContainer;
 
     AbstractCanvas(final Printer printer, final Format format) throws InsufficientRenderingAreaException {
 
@@ -87,6 +92,12 @@ public abstract class AbstractCanvas {
         mPrintableArea = calculatePrintingArea(marginBox, constraintBox);
         mLogger.info("The calculated available printing area equals: {}", mPrintableArea);
 
+        mDotDiameter = mPrinter.getProperty("raster.dotDiameter").toDouble();
+
+        // Constraints
+        mConstraintLeft =  mPrinter.getProperty("constraint.left").toDouble();
+        mConstraintTop =  mPrinter.getProperty("constraint.top").toDouble();
+
     }
 
     /**
@@ -117,6 +128,33 @@ public abstract class AbstractCanvas {
         return mPrintableArea.getHeight();
     }
 
+    public final double getPageWidth() {
+        return mFormat.getProperty("page.width").toDouble();
+    }
+
+    public final double getPageHeight() {
+        return mFormat.getProperty("page.height").toDouble();
+    }
+
+    /**
+     * Get the diameter of a dot in mm.
+     * @return The diameter of a dot in mm.
+     */
+    public final double getDotDiameter() {
+        return mDotDiameter;
+    }
+
+    public final double getConstraintLeft() {
+        return mConstraintLeft;
+    }
+
+    public final double getConstraintTop() {
+        return mConstraintTop;
+    }
+
+    public abstract double getFullConstraintLeft();
+    public abstract double getFullConstraintTop();
+
     /**
      * Get the number of pages in the canvas.
      * @return The number of pages.
@@ -126,13 +164,13 @@ public abstract class AbstractCanvas {
     }
 
     /**
-     * Get an Iterator for the PrintableData instances representing the canvas pages. The single instances should be
-     * casted to the regarding concrete type depending on the canvas implementation.
+     * Get an Iterator for the PrintableData instances representing the canvas pages.
      * @return A {@link ListIterator}&lt;{@link PrintableData}&gt;.
      */
-    public ListIterator<PrintableData> getPageIterator() {
+    public ListIterator<T> getPageIterator() {
         return mPageContainer.listIterator();
     }
+
 
     /**
      * Get the Printer Configuration.
@@ -141,6 +179,16 @@ public abstract class AbstractCanvas {
     public Printer getPrinter() {
         return mPrinter;
     }
+
+
+    public final T getCurrentPage() {
+        if (mPageContainer.size() < 1) {
+            return getNewPage();
+        }
+        return mPageContainer.get(mPageContainer.size() - 1);
+    }
+
+    public abstract T getNewPage();
 
 
 }

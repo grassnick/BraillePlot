@@ -42,6 +42,9 @@ dependencies {
     compile 'org.liblouis:liblouis-java:4.2.0'
     // CSV parsing
     compile "com.opencsv:opencsv:4.6"
+
+    // SVG
+    compile group: 'org.jfree', name: 'jfreesvg', version: '3.4'
 }
 
 tasks.withType(Test) {
