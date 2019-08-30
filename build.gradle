@@ -30,7 +30,7 @@ dependencies {
     // Use JUnit test framework
     compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
     testImplementation('org.junit.jupiter:junit-jupiter:5.4.2')
-    
+
     // Logging
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.26'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
@@ -49,6 +49,13 @@ dependencies {
 tasks.withType(Test) {
     useJUnitPlatform()
 }
+
+// Copy Braille tables from submodule to working dir
+task copyBrailleTables(type: Copy) {
+    from "$projectDir/third_party/liblouis/tables/"
+    into "$buildDir/src/main/resources/mapping/liblouis"
+}
+processResources.dependsOn copyBrailleTables
 
 // Define the main class for the application
 mainClassName = 'de.tudresden.inf.mci.brailleplot.App'
