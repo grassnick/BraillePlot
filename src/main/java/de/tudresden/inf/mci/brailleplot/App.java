@@ -5,6 +5,8 @@ import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfiguration
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
+import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
@@ -168,17 +170,17 @@ public final class App {
 
             // Parse csv data
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_vertical.csv");
+            InputStream csvStream = classloader.getResourceAsStream("examples/csv/2_line_plot.csv");
             Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
 
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
-            CategoricalPointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
+            PointListContainer<PointList> container = csvParser.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
             mLogger.debug("Internal data representation:\n {}", container.toString());
-            BarChart barChart = new BarChart(container);
+            ScatterPlot scatterPlot = new ScatterPlot(container);
 
             // Render diagram
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
-            RasterCanvas canvas = renderer.rasterize(barChart);
+            RasterCanvas canvas = renderer.rasterize(scatterPlot);
             SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
             mLogger.debug("Render preview:\n" + mat.toBoolString());
 

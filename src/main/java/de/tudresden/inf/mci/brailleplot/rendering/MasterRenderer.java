@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.SixDotBrailleRasterCanvas;
@@ -40,11 +41,12 @@ public final class MasterRenderer {
 
         Rasterizer<BarChart> uniformTexture = new UniformTextureBarChartRasterizer();
         Rasterizer<Image> linearImageMapping = new ImageRasterizer();
+        Rasterizer<ScatterPlot> scatter = new ScatterPlotRasterizer();
 
         mLogger.trace("Registering default rasterizers");
         renderingBase.registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, uniformTexture));
         renderingBase.registerRasterizer(new FunctionalRasterizer<Image>(Image.class, linearImageMapping));
-        //renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, ScatterPlotRasterizing::fooRasterizing));
+        renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, scatter));
         //...
 
         setRenderingContext(printer, format, renderingBase);
