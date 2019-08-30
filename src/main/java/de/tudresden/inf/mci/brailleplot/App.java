@@ -189,6 +189,8 @@ public final class App {
             // SVG exporting
             MasterRenderer renderer = new MasterRenderer(printer, formatA4);
             RasterCanvas canvas = renderer.rasterize(lineChart);
+            SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
+            mLogger.debug("Render preview:\n" + mat.toBoolString());
             SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
             svgExporter.render();
             svgExporter.dump("boolMat");
@@ -224,7 +226,7 @@ public final class App {
             MatrixData<Boolean> data = new SimpleMatrixDataImpl<>(printer, formatA4, 18, 20, true);
             String printerConfigUpperCase = printer.getProperty("mode").toString().toUpperCase();
             PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), printer);
-            printD.print(data);
+            printD.print(mat);
 
         } catch (final Exception e) {
             terminateWithException(e);
