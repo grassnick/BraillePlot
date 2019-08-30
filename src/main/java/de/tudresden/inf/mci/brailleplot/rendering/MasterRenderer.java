@@ -1,14 +1,18 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
-import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
-import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
-import de.tudresden.inf.mci.brailleplot.layout.SixDotBrailleRasterCanvas;
-import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
+import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
+import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
+import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.SixDotBrailleRasterCanvas;
+import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.FunctionalPlotter;
+import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.Plotter;
+import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.ScatterPlotter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
@@ -47,6 +51,11 @@ public final class MasterRenderer {
         //renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, ScatterPlotRasterizing::fooRasterizing));
         //...
 
+        Plotter<ScatterPlot> scatterPlotter = new ScatterPlotter();
+
+        mLogger.trace("Registering default rasterizers");
+        renderingBase.registerPlotter(new FunctionalPlotter<ScatterPlot>(ScatterPlot.class, scatterPlotter));
+
         setRenderingContext(printer, format, renderingBase);
     }
 
@@ -62,6 +71,17 @@ public final class MasterRenderer {
         mRenderingBase.setRasterCanvas(canvas);
         mRenderingBase.rasterize(data);
         mLogger.info("Rasterizing of {} on RenderingBase {} has finished, result containing {} pages",
+                data.getClass().getSimpleName(), mRenderingBase, canvas.getPageCount());
+        return canvas;
+    }
+
+    public PlotCanvas plot(final Renderable data) throws InsufficientRenderingAreaException {
+        mLogger.info("Preparing a new {} plotting on RenderingBase {}",
+                data.getClass().getSimpleName(), mRenderingBase);
+        PlotCanvas canvas = new PlotCanvas(mPrinter, mFormat);
+        mRenderingBase.setPlotCanvas(canvas);
+        mRenderingBase.plot(data);
+        mLogger.info("Plotting of {} on RenderingBase {} has finished, result containing {} pages",
                 data.getClass().getSimpleName(), mRenderingBase, canvas.getPageCount());
         return canvas;
     }

@@ -12,8 +12,10 @@ import java.util.Objects;
  */
 public final class ScatterPlotter extends AbstractPlotter implements Plotter<ScatterPlot> {
 
+    ScatterPlot mDiagram;
+
     // constants
-    private static final double STEPSIZE = 0.5;
+    private static final double STEPSIZE = 1.5;
     private static final int XTICS = 5;
     private static final int YTICS = 5;
 
@@ -21,6 +23,7 @@ public final class ScatterPlotter extends AbstractPlotter implements Plotter<Sca
      * Constructor. Create a new plotter for instances of {@link ScatterPlot}.
      */
     public ScatterPlotter() {
+        super();
         mStepSize = STEPSIZE;
         mNumberXTics = XTICS;
         mNumberYTics = YTICS;
@@ -44,11 +47,19 @@ public final class ScatterPlotter extends AbstractPlotter implements Plotter<Sca
         mPageWidth = mCanvas.getPrintableWidth();
         mPageHeight = mCanvas.getPrintableHeight();
 
-        // calculating ranges
-        double xRange = mDiagram.getMaxX() - mDiagram.getMinX();
-        double yRange = mDiagram.getMaxY() - mDiagram.getMinY();
-
+        calculateRanges(mDiagram);
         drawAxes();
+        scaleX = scaleAxes(xRange, mNumberXTics, mDiagram.getMinX());
+        scaleY = scaleAxes(yRange, mNumberYTics, mDiagram.getMinY());
+
+        System.out.print("minX = " + mDiagram.getMinX() + ", maxX = " + mDiagram.getMaxX() + "\n");
+        for (int i = 0; i < scaleX.length; i++) {
+            System.out.print(scaleX[i] + "\n");
+        }
+        System.out.print("minY = " + mDiagram.getMinY() + ", maxY = " + mDiagram.getMaxY() + "\n");
+        for (int i = 0; i < scaleY.length; i++) {
+            System.out.print(scaleY[i] + "\n");
+        }
 
     }
 }

@@ -12,6 +12,7 @@ import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
 import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimplePointListContainerImpl;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
@@ -179,6 +180,15 @@ public final class App {
             svgExporter.render();
             svgExporter.dump("boolMat");
 
+            classloader = Thread.currentThread().getContextClassLoader();
+            csvStream = classloader.getResourceAsStream("examples/csv/1_scatter_plot.csv");
+            csvReader = new BufferedReader(new InputStreamReader(csvStream));
+
+            csvParser = new CsvParser(csvReader, ',', '\"');
+            PointListContainer<PointList> container2 = csvParser.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
+            mLogger.debug("Internal data representation:\n {}", container.toString());
+            ScatterPlot scatterplot = new ScatterPlot(container2);
+
             // FloatingPointData SVG exporting example
             PlotCanvas floatCanvas = new PlotCanvas(indexV4Printer, a4Format);
             FloatingPointData<Boolean> points = floatCanvas.getNewPage();
@@ -194,7 +204,7 @@ public final class App {
 
             ScatterPlotter plotter = new ScatterPlotter();
             ScatterPlot plot = new ScatterPlot(new SimplePointListContainerImpl());
-            plotter.plot(plot, floatCanvas);
+            plotter.plot(scatterplot, floatCanvas);
 
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();

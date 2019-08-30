@@ -45,7 +45,7 @@ public class FunctionalPlotter<T extends Renderable> implements Plotter {
      * Getter for supported renderable class.
      * @return class
      */
-    Class<? extends T> getSupportedRenderableClass() {
+    public final Class<? extends T> getSupportedRenderableClass() {
         return mSupportedRenderableClass;
     }
 

@@ -13,7 +13,7 @@ import java.util.Objects;
  * @author Richard Schmidt
  */
 public abstract class Diagram implements Renderable {
-    private PointListContainer<PointList> mData;
+    protected PointListContainer<PointList> mData;
 
     public Diagram(final PointListContainer<PointList> data) {
         Objects.requireNonNull(data);

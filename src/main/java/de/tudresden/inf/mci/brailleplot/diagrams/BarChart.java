@@ -7,7 +7,6 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.rendering.Renderable;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -15,12 +14,10 @@ import java.util.stream.Collectors;
  * @author Richard Schmidt, Georg Graßnick
  * @version 2019.07.29
  */
-public class BarChart implements Renderable {
-    private PointListContainer<PointList> mData;
+public class BarChart extends Diagram implements Renderable {
 
     public BarChart(final PointListContainer<PointList> data) {
-        Objects.requireNonNull(data);
-        mData = data;
+        super(data);
     }
 
     /**
@@ -43,23 +40,6 @@ public class BarChart implements Renderable {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    /**
-     * Getter for the minimum y-value.
-     *
-     * @return double minimum y-value
-     */
-    public double getMinY() {
-        return mData.getMinY();
-    }
-
-    /**
-     * Getter for the maximum y-value.
-     *
-     * @return double maximum y-value
-     */
-    public double getMaxY() {
-        return mData.getMaxY();
-    }
 
     /**
      * Getter for a list with x-y-Pairs: x is the index (always just counts from 0 up), y is the value.
