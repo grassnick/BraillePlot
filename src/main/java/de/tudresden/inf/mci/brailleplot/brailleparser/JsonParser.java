@@ -27,7 +27,7 @@ public class JsonParser extends AbstractBrailleTableParser {
     }
 
     @Override
-    public String getCharToBraille(String key) {
+    public String getCharToBraille(final String key) {
        throw new UnsupportedOperationException();
     }
 }

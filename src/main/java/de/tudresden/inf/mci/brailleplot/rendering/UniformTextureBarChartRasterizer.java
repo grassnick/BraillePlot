@@ -45,7 +45,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
     private final int mCaptionLength = 6; // cells
 
     // associated rasterizers
-    private BrailleTextRasterizer mTextRasterizer;
+    private LiblouisBrailleTextRasterizer mTextRasterizer;
     private LinearMappingAxisRasterizer mAxisRasterizer;
     //private Rasterizer<Legend> mLegendRasterizer;
 
@@ -69,7 +69,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
             throws InsufficientRenderingAreaException {
 
         // The comments here can only give a very short overview, please see the wiki for a full explanation.
-        mTextRasterizer = new BrailleTextRasterizer(canvas.getPrinter());
+        mTextRasterizer = new LiblouisBrailleTextRasterizer(canvas.getPrinter());
         mDiagram = Objects.requireNonNull(diagram);
         mCanvas = Objects.requireNonNull(canvas);
         mData = mCanvas.getCurrentPage();

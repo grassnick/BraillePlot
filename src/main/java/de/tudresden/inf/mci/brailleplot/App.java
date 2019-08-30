@@ -5,7 +5,6 @@ import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfiguration
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
-import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 
@@ -22,9 +21,6 @@ import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
 import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
-import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
-import de.tudresden.inf.mci.brailleplot.rendering.BrailleTextRasterizer;
-import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -175,6 +171,7 @@ public final class App {
             //RasterCanvas canvas = renderer.rasterize(new BrailleText("ABCDabcd23465/%",new Rectangle(0,0,1000,1000)));
             SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
             mLogger.debug("Render preview:\n" + mat.toBoolString());
+            
 
             // Config Parsing
 

@@ -1,9 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.brailleparser;
 
-import org.apache.commons.collections.bidimap.DualTreeBidiMap;
-
 import java.io.FileInputStream;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -15,7 +12,6 @@ import java.util.Properties;
 
 public class PropertiesParser extends AbstractBrailleTableParser {
     private Properties mProperties = new Properties();
-    private DualTreeBidiMap map;
 
     /**
      * Constructor for properties parser. Takes a filePath to the braille table file with the .properties file extension.
@@ -48,7 +44,13 @@ public class PropertiesParser extends AbstractBrailleTableParser {
     }
 
     @Override
-    public String getCharToBraille(String key) {
-        return (String) mProperties.get(key);
+    public String getCharToBraille(final String key) {
+        String result = (String) mProperties.get(key);
+        if (Objects.isNull(result)) {
+            throw new RuntimeException("Could not find the letter: '" + key + "' in the table! Maybe using the wrong"
+                    + "semantic table in the config?");
+        }
+        return result;
+
     }
 }
