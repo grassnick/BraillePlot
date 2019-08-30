@@ -27,7 +27,7 @@ public class Legend implements Renderable {
     }
 
     /**
-     * Sets a new text content.
+     * Sets a new title.
      * @param title The new title for the legend.
      */
     public void setTitle(final String title) {

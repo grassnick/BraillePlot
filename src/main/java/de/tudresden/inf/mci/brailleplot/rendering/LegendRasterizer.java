@@ -137,8 +137,8 @@ public class LegendRasterizer implements Rasterizer<Legend> {
         // write text lines
         int textLength = mTextRasterizer.getBrailleStringLength(text);
         int textHeight = max(1, (int) Math.ceil(textLength / cellArea.getWidth()));
-        Rectangle titleDotArea = mCanvas.toDotRectangle(cellArea.removeFromTop(textHeight));
-        mTextRasterizer.rasterize(new BrailleText(text, titleDotArea), mCanvas);
+        Rectangle textLineDotArea = mCanvas.toDotRectangle(cellArea.removeFromTop(textHeight));
+        mTextRasterizer.rasterize(new BrailleText(text, textLineDotArea), mCanvas);
     }
 
 }
