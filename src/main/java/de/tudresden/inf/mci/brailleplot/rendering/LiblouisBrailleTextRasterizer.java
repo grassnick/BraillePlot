@@ -111,7 +111,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
      * @param canvas Canvas on which the text should later appear
      * @return Height in dots.
      */
-    public int calculateRequiredHeight(final String text, final int xPos, final int yPos, int maxWidth,
+    public int calculateRequiredHeight(final String text, final int xPos, final int yPos, final int maxWidth,
                                        final RasterCanvas canvas) {
         TranslationResult result = null;
         try {
@@ -123,10 +123,13 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
         }
         String sResult = result.getBraille();
         int widthOfText = sResult.length();
+        int tempMaxWidth;
         // If its not dividable by two, make it dividable by two;
         if (maxWidth % 2 != 0) {
-            maxWidth--;
+            tempMaxWidth = maxWidth - 1;
+        } else {
+            tempMaxWidth = maxWidth;
         }
-        return (int) ceil(widthOfText / maxWidth);
+        return (int) ceil(widthOfText / tempMaxWidth);
     }
 }

@@ -183,7 +183,6 @@ public final class App {
             //RasterCanvas canvas = renderer.rasterize(new BrailleText("ABCDabcd23465/%",new Rectangle(0,0,1000,1000)));
             SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
             mLogger.debug("Render preview:\n" + mat.toBoolString());
-            
 
             // SVG exporting
             SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
