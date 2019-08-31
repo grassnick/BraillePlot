@@ -13,9 +13,9 @@ import java.util.Objects;
  * @author Richard Schmidt
  */
 public abstract class Diagram implements Renderable {
-    protected PointListContainer<PointList> mData;
+    PointListContainer<PointList> mData;
 
-    public Diagram(final PointListContainer<PointList> data) {
+    Diagram(final PointListContainer<PointList> data) {
         Objects.requireNonNull(data);
         mData = data;
     }

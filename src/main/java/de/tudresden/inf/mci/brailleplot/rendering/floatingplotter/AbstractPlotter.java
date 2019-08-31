@@ -136,11 +136,10 @@ abstract class AbstractPlotter {
 
     int[] scaleAxes(final Double calcRange, final Integer numberTics, final Double minimum) {
 
-        System.out.print("Range: " + calcRange + " Tics: " + numberTics + " Min: " + minimum + "\n");
-
         int range = (int) Math.ceil(calcRange);
         int[] array = new int[numberTics + 1];
         boolean scaledTwice = false;
+        boolean singleDigit = false;
 
         double newMinimum = minimum;
         if (minimum > 0) {
@@ -156,13 +155,7 @@ abstract class AbstractPlotter {
             digits[i] = Integer.parseInt(dummy[i]);
         }
 
-        for (int i = 0; i < digits.length; i++) {
-            System.out.print(digits[i] + "\n");
-        }
-
         int len = digits.length;
-
-        System.out.print("len: " + len + "\n");
 
         // scaling if values are below one
         if (range < 1) {
@@ -174,7 +167,8 @@ abstract class AbstractPlotter {
         int newRange;
         if (len == 1) {
             if (digits[0] < FIVE) {
-                newRange = range;
+                newRange = FIVE;
+                singleDigit = true;
             } else {
                 newRange = TEN;
                 len = 2;
@@ -205,30 +199,25 @@ abstract class AbstractPlotter {
             newRange = 0;
             for (int i = 0; i < len; i++) {
                 newRange = (int) (newRange + digits[i] * Math.pow(TEN, len - i - 1));
-                System.out.print("digits: " + digits[i] + "\n");
-                System.out.print("pow: " + Math.pow(TEN, len - i - 1) + "\n");
-                System.out.print("Range: " + newRange + "\n");
-            }
-
-            for (int i = 0; i < len; i++) {
-                System.out.print("digits:\n" + digits[i] + "\n");
             }
 
         }
-
-
-        System.out.print("newRange: " + newRange + "\n");
-
-        System.out.print("newRange: " + newRange + "\n");
 
         // filling the array
-        double distance = newRange / numberTics;
+        double distance = (double) newRange / numberTics;
         for (int i = 0; i < numberTics; i++) {
-            array[i] = (int) (((i + 1) * distance) + newMinimum / Math.pow(TEN, len - 2));
+            if (singleDigit) {
+                array[i] = (int) (((i + 1) * distance) + newMinimum);
+            } else {
+                array[i] = (int) ((((i + 1) * distance) + newMinimum) / Math.pow(TEN, len - 2));
+            }
         }
+
         // power of 10 which is used to scale; for legend
         if (scaledTwice) {
             array[numberTics] = 1;
+        } else if (singleDigit) {
+            array[numberTics] = 0;
         } else {
             array[numberTics] = len - 2;
         }

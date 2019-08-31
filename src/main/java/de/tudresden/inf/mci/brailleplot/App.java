@@ -180,8 +180,9 @@ public final class App {
             svgExporter.render();
             svgExporter.dump("boolMat");
 
+            // Plotting
             classloader = Thread.currentThread().getContextClassLoader();
-            csvStream = classloader.getResourceAsStream("examples/csv/1_scatter_plot.csv");
+            csvStream = classloader.getResourceAsStream("examples/csv/sp.csv");
             csvReader = new BufferedReader(new InputStreamReader(csvStream));
 
             csvParser = new CsvParser(csvReader, ',', '\"');

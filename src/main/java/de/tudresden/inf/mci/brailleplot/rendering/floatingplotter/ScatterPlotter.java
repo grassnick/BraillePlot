@@ -52,14 +52,5 @@ public final class ScatterPlotter extends AbstractPlotter implements Plotter<Sca
         scaleX = scaleAxes(xRange, mNumberXTics, mDiagram.getMinX());
         scaleY = scaleAxes(yRange, mNumberYTics, mDiagram.getMinY());
 
-        System.out.print("minX = " + mDiagram.getMinX() + ", maxX = " + mDiagram.getMaxX() + "\n");
-        for (int i = 0; i < scaleX.length; i++) {
-            System.out.print(scaleX[i] + "\n");
-        }
-        System.out.print("minY = " + mDiagram.getMinY() + ", maxY = " + mDiagram.getMaxY() + "\n");
-        for (int i = 0; i < scaleY.length; i++) {
-            System.out.print(scaleY[i] + "\n");
-        }
-
     }
 }
