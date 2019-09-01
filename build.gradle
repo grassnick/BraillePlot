@@ -55,6 +55,11 @@ task copyBrailleTables(type: Copy) {
     from "$projectDir/third_party/liblouis/tables/"
     into "$rootDir/src/main/resources/mapping/liblouis"
 }
+// Delete tables
+clean {
+    delete "$rootDir/src/main/resources/mapping/liblouis"
+}
+
 processResources.dependsOn copyBrailleTables
 
 // Define the main class for the application
@@ -75,10 +80,7 @@ checkstyleTest {
     checkstyleTest.enabled = false
 }
 
-    // Delete tables
-clean {
-    delete "$rootDir/src/main/resources/mapping/liblouis"
-}
+
     // Needed for Integrationtests
 
 apply from: "$rootDir/integrationTest.gradle"
