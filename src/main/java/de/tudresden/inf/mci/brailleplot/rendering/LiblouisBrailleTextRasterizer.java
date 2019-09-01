@@ -6,11 +6,14 @@ import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaExceptio
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printerbackend.NotSupportedFileExtensionException;
+import org.apache.commons.lang3.ObjectUtils;
 import org.liblouis.DisplayException;
 import org.liblouis.DisplayTable;
 import org.liblouis.TranslationException;
 import org.liblouis.TranslationResult;
 import org.liblouis.Translator;
+
+import java.util.Objects;
 
 import static java.lang.Math.ceil;
 
@@ -37,6 +40,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
      * @param printer Needed to get the semantictable according to the printer config.
      */
     public LiblouisBrailleTextRasterizer(final Printer printer) {
+        Objects.requireNonNull(printer, "The given printer for the LiblouisBrailleTextRasterizer was null!");
         try {
             mParser = AbstractBrailleTableParser.getParser(printer, "semantictable");
         } catch (NotSupportedFileExtensionException e) {
@@ -53,7 +57,8 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
 
     @Override
     public void rasterize(final BrailleText data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
-
+        Objects.requireNonNull(data, "The data given to the brailletextrasterizer was null!");
+        Objects.requireNonNull(canvas, "The canvas given to the brailletextrasterizer was null!");
         Rectangle rect = data.getArea().intersectedWith(canvas.getDotRectangle());
         mCanvas = canvas;
         TranslationResult result = null;
@@ -80,6 +85,8 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
     }
 
     private void writeToCanvas(final String[] braille, final int offsetX, final int offsetY, final RasterCanvas canvas) {
+        Objects.requireNonNull(braille, "The string array given to writeToCanvas in liblouisBraileTextRasterizer was null!");
+        Objects.requireNonNull(canvas, "The cancas given to writeToCanvas was null");
         int temp = 0;
         for (int j = 0; j < canvas.getCellWidth(); j++) {
             for (int k = 0; k < canvas.getCellHeight(); k++) {
@@ -92,6 +99,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
     }
 
     private void writeChar(final String s) throws InsufficientRenderingAreaException {
+        Objects.requireNonNull(s, "The given String to writeChar was null!");
         String[] braille = mParser.getCharToBraille(s).split("");
         writeToCanvas(braille, x, y, mCanvas);
         jumpToNextCell();
@@ -122,6 +130,9 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
      */
     public int calculateRequiredHeight(final String text, final int xPos, final int yPos, final int maxWidth,
                                        final RasterCanvas canvas) {
+        Objects.requireNonNull(text, "The given string for calculateRequiredHeight was null!");
+        Objects.requireNonNull(canvas, "The given canvas for calculateRequiredHeight was null!");
+
         TranslationResult result = null;
         try {
             result = mTranslator.translate(text, null, null, null, DisplayTable.StandardDisplayTables.DEFAULT);
