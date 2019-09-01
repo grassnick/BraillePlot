@@ -50,12 +50,19 @@ tasks.withType(Test) {
     useJUnitPlatform()
 }
 
-// Copy Braille tables from submodule to working dir / delete them on "clean" task
+// Copy Braille tables from submodule to working dir
 task copyBrailleTables(type: Copy) {
     from "$projectDir/third_party/liblouis/tables/"
     into "$rootDir/src/main/resources/mapping/liblouis"
 }
 processResources.dependsOn copyBrailleTables
+// Abort if files are missing
+gradle.taskGraph.afterTask { copyBrailleTables ->
+    if(copyBrailleTables.state.noSource){
+        throw new GradleException("Could not find liblouis Braille tables in \"$projectDir/third_party/liblouis/tables/\". Please make sure you updated all git submodules using \"git submodule update --init --recursive\" ")
+    }
+}
+// Delete tables on "clean" task
 clean {
     delete "$rootDir/src/main/resources/mapping/liblouis"
 }
