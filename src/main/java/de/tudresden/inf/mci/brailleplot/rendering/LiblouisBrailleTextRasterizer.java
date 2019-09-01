@@ -15,7 +15,6 @@ import org.liblouis.Translator;
 import java.util.Objects;
 
 import static java.lang.Math.ceil;
-
 /**
  * Class representing a brailletextrasterizing approach using the liblouis library.
  * @author Andrey Ruzhanskiy
@@ -124,7 +123,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
      * @param yPos Y position where to start.
      * @param maxWidth the maximum width of the area where the text has to be
      * @param canvas Canvas on which the text should later appear
-     * @return Height in dots.
+     * @return Height in braillecells.
      */
     public int calculateRequiredHeight(final String text, final int xPos, final int yPos, final int maxWidth,
                                        final RasterCanvas canvas) {
@@ -148,6 +147,6 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
         } else {
             tempMaxWidth = maxWidth;
         }
-        return (int) ceil(widthOfText / tempMaxWidth);
+        return (int) ceil((double) widthOfText / (double) tempMaxWidth);
     }
 }
