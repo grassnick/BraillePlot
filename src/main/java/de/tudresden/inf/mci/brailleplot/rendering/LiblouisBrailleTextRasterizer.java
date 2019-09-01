@@ -6,7 +6,6 @@ import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaExceptio
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printerbackend.NotSupportedFileExtensionException;
-import org.apache.commons.lang3.ObjectUtils;
 import org.liblouis.DisplayException;
 import org.liblouis.DisplayTable;
 import org.liblouis.TranslationException;
@@ -47,8 +46,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             throw new RuntimeException(e);
         }
         try {
-            mTranslator = new Translator("C:\\Users\\tEST\\Desktop\\tables\\de-g0.utb");
-
+            mTranslator = new Translator("src\\main\\resources\\mapping\\liblouis\\de-g0.utb");
         } catch (Exception e) {
             throw new RuntimeException(e.getCause());
         }
