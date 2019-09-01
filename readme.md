@@ -11,6 +11,16 @@ These instructions will get you a copy of the project up and running on your loc
 You will need the following tools to build the project:
 * JavaJDK >= 11
 * gradle >= 4.4
+* git
+
+#### Build preparation
+
+Use the following commands to setup your local source tree:
+
+```bash
+git clone ${URL_OF_THIS_REPO}
+git submodule update --init --recursive # This will fetch third party dependencies
+```
 
 ### Installing
 
@@ -22,7 +32,7 @@ gradle jar
 to create an executable jar file in `build/libs` which will include all runtime dependencies.
 
 
-## Running the tests
+### Running the tests
 
 A simple call of
 ```
