@@ -75,6 +75,10 @@ checkstyleTest {
     checkstyleTest.enabled = false
 }
 
+    // Delete tables
+clean {
+    delete "$rootDir/src/main/resources/mapping/liblouis"
+}
     // Needed for Integrationtests
 
 apply from: "$rootDir/integrationTest.gradle"
