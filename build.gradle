@@ -50,16 +50,16 @@ tasks.withType(Test) {
     useJUnitPlatform()
 }
 
-// Copy Braille tables from submodule to working dir
+// Copy Braille tables from submodule to working dir / delete them on "clean" task
 task copyBrailleTables(type: Copy) {
     from "$projectDir/third_party/liblouis/tables/"
     into "$rootDir/src/main/resources/mapping/liblouis"
 }
-
 processResources.dependsOn copyBrailleTables
 clean {
     delete "$rootDir/src/main/resources/mapping/liblouis"
 }
+
 // Define the main class for the application
 mainClassName = 'de.tudresden.inf.mci.brailleplot.App'
 
