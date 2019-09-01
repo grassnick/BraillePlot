@@ -15,7 +15,9 @@ import org.liblouis.Translator;
 import static java.lang.Math.ceil;
 
 /**
+ * Class representing a brailletextrasterizing approach using the liblouis library.
  * @author Andrey Ruzhanskiy
+ * @version 30.08.2019
  */
 
 public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
@@ -30,6 +32,10 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
     private Translator mTranslator;
 
 
+    /**
+     * Constructor for liblouistextrasterizer.
+     * @param printer Needed to get the semantictable according to the printer config.
+     */
     public LiblouisBrailleTextRasterizer(final Printer printer) {
         try {
             mParser = AbstractBrailleTableParser.getParser(printer, "semantictable");
@@ -37,7 +43,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             throw new RuntimeException(e);
         }
         try {
-            mTranslator = new Translator("C:\\Users\\tEST\\Desktop\\tables\\de-g1.ctb");
+            mTranslator = new Translator("C:\\Users\\tEST\\Desktop\\tables\\de-g0.utb");
 
         } catch (Exception e) {
             throw new RuntimeException(e.getCause());
@@ -85,13 +91,13 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
         }
     }
 
-    private void writeChar(final String s) {
+    private void writeChar(final String s) throws InsufficientRenderingAreaException {
         String[] braille = mParser.getCharToBraille(s).split("");
         writeToCanvas(braille, x, y, mCanvas);
         jumpToNextCell();
     }
 
-    private void jumpToNextCell() {
+    private void jumpToNextCell() throws InsufficientRenderingAreaException {
         x += 2;
         // Check if linebreak is needed.
         if (x >= mMaxWidth) {
@@ -99,6 +105,9 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             y = y + mCanvas.getCellHeight();
             // Reset x
             x = origX;
+        }
+        if (x > mCanvas.getCellRectangle().getWidth() * mCanvas.getCellWidth() || y > mCanvas.getCellRectangle().getHeight() * mCanvas.getCellHeight()) {
+            throw new InsufficientRenderingAreaException();
         }
     }
 
