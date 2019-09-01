@@ -53,7 +53,7 @@ tasks.withType(Test) {
 // Copy Braille tables from submodule to working dir
 task copyBrailleTables(type: Copy) {
     from "$projectDir/third_party/liblouis/tables/"
-    into "$buildDir/src/main/resources/mapping/liblouis"
+    into "$rootDir/src/main/resources/mapping/liblouis"
 }
 processResources.dependsOn copyBrailleTables
 
