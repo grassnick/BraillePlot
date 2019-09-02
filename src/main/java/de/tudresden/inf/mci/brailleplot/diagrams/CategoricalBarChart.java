@@ -25,4 +25,12 @@ public class CategoricalBarChart extends BarChart {
     public String getCategoryName(final int index) {
         return mData.getCategory(index);
     }
+
+    /**
+     * Gets the total number of categories.
+     * @return Number of categories as int.
+     */
+    public int getNumberOfCategories() {
+        return mData.getNumberOfCategories();
+    }
 }

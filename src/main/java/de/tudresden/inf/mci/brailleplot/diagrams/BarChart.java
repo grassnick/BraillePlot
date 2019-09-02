@@ -24,15 +24,6 @@ public class BarChart implements Renderable {
     }
 
     /**
-     * Getter for the total number of categories.
-     *
-     * @return int number of categories
-     */
-    public int getCategoryCount() {
-        return mData.getSize();
-    }
-
-    /**
      * Getter for the category names in a list.
      *
      * @return list with category names as strings

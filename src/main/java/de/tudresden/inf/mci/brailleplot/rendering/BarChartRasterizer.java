@@ -175,8 +175,8 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
             yAxisDotArea = canvas.toDotRectangle(mNegativeChartCellArea).fromRight(1);
             int originXDotCoordinate = yAxisDotArea.intWrapper().getX(); // right edge between negative and positive chart area
             // Bar Groups (Categories)
-            int amountOfGroups = diagram.getCategoryCount(); // Count the total amount of groups and bars
-            int amountOfBars = countTotalBarAmount(diagram);
+            int amountOfGroups = diagram.getDataSet().getSize(); // Count the total amount of groups
+            int amountOfBars = countTotalBarAmount(diagram); // and bars
             if (amountOfGroups == amountOfBars) {       // If each group only contains a single bar
                 mGroupPaddingCells = mBarPaddingCells;  // this is done because there are no 'real' groups.
             }

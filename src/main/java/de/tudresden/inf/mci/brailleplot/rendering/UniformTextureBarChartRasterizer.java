@@ -223,7 +223,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
             barThickness -= 2;
             if (barThickness < mBarMinThickness) {
                 throw new InsufficientRenderingAreaException("Not enough space to render given amount of categories in "
-                        + "bar chart. " + mDiagram.getCategoryCount() + " categories given. " + requiredCells
+                        + "bar chart. " + mDiagram.getDataSet().getSize() + " categories given. " + requiredCells
                         + " cells required but only " + availableCells + " available. "
                         + "(Minimum bar thickness is set to " + mBarMinThickness + " dots)");
             }
@@ -241,7 +241,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         int barCells = (int) ceil(barSize / (double) cellHeight); // important cast, else int division happens
         int cellsInclusive = (int) ceil(sizeInclusive / (double) cellHeight);
         // --> Linear equation
-        return barCells + (cellsInclusive - 1) * (mDiagram.getCategoryCount() - 1);
+        return barCells + (cellsInclusive - 1) * (mDiagram.getDataSet().getSize() - 1);
     }
 
 
