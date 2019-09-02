@@ -28,7 +28,7 @@ import static java.lang.Math.round;
  * A rasterizer for instances of {@link CategoricalBarChart} which is able to display multiple bars per category.
  * The rasterizer is 'cell' based, restricted to 6-dot layouts.
  * @author Leonard Kupper
- * @version 2019.08.29
+ * @version 2019.09.02
  */
 public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
 

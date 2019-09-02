@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 /**
  * Representation of a bar chart with basic data functions. Implements Renderable.
  * @author Richard Schmidt, Georg Graßnick
- * @version 2019.07.29
+ * @version 2019.09.02
  */
 public class BarChart implements Renderable {
     private PointListContainer<PointList> mData;
