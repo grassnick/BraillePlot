@@ -144,7 +144,7 @@ public final class App {
         try {
             // Logging example
             mLogger.info("Application started");
-
+            System.setProperty("jna.library.path", "/third_party");
             // Parse command line parameters
             CommandLineParser cliParser = new CommandLineParser();
             SettingsWriter settings = cliParser.parse(args);
