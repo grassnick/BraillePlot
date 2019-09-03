@@ -114,8 +114,8 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             // Reset x
             x = origX;
         }
-        if (x > mCanvas.getCellRectangle().getWidth() * mCanvas.getCellWidth() || y > mCanvas.getCellRectangle().getHeight() * mCanvas.getCellHeight()) {
-            throw new InsufficientRenderingAreaException();
+        if (x >= mCanvas.getCellRectangle().getWidth() * mCanvas.getCellWidth() || y >= mCanvas.getCellRectangle().getHeight() * mCanvas.getCellHeight()) {
+            throw new InsufficientRenderingAreaException("The Area for the Brailletext was not big enough for the braille!");
         }
     }
 
