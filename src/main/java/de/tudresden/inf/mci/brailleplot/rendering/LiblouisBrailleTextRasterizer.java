@@ -155,9 +155,16 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
         return (int) ceil((double) widthOfText / (double) tempMaxWidth);
     }
 
-    public int getBrailleStringLength(String text) {
+    /**
+     * Method for getting the braillelength for a given string.
+     * @param text String to analyze
+     * @return length of the braille
+     */
+    public int getBrailleStringLength(final String text) {
         Objects.requireNonNull(text, "The given string for getBrailleStringLength was null!");
-        if (text == "") return 0;
+        if (text == "") {
+            return 0;
+        }
         TranslationResult result = null;
         try {
             result = mTranslator.translate(text, null, null, null, DisplayTable.StandardDisplayTables.DEFAULT);
