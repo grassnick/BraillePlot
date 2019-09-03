@@ -17,7 +17,6 @@ import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 
 
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
-import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 
@@ -32,9 +31,6 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
-import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
-import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRenderingBase;
-import de.tudresden.inf.mci.brailleplot.rendering.LineChartRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolFloatingPointDataSvgExporter;
@@ -178,7 +174,7 @@ public final class App {
             Format formatA4 = configParser.getFormat("A4");
             // Parse csv data
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream csvStream = classloader.getResourceAsStream("examples/csv/2_line_plot.csv");
+            InputStream csvStream = classloader.getResourceAsStream("examples/csv/2_1_line_plot_equal_distance.csv");
             Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
 
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');

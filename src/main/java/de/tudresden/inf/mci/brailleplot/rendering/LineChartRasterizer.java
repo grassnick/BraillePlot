@@ -6,15 +6,13 @@ import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
-import de.tudresden.inf.mci.brailleplot.point.Point2D;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.Iterator;
 
-import static de.tudresden.inf.mci.brailleplot.rendering.Axis.Type.X_AXIS;
 import static java.lang.Math.*;
 import static java.lang.StrictMath.floor;
 
@@ -88,6 +86,15 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
 
         Rectangle xAxisBound = xAxisArea.scaledBy(mCanvas.getCellWidth(), mCanvas.getCellHeight());
         int originY = xAxisBound.intWrapper().getY();
+
+        //int yUnitsAvailable = calculateUnitsWidhtInCells();
+        Rectangle yAxisArea = calculateYAxis();
+        try {
+            yAxisArea.removeFromBottom(2);
+        } catch (Rectangle.OutOfSpaceException e) {
+            e.printStackTrace();
+        }
+
         rasterizeLayout(mDiagramTitle, titleArea, xStepWidth,originY);
 
 
@@ -109,6 +116,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         } catch (InsufficientRenderingAreaException e) {
             e.printStackTrace();
         }
+        Axis yAxis = new Axis(Axis.Type.Y_AXIS, 0, 0,0,0);
 
     }
 
@@ -133,7 +141,13 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
             throw new InsufficientRenderingAreaException("Not enough space to build the X-Axis for the line chart!");
         }
     }
-
+    private Rectangle calculateYAxis() throws InsufficientRenderingAreaException {
+        try {
+            return mCellLineArea.removeFromLeft(2);
+        } catch (Rectangle.OutOfSpaceException e) {
+            throw new InsufficientRenderingAreaException("Not enough space to build the X-Axis for the line chart!");
+        }
+    }
     // Please shut up checkstyle
     @SuppressWarnings("checkstyle:MagicNumber")
     private void addSpaceLeft() throws InsufficientRenderingAreaException {
@@ -203,7 +217,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         int cellsToNextTick = (int) floor(xUnitsAvailable /  rangeOfXValues);
         int numberOfTicks = (int) ceil(xUnitsAvailable / cellsToNextTick) + 1;
         PointListContainer<PointList> data = mDiagram.getData();
-        ArrayList listOfFloats = new ArrayList<Float>();
+        ArrayList<Double> listOfFloats = new ArrayList();
         Iterator<PointList> iter = data.iterator();
         while (iter.hasNext()) {
             PointList list = iter.next();
@@ -214,7 +228,12 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
             }
             break;
         }
-        testIfEquidistant(listOfFloats);
+
+        if (testIfEquidistant(listOfFloats)) {
+            Collections.sort(listOfFloats);
+            cellsToNextTick = abs((int) ((abs(listOfFloats.get(1)) - abs(listOfFloats.get(0)))));
+            //cellsToNextTick = (int) floor(xUnitsAvailable / distance);
+        }
 
         return cellsToNextTick;
 
@@ -248,13 +267,24 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         */
     }
 
-    private void testIfEquidistant(ArrayList<Double> listOfFloats) {
-        float distance;
-        Double[] list = new Double[listOfFloats.size()];
-        listOfFloats.<Double>toArray(list);
+    private boolean testIfEquidistant(ArrayList<Double> listOfFloats) {
+        Collections.sort(listOfFloats);
+        double temp = 0;
+        double distance = 0;
+        boolean isEqidistant = true;
         for (int i = 0; i < listOfFloats.size()-1 ; i++) {
-            double temp = list[i];
+            distance = listOfFloats.get(i+1) - listOfFloats.get(i);
 
+            if(i == 0) {
+                temp = distance;
+            }
+            if(temp != distance) {
+                isEqidistant = false;
+            }
+            if (i + 1 == listOfFloats.size()) {
+                break;
+            }
         }
+        return isEqidistant;
     }
 }
