@@ -45,7 +45,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             throw new RuntimeException(e);
         }
         try {
-            mTranslator = new Translator("src\\main\\resources\\mapping\\liblouis\\de-g1.ctb");
+            mTranslator = new Translator("src\\main\\resources\\mapping\\liblouis\\de-g2.ctb");
         } catch (Exception e) {
             throw new RuntimeException(e.getCause());
         }
@@ -84,16 +84,21 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
 
     }
 
-    private void writeToCanvas(final String[] braille, final int offsetX, final int offsetY, final RasterCanvas canvas) {
+    private void writeToCanvas(final String[] braille, final int offsetX, final int offsetY, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
         Objects.requireNonNull(braille, "The string array given to writeToCanvas in liblouisBraileTextRasterizer was null!");
-        Objects.requireNonNull(canvas, "The cancas given to writeToCanvas was null");
+        Objects.requireNonNull(canvas, "The canvas given to writeToCanvas was null");
         int temp = 0;
         for (int j = 0; j < canvas.getCellWidth(); j++) {
             for (int k = 0; k < canvas.getCellHeight(); k++) {
                 // If it is 1, returns 1, if not return false
-                canvas.getCurrentPage().setValue(k + offsetY, j + offsetX, braille[temp].equals("1"));
-                boolean a = canvas.getCurrentPage().getValue(k, j);
-                temp++;
+                try {
+                    canvas.getCurrentPage().setValue(k + offsetY, j + offsetX, braille[temp].equals("1"));
+                    boolean a = canvas.getCurrentPage().getValue(k, j);
+                    temp++;
+                } catch (IndexOutOfBoundsException e) {
+                    throw new InsufficientRenderingAreaException("The area given to the brailletextrasterizer was too small!");
+                }
+
             }
         }
     }
@@ -113,9 +118,6 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             y = y + mCanvas.getCellHeight();
             // Reset x
             x = origX;
-        }
-        if (x >= mCanvas.getCellRectangle().getWidth() * mCanvas.getCellWidth() || y >= mCanvas.getCellRectangle().getHeight() * mCanvas.getCellHeight()) {
-            throw new InsufficientRenderingAreaException("The Area for the Brailletext was not big enough for the braille!");
         }
     }
 
