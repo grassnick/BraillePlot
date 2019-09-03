@@ -45,7 +45,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             throw new RuntimeException(e);
         }
         try {
-            mTranslator = new Translator("src\\main\\resources\\mapping\\liblouis\\de-g0.utb");
+            mTranslator = new Translator("src\\main\\resources\\mapping\\liblouis\\de-g1.ctb");
         } catch (Exception e) {
             throw new RuntimeException(e.getCause());
         }
@@ -56,6 +56,9 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
     public void rasterize(final BrailleText data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
         Objects.requireNonNull(data, "The data given to the brailletextrasterizer was null!");
         Objects.requireNonNull(canvas, "The canvas given to the brailletextrasterizer was null!");
+        if (data.getText() == "") {
+            throw new RuntimeException("The string in the Brailletext must not be empty!");
+        }
         Rectangle rect = data.getArea().intersectedWith(canvas.getDotRectangle());
         mCanvas = canvas;
         TranslationResult result = null;
@@ -148,5 +151,19 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             tempMaxWidth = maxWidth;
         }
         return (int) ceil((double) widthOfText / (double) tempMaxWidth);
+    }
+
+    public int getBrailleStringLength(String text) {
+        Objects.requireNonNull(text, "The given string for getBrailleStringLength was null!");
+        if (text == "") return 0;
+        TranslationResult result = null;
+        try {
+            result = mTranslator.translate(text, null, null, null, DisplayTable.StandardDisplayTables.DEFAULT);
+        } catch (TranslationException e) {
+            e.printStackTrace();
+        } catch (DisplayException e) {
+            e.printStackTrace();
+        }
+        return result.getBraille().length();
     }
 }
