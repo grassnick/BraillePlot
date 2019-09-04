@@ -136,10 +136,22 @@ abstract class AbstractPlotter {
 
     int[] scaleAxes(final Double calcRange, final Integer numberTics, final Double minimum) {
 
-        int range = (int) Math.ceil(calcRange);
-        int[] array = new int[numberTics + 1];
+        int range;
+        int decimalPlaces = 0;
         boolean scaledTwice = false;
         boolean singleDigit = false;
+
+        if (calcRange > 1) {
+            range = (int) Math.ceil(calcRange);
+        } else {
+            decimalPlaces = (int) Math.floor(Math.log10(calcRange));
+            range = (int) (calcRange * Math.pow(TEN, -decimalPlaces));
+            scaledTwice = true;
+        }
+
+
+
+        int[] array = new int[numberTics + 1];
 
         double newMinimum = minimum;
         if (minimum > 0) {
@@ -156,12 +168,6 @@ abstract class AbstractPlotter {
         }
 
         int len = digits.length;
-
-        // scaling if values are below one
-        if (range < 1) {
-            range = (int) (range * Math.pow(TEN, len - 1));
-            scaledTwice = true;
-        }
 
         // rounding
         int newRange;
@@ -215,7 +221,7 @@ abstract class AbstractPlotter {
 
         // power of 10 which is used to scale; for legend
         if (scaledTwice) {
-            array[numberTics] = 1;
+            array[numberTics] = decimalPlaces;
         } else if (singleDigit) {
             array[numberTics] = 0;
         } else {

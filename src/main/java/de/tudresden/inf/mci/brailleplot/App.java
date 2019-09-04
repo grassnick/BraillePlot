@@ -182,7 +182,7 @@ public final class App {
 
             // Plotting
             classloader = Thread.currentThread().getContextClassLoader();
-            csvStream = classloader.getResourceAsStream("examples/csv/sp.csv");
+            csvStream = classloader.getResourceAsStream("examples/csv/1_scatter_plot.csv");
             csvReader = new BufferedReader(new InputStreamReader(csvStream));
 
             csvParser = new CsvParser(csvReader, ',', '\"');
