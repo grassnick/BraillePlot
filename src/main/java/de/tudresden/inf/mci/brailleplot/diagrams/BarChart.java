@@ -1,7 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.diagrams;
 
 import de.tudresden.inf.mci.brailleplot.datacontainers.Named;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.rendering.Renderable;
@@ -40,13 +39,5 @@ public class BarChart extends Diagram implements Renderable {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-
-    /**
-     * Getter for a list with x-y-Pairs: x is the index (always just counts from 0 up), y is the value.
-     * @return PointList with the corresponding data set
-     */
-    public PointContainer<PointList> getDataSet() {
-        return mData;
-    }
 }
 

@@ -51,6 +51,13 @@ public abstract class Diagram implements Renderable {
         return mData.getMaxY();
     }
 
+    /**
+     * Getter for a list with x-y-Pairs: x is the index (always just counts from 0 up), y is the value.
+     * @return PointList with the corresponding data set
+     */
+    public PointListContainer<PointList> getDataSet() {
+        return mData;
+    }
 
     /**
      * Getter for the name of a data set by index.

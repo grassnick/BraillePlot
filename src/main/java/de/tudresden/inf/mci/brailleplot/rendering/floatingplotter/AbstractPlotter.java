@@ -57,6 +57,8 @@ abstract class AbstractPlotter {
     private static final double TICK4 = 6;
     private static final int FIVE = 5;
     private static final int TEN = 10;
+    private static final int FIFTEEN = 15;
+    private static final int TWENTY = 20;
 
 
     AbstractPlotter() {
@@ -85,6 +87,17 @@ abstract class AbstractPlotter {
         }
         double lengthX = lastValueX - leftMargin;
         mNumberXTics = (int) Math.floor(lengthX / TICKDISTANCE);
+        if (mNumberXTics < 2) {
+            mNumberXTics = 2;
+        } else if (mNumberXTics <= FIVE) {
+            mNumberXTics = FIVE;
+        } else if (mNumberXTics <= TEN) {
+            mNumberXTics = TEN;
+        } else if (mNumberXTics <= FIFTEEN) {
+            mNumberXTics = FIFTEEN;
+        } else if (mNumberXTics <= TWENTY) {
+            mNumberXTics = TWENTY;
+        }
 
         // arrows on x-axis
         addPoint(lastValueX - ARROWS1, bottomMargin + ARROWS1);
@@ -115,6 +128,17 @@ abstract class AbstractPlotter {
         }
         double lengthY = bottomMargin - lastValueY;
         mNumberYTics = (int) Math.floor(lengthY / TICKDISTANCE);
+        if (mNumberYTics < 2) {
+            mNumberYTics = 2;
+        } else if (mNumberYTics <= FIVE) {
+            mNumberYTics = FIVE;
+        } else if (mNumberYTics <= TEN) {
+            mNumberYTics = TEN;
+        } else if (mNumberYTics <= FIFTEEN) {
+            mNumberYTics = FIFTEEN;
+        } else if (mNumberYTics <= TWENTY) {
+            mNumberYTics = TWENTY;
+        }
 
         // arrows on y-axis
         addPoint(leftMargin - ARROWS1, lastValueY + ARROWS1);
@@ -157,8 +181,6 @@ abstract class AbstractPlotter {
             range = (int) (calcRange * Math.pow(TEN, -decimalPlaces));
             scaled = true;
         }
-
-
 
         int[] array = new int[numberTics + 1];
 
@@ -244,16 +266,16 @@ abstract class AbstractPlotter {
         FloatingPointData<Boolean> grid = mCanvas.getNewPage();
 
         // x-axis
-        for (int i = 1; i <= mNumberXTics; i++) {
+        for (double i = 1; i <= 2 * mNumberXTics; i++) {
             for (double j = bottomMargin; j > titleMargin; j -= mStepSize) {
-                grid.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(leftMargin + i * xTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true));
+                grid.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(leftMargin + (i / 2) * xTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true));
             }
         }
 
         // y-axis
-        for (int i = 1; i <= mNumberYTics; i++) {
+        for (double i = 1; i <= 2 * mNumberYTics; i++) {
             for (double j = leftMargin; j <= mPageWidth; j += mStepSize) {
-                grid.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(bottomMargin - i * yTickStep, MetricPrefix.MILLI(METRE)), true));
+                grid.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(bottomMargin - (i / 2) * yTickStep, MetricPrefix.MILLI(METRE)), true));
             }
         }
     }
