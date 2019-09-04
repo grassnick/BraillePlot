@@ -33,6 +33,11 @@ abstract class AbstractPlotter {
     double yRange;
     double xTickStep;
     double yTickStep;
+    double leftMargin;
+    double bottomMargin;
+    double titleMargin;
+    double lastValueX;
+    double lastValueY;
 
     // parameters to be identified by trial
     double mStepSize;
@@ -67,14 +72,14 @@ abstract class AbstractPlotter {
 
     void drawAxes() {
         // margin left of y-axis
-        double leftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
+        leftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
         // margin from bottom to x-axis
-        double bottomMargin = mPageHeight - (HMULT * mCanvas.getCellHeight() + HMULT * mCanvas.getCellDistVer());
+        bottomMargin = mPageHeight - (HMULT * mCanvas.getCellHeight() + HMULT * mCanvas.getCellDistVer());
         // margin from top for title
-        double titleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
+        titleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
 
         // x-axis:
-        double lastValueX = leftMargin;
+        lastValueX = leftMargin;
         for (double i = leftMargin; i <= mPageWidth; i += mStepSize) {
             addPoint(i, bottomMargin);
             lastValueX = i;
@@ -102,7 +107,7 @@ abstract class AbstractPlotter {
         }
 
         // y-axis:
-        double lastValueY = bottomMargin;
+        lastValueY = bottomMargin;
         for (double i = bottomMargin; i > titleMargin; i -= mStepSize) {
             addPoint(leftMargin, i);
             lastValueY = i;
@@ -138,7 +143,7 @@ abstract class AbstractPlotter {
 
         int range;
         int decimalPlaces = 0;
-        boolean scaledTwice = false;
+        boolean scaled = false;
         boolean singleDigit = false;
 
         if (calcRange > 1) {
@@ -146,7 +151,7 @@ abstract class AbstractPlotter {
         } else {
             decimalPlaces = (int) Math.floor(Math.log10(calcRange));
             range = (int) (calcRange * Math.pow(TEN, -decimalPlaces));
-            scaledTwice = true;
+            scaled = true;
         }
 
 
@@ -220,7 +225,7 @@ abstract class AbstractPlotter {
         }
 
         // power of 10 which is used to scale; for legend
-        if (scaledTwice) {
+        if (scaled) {
             array[numberTics] = decimalPlaces;
         } else if (singleDigit) {
             array[numberTics] = 0;
@@ -229,6 +234,24 @@ abstract class AbstractPlotter {
         }
 
         return array;
+    }
+
+    void drawGrid() {
+        FloatingPointData<Boolean> grid = mCanvas.getNewPage();
+
+        // x-axis
+        for (int i = 1; i <= mNumberXTics; i++) {
+            for (double j = bottomMargin; j > titleMargin; j -= mStepSize) {
+                grid.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(leftMargin + i * xTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true));
+            }
+        }
+
+        // y-axis
+        for (int i = 1; i <= mNumberYTics; i++) {
+            for (double j = leftMargin; j <= mPageWidth; j += mStepSize) {
+                grid.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(bottomMargin - i * yTickStep, MetricPrefix.MILLI(METRE)), true));
+            }
+        }
     }
 
 }

@@ -51,6 +51,7 @@ public final class ScatterPlotter extends AbstractPlotter implements Plotter<Sca
         drawAxes();
         scaleX = scaleAxes(xRange, mNumberXTics, mDiagram.getMinX());
         scaleY = scaleAxes(yRange, mNumberYTics, mDiagram.getMinY());
+        drawGrid();
 
     }
 }
