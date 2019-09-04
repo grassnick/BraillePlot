@@ -14,19 +14,11 @@ public final class ScatterPlotter extends AbstractPlotter implements Plotter<Sca
 
     ScatterPlot mDiagram;
 
-    // constants
-    private static final double STEPSIZE = 1.5;
-    private static final int XTICS = 5;
-    private static final int YTICS = 5;
-
     /**
      * Constructor. Create a new plotter for instances of {@link ScatterPlot}.
      */
     public ScatterPlotter() {
         super();
-        mStepSize = STEPSIZE;
-        mNumberXTics = XTICS;
-        mNumberYTics = YTICS;
     }
 
     /**
@@ -44,6 +36,7 @@ public final class ScatterPlotter extends AbstractPlotter implements Plotter<Sca
         mData = mCanvas.getCurrentPage();
         mCanvas.readConfig();
         mResolution = mCanvas.getResolution();
+        mStepSize = mCanvas.getDotDiameter();
         mPageWidth = mCanvas.getPrintableWidth();
         mPageHeight = mCanvas.getPrintableHeight();
 

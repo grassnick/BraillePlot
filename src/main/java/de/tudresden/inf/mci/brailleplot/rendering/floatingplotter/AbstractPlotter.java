@@ -38,8 +38,6 @@ abstract class AbstractPlotter {
     double titleMargin;
     double lastValueX;
     double lastValueY;
-
-    // parameters to be identified by trial
     double mStepSize;
     int mNumberXTics;
     int mNumberYTics;
@@ -48,6 +46,7 @@ abstract class AbstractPlotter {
     private static final double WMULT = 3;
     private static final double HMULT = 2;
     private static final double TMULT = 2;
+    private static final double TICKDISTANCE = 35;
     private static final double ARROWS1 = 1;
     private static final double ARROWS2 = 2;
     private static final double ARROWS3 = 3;
@@ -78,12 +77,14 @@ abstract class AbstractPlotter {
         // margin from top for title
         titleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
 
-        // x-axis:
+        // x-axis
         lastValueX = leftMargin;
         for (double i = leftMargin; i <= mPageWidth; i += mStepSize) {
             addPoint(i, bottomMargin);
             lastValueX = i;
         }
+        double lengthX = lastValueX - leftMargin;
+        mNumberXTics = (int) Math.floor(lengthX / TICKDISTANCE);
 
         // arrows on x-axis
         addPoint(lastValueX - ARROWS1, bottomMargin + ARROWS1);
@@ -112,6 +113,8 @@ abstract class AbstractPlotter {
             addPoint(leftMargin, i);
             lastValueY = i;
         }
+        double lengthY = bottomMargin - lastValueY;
+        mNumberYTics = (int) Math.floor(lengthY / TICKDISTANCE);
 
         // arrows on y-axis
         addPoint(leftMargin - ARROWS1, lastValueY + ARROWS1);
@@ -120,6 +123,7 @@ abstract class AbstractPlotter {
         addPoint(leftMargin + ARROWS1, lastValueY + ARROWS1);
         addPoint(leftMargin + ARROWS2, lastValueY + ARROWS2);
         addPoint(leftMargin + ARROWS3, lastValueY + ARROWS3);
+
 
         // tick marks on y-axis
         yTickStep = (bottomMargin - lastValueY - MARGIN) / mNumberYTics;
