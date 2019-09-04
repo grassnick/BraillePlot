@@ -6,6 +6,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
@@ -24,6 +25,9 @@ import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
 import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
+import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
+import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
+import de.tudresden.inf.mci.brailleplot.rendering.LiblouisBrailleTextRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolFloatingPointDataSvgExporter;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolMatrixDataSvgExporter;
@@ -206,6 +210,19 @@ public final class App {
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();
             floatSvgExporter.dump("floatingPointData");
+            LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(indexV4Printer);
+            renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BrailleText>(BrailleText.class, textRasterizer));
+            RasterCanvas refCanvas = renderer.rasterize(new BrailleText(" ", new Rectangle(0, 0, 0, 0)));
+
+            String text = "()[]üÄß@`";
+            int xpos = 0;
+            int ypos = 0;
+            int maxWidth = 20 * 2;
+            int height = textRasterizer.calculateRequiredHeight(text, xpos, ypos, maxWidth, refCanvas);
+            Rectangle textArea = new Rectangle(xpos, ypos, maxWidth, height);
+            RasterCanvas mcanvas = renderer.rasterize(new BrailleText(text, textArea));
+
+
 
             // Check if some SpoolerService/Printservice exists
             if (!PrintDirector.isPrintServiceOn()) {
