@@ -73,8 +73,6 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         } catch (Rectangle.OutOfSpaceException e) {
             e.printStackTrace();
         }
-        // Space reserving, needs testing.
-        addSpaceLeft();
         // Step three: Calculate the range of the x values (example: -5 - 1000)
         double rangeOfXValues = valueRangeOfXAxis();
         double negValueRangeSize = abs(min(mDiagram.getMinY(), 0));
@@ -86,8 +84,14 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
 
         Rectangle xAxisBound = xAxisArea.scaledBy(mCanvas.getCellWidth(), mCanvas.getCellHeight());
         int originY = xAxisBound.intWrapper().getY();
+        int originX = xAxisBound.intWrapper().getX();
 
         //int yUnitsAvailable = calculateUnitsWidhtInCells();
+
+        rasterizeTitle(mDiagramTitle, titleArea);
+
+        rasterizeXAxis(originY,originX,xStepWidth,xAxisBound);
+        /*
         Rectangle yAxisArea = calculateYAxis();
         try {
             yAxisArea.removeFromBottom(2);
@@ -95,31 +99,42 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
             e.printStackTrace();
         }
 
-        rasterizeLayout(mDiagramTitle, titleArea, xStepWidth,originY);
-
-
-
+        int yOriginY = yAxisArea.intWrapper().getY();
+        int yOriginX = yAxisArea.intWrapper().getX();
         double rangeOfYValues = valueRangeOfYAxis();
+
+         */
     }
 
-    private void rasterizeLayout(String title, Rectangle titleArea, int stepWidthX, int originY) {
+    private void rasterizeTitle(String title, Rectangle titleArea) {
         BrailleText diagramTitle = new BrailleText(title, titleArea);
         try {
             mTextRasterizer.rasterize(diagramTitle, mCanvas);
         } catch (InsufficientRenderingAreaException e) {
             e.printStackTrace();
         }
-        Axis xAxis = new Axis(Axis.Type.X_AXIS, 0, originY, stepWidthX*2, 3);
-        //xAxis.setBoundary(yAxisBound);
+    }
+
+    private void rasterizeXAxis(int originY, int originX, int stepWidthX, Rectangle xAxisBound) {
+        Axis xAxis = new Axis(Axis.Type.X_AXIS, originX, originY, stepWidthX*2, 3);
+        xAxis.setBoundary(xAxisBound);
         try {
             mAxisRasterizer.rasterize(xAxis, mCanvas);
         } catch (InsufficientRenderingAreaException e) {
             e.printStackTrace();
         }
-        Axis yAxis = new Axis(Axis.Type.Y_AXIS, 0, 0,0,0);
-
     }
 
+
+    private void rasterizeYAxis(int originY, int originX, int stepWidthY, Rectangle yAxisBound) {
+        Axis yAxis = new Axis(Axis.Type.Y_AXIS, originY, originY,stepWidthY*2, 3);
+        yAxis.setBoundary(yAxisBound);
+        try {
+            mAxisRasterizer.rasterize(yAxis, mCanvas);
+        } catch (InsufficientRenderingAreaException e) {
+            e.printStackTrace();
+        }
+    }
     // Works Cell based
     private Rectangle calculateTitle() throws InsufficientRenderingAreaException {
         if (mDiagramTitle.isEmpty()) {
@@ -146,15 +161,6 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
             return mCellLineArea.removeFromLeft(2);
         } catch (Rectangle.OutOfSpaceException e) {
             throw new InsufficientRenderingAreaException("Not enough space to build the X-Axis for the line chart!");
-        }
-    }
-    // Please shut up checkstyle
-    @SuppressWarnings("checkstyle:MagicNumber")
-    private void addSpaceLeft() throws InsufficientRenderingAreaException {
-        try {
-            mCellLineArea.removeFromLeft(6);
-        } catch (Rectangle.OutOfSpaceException e) {
-            throw new InsufficientRenderingAreaException("Not enough enough space to the left for the line chart!");
         }
     }
 
