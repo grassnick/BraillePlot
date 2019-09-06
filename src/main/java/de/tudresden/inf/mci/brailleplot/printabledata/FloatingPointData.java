@@ -31,7 +31,7 @@ public interface FloatingPointData<T> extends PrintableData {
 
     /**
      * Checks if a point is already in the data.
-     * @param point
+     * @param point The point to be checked.
      * @return true, if the point is already in the data and false, if not.
      */
     boolean checkPoint(Point2DValued<Quantity<Length>, T> point);

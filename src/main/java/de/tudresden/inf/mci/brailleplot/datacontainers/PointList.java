@@ -21,8 +21,8 @@ public interface PointList extends PointContainer<Point2DDouble>, Named {
 
     /**
      * Gives the corresponding y-value to a given x-value.
-     * @param xValue
-     * @return double y-value
+     * @param xValue Given x-value.
+     * @return double y-value.
      */
     double getCorrespondingYValue(double xValue);
 
