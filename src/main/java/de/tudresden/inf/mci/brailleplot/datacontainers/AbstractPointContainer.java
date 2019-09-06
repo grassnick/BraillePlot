@@ -121,4 +121,5 @@ public abstract class AbstractPointContainer<T extends MinMaxPos2D<Double>> impl
     public String toString() {
         return toRecursiveString(0);
     }
+
 }

@@ -2,7 +2,7 @@ package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
-import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
+import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
@@ -11,33 +11,35 @@ import java.util.Iterator;
 import java.util.Objects;
 
 /**
- * ScatterPlotter. Provides a plotting algorithm for scatter plot data. Extends Plotter.
+ * LinePlotter. Provides a plotting algorithm for line plot data. Extends Plotter.
  * @author Richard Schmidt
  */
-public final class ScatterPlotter extends AbstractPlotter implements Plotter<ScatterPlot> {
+public final class LinePlotter extends AbstractPlotter implements Plotter<LinePlot> {
 
-    private ScatterPlot mDiagram;
+    private LinePlot mDiagram;
     private static final double CIRCLESCALE = 1.3;
     private static final int THREE = 3;
+    private static final int FOUR = 4;
+    private static final int FIVE = 5;
     private static final int TEN = 10;
     private static final double CIRCLEDIA = 15;
 
     /**
-     * Constructor. Create a new plotter for instances of {@link ScatterPlot}.
+     * Constructor. Create a new plotter for instances of {@link LinePlot}.
      */
-    public ScatterPlotter() {
+    public LinePlotter() {
         super();
     }
 
     /**
-     * Plots a {@link ScatterPlot} instance onto a {@link PlotCanvas}.
-     * @param diagram An instance of {@link ScatterPlot} representing the scatter plot.
+     * Plots a {@link LinePlot} instance onto a {@link PlotCanvas}.
+     * @param diagram An instance of {@link LinePlot} representing the line plot.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
      * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas}, this is
      * to display the given diagram.
      */
     @Override
-    public void plot(final ScatterPlot diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
+    public void plot(final LinePlot diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
         mDiagram = Objects.requireNonNull(diagram);
         mCanvas = Objects.requireNonNull(canvas);
@@ -54,7 +56,7 @@ public final class ScatterPlotter extends AbstractPlotter implements Plotter<Sca
         scaleY = scaleAxis(yRange, mNumberYTics, mDiagram.getMinY());
         drawGrid();
 
-        // draw points and frames
+        // draw points, frames and lines
         PointListContainer<PointList> bigList = mDiagram.getDataSet();
         Iterator<PointList> bigListIt = bigList.iterator();
 
@@ -70,6 +72,63 @@ public final class ScatterPlotter extends AbstractPlotter implements Plotter<Sca
                         drawPoint(xValue, yValue, i);
                     }
                 }
+
+                // draw lines
+                double currentX = smallList.getMinX();
+                double currentY = smallList.getCorrespondingYValue(currentX);
+                double nextX;
+                double nextY;
+                boolean done = false;
+
+                while (!done) {
+
+                    smallList.removeFirstOccurrence(new Point2DDouble(currentX, currentY));
+
+                    // find next point
+                    Iterator<Point2DDouble> pointIt = smallList.iterator();
+                    if (pointIt.hasNext()) {
+                        Point2DDouble point = pointIt.next();
+                        nextX = point.getX();
+
+
+                        for (int j = 0; j < smallList.getSize(); j++) {
+                            if (pointIt.hasNext()) {
+                                point = pointIt.next();
+                                if (point.getX() < nextX) {
+                                    nextX = point.getX();
+                                }
+                            }
+                        }
+
+                        // drawing
+                        nextY = smallList.getCorrespondingYValue(nextX);
+                        double slope = (calculateYValue(nextY) - calculateYValue(currentY)) / (calculateXValue(nextX) - calculateXValue(currentX));
+                        int k = 1;
+                        double steps;
+                        if (Math.abs(slope) <= 1) {
+                            steps = mStepSize;
+                        } else if (Math.abs(slope) <= 2) {
+                            steps = mStepSize / 2;
+                        } else if (Math.abs(slope) <= THREE) {
+                            steps = mStepSize / THREE;
+                        } else if (Math.abs(slope) <= FOUR) {
+                            steps = mStepSize / FOUR;
+                        } else {
+                            steps = mStepSize / FIVE;
+                        }
+
+                        for (double j = calculateXValue(currentX) + steps; j < calculateXValue(nextX); j += steps) {
+                            addPoint(j, k * slope * steps  + calculateYValue(currentY));
+                            k++;
+                        }
+
+                        currentX = nextX;
+                        currentY = nextY;
+                    } else {
+                        done = true;
+                    }
+                }
+
             }
         }
 

@@ -35,9 +35,9 @@ abstract class AbstractPlotter {
     double yTickStep;
     double leftMargin;
     double bottomMargin;
-    double titleMargin;
-    double lastValueX;
-    double lastValueY;
+    private double titleMargin;
+    private double lastValueX;
+    private double lastValueY;
     double mStepSize;
     int mNumberXTics;
     int mNumberYTics;
@@ -57,20 +57,20 @@ abstract class AbstractPlotter {
     private static final double TICK4 = 6;
     private static final int FIVE = 5;
     private static final int TEN = 10;
-    private static final int FIFTEEN = 15;
-    private static final int TWENTY = 20;
 
 
-    AbstractPlotter() {
-        scaleX = new int[mNumberXTics + 1];
-        scaleY = new int[mNumberYTics + 1];
-    }
-
+    /**
+     * Calculates ranges of x and y values as a difference of max and min.
+     * @param diagram
+     */
     void calculateRanges(final Diagram diagram) {
         xRange = Math.abs(diagram.getMaxX() - diagram.getMinX());
         yRange = Math.abs(diagram.getMaxY() - diagram.getMinY());
     }
 
+    /**
+     * Draws x- and y-axis.
+     */
     void drawAxes() {
         // margin left of y-axis
         leftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
@@ -91,13 +91,11 @@ abstract class AbstractPlotter {
             mNumberXTics = 2;
         } else if (mNumberXTics <= FIVE) {
             mNumberXTics = FIVE;
-        } else if (mNumberXTics <= TEN) {
+        } else {
             mNumberXTics = TEN;
-        } else if (mNumberXTics <= FIFTEEN) {
-            mNumberXTics = FIFTEEN;
-        } else if (mNumberXTics <= TWENTY) {
-            mNumberXTics = TWENTY;
         }
+
+        scaleX = new int[mNumberXTics + 1];
 
         // arrows on x-axis
         addPoint(lastValueX - ARROWS1, bottomMargin + ARROWS1);
@@ -132,13 +130,11 @@ abstract class AbstractPlotter {
             mNumberYTics = 2;
         } else if (mNumberYTics <= FIVE) {
             mNumberYTics = FIVE;
-        } else if (mNumberYTics <= TEN) {
+        } else {
             mNumberYTics = TEN;
-        } else if (mNumberYTics <= FIFTEEN) {
-            mNumberYTics = FIFTEEN;
-        } else if (mNumberYTics <= TWENTY) {
-            mNumberYTics = TWENTY;
         }
+
+        scaleY = new int[mNumberYTics + 1];
 
         // arrows on y-axis
         addPoint(leftMargin - ARROWS1, lastValueY + ARROWS1);
@@ -163,11 +159,23 @@ abstract class AbstractPlotter {
         }
     }
 
+    /**
+     * Adds a point by its x- and y-value to the floating point data.
+     * @param x
+     * @param y
+     */
     void addPoint(final double x, final double y) {
         mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true));
     }
 
-    int[] scaleAxes(final Double calcRange, final Integer numberTics, final Double minimum) {
+    /**
+     * Scales axis numeration.
+     * @param calcRange Calculated range difference.
+     * @param numberTics Number of tics desired on the axis.
+     * @param minimum Minimum value on the axis.
+     * @return Integer array with an Integer for a tic in each field. Last field contains scale factor as power of 10.
+     */
+    int[] scaleAxis(final Double calcRange, final Integer numberTics, final Double minimum) {
 
         int range;
         int decimalPlaces = 0;
@@ -262,20 +270,29 @@ abstract class AbstractPlotter {
         return array;
     }
 
+    /**
+     * Draw a grid with twice as many lines as tics per axis.
+     */
     void drawGrid() {
         FloatingPointData<Boolean> grid = mCanvas.getNewPage();
 
         // x-axis
         for (double i = 1; i <= 2 * mNumberXTics; i++) {
             for (double j = bottomMargin; j > titleMargin; j -= mStepSize) {
-                grid.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(leftMargin + (i / 2) * xTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true));
+                Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(leftMargin + (i / 2) * xTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                if (!mData.checkPoint(point)) {
+                    grid.addPoint(point);
+                }
             }
         }
 
         // y-axis
         for (double i = 1; i <= 2 * mNumberYTics; i++) {
             for (double j = leftMargin; j <= mPageWidth; j += mStepSize) {
-                grid.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(bottomMargin - (i / 2) * yTickStep, MetricPrefix.MILLI(METRE)), true));
+                Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(bottomMargin - (i / 2) * yTickStep, MetricPrefix.MILLI(METRE)), true);
+                if (!mData.checkPoint(point)) {
+                    grid.addPoint(point);
+                }
             }
         }
     }

@@ -2,6 +2,7 @@ package de.tudresden.inf.mci.brailleplot.datacontainers;
 
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -50,5 +51,19 @@ public class SimplePointListImpl extends AbstractPointContainer<Point2DDouble> i
     @Override
     protected String toRecursiveString(final int depth) {
         return getName() + super.toRecursiveString(depth);
+    }
+
+    @Override
+    public double getCorrespondingYValue(final double xValue) {
+        Iterator<Point2DDouble> iterator = mElements.iterator();
+
+        while (iterator.hasNext()) {
+            Point2DDouble newPoint = iterator.next();
+            if (newPoint.getX().equals(xValue)) {
+                return newPoint.getY();
+            }
+        }
+
+        return 0;
     }
 }

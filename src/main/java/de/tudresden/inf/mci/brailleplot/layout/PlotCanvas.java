@@ -28,6 +28,9 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
     private double mCellDistHor;
     private double mCellDistVer;
 
+    // constants
+    private static final int THREE = 3;
+
     public PlotCanvas(final Printer printer, final Format format) throws InsufficientRenderingAreaException {
         super(printer, format);
     }
@@ -50,13 +53,12 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
     /**
      * Reads config file to get parameters to calculate class variables.
      */
-    @SuppressWarnings("MagicNumber")
     public void readConfig() {
         mLogger.trace("Reading plot specific configuration");
 
         mResolution = mPrinter.getProperty("floatingDot.resolution").toDouble();
         mCellWidth = mPrinter.getProperty("raster.dotDistance.horizontal").toDouble() + 2 * mPrinter.getProperty("raster.dotDiameter").toDouble();
-        mCellHeight = 2 * mPrinter.getProperty("raster.dotDistance.vertical").toDouble() + 3 * mPrinter.getProperty("raster.dotDiameter").toDouble();
+        mCellHeight = 2 * mPrinter.getProperty("raster.dotDistance.vertical").toDouble() + THREE * mPrinter.getProperty("raster.dotDiameter").toDouble();
         mCellDistHor = mPrinter.getProperty("raster.cellDistance.horizontal").toDouble();
         mCellDistVer = mPrinter.getProperty("raster.cellDistance.vertical").toDouble();
 

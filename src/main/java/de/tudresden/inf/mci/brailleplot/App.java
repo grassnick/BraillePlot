@@ -13,8 +13,8 @@ import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
 import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
-import de.tudresden.inf.mci.brailleplot.datacontainers.SimplePointListContainerImpl;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
+import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
 import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
@@ -23,6 +23,7 @@ import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
+import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.LinePlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.ScatterPlotter;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolFloatingPointDataSvgExporter;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolMatrixDataSvgExporter;
@@ -189,6 +190,7 @@ public final class App {
             PointListContainer<PointList> container2 = csvParser.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
             mLogger.debug("Internal data representation:\n {}", container.toString());
             ScatterPlot scatterplot = new ScatterPlot(container2);
+            LinePlot lineplot = new LinePlot(container2);
 
             // FloatingPointData SVG exporting example
             PlotCanvas floatCanvas = new PlotCanvas(indexV4Printer, a4Format);
@@ -204,8 +206,10 @@ public final class App {
             }*/
 
             ScatterPlotter plotter = new ScatterPlotter();
-            ScatterPlot plot = new ScatterPlot(new SimplePointListContainerImpl());
-            plotter.plot(scatterplot, floatCanvas);
+            // plotter.plot(scatterplot, floatCanvas);
+
+            LinePlotter plotter2 = new LinePlotter();
+            plotter2.plot(lineplot, floatCanvas);
 
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();

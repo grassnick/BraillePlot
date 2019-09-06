@@ -1,15 +1,14 @@
 package de.tudresden.inf.mci.brailleplot.printabledata;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Objects;
-
-import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
+import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Objects;
 
 /**
  * A low effort implementation of the {@link FloatingPointData} interface.
@@ -36,6 +35,27 @@ public class SimpleFloatingPointDataImpl<T> extends AbstractPrintableData implem
     @Override
     public void addPoint(final Point2DValued<Quantity<Length>, T> point) {
         Objects.requireNonNull(point);
-        mPoints.addLast(point);
+
+        if (!checkPoint(point)) {
+            mPoints.addLast(point);
+        }
+    }
+
+    @Override
+    public boolean checkPoint(final Point2DValued<Quantity<Length>, T> point) {
+        boolean present = false;
+        Quantity<Length> x = point.getX();
+        Quantity<Length> y = point.getY();
+
+        Iterator<Point2DValued<Quantity<Length>, T>> iterator = mPoints.iterator();
+
+        while (iterator.hasNext()) {
+            Point2DValued<Quantity<Length>, T> newPoint = iterator.next();
+            if (newPoint.getX().equals(x) && newPoint.getY().equals(y)) {
+                present = true;
+            }
+        }
+
+        return present;
     }
 }
