@@ -103,7 +103,7 @@ public final class LinePlotter extends AbstractPlotter implements Plotter<LinePl
                         // drawing
                         nextY = smallList.getCorrespondingYValue(nextX);
                         double slope = (calculateYValue(nextY) - calculateYValue(currentY)) / (calculateXValue(nextX) - calculateXValue(currentX));
-                        int k = 1;
+                        double n = calculateYValue(currentY) - calculateXValue(currentX) * slope;
                         double steps;
                         if (Math.abs(slope) <= 1) {
                             steps = mStepSize;
@@ -118,8 +118,7 @@ public final class LinePlotter extends AbstractPlotter implements Plotter<LinePl
                         }
 
                         for (double j = calculateXValue(currentX) + steps; j < calculateXValue(nextX); j += steps) {
-                            addPoint(j, k * slope * steps  + calculateYValue(currentY));
-                            k++;
+                            addPoint(j, j * slope + n);
                         }
 
                         currentX = nextX;
