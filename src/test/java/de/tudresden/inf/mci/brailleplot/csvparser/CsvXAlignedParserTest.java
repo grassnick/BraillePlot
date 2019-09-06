@@ -16,12 +16,12 @@ import java.util.Iterator;
 /**
  * @author Richard Schmidt
  */
-public class CsvXAlignedParserTest {
+class CsvXAlignedParserTest {
 
-    public static CsvParser parser;
+    private static CsvParser parser;
 
     @BeforeAll
-    public static void initialize() throws Exception {
+    static void initialize() throws Exception {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         InputStream csvStream = classloader.getResourceAsStream("examples.csv/0_bar_chart.csv");
         Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
@@ -30,7 +30,7 @@ public class CsvXAlignedParserTest {
     }
 
     @Test
-    public void testVerticalParsing() {
+    void testVerticalParsing() {
         PointListContainer<PointList> container = parser.parse(CsvType.X_ALIGNED, CsvOrientation.VERTICAL);
         Iterator<PointList> containerIt = container.iterator();
         PointList list_1 = containerIt.next();

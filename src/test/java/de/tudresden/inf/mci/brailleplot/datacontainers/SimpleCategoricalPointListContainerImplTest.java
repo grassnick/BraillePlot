@@ -7,17 +7,17 @@ import org.junit.jupiter.api.Test;
 /**
  * @author Richard Schmidt
  */
-public class SimpleCategoricalPointListContainerImplTest {
+class SimpleCategoricalPointListContainerImplTest {
 
-    public static SimpleCategoricalPointListContainerImpl container;
+    private static SimpleCategoricalPointListContainerImpl container;
 
     @BeforeAll
-    public static void initialize() {
+    static void initialize() {
         container = new SimpleCategoricalPointListContainerImpl();
     }
 
     @Test
-    public void testPushBackCategory() {
+    void testPushBackCategory() {
 
         Assertions.assertThrows(NullPointerException.class, () -> {container.pushBackCategory(null);});
 
@@ -32,7 +32,7 @@ public class SimpleCategoricalPointListContainerImplTest {
     }
 
     @Test
-    public void testGetCategory() {
+    void testGetCategory() {
 
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {container.getCategory(-1);});
         Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {container.getCategory(2);});

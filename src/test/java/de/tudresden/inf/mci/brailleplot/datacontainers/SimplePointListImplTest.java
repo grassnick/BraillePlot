@@ -12,18 +12,17 @@ import java.util.List;
 /**
  * @author Richard Schmidt
  */
-public class SimplePointListImplTest {
+class SimplePointListImplTest {
 
-    public static String name;
-    public static List<Point2DDouble> initial_elements;
-    public static Point2DDouble point_1;
-    public static Point2DDouble point_2;
-    public static SimplePointListImpl plist;
+    private static String name;
+    private static List<Point2DDouble> initial_elements;
 
     @BeforeAll
-    public static void initialize() {
+    static void initialize() {
         name = "test_name";
         initial_elements = new LinkedList<>();
+        Point2DDouble point_1;
+        Point2DDouble point_2;
         point_1 = new Point2DDouble(2, 3);
         point_2 = new Point2DDouble(4, 5);
         initial_elements.add(point_1);
@@ -31,12 +30,12 @@ public class SimplePointListImplTest {
     }
 
     @Test
-    public void testSimplePointListImpl() {
+    void testSimplePointListImpl() {
 
         Assertions.assertThrows(NullPointerException.class, () -> {new SimplePointListImpl(null, initial_elements);});
         Assertions.assertThrows(NullPointerException.class, () -> {new SimplePointListImpl(name, null);});
 
-        plist = new SimplePointListImpl(name, initial_elements);
+        SimplePointListImpl plist = new SimplePointListImpl(name, initial_elements);
         Assertions.assertEquals(name, plist.getName());
 
         Iterator<Point2DDouble> it = plist.getListIterator();

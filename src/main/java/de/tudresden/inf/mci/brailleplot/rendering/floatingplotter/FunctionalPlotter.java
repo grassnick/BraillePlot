@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 
+import de.tudresden.inf.mci.brailleplot.diagrams.Diagram;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.rendering.Renderable;
@@ -8,12 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * FunctionalPlotter. This class implements a concrete floatingplotter via a functional interface.
+ * FunctionalPlotter. This class implements a concrete floating plotter via a functional interface.
  * The plotting algorithm to be used is passed to the constructor as lambda function, method reference or plot implementation.
- * @param <T> The concrete diagram class which can be plotted with the floatingplotter.
+ * @param <T> The concrete diagram class which can be plotted with the floating plotter. Needs to extend {@link Diagram}.
  * @author Leonard Kupper and Richard Schmidt
  */
-public class FunctionalPlotter<T extends Renderable> implements Plotter {
+public class FunctionalPlotter<T extends Diagram> implements Plotter {
 
     private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
 

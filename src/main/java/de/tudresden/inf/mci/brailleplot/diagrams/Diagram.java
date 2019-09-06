@@ -7,8 +7,8 @@ import de.tudresden.inf.mci.brailleplot.rendering.Renderable;
 import java.util.Objects;
 
 /**
- * General representation of both scatter and line plots with basic data functions. Classes LinePlot and ScatterPlot extend this class.
- * Implements Renderable.
+ * General representation of a diagram with basic data functions. {@link BarChart}, {@link LinePlot} and {@link ScatterPlot} extend this class.
+ * Implements {@link Renderable}.
  *
  * @author Richard Schmidt
  */
@@ -21,7 +21,7 @@ public abstract class Diagram implements Renderable {
     }
     /**
      * Getter for the minimum x-value.
-     * @return double minimum x-value
+     * @return double minimum x-value.
      */
     public double getMinX() {
         return mData.getMinX();
@@ -29,7 +29,7 @@ public abstract class Diagram implements Renderable {
 
     /**
      * Getter for the maximum x-value.
-     * @return double maximum x-value
+     * @return double maximum x-value.
      */
     public double getMaxX() {
         return mData.getMaxX();
@@ -37,7 +37,7 @@ public abstract class Diagram implements Renderable {
 
     /**
      * Getter for the minimum y-value.
-     * @return double minimum y-value
+     * @return double minimum y-value.
      */
     public double getMinY() {
         return mData.getMinY();
@@ -45,7 +45,7 @@ public abstract class Diagram implements Renderable {
 
     /**
      * Getter for the maximum y-value.
-     * @return double maximum y-value
+     * @return double maximum y-value.
      */
     public double getMaxY() {
         return mData.getMaxY();
@@ -53,18 +53,10 @@ public abstract class Diagram implements Renderable {
 
     /**
      * Getter for a list with x-y-Pairs: x is the index (always just counts from 0 up), y is the value.
-     * @return PointList with the corresponding data set
+     * @return PointList with the corresponding data set.
      */
     public PointListContainer<PointList> getDataSet() {
         return mData;
     }
 
-    /**
-     * Getter for the name of a data set by index.
-     * @param index int
-     * @return name of the data set as a string
-     */
-    public String getDataSetName(final int index) {
-        return mData.toString();
-    }
 }

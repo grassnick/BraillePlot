@@ -11,19 +11,10 @@ import java.util.Iterator;
 import java.util.Objects;
 
 /**
- * ScatterPlotter. Provides a plotting algorithm for scatter plot data. Extends Plotter.
+ * Provides a plotting algorithm for scatter plot data.
  * @author Richard Schmidt
  */
-public final class ScatterPlotter extends AbstractPlotter implements Plotter<ScatterPlot> {
-
-    private ScatterPlot mDiagram;
-
-    /**
-     * Constructor. Create a new plotter for instances of {@link ScatterPlot}.
-     */
-    public ScatterPlotter() {
-        super();
-    }
+public final class ScatterPlotter extends AbstractPlotter<ScatterPlot> implements Plotter<ScatterPlot> {
 
     /**
      * Plots a {@link ScatterPlot} instance onto a {@link PlotCanvas}.
@@ -44,10 +35,10 @@ public final class ScatterPlotter extends AbstractPlotter implements Plotter<Sca
         mPageWidth = mCanvas.getPrintableWidth();
         mPageHeight = mCanvas.getPrintableHeight();
 
-        calculateRanges(mDiagram);
+        calculateRanges();
         drawAxes();
-        scaleX = scaleAxis(xRange, mNumberXTics, mDiagram.getMinX());
-        scaleY = scaleAxis(yRange, mNumberYTics, mDiagram.getMinY());
+        mScaleX = scaleAxis("x");
+        mScaleY = scaleAxis("y");
         drawGrid();
 
         // draw points and frames

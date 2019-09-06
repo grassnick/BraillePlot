@@ -10,14 +10,14 @@ import java.util.Iterator;
 /**
  * @author Richard Schmidt
  */
-public class AbstractPointContainerTest {
+class AbstractPointContainerTest {
 
-    public static SimplePointListContainerImpl container;
-    public static PointList list_1;
-    public static PointList list_2;
+    private static SimplePointListContainerImpl container;
+    private static PointList list_1;
+    private static PointList list_2;
 
     @BeforeAll
-    public static void initialize() {
+    static void initialize() {
         container = new SimplePointListContainerImpl();
         list_1 = new SimplePointListImpl();
         list_1.pushBack(new Point2DDouble(1.0, 2.0));
@@ -26,7 +26,7 @@ public class AbstractPointContainerTest {
     }
 
     @Test
-    public void testPushBack() {
+    void testPushBack() {
         container.pushBack(list_1);
         container.pushBack(list_2);
 

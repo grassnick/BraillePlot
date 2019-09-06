@@ -6,10 +6,10 @@ import org.junit.jupiter.api.Test;
 /**
  * @author Richard Schmidt
  */
-public class Point2DValuedTest {
+class Point2DValuedTest {
 
     @Test
-    public void testPoint2DValued () {
+    void testPoint2DValued () {
         int a = 1;
         int b = 2;
         int value = 3;
@@ -21,7 +21,7 @@ public class Point2DValuedTest {
     }
 
     @Test
-    public void testEquals () {
+    void testEquals () {
         Point2DValued<Integer, Integer> point_1 = new Point2DValued<>(1, 2, 3);
         Point2DValued<Integer, Integer> point_2 = new Point2DValued<>(1, 2, 3);
         Point2DValued<Integer, Integer> point_3 = new Point2DValued<>(2, 2, 3);
@@ -29,10 +29,10 @@ public class Point2DValuedTest {
         Point2DValued<Integer, Integer> point_5 = new Point2DValued<>(1, 2, 2);
         String string = "test";
 
-        Assertions.assertEquals(true, point_1.equals(point_2));
-        Assertions.assertEquals(false, point_1.equals(point_3));
-        Assertions.assertEquals(false, point_1.equals(point_4));
-        Assertions.assertEquals(false, point_1.equals(point_5));
-        Assertions.assertEquals(false, point_1.equals(string));
+        Assertions.assertTrue(point_1.equals(point_2));
+        Assertions.assertFalse(point_1.equals(point_3));
+        Assertions.assertFalse(point_1.equals(point_4));
+        Assertions.assertFalse(point_1.equals(point_5));
+        Assertions.assertFalse(point_1.equals(string));
     }
 }

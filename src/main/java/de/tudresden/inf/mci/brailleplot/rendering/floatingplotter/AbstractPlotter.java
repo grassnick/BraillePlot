@@ -15,32 +15,32 @@ import static tec.units.ri.unit.Units.METRE;
 
 /**
  * Abstract parent class for all plotting algorithms. Provides methods for axis drawing and point adding.
+ * @param <T> Type of diagram the plotter can plot. Needs to extend {@link Diagram}.
  * @author Richard Schmidt
  * @version 28.08.2019
  */
-abstract class AbstractPlotter {
+abstract class AbstractPlotter<T extends Diagram> {
 
+    T mDiagram;
     PlotCanvas mCanvas;
     FloatingPointData<Boolean> mData;
     // arrays with int for axis ticks starting at the origin; last field contains scale factor as power of 10
-    int[] scaleX;
-    int[] scaleY;
+    int[] mScaleX;
+    int[] mScaleY;
 
     double mResolution;
     double mPageWidth;
     double mPageHeight;
-    double xRange;
-    double yRange;
-    double xTickStep;
-    double yTickStep;
-    double leftMargin;
-    double bottomMargin;
-    private double titleMargin;
-    private double lastValueX;
-    private double lastValueY;
+    private double mXRange;
+    private double mYRange;
+    private double mXTickStep;
+    private double mYTickStep;
+    private double mLeftMargin;
+    private double mBottomMargin;
+    private double mTitleMargin;
     double mStepSize;
-    int mNumberXTics;
-    int mNumberYTics;
+    private int mNumberXTics;
+    private int mNumberYTics;
 
     // constants
     private static final double WMULT = 3;
@@ -55,40 +55,41 @@ abstract class AbstractPlotter {
     private static final double TICK2 = 3;
     private static final double TICK3 = 4.5;
     private static final double TICK4 = 6;
-    private static final int THREE = 3;
-    private static final int FIVE = 5;
-    private static final int TEN = 10;
+    static final int THREE = 3;
+    static final int FOUR = 4;
+    static final int FIVE = 5;
+    static final int TEN = 10;
     private static final double CIRCLESCALE = 1.45;
     private static final double CIRCLEDIA = 15;
 
 
     /**
      * Calculates ranges of x and y values as a difference of max and min.
-     * @param diagram Diagram with the data.
      */
-    void calculateRanges(final Diagram diagram) {
-        xRange = Math.abs(diagram.getMaxX() - diagram.getMinX());
-        yRange = Math.abs(diagram.getMaxY() - diagram.getMinY());
+    void calculateRanges() {
+        mXRange = Math.abs(mDiagram.getMaxX() - mDiagram.getMinX());
+        mYRange = Math.abs(mDiagram.getMaxY() - mDiagram.getMinY());
     }
 
     /**
      * Draws x- and y-axis.
      */
     void drawAxes() {
+
         // margin left of y-axis
-        leftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
+        mLeftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
         // margin from bottom to x-axis
-        bottomMargin = mPageHeight - (HMULT * mCanvas.getCellHeight() + HMULT * mCanvas.getCellDistVer());
+        mBottomMargin = mPageHeight - (HMULT * mCanvas.getCellHeight() + HMULT * mCanvas.getCellDistVer());
         // margin from top for title
-        titleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
+        mTitleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
 
         // x-axis
-        lastValueX = leftMargin;
-        for (double i = leftMargin; i <= mPageWidth; i += mStepSize) {
-            addPoint(i, bottomMargin);
+        double lastValueX = mLeftMargin;
+        for (double i = mLeftMargin; i <= mPageWidth; i += mStepSize) {
+            addPoint(i, mBottomMargin);
             lastValueX = i;
         }
-        double lengthX = lastValueX - leftMargin;
+        double lengthX = lastValueX - mLeftMargin;
         mNumberXTics = (int) Math.floor(lengthX / TICKDISTANCE);
         if (mNumberXTics < 2) {
             mNumberXTics = 2;
@@ -98,36 +99,36 @@ abstract class AbstractPlotter {
             mNumberXTics = TEN;
         }
 
-        scaleX = new int[mNumberXTics + 1];
+        mScaleX = new int[mNumberXTics + 1];
 
         // arrows on x-axis
-        addPoint(lastValueX - ARROWS1, bottomMargin + ARROWS1);
-        addPoint(lastValueX - ARROWS2, bottomMargin + ARROWS2);
-        addPoint(lastValueX - ARROWS3, bottomMargin + ARROWS3);
-        addPoint(lastValueX - ARROWS1, bottomMargin - ARROWS1);
-        addPoint(lastValueX - ARROWS2, bottomMargin - ARROWS2);
-        addPoint(lastValueX - ARROWS3, bottomMargin - ARROWS3);
+        addPoint(lastValueX - ARROWS1, mBottomMargin + ARROWS1);
+        addPoint(lastValueX - ARROWS2, mBottomMargin + ARROWS2);
+        addPoint(lastValueX - ARROWS3, mBottomMargin + ARROWS3);
+        addPoint(lastValueX - ARROWS1, mBottomMargin - ARROWS1);
+        addPoint(lastValueX - ARROWS2, mBottomMargin - ARROWS2);
+        addPoint(lastValueX - ARROWS3, mBottomMargin - ARROWS3);
 
         // tick marks on x-axis
-        xTickStep = (lastValueX - MARGIN - leftMargin) / mNumberXTics;
+        mXTickStep = (lastValueX - MARGIN - mLeftMargin) / mNumberXTics;
         for (int i = 1; i <= mNumberXTics; i++) {
-            addPoint(leftMargin + i * xTickStep, bottomMargin + TICK1);
-            addPoint(leftMargin + i * xTickStep, bottomMargin + TICK2);
-            addPoint(leftMargin + i * xTickStep, bottomMargin + TICK3);
-            // addPoint(leftMargin + i * xTickStep, bottomMargin + TICK4);
-            addPoint(leftMargin + i * xTickStep, bottomMargin - TICK1);
-            addPoint(leftMargin + i * xTickStep, bottomMargin - TICK2);
-            addPoint(leftMargin + i * xTickStep, bottomMargin - TICK3);
-            // addPoint(leftMargin + i * xTickStep, bottomMargin - TICK4);
+            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK1);
+            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK2);
+            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK3);
+            // addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK4);
+            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK1);
+            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK2);
+            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK3);
+            // addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK4);
         }
 
         // y-axis:
-        lastValueY = bottomMargin;
-        for (double i = bottomMargin; i > titleMargin; i -= mStepSize) {
-            addPoint(leftMargin, i);
+        double lastValueY = mBottomMargin;
+        for (double i = mBottomMargin; i > mTitleMargin; i -= mStepSize) {
+            addPoint(mLeftMargin, i);
             lastValueY = i;
         }
-        double lengthY = bottomMargin - lastValueY;
+        double lengthY = mBottomMargin - lastValueY;
         mNumberYTics = (int) Math.floor(lengthY / TICKDISTANCE);
         if (mNumberYTics < 2) {
             mNumberYTics = 2;
@@ -137,28 +138,28 @@ abstract class AbstractPlotter {
             mNumberYTics = TEN;
         }
 
-        scaleY = new int[mNumberYTics + 1];
+        mScaleY = new int[mNumberYTics + 1];
 
         // arrows on y-axis
-        addPoint(leftMargin - ARROWS1, lastValueY + ARROWS1);
-        addPoint(leftMargin - ARROWS2, lastValueY + ARROWS2);
-        addPoint(leftMargin - ARROWS3, lastValueY + ARROWS3);
-        addPoint(leftMargin + ARROWS1, lastValueY + ARROWS1);
-        addPoint(leftMargin + ARROWS2, lastValueY + ARROWS2);
-        addPoint(leftMargin + ARROWS3, lastValueY + ARROWS3);
+        addPoint(mLeftMargin - ARROWS1, lastValueY + ARROWS1);
+        addPoint(mLeftMargin - ARROWS2, lastValueY + ARROWS2);
+        addPoint(mLeftMargin - ARROWS3, lastValueY + ARROWS3);
+        addPoint(mLeftMargin + ARROWS1, lastValueY + ARROWS1);
+        addPoint(mLeftMargin + ARROWS2, lastValueY + ARROWS2);
+        addPoint(mLeftMargin + ARROWS3, lastValueY + ARROWS3);
 
 
         // tick marks on y-axis
-        yTickStep = (bottomMargin - lastValueY - MARGIN) / mNumberYTics;
+        mYTickStep = (mBottomMargin - lastValueY - MARGIN) / mNumberYTics;
         for (int i = 1; i <= mNumberYTics; i++) {
-            addPoint(leftMargin + TICK1, bottomMargin - i * yTickStep);
-            addPoint(leftMargin + TICK2, bottomMargin - i * yTickStep);
-            addPoint(leftMargin + TICK3, bottomMargin - i * yTickStep);
-            // addPoint(leftMargin + TICK4, bottomMargin - i * yTickStep);
-            addPoint(leftMargin - TICK1, bottomMargin - i * yTickStep);
-            addPoint(leftMargin - TICK2, bottomMargin - i * yTickStep);
-            addPoint(leftMargin - TICK3, bottomMargin - i * yTickStep);
-            // addPoint(leftMargin - TICK4, bottomMargin - i * yTickStep);
+            addPoint(mLeftMargin + TICK1, mBottomMargin - i * mYTickStep);
+            addPoint(mLeftMargin + TICK2, mBottomMargin - i * mYTickStep);
+            addPoint(mLeftMargin + TICK3, mBottomMargin - i * mYTickStep);
+            // addPoint(mLeftMargin + TICK4, mBottomMargin - i * mYTickStep);
+            addPoint(mLeftMargin - TICK1, mBottomMargin - i * mYTickStep);
+            addPoint(mLeftMargin - TICK2, mBottomMargin - i * mYTickStep);
+            addPoint(mLeftMargin - TICK3, mBottomMargin - i * mYTickStep);
+            // addPoint(mLeftMargin - TICK4, mBottomMargin - i * mYTickStep);
         }
     }
 
@@ -173,12 +174,27 @@ abstract class AbstractPlotter {
 
     /**
      * Scales axis numeration.
-     * @param calcRange Calculated range difference.
-     * @param numberTics Number of tics desired on the axis.
-     * @param minimum Minimum value on the axis.
+     * @param type "x" for x-axis scaling and "y" for y-axis scaling.
      * @return Integer array with an Integer for a tic in each field. Last field contains scale factor as power of 10.
+     * @throws IllegalArgumentException If argument is neither "x" nor "y".
      */
-    int[] scaleAxis(final Double calcRange, final Integer numberTics, final Double minimum) {
+    int[] scaleAxis(final String type) throws IllegalArgumentException {
+
+        double calcRange;
+        int numberTics;
+        double minimum;
+
+        if (type.equals("x")) {
+            calcRange = mXRange;
+            numberTics = mNumberXTics;
+            minimum = mDiagram.getMinX();
+        } else if (type.equals("y")) {
+            calcRange = mYRange;
+            numberTics = mNumberYTics;
+            minimum = mDiagram.getMinY();
+        } else {
+            throw new IllegalArgumentException();
+        }
 
         int range;
         int decimalPlaces = 0;
@@ -274,15 +290,15 @@ abstract class AbstractPlotter {
     }
 
     /**
-     * Draw a grid with twice as many lines as tics per axis.
+     * Draw a grid with twice as many lines as ticks per axis.
      */
     void drawGrid() {
         FloatingPointData<Boolean> grid = mCanvas.getNewPage();
 
         // x-axis
         for (double i = 1; i <= 2 * mNumberXTics; i++) {
-            for (double j = bottomMargin; j > titleMargin; j -= mStepSize) {
-                Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(leftMargin + (i / 2) * xTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+            for (double j = mBottomMargin; j > mTitleMargin; j -= mStepSize) {
+                Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                 if (!mData.checkPoint(point)) {
                     grid.addPoint(point);
                 }
@@ -291,8 +307,8 @@ abstract class AbstractPlotter {
 
         // y-axis
         for (double i = 1; i <= 2 * mNumberYTics; i++) {
-            for (double j = leftMargin; j <= mPageWidth; j += mStepSize) {
-                Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(bottomMargin - (i / 2) * yTickStep, MetricPrefix.MILLI(METRE)), true);
+            for (double j = mLeftMargin; j <= mPageWidth; j += mStepSize) {
+                Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(mBottomMargin - (i / 2) * mYTickStep, MetricPrefix.MILLI(METRE)), true);
                 if (!mData.checkPoint(point)) {
                     grid.addPoint(point);
                 }
@@ -304,21 +320,21 @@ abstract class AbstractPlotter {
     /**
      * Calculates the absolute x-value on the paper.
      * @param x Value as in data.
-     * @return double
+     * @return Calculated x-value.
      */
     double calculateXValue(final double x) {
-        double ratio = xTickStep / (scaleX[1] - scaleX[0]);
-        return (x / Math.pow(TEN, scaleX[scaleX.length - 1]) - scaleX[0]) * ratio + leftMargin + xTickStep;
+        double ratio = mXTickStep / (mScaleX[1] - mScaleX[0]);
+        return (x / Math.pow(TEN, mScaleX[mScaleX.length - 1]) - mScaleX[0]) * ratio + mLeftMargin + mXTickStep;
     }
 
     /**
      * Calculates the absolute y-value on the paper.
      * @param y Value as in data.
-     * @return double
+     * @return Calculated y-value.
      */
     double calculateYValue(final double y) {
-        double ratio = yTickStep / (scaleY[1] - scaleY[0]);
-        return bottomMargin - yTickStep - (y / Math.pow(TEN, scaleY[scaleY.length - 1]) - scaleY[0]) * ratio;
+        double ratio = mYTickStep / (mScaleY[1] - mScaleY[0]);
+        return mBottomMargin - mYTickStep - (y / Math.pow(TEN, mScaleY[mScaleY.length - 1]) - mScaleY[0]) * ratio;
     }
 
     /**
@@ -340,8 +356,8 @@ abstract class AbstractPlotter {
 
     /**
      * Draws a circle frame with xValue and yValue as center.
-     * @param xValue
-     * @param yValue
+     * @param xValue X-value of center.
+     * @param yValue Y-value of center.
      */
     private void drawCircle(final double xValue, final double yValue) {
         double lastX = 0;
@@ -363,8 +379,8 @@ abstract class AbstractPlotter {
 
     /**
      * Draws an X with xValue and yValue as center.
-     * @param xValue
-     * @param yValue
+     * @param xValue X-value of center.
+     * @param yValue Y-value of center.
      */
     private void drawX(final double xValue, final double yValue) {
         addPoint(xValue + mStepSize, yValue + mStepSize);
@@ -386,8 +402,8 @@ abstract class AbstractPlotter {
 
     /**
      * Draws a cross with xValue and yValue as center.
-     * @param xValue
-     * @param yValue
+     * @param xValue X-value of center.
+     * @param yValue Y-value of center.
      */
     private void drawCross(final double xValue, final double yValue) {
         addPoint(xValue, yValue + mStepSize);

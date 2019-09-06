@@ -11,25 +11,10 @@ import java.util.Iterator;
 import java.util.Objects;
 
 /**
- * LinePlotter. Provides a plotting algorithm for line plot data. Extends Plotter.
+ * Provides a plotting algorithm for line plot data.
  * @author Richard Schmidt
  */
-public final class LinePlotter extends AbstractPlotter implements Plotter<LinePlot> {
-
-    private LinePlot mDiagram;
-    private static final double CIRCLESCALE = 1.3;
-    private static final int THREE = 3;
-    private static final int FOUR = 4;
-    private static final int FIVE = 5;
-    private static final int TEN = 10;
-    private static final double CIRCLEDIA = 15;
-
-    /**
-     * Constructor. Create a new plotter for instances of {@link LinePlot}.
-     */
-    public LinePlotter() {
-        super();
-    }
+public final class LinePlotter extends AbstractPlotter<LinePlot> implements Plotter<LinePlot> {
 
     /**
      * Plots a {@link LinePlot} instance onto a {@link PlotCanvas}.
@@ -50,10 +35,10 @@ public final class LinePlotter extends AbstractPlotter implements Plotter<LinePl
         mPageWidth = mCanvas.getPrintableWidth();
         mPageHeight = mCanvas.getPrintableHeight();
 
-        calculateRanges(mDiagram);
+        calculateRanges();
         drawAxes();
-        scaleX = scaleAxis(xRange, mNumberXTics, mDiagram.getMinX());
-        scaleY = scaleAxis(yRange, mNumberYTics, mDiagram.getMinY());
+        mScaleX = scaleAxis("x");
+        mScaleY = scaleAxis("y");
         drawGrid();
 
         // draw points, frames and lines

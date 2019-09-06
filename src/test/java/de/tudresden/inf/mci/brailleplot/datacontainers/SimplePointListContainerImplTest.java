@@ -11,22 +11,21 @@ import java.util.List;
 /**
  * @author Richard Schmidt
  */
-public class SimplePointListContainerImplTest {
+class SimplePointListContainerImplTest {
 
-    public static List<PointList> elements;
-    public static PointList list;
+    private static List<PointList> elements;
 
     @BeforeAll
-    public static void initialize() {
+    static void initialize() {
         elements = new LinkedList<>();
-        list = new SimplePointListImpl();
+        PointList list = new SimplePointListImpl();
         list.setName("test_list");
         elements.add(list);
 
     }
 
     @Test
-    public void testSimplePointListContainerImpl() {
+    void testSimplePointListContainerImpl() {
         SimplePointListContainerImpl container = new SimplePointListContainerImpl(elements);
         Iterator<PointList> it = container.iterator();
         PointList my_list = it.next();

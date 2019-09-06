@@ -13,25 +13,22 @@ import java.util.LinkedList;
 /**
  * @author Richard Schmidt
  */
-public class BarChartTest {
+class BarChartTest {
 
-    public static SimplePointListContainerImpl container;
-    public static LinkedList<PointList> outer_list;
-    public static PointList inner_list;
-    public static Point2DDouble point;
+    private static SimplePointListContainerImpl container;
 
     @BeforeAll
-    public static void initialize() {
-        outer_list = new LinkedList<>();
-        inner_list = new SimplePointListImpl();
-        point = new Point2DDouble(1, 2);
+    static void initialize() {
+        LinkedList<PointList> outer_list = new LinkedList<>();
+        PointList inner_list = new SimplePointListImpl();
+        Point2DDouble point = new Point2DDouble(1, 2);
         inner_list.pushBack(point);
         outer_list.add(inner_list);
         container = new SimplePointListContainerImpl(outer_list);
     }
 
     @Test
-    public void testBarChart () {
+    void testBarChart () {
         BarChart bar = new BarChart(container);
         Point2DDouble p = bar.getDataSet().iterator().next().getListIterator().next();
         Assertions.assertEquals(1, p.getX());
