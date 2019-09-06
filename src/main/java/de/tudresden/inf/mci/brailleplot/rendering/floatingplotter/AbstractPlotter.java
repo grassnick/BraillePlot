@@ -55,13 +55,16 @@ abstract class AbstractPlotter {
     private static final double TICK2 = 3;
     private static final double TICK3 = 4.5;
     private static final double TICK4 = 6;
+    private static final int THREE = 3;
     private static final int FIVE = 5;
     private static final int TEN = 10;
+    private static final double CIRCLESCALE = 1.45;
+    private static final double CIRCLEDIA = 15;
 
 
     /**
      * Calculates ranges of x and y values as a difference of max and min.
-     * @param diagram
+     * @param diagram Diagram with the data.
      */
     void calculateRanges(final Diagram diagram) {
         xRange = Math.abs(diagram.getMaxX() - diagram.getMinX());
@@ -161,8 +164,8 @@ abstract class AbstractPlotter {
 
     /**
      * Adds a point by its x- and y-value to the floating point data.
-     * @param x
-     * @param y
+     * @param x X-value.
+     * @param y Y-value.
      */
     void addPoint(final double x, final double y) {
         mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true));
@@ -295,6 +298,113 @@ abstract class AbstractPlotter {
                 }
             }
         }
+    }
+
+
+    /**
+     * Calculates the absolute x-value on the paper.
+     * @param x Value as in data.
+     * @return double
+     */
+    double calculateXValue(final double x) {
+        double ratio = xTickStep / (scaleX[1] - scaleX[0]);
+        return (x / Math.pow(TEN, scaleX[scaleX.length - 1]) - scaleX[0]) * ratio + leftMargin + xTickStep;
+    }
+
+    /**
+     * Calculates the absolute y-value on the paper.
+     * @param y Value as in data.
+     * @return double
+     */
+    double calculateYValue(final double y) {
+        double ratio = yTickStep / (scaleY[1] - scaleY[0]);
+        return bottomMargin - yTickStep - (y / Math.pow(TEN, scaleY[scaleY.length - 1]) - scaleY[0]) * ratio;
+    }
+
+    /**
+     * Adds a point by its x- and y-value to the floating point data. Chooses a corresponding frame.
+     * @param xValue Must be the absolute x-value on the paper.
+     * @param yValue Must be the absolute y-value on the paper.
+     * @param i Links to the data series, thus choosing one frame per data series.
+     */
+    void drawPoint(final double xValue, final double yValue, final int i) {
+        addPoint(xValue, yValue);
+        if (i == 0) {
+            drawCircle(xValue, yValue);
+        } else if (i == 1) {
+            drawX(xValue, yValue);
+        } else if (i == 2) {
+            drawCross(xValue, yValue);
+        }
+    }
+
+    /**
+     * Draws a circle frame with xValue and yValue as center.
+     * @param xValue
+     * @param yValue
+     */
+    private void drawCircle(final double xValue, final double yValue) {
+        double lastX = 0;
+
+        for (double x = xValue - CIRCLEDIA / 2; x <= xValue + CIRCLEDIA / 2; x += mStepSize) {
+            double root = Math.sqrt(Math.pow(CIRCLEDIA / 2, 2) - Math.pow(x - xValue, 2));
+            double y1 = yValue + root;
+            double y2 = yValue - root;
+            addPoint(x, y1);
+            addPoint(x, y2);
+            lastX = x;
+        }
+
+        addPoint(lastX - mStepSize / THREE, yValue + CIRCLESCALE * mStepSize);
+        addPoint(lastX - mStepSize / THREE, yValue - CIRCLESCALE * mStepSize);
+        addPoint(xValue - CIRCLEDIA / 2 + mStepSize / THREE, yValue + CIRCLESCALE * mStepSize);
+        addPoint(xValue - CIRCLEDIA / 2 + mStepSize / THREE, yValue - CIRCLESCALE * mStepSize);
+    }
+
+    /**
+     * Draws an X with xValue and yValue as center.
+     * @param xValue
+     * @param yValue
+     */
+    private void drawX(final double xValue, final double yValue) {
+        addPoint(xValue + mStepSize, yValue + mStepSize);
+        addPoint(xValue + 2 * mStepSize, yValue + 2 * mStepSize);
+        addPoint(xValue + THREE * mStepSize, yValue + THREE * mStepSize);
+
+        addPoint(xValue - mStepSize, yValue - mStepSize);
+        addPoint(xValue - 2 * mStepSize, yValue - 2 * mStepSize);
+        addPoint(xValue - THREE * mStepSize, yValue - THREE * mStepSize);
+
+        addPoint(xValue + mStepSize, yValue - mStepSize);
+        addPoint(xValue + 2 * mStepSize, yValue - 2 * mStepSize);
+        addPoint(xValue + THREE * mStepSize, yValue - THREE * mStepSize);
+
+        addPoint(xValue - mStepSize, yValue + mStepSize);
+        addPoint(xValue - 2 * mStepSize, yValue + 2 * mStepSize);
+        addPoint(xValue - THREE * mStepSize, yValue + THREE * mStepSize);
+    }
+
+    /**
+     * Draws a cross with xValue and yValue as center.
+     * @param xValue
+     * @param yValue
+     */
+    private void drawCross(final double xValue, final double yValue) {
+        addPoint(xValue, yValue + mStepSize);
+        addPoint(xValue, yValue + 2 * mStepSize);
+        addPoint(xValue, yValue + THREE * mStepSize);
+
+        addPoint(xValue, yValue - mStepSize);
+        addPoint(xValue, yValue - 2 * mStepSize);
+        addPoint(xValue, yValue - THREE * mStepSize);
+
+        addPoint(xValue + mStepSize, yValue);
+        addPoint(xValue + 2 * mStepSize, yValue);
+        addPoint(xValue + THREE * mStepSize, yValue);
+
+        addPoint(xValue - mStepSize, yValue);
+        addPoint(xValue - 2 * mStepSize, yValue);
+        addPoint(xValue - THREE * mStepSize, yValue);
     }
 
 }
