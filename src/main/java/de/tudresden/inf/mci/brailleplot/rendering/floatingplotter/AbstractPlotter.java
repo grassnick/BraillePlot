@@ -24,6 +24,7 @@ abstract class AbstractPlotter<T extends Diagram> {
     T mDiagram;
     PlotCanvas mCanvas;
     FloatingPointData<Boolean> mData;
+
     // arrays with int for axis ticks starting at the origin; last field contains scale factor as power of 10
     int[] mScaleX;
     int[] mScaleY;
@@ -31,6 +32,7 @@ abstract class AbstractPlotter<T extends Diagram> {
     double mResolution;
     double mPageWidth;
     double mPageHeight;
+    double mStepSize;
     private double mXRange;
     private double mYRange;
     private double mXTickStep;
@@ -38,11 +40,14 @@ abstract class AbstractPlotter<T extends Diagram> {
     private double mLeftMargin;
     private double mBottomMargin;
     private double mTitleMargin;
-    double mStepSize;
     private int mNumberXTics;
     private int mNumberYTics;
 
     // constants
+    static final int THREE = 3;
+    static final int FOUR = 4;
+    static final int FIVE = 5;
+    static final int TEN = 10;
     private static final double WMULT = 3;
     private static final double HMULT = 2;
     private static final double TMULT = 2;
@@ -55,10 +60,6 @@ abstract class AbstractPlotter<T extends Diagram> {
     private static final double TICK2 = 3;
     private static final double TICK3 = 4.5;
     private static final double TICK4 = 6;
-    static final int THREE = 3;
-    static final int FOUR = 4;
-    static final int FIVE = 5;
-    static final int TEN = 10;
     private static final double CIRCLESCALE = 1.45;
     private static final double CIRCLEDIA = 15;
 
