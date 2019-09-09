@@ -69,6 +69,8 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
             mNumberXTics = TEN;
         }
 
+        mScaleX = new int[mNumberXTics + 1];
+
         // arrows on x-axis
         addPoint(lastValueX - ARROWS1, mBottomMargin + ARROWS1);
         addPoint(lastValueX - ARROWS2, mBottomMargin + ARROWS2);
@@ -76,6 +78,19 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
         addPoint(lastValueX - ARROWS1, mBottomMargin - ARROWS1);
         addPoint(lastValueX - ARROWS2, mBottomMargin - ARROWS2);
         addPoint(lastValueX - ARROWS3, mBottomMargin - ARROWS3);
+
+        // tick marks on x-axis
+        mXTickStep = (lastValueX - MARGIN - mLeftMargin) / mNumberXTics;
+        for (int i = 1; i <= mNumberXTics; i++) {
+            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK1);
+            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK2);
+            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK3);
+            // addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK4);
+            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK1);
+            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK2);
+            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK3);
+            // addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK4);
+        }
 
         // y-axis:
         double lastValueY = mBottomMargin;
@@ -93,8 +108,6 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
             mNumberYTics = TEN;
         }
 
-        mScaleY = new int[mNumberYTics + 1];
-
         // arrows on y-axis
         addPoint(mLeftMargin - ARROWS1, lastValueY + ARROWS1);
         addPoint(mLeftMargin - ARROWS2, lastValueY + ARROWS2);
@@ -103,19 +116,6 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
         addPoint(mLeftMargin + ARROWS2, lastValueY + ARROWS2);
         addPoint(mLeftMargin + ARROWS3, lastValueY + ARROWS3);
 
-
-        // tick marks on y-axis
-        mYTickStep = (mBottomMargin - lastValueY - MARGIN) / mNumberYTics;
-        for (int i = 1; i <= mNumberYTics; i++) {
-            addPoint(mLeftMargin + TICK1, mBottomMargin - i * mYTickStep);
-            addPoint(mLeftMargin + TICK2, mBottomMargin - i * mYTickStep);
-            addPoint(mLeftMargin + TICK3, mBottomMargin - i * mYTickStep);
-            // addPoint(mLeftMargin + TICK4, mBottomMargin - i * mYTickStep);
-            addPoint(mLeftMargin - TICK1, mBottomMargin - i * mYTickStep);
-            addPoint(mLeftMargin - TICK2, mBottomMargin - i * mYTickStep);
-            addPoint(mLeftMargin - TICK3, mBottomMargin - i * mYTickStep);
-            // addPoint(mLeftMargin - TICK4, mBottomMargin - i * mYTickStep);
-        }
     }
 
 }

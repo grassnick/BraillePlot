@@ -1,7 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.diagrams;
 
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
-import de.tudresden.inf.mci.brailleplot.datacontainers.SimplePointListContainerImpl;
+import de.tudresden.inf.mci.brailleplot.datacontainers.SimpleCategoricalPointListContainerImpl;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimplePointListImpl;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 import org.junit.jupiter.api.Assertions;
@@ -15,7 +15,7 @@ import java.util.LinkedList;
  */
 class BarChartTest {
 
-    private static SimplePointListContainerImpl container;
+    private static SimpleCategoricalPointListContainerImpl container;
 
     @BeforeAll
     static void initialize() {
@@ -24,7 +24,8 @@ class BarChartTest {
         Point2DDouble point = new Point2DDouble(1, 2);
         inner_list.pushBack(point);
         outer_list.add(inner_list);
-        container = new SimplePointListContainerImpl(outer_list);
+        LinkedList<String> cat_list = new LinkedList<>();
+        container = new SimpleCategoricalPointListContainerImpl(outer_list, cat_list);
     }
 
     @Test
