@@ -45,7 +45,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             throw new RuntimeException(e);
         }
         try {
-            mTranslator = new Translator("src\\main\\resources\\mapping\\liblouis\\de-g2.ctb");
+            mTranslator = new Translator("src\\main\\resources\\mapping\\liblouis\\de-g0.utb");
         } catch (Exception e) {
             throw new RuntimeException(e.getCause());
         }
