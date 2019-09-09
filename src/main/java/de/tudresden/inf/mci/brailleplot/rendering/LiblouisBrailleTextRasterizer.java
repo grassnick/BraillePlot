@@ -153,6 +153,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             tempMaxWidth = maxWidth;
         }
         return (int) ceil((double) widthOfText / (double) tempMaxWidth);
+
     }
 
     /**

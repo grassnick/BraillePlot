@@ -184,11 +184,6 @@ public final class App {
             // Render diagram
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
             RasterCanvas canvas = renderer.rasterize(barChart);
-            //renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BrailleText>(BrailleText.class ,new BrailleTextRasterizer()));
-            //RasterCanvas canvas = renderer.rasterize(new BrailleText("ABCDabcd23465/%",new Rectangle(0,0,1000,1000)));
-            //SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
-            //mLogger.debug("Render preview:\n" + mat.toBoolString());
-
             // SVG exporting
             SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
             svgExporter.render();
@@ -213,18 +208,8 @@ public final class App {
             LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(indexV4Printer);
             renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BrailleText>(BrailleText.class, textRasterizer));
             RasterCanvas refCanvas = renderer.rasterize(new BrailleText(" ", new Rectangle(0, 0, 0, 0)));
-
-            //String text = "()[]üÄß@` ";
-            String text = " °^1234567890ß´!\"§$%&/()=?`@€öüäÖÜÄ\\*+~'#<>|,;.:-_";
-            //String text = "";
-            int xpos = 0;
-            int ypos = 0;
-            int maxWidth = 20 * 2;
-            int height = textRasterizer.calculateRequiredHeight(text, xpos, ypos, maxWidth, refCanvas);
-            Rectangle textArea = new Rectangle(xpos, ypos, maxWidth, height);
-            RasterCanvas mcanvas = renderer.rasterize(new BrailleText(text, textArea));
            // RasterCanvas m2canvas = renderer.rasterize(new BrailleText(text2, textArea));
-            SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) mcanvas.getCurrentPage();
+            SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
             mLogger.debug("Render preview:\n" + mat.toBoolString());
 
 
