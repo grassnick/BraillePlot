@@ -4,21 +4,26 @@ import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaExceptio
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
-
 import static de.tudresden.inf.mci.brailleplot.rendering.Axis.Type.X_AXIS;
 import static de.tudresden.inf.mci.brailleplot.rendering.Axis.Type.Y_AXIS;
-import static java.lang.Math.abs;
+import static java.lang.Integer.signum;
 
 /**
  * A rasterizer for instances of {@link Axis} which is using a simple approach by linear mapping.
  * @author Leonard Kupper
- * @version 2019.07.20
+ * @version 2019.08.29
  */
 
 public class LinearMappingAxisRasterizer implements Rasterizer<Axis> {
 
-    private BrailleTextRasterizer mTextRasterizer = new BrailleTextRasterizer();
+    private LiblouisBrailleTextRasterizer mTextRasterizer;
     private RasterCanvas mCanvas;
+    private MatrixData<Boolean> mPage;
+
+    private Axis mAxis;
+    private int mStepWidth, mTickSize, mOriginX, mOriginY;
+    private boolean mHasLabels, mTickDetermination;
+    private Rectangle mBound;
 
     /**
      * Rasterizes a {@link Axis} instance onto a {@link RasterCanvas}.
@@ -30,96 +35,148 @@ public class LinearMappingAxisRasterizer implements Rasterizer<Axis> {
     @Override
     public void rasterize(final Axis axis, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
 
+        mTextRasterizer = new LiblouisBrailleTextRasterizer(canvas.getPrinter());
         mCanvas = canvas;
-        MatrixData<Boolean> data = mCanvas.getCurrentPage();
+        mPage = mCanvas.getCurrentPage();
 
-        int dotX, startY, endY, dotY, startX, endX;
-        int stepWidth = (int) axis.getStepWidth();
-        int tickSize = (int) axis.getTickSize();
-        boolean setTicks = (abs(tickSize) > 0);
-        boolean hasLabels = axis.hasLabels();
+        mAxis = axis;
+        mOriginX = (int) axis.getOriginX();
+        mOriginY = (int) axis.getOriginY();
+        mStepWidth = (int) axis.getStepWidth();
+        mTickSize = (int) axis.getTickSize();
+        mHasLabels = axis.hasLabels();
+        if (axis.hasBoundary()) {
+            mBound = axis.getBoundary();
+        } else {
+            mBound = mCanvas.getDotRectangle();
+        }
 
         if (axis.getType() == X_AXIS) {
-            Rectangle bound;
-            dotY = (int) axis.getOriginY();
-            if (axis.hasBoundary()) {
-                bound = axis.getBoundary();
-            } else {
-                bound = mCanvas.getDotRectangle();
-            }
-            startX = bound.intWrapper().getX();
-            endX = bound.intWrapper().getRight();
-            Rasterizer.fill(startX, dotY, endX, dotY, data, true);
+            drawXAxis();
+        } else if (axis.getType() == Y_AXIS) {
+            drawYAxis();
+        } else {
+            throw new IllegalArgumentException("Unknown axis type: " + axis.getType());
+        }
 
-            if (setTicks) {
-                int i;
-                startY = dotY;
-                endY = dotY + tickSize;
-                i = 0;
-                for (dotX = (int) axis.getOriginX(); dotX <= endX; dotX += stepWidth) {
-                    Rasterizer.fill(dotX, startY, dotX, endY, data, true);
-                    // TODO: refactor to have labeling functionality in extra method.
-                    if (hasLabels && axis.getLabels().containsKey(i)) {
-                        String label = axis.getLabels().get(i);
-                        Rectangle labelArea = new Rectangle(dotX - 1, endY + 1, stepWidth, mCanvas.getCellHeight());
-                        mTextRasterizer.rasterize(new BrailleText(label, labelArea), mCanvas);
-                    }
-                    i++;
+    }
+
+    private void drawXAxis() throws InsufficientRenderingAreaException {
+        // draw axis line
+        Rectangle axisLineDotArea = new Rectangle(mBound.getX(), mOriginY, mBound.getWidth(), 1);
+        Rasterizer.rectangle(axisLineDotArea, mPage, true);
+        // draw labels and ticks
+        int positiveUnits = (int) Math.floor((axisLineDotArea.intWrapper().getRight() - mOriginX) / mStepWidth);
+        int negativeUnits = (int) Math.floor((axisLineDotArea.intWrapper().getX() - mOriginX) / mStepWidth);
+        for (int i = 0; i <= positiveUnits; i++) {
+            tryToDrawLabel(i);
+        }
+        for (int i = -1; i >= negativeUnits; i--) {
+            tryToDrawLabel(i);
+        }
+    }
+
+    private void drawYAxis() throws InsufficientRenderingAreaException {
+        // draw axis line
+        Rectangle axisLineDotArea = new Rectangle(mOriginX, mBound.getY(), 1, mBound.getHeight());
+        Rasterizer.rectangle(axisLineDotArea, mPage, true);
+        // draw labels and ticks
+        int positiveUnits = (int) Math.floor((mOriginY - axisLineDotArea.intWrapper().getY()) / mStepWidth);
+        int negativeUnits = (int) Math.floor((mOriginY - axisLineDotArea.intWrapper().getBottom()) / mStepWidth);
+        for (int i = 0; i <= positiveUnits; i++) {
+            tryToDrawLabel(i);
+        }
+        for (int i = -1; i >= negativeUnits; i--) {
+            tryToDrawLabel(i);
+        }
+    }
+
+    /**
+     * Tries to draw a label at given index and draws a tick when needed.
+     * @param labelIndex The index of the label which the method will try to draw.
+     * @return A boolean value determining whether a tick has been set. Ticks will be drawn whenever a label can be set
+     *         at the respective positions or when no labels are defined.
+     */
+    private boolean tryToDrawLabel(final int labelIndex)
+            throws InsufficientRenderingAreaException {
+
+        Rectangle tickmarkDotArea;
+        int dotX, dotY, labelCellX, labelCellY;
+        dotX = mOriginX;
+        dotY = mOriginY;
+
+        // check preconditions
+        if (mHasLabels && mAxis.getLabels().containsKey(labelIndex)) {
+            // get label text
+            String labelText = mAxis.getLabels().get(labelIndex);
+            int stringLength = mTextRasterizer.getBrailleStringLength(labelText);
+
+            // determine area to write the label text on
+            int xPad, yPad;
+            Rectangle labelCellArea;
+            int labelOffset = signum(mTickSize); // is the label above or below the tickmark?
+            if (mAxis.getType() == X_AXIS) {
+                dotX += labelIndex * mStepWidth;
+                labelCellX = mCanvas.getCellXFromDotX(dotX);
+                labelCellY = mCanvas.getCellYFromDotY(dotY + mTickSize) + labelOffset;
+                labelCellArea = new Rectangle(labelCellX - (stringLength / 2), labelCellY, stringLength, 1);
+                xPad = 1;
+                yPad = 0;
+            } else if (mAxis.getType() == Y_AXIS) {
+                dotY -= labelIndex * mStepWidth;
+                labelCellX = mCanvas.getCellXFromDotX(dotX + (mTickSize + labelOffset)) + labelOffset;
+                labelCellY = mCanvas.getCellYFromDotY(dotY);
+                if (mTickSize < 0) {
+                    labelCellArea = new Rectangle(labelCellX - (stringLength), labelCellY, stringLength, 1);
+                } else {
+                    labelCellArea = new Rectangle(labelCellX, labelCellY, stringLength, 1);
                 }
-                i = -1;
-                for (dotX = (int) axis.getOriginX() - stepWidth; dotX >= startX; dotX -= stepWidth) {
-                    Rasterizer.fill(dotX, startY, dotX, endY, data, true);
-                    if (hasLabels && axis.getLabels().containsKey(i)) {
-                        String label = axis.getLabels().get(i);
-                        Rectangle labelArea = new Rectangle(dotX - 1, endY + 1, stepWidth, mCanvas.getCellHeight());
-                        mTextRasterizer.rasterize(new BrailleText(label, labelArea), mCanvas);
-                    }
-                    i--;
-                }
+                xPad = 0;
+                yPad = 0;
+            } else {
+                return false;
+            }
+
+            // try to draw label (depending on available space)
+            if (testCellsEmpty(labelCellArea, xPad, yPad)) {
+                mTextRasterizer.rasterize(new BrailleText(labelText, mCanvas.toDotRectangle(labelCellArea)), mCanvas);
+            } else {
+                return false;
             }
         }
 
-        if (axis.getType() == Y_AXIS) {
-            Rectangle bound;
-            dotX = (int) axis.getOriginX();
-            if (axis.hasBoundary()) {
-                bound = axis.getBoundary();
-            } else {
-                bound = mCanvas.getDotRectangle();
+        // draw a tickmark
+        if (mAxis.getType() == X_AXIS) {
+            tickmarkDotArea = new Rectangle(dotX, dotY, 1, Math.abs(mTickSize) + 1);
+            if (mTickSize < 0) {
+                tickmarkDotArea = tickmarkDotArea.translatedBy(0, mTickSize);
             }
-            startY = bound.intWrapper().getY();
-            endY = bound.intWrapper().getBottom();
-            Rasterizer.fill(dotX, startY, dotX, endY, data, true);
+        } else if (mAxis.getType() == Y_AXIS) {
+            tickmarkDotArea = new Rectangle(dotX, dotY, Math.abs(mTickSize) + 1, 1);
+            if (mTickSize < 0) {
+                tickmarkDotArea = tickmarkDotArea.translatedBy(mTickSize, 0);
+            }
+        } else {
+            return false;
+        }
+        Rasterizer.rectangle(tickmarkDotArea, mPage, true);
+        return true;
+    }
 
-            if (setTicks) {
-                int i;
-                startX = dotX;
-                endX = dotX + tickSize;
-                i = 0;
-                for (dotY = (int) axis.getOriginY(); dotY <= endY; dotY += stepWidth) {
-                    Rasterizer.fill(startX, dotY, endX, dotY, data, true);
-                    /*
-                    if (hasLabels && axis.getLabels().containsKey(i)) {
-                        String label = axis.getLabels().get(i);
-                        Rectangle labelArea = new Rectangle(endX + Integer.signum(tickSize), dotY, stepWidth, mCanvas.getCellHeight());
-                        mTextRasterizer.rasterize(new BrailleText(label, labelArea), mCanvas);
-                    }
-                    */
-                    i++;
-                }
-                i = -1;
-                for (dotY = (int) axis.getOriginY() - stepWidth; dotY >= startY; dotY -= stepWidth) {
-                    Rasterizer.fill(startX, dotY, endX, dotY, data, true);
-                    /*
-                    if (hasLabels && axis.getLabels().containsKey(i)) {
-                        String label = axis.getLabels().get(i);
-                        Rectangle labelArea = new Rectangle(endX + Integer.signum(tickSize), dotY, stepWidth, mCanvas.getCellHeight());
-                        mTextRasterizer.rasterize(new BrailleText(label, labelArea), mCanvas);
-                    }
-                    */
-                    i--;
+    private boolean testCellsEmpty(final Rectangle cellArea, final int xPad, final int yPad) {
+        Rectangle paddedCellArea = cellArea.translatedBy(-1 * xPad, -1 * yPad);
+        paddedCellArea.setWidth(paddedCellArea.getWidth() + 2 * xPad);
+        paddedCellArea.setHeight(paddedCellArea.getHeight() + 2 * yPad);
+        Rectangle testDotArea = mCanvas.toDotRectangle(paddedCellArea);
+        for (int x = testDotArea.intWrapper().getX(); x <= testDotArea.intWrapper().getRight(); x++) {
+            for (int y = testDotArea.intWrapper().getY(); y <= testDotArea.intWrapper().getBottom(); y++) {
+                if ((mPage.getRowCount() <= y) || (mPage.getColumnCount() <= x)
+                        || (y < 0) || (x < 0)
+                        || mPage.getValue(y, x)) {
+                    return false;
                 }
             }
         }
+        return true;
     }
 }

@@ -1,6 +1,5 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
-import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
@@ -8,11 +7,9 @@ import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaExceptio
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
-import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
-import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
-import org.w3c.dom.css.Rect;
 
-import java.awt.image.Raster;
+
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -31,7 +28,7 @@ import static java.lang.StrictMath.floor;
 public class LineChartRasterizer implements Rasterizer<LineChart> {
     private LineChart mDiagram;
     private RasterCanvas mCanvas;
-    private BrailleTextRasterizer mTextRasterizer;
+    private LiblouisBrailleTextRasterizer mTextRasterizer;
     private LinearMappingAxisRasterizer mAxisRasterizer;
 
 
@@ -51,7 +48,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     private Rectangle mCellLineArea;
 
     LineChartRasterizer() {
-        mTextRasterizer = new BrailleTextRasterizer();
+
         mAxisRasterizer = new LinearMappingAxisRasterizer();
     }
 
@@ -63,7 +60,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         if (canvas.equals(null)) {
             throw new NullPointerException("The given canvas for the LineChartRasterizer was null!");
         }
-
+        mTextRasterizer = new LiblouisBrailleTextRasterizer(canvas.getPrinter());
         PointListContainer list =  data.getData();
         mCanvas = canvas;
         mDiagram = data;
@@ -111,16 +108,17 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
 
 
        // Rasterizer.rectangle(mCanvas.toDotRectangle(xAxisArea), mCanvas.getCurrentPage(), true);
-        printHelp();
+        //printHelp();
 
 
     }
 
     private void printHelp() {
         Rectangle mCellLineAreatemp = mCanvas.toDotRectangle(mCellLineArea);
-        Rasterizer.fill(mCellLineAreatemp.intWrapper().getX(), mCellLineAreatemp.intWrapper().getY() ,mCellLineAreatemp.intWrapper().getRight(),
-                mCellLineAreatemp.intWrapper().getBottom()
-                , mCanvas.getCurrentPage(), true);
+        Rasterizer.fill(mCellLineAreatemp.intWrapper().getX(), mCellLineAreatemp.intWrapper().getY(),
+                mCellLineAreatemp.intWrapper().getRight(),
+                mCellLineAreatemp.intWrapper().getBottom(),
+                mCanvas.getCurrentPage(), true);
     }
 
     private int findYAxisStepWidth(final double rangeOfYValues, final int xUnitsAvailable) {

@@ -45,7 +45,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
     private final int mCaptionLength = 6; // cells
 
     // associated rasterizers
-    private BrailleTextRasterizer mTextRasterizer;
+    private LiblouisBrailleTextRasterizer mTextRasterizer;
     private LinearMappingAxisRasterizer mAxisRasterizer;
     //private Rasterizer<Legend> mLegendRasterizer;
 
@@ -53,7 +53,6 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
      * Constructor. Create a new rasterizer for instances of {@link BarChart}.
      */
     UniformTextureBarChartRasterizer() {
-        mTextRasterizer = new BrailleTextRasterizer();
         mAxisRasterizer = new LinearMappingAxisRasterizer();
         //mLegendRasterizer = new LegendRasterizer();
     }
@@ -70,7 +69,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
             throws InsufficientRenderingAreaException {
 
         // The comments here can only give a very short overview, please see the wiki for a full explanation.
-
+        mTextRasterizer = new LiblouisBrailleTextRasterizer(canvas.getPrinter());
         mDiagram = Objects.requireNonNull(diagram);
         mCanvas = Objects.requireNonNull(canvas);
         mData = mCanvas.getCurrentPage();
@@ -182,7 +181,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         xAxis.setBoundary(xAxisBound);
         // a bit more complicated than y-axis here: building a map for the axis labels
         Map<Integer, String> xAxisLabels = new HashMap<>();
-        char labelLetter = 'A';
+        char labelLetter = 'a';
         for (int axisTick = (negUnits / 2) * -1; axisTick <= (posUnits / 2); axisTick++) {
             xAxisLabels.put(axisTick, Character.toString(labelLetter));
             labelLetter++;
@@ -223,7 +222,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
             barThickness -= 2;
             if (barThickness < mBarMinThickness) {
                 throw new InsufficientRenderingAreaException("Not enough space to render given amount of categories in "
-                        + "bar chart. " + mDiagram.getCategoryCount() + " categories given. " + requiredCells
+                        + "bar chart. " + mDiagram.getDataSet().getSize() + " categories given. " + requiredCells
                         + " cells required but only " + availableCells + " available. "
                         + "(Minimum bar thickness is set to " + mBarMinThickness + " dots)");
             }
@@ -241,7 +240,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         int barCells = (int) ceil(barSize / (double) cellHeight); // important cast, else int division happens
         int cellsInclusive = (int) ceil(sizeInclusive / (double) cellHeight);
         // --> Linear equation
-        return barCells + (cellsInclusive - 1) * (mDiagram.getCategoryCount() - 1);
+        return barCells + (cellsInclusive - 1) * (mDiagram.getDataSet().getSize() - 1);
     }
 
 
@@ -269,6 +268,16 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         Rasterizer.rectangle(lowerX, lowerY, upperX, upperY, mData, true);
 
         // then the rectangle is filled with the uniform texture
+        /*
+        Texture<Boolean> uniformTexture = new Texture<>(TexturedArea.BOTTOM_T_PATTERN);
+        TextureRasterizer textureRasterizer = new TextureRasterizer();
+        TexturedArea barFace = new TexturedArea(
+                uniformTexture,
+                new Rectangle(lowerX + 1, upperY + 1, length - 2, thickness - 2)
+        );
+        textureRasterizer.rasterize(barFace, mCanvas);
+         */
+
         int textureStep = Integer.signum(upperX - lowerX) * mTextureUnitSize;
         int i = 0;
         for (int dotX = lowerX; dotX != upperX; dotX += textureStep) {
@@ -296,6 +305,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
             captionCellX = mCanvas.getCellXFromDotX(max(lowerX, upperX) + 1);
         }
         Rectangle captionArea = new Rectangle(captionCellX, captionCellY, mCaptionLength, 1);
+        // TODO Something is strange gi
         mTextRasterizer.rasterize(new BrailleText(categoryName,
                 captionArea.scaledBy(mCanvas.getCellWidth(), mCanvas.getCellHeight())), mCanvas);
 

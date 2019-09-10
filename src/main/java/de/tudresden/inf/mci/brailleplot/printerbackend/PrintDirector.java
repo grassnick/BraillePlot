@@ -111,7 +111,6 @@ public class PrintDirector {
      * Private method for sending the data to the printer. Separated from the public method so that the assemble process
      * and the printing process are separated logically, but from outside it looks like it all happens in one method.
      * @param data Data to be printed.
-     * @throws PrintException If the printing job could not be completed.
      */
 
     private void print(final byte[] data) {

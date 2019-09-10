@@ -7,8 +7,8 @@ import java.util.Objects;
 
 /**
  * Low effort implementation of {@link CategoricalPointListContainer}{@literal <}{@link PointList}{@literal >}.
- * @author Georg Graßnick
- * @version 2019.08.02
+ * @author Georg Graßnick, Leonard Kupper
+ * @version 2019.08.29
  */
 public class SimpleCategoricalPointListContainerImpl extends SimplePointListContainerImpl implements CategoricalPointListContainer<PointList> {
 
@@ -25,6 +25,12 @@ public class SimpleCategoricalPointListContainerImpl extends SimplePointListCont
     public SimpleCategoricalPointListContainerImpl(final List<PointList> initialElements, final List<String> initialCategories) {
         super(initialElements);
         mCategories = new ArrayList<>(Objects.requireNonNull(initialCategories));
+    }
+
+    public SimpleCategoricalPointListContainerImpl(final PointListContainer<PointList> pointListContainer) {
+        super(pointListContainer);
+        mCategories = new ArrayList<>();
+        mCategories.add("");
     }
 
     @Override

@@ -6,6 +6,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
 
 
+
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
@@ -17,6 +18,8 @@ import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 
 
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
+
+
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 
@@ -153,7 +156,8 @@ public final class App {
         try {
             // Logging example
             mLogger.info("Application started");
-
+            // Needed for Windows machines
+            System.setProperty("jna.library.path", System.getProperty("user.dir") + "/third_party");
             // Parse command line parameters
             CommandLineParser cliParser = new CommandLineParser();
             SettingsWriter settings = cliParser.parse(args);
@@ -180,6 +184,7 @@ public final class App {
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
             PointListContainer<PointList> container = csvParser.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
             mLogger.debug("Internal data representation:\n {}", container.toString());
+
             LineChart lineChart = new LineChart(container);
 
             // SVG exporting
@@ -187,6 +192,14 @@ public final class App {
             RasterCanvas canvas = renderer.rasterize(lineChart);
             SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
             mLogger.debug("Render preview:\n" + mat.toBoolString());
+
+            //CategoricalBarChart barChart = new CategoricalBarChart(container);
+
+            // Render diagram
+            //MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
+            //RasterCanvas canvas = renderer.rasterize(barChart);
+            // SVG exporting
+
             SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
             svgExporter.render();
             svgExporter.dump("boolMat");
@@ -207,6 +220,14 @@ public final class App {
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();
             floatSvgExporter.dump("floatingPointData");
+           // LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(indexV4Printer);
+            //renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BrailleText>(BrailleText.class, textRasterizer));
+           // RasterCanvas refCanvas = renderer.rasterize(new BrailleText(" ", new Rectangle(0, 0, 0, 0)));
+           // RasterCanvas m2canvas = renderer.rasterize(new BrailleText(text2, textArea));
+            //SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
+            //mLogger.debug("Render preview:\n" + mat.toBoolString());
+
+
 
             // Check if some SpoolerService/Printservice exists
             if (!PrintDirector.isPrintServiceOn()) {
