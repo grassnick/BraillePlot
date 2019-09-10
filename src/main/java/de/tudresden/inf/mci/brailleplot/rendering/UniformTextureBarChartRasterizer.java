@@ -222,7 +222,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
             barThickness -= 2;
             if (barThickness < mBarMinThickness) {
                 throw new InsufficientRenderingAreaException("Not enough space to render given amount of categories in "
-                        + "bar chart. " + mDiagram.getCategoryCount() + " categories given. " + requiredCells
+                        + "bar chart. " + mDiagram.getDataSet().getSize() + " categories given. " + requiredCells
                         + " cells required but only " + availableCells + " available. "
                         + "(Minimum bar thickness is set to " + mBarMinThickness + " dots)");
             }
@@ -240,7 +240,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         int barCells = (int) ceil(barSize / (double) cellHeight); // important cast, else int division happens
         int cellsInclusive = (int) ceil(sizeInclusive / (double) cellHeight);
         // --> Linear equation
-        return barCells + (cellsInclusive - 1) * (mDiagram.getCategoryCount() - 1);
+        return barCells + (cellsInclusive - 1) * (mDiagram.getDataSet().getSize() - 1);
     }
 
 
@@ -268,6 +268,16 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
         Rasterizer.rectangle(lowerX, lowerY, upperX, upperY, mData, true);
 
         // then the rectangle is filled with the uniform texture
+        /*
+        Texture<Boolean> uniformTexture = new Texture<>(TexturedArea.BOTTOM_T_PATTERN);
+        TextureRasterizer textureRasterizer = new TextureRasterizer();
+        TexturedArea barFace = new TexturedArea(
+                uniformTexture,
+                new Rectangle(lowerX + 1, upperY + 1, length - 2, thickness - 2)
+        );
+        textureRasterizer.rasterize(barFace, mCanvas);
+         */
+
         int textureStep = Integer.signum(upperX - lowerX) * mTextureUnitSize;
         int i = 0;
         for (int dotX = lowerX; dotX != upperX; dotX += textureStep) {

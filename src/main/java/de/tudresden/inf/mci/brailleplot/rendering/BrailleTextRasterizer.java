@@ -11,11 +11,13 @@ import de.tudresden.inf.mci.brailleplot.printerbackend.NotSupportedFileExtension
 
 /**
  * A rasterizer for text on braille grids. This class is still a stub and must be implemented!
+<<<<<<< HEAD
  * @version 2019.08.17
  * @author Leonard Kupper, Andrey Ruzhanskiy
  */
 @Deprecated
 public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
+
     private AbstractBrailleTableParser mParser;
 
 
@@ -42,8 +44,16 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
         }
     }
 
-    @Override
+
+
+
+
+    // Ignore this class.
+    // It has to be replaced completely with Andreys implementation when the text rasterizer branch gets merged.
     @Deprecated
+    @Override
+    @SuppressWarnings("checkstyle:MagicNumber")
+
     public void rasterize(final BrailleText data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
 
         Rectangle rect = data.getArea().intersectedWith(canvas.getDotRectangle());
@@ -58,6 +68,7 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
         mMaxWidth = rect.intWrapper().getWidth();
         // Loop through
         for (int i = 0; i < data.getText().length(); i++) {
+
             // Get current letter as temp.
             String letter = textAsArray[i];
             // If its uppercase, write the corresponding char.
@@ -158,9 +169,14 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
         }
     }
 
-    // TODO: Return in Dots
-    // TODO: Method Signature: Change so that a allignment (x), representing left and right is taken into consideration
-    // TODO: Method Signature: Change so that a allignment (y), representing left and right is taken into consideration
+
+
+    public int getBrailleStringLength(final String str) {
+        return str.length();
+    }
+
+    // TODO: Completely replace with help methods to calculate suited area for left or right alignment of given text.
+
     public int calculateRequiredHeight(final String text, final int xPos, final int yPos, final int maxWidth,
                                            final RasterCanvas canvas) {
         // TODO: Add calculations for required height to fit the given text into the given canvas. (Linebreaks!)

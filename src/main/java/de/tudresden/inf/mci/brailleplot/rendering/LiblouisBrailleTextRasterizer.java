@@ -57,7 +57,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
         Objects.requireNonNull(data, "The data given to the brailletextrasterizer was null!");
         Objects.requireNonNull(canvas, "The canvas given to the brailletextrasterizer was null!");
         if (data.getText() == "") {
-            throw new RuntimeException("The string in the Brailletext must not be empty!");
+            return;
         }
         Rectangle rect = data.getArea().intersectedWith(canvas.getDotRectangle());
         mCanvas = canvas;
