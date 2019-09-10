@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
@@ -8,12 +9,18 @@ import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
+import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
+import org.w3c.dom.css.Rect;
 
+import java.awt.image.Raster;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
-import static java.lang.Math.*;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.Math.abs;
+import static java.lang.Math.ceil;
 import static java.lang.StrictMath.floor;
 
 /**
@@ -22,7 +29,6 @@ import static java.lang.StrictMath.floor;
  * @version 2019.08.17
  */
 public class LineChartRasterizer implements Rasterizer<LineChart> {
-    private MatrixData mData;
     private LineChart mDiagram;
     private RasterCanvas mCanvas;
     private BrailleTextRasterizer mTextRasterizer;
@@ -43,12 +49,8 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     // Layout Variables
 
     private Rectangle mCellLineArea;
-    private int yoriginY;
-    private int yoriginX;
-    private int stepWidthY;
-    private Rectangle yAxisBound;
 
-    public LineChartRasterizer() {
+    LineChartRasterizer() {
         mTextRasterizer = new BrailleTextRasterizer();
         mAxisRasterizer = new LinearMappingAxisRasterizer();
     }
@@ -65,7 +67,6 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         PointListContainer list =  data.getData();
         mCanvas = canvas;
         mDiagram = data;
-        mData = mCanvas.getCurrentPage();
         // Important: Its a cell rectangle, not a dot rectangle.
         mCellLineArea = mCanvas.getCellRectangle();
 
@@ -96,33 +97,42 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
 
         rasterizeTitle(mDiagramTitle, titleArea);
 
-        rasterizeXAxis(originY,originX,xStepWidth,xAxisBound);
+        rasterizeXAxis(originY, originX, xStepWidth, xAxisBound);
 
         Rectangle yAxisArea = calculateYAxis();
         int yOriginY = yAxisArea.intWrapper().getY();
-        // Set the begining where the x axis is
 
-        int yOriginX = originX;
+        int yOriginX = originX - 1;
         double rangeOfYValues = valueRangeOfYAxis();
         int yUnitsAvailable = calculateUnitsHeightWidthInCells(yAxisArea);
-        int yStepWidth =  findYAxisStepWidth(rangeOfYValues, xUnitsAvailable);
+        int yStepWidth =  findYAxisStepWidth(rangeOfYValues, yUnitsAvailable);
         Rectangle yAxisBound = yAxisArea.scaledBy(mCanvas.getCellWidth(), mCanvas.getCellHeight());
+        rasterizeYAxis(yOriginY, yOriginX, yStepWidth, yAxisBound);
 
-        rasterizeYAxis(yOriginY,yOriginX,yStepWidth,yAxisBound);
+
+       // Rasterizer.rectangle(mCanvas.toDotRectangle(xAxisArea), mCanvas.getCurrentPage(), true);
+        printHelp();
 
 
     }
 
-    private int findYAxisStepWidth(double rangeOfYValues, int xUnitsAvailable) {
+    private void printHelp() {
+        Rectangle mCellLineAreatemp = mCanvas.toDotRectangle(mCellLineArea);
+        Rasterizer.fill(mCellLineAreatemp.intWrapper().getX(), mCellLineAreatemp.intWrapper().getY() ,mCellLineAreatemp.intWrapper().getRight(),
+                mCellLineAreatemp.intWrapper().getBottom()
+                , mCanvas.getCurrentPage(), true);
+    }
+
+    private int findYAxisStepWidth(final double rangeOfYValues, final int xUnitsAvailable) {
         int cellsToNextTick = (int) floor(xUnitsAvailable /  rangeOfYValues);
         return cellsToNextTick;
     }
 
-    private int calculateUnitsHeightWidthInCells(Rectangle rectangle) {
+    private int calculateUnitsHeightWidthInCells(final Rectangle rectangle) {
         return (int) floor(rectangle.getHeight() * mCanvas.getCellWidth());
     }
 
-    private void rasterizeTitle(String title, Rectangle titleArea) {
+    private void rasterizeTitle(final String title, final Rectangle titleArea) {
         BrailleText diagramTitle = new BrailleText(title, titleArea);
         try {
             mTextRasterizer.rasterize(diagramTitle, mCanvas);
@@ -131,9 +141,10 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         }
     }
 
-    private void rasterizeXAxis(int originY, int originX, int stepWidthX, Rectangle xAxisBound) {
-        Axis xAxis = new Axis(Axis.Type.X_AXIS, originX, originY, stepWidthX*2, 2);
+    private void rasterizeXAxis(final int originY, final int originX, final int stepWidthX, final Rectangle xAxisBound) {
+        Axis xAxis = new Axis(Axis.Type.X_AXIS, originX, originY, stepWidthX * 2, 2);
         xAxis.setBoundary(xAxisBound);
+        Rectangle test = xAxis.getBoundary();
         try {
             mAxisRasterizer.rasterize(xAxis, mCanvas);
         } catch (InsufficientRenderingAreaException e) {
@@ -141,10 +152,10 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         }
     }
 
-
-    private void rasterizeYAxis(int originY, int originX, int stepWidthY, Rectangle yAxisBound) {
-        Axis yAxis = new Axis(Axis.Type.Y_AXIS, originX, originY,stepWidthY*2, -2);
-        yAxis.setBoundary(yAxisBound);
+    @SuppressWarnings("magicnumber")
+    private void rasterizeYAxis(final int originY, final int originX, final int step, final Rectangle rect) {
+        Axis yAxis = new Axis(Axis.Type.Y_AXIS, originX, originY, step * 2, -2);
+        yAxis.setBoundary(rect);
         try {
             mAxisRasterizer.rasterize(yAxis, mCanvas);
         } catch (InsufficientRenderingAreaException e) {
@@ -159,7 +170,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         int widthOfCompleteArea = mCellLineArea.intWrapper().getWidth();
         int titleBarHeight = mTextRasterizer.calculateRequiredHeight(mDiagramTitle, 0, 0, widthOfCompleteArea, mCanvas);
         try {
-            return  mCellLineArea.removeFromTop(mCanvas.getCellYFromDotY(titleBarHeight)+1);
+            return  mCellLineArea.removeFromTop(mCanvas.getCellYFromDotY(titleBarHeight) + 1);
         } catch (Rectangle.OutOfSpaceException e) {
             throw new InsufficientRenderingAreaException("Not enough space to build the title area for the line chart!");
         }
@@ -239,7 +250,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         int cellsToNextTick = (int) floor(xUnitsAvailable /  rangeOfXValues);
         int numberOfTicks = (int) ceil(xUnitsAvailable / cellsToNextTick) + 1;
         PointListContainer<PointList> data = mDiagram.getData();
-        ArrayList<Double> listOfFloats = new ArrayList();
+        ArrayList<Double> listOfFloats = new ArrayList<Double>();
         Iterator<PointList> iter = data.iterator();
         while (iter.hasNext()) {
             PointList list = iter.next();
@@ -289,18 +300,18 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         */
     }
 
-    private boolean testIfEquidistant(ArrayList<Double> listOfFloats) {
+    private boolean testIfEquidistant(final ArrayList<Double> listOfFloats) {
         Collections.sort(listOfFloats);
         double temp = 0;
         double distance = 0;
         boolean isEqidistant = true;
-        for (int i = 0; i < listOfFloats.size()-1 ; i++) {
-            distance = listOfFloats.get(i+1) - listOfFloats.get(i);
+        for (int i = 0; i < listOfFloats.size() - 1; i++) {
+            distance = listOfFloats.get(i + 1) - listOfFloats.get(i);
 
-            if(i == 0) {
+            if (i == 0) {
                 temp = distance;
             }
-            if(temp != distance) {
+            if (temp != distance) {
                 isEqidistant = false;
             }
             if (i + 1 == listOfFloats.size()) {
