@@ -29,7 +29,7 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
     public void plot(final BarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
         mDiagram = Objects.requireNonNull(diagram);
-        CategoricalPointListContainer<PointList> mList = (CategoricalPointListContainer<PointList>) mDiagram.getDataSet();
+        CategoricalPointListContainer<PointList> catList = (CategoricalPointListContainer<PointList>) mDiagram.getDataSet();
         mCanvas = Objects.requireNonNull(canvas);
         mData = mCanvas.getCurrentPage();
         mCanvas.readConfig();
@@ -41,9 +41,9 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
         calculateRanges();
         drawAxes();
         mScaleY = scaleAxis("y");
-        mNamesX = new String[mList.getSize()];
+        mNamesX = new String[catList.getSize()];
 
-        Iterator<PointList> catListIt = mList.iterator();
+        Iterator<PointList> catListIt = catList.iterator();
         for (int i = 0; i < mNamesX.length; i++) {
             if (catListIt.hasNext()) {
                 mNamesX[i] = catListIt.next().getName();
@@ -51,10 +51,10 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
         }
 
         // TODO make this configurable by the user
-        int numBar = mList.getSize();
+        int numBar = catList.getSize();
         double minWidth = TWENTY; // minimum width of a bar
         double maxWidth = FIFTY; // maximum width of a bar
-        double minDist = TEN; // maximum distance between two bars
+        double minDist = TEN; // minimum distance between two bars
 
         double barWidth = (lengthX - (numBar + 1) * minDist) / numBar;
         if (barWidth < minWidth) {
@@ -65,8 +65,8 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
 
         double barDist = (lengthX - numBar * barWidth) / (numBar + 1);
 
-        Iterator<PointList> bigListIt = mList.iterator();
-        for (int i = 0; i < mList.getSize(); i++) {
+        Iterator<PointList> bigListIt = catList.iterator();
+        for (int i = 0; i < catList.getSize(); i++) {
             if (bigListIt.hasNext()) {
                 PointList smallList = bigListIt.next();
                 Iterator<Point2DDouble> smallListIt = smallList.iterator();
