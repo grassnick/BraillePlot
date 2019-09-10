@@ -214,11 +214,11 @@ public final class App {
 
             LinePlot lineplot = new LinePlot(container2);
             LinePlotter plotter2 = new LinePlotter();
-            // plotter2.plot(lineplot, floatCanvas);
+            plotter2.plot(lineplot, floatCanvas);
 
             BarChart bar = new BarChart(container3);
             BarChartPlotter plotter3 = new BarChartPlotter();
-            plotter3.plot(bar, floatCanvas);
+            // plotter3.plot(bar, floatCanvas);
 
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();
