@@ -22,7 +22,7 @@ public class LegendRasterizer implements Rasterizer<Legend> {
     private static final String LEGEND_KEYWORD = "Legende:"; // title for the legend
 
     // Sub rasterizers
-    private BrailleTextRasterizer mTextRasterizer = new BrailleTextRasterizer();
+    private LiblouisBrailleTextRasterizer mTextRasterizer;
     private TextureRasterizer mTextureRasterizer = new TextureRasterizer();
 
     /**
@@ -33,6 +33,7 @@ public class LegendRasterizer implements Rasterizer<Legend> {
     @Override
     public void rasterize(final Legend legend, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
 
+        mTextRasterizer = new LiblouisBrailleTextRasterizer(canvas.getPrinter());
         mCanvas = canvas;
         mLegend = legend;
 

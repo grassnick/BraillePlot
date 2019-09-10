@@ -63,8 +63,8 @@ public class JavaPropertiesConfigurationParserTest {
     @Test
     public void testFallbackProperties() {
 
-        String specifiedByConfig[] = {"name", "mode", "brailletable", "floatingDot.support", "floatingDot.resolution", "constraint.top", "constraint.left", "raster.dotDistance.horizontal", "raster.dotDistance.vertical", "raster.cellDistance.horizontal", "raster.cellDistance.vertical", "raster.dotDiameter"};
-        String specifiedByFallback[] = {"mode", "brailletable", "floatingDot.support", "constraint.top", "constraint.left", "raster.constraint.top", "raster.constraint.left", "raster.constraint.width", "raster.constraint.height", "raster.type", "raster.dotDistance.horizontal", "raster.dotDistance.vertical", "raster.cellDistance.horizontal", "raster.cellDistance.vertical", "raster.dotDiameter"};
+        String specifiedByConfig[] = {"name", "mode", "brailletable", "semantictable", "floatingDot.support", "floatingDot.resolution", "constraint.top", "constraint.left", "raster.dotDistance.horizontal", "raster.dotDistance.vertical", "raster.cellDistance.horizontal", "raster.cellDistance.vertical", "raster.dotDiameter"};
+        String specifiedByFallback[] = {"mode", "brailletable", "semantictable", "floatingDot.support", "constraint.top", "constraint.left", "raster.constraint.top", "raster.constraint.left", "raster.constraint.width", "raster.constraint.height", "raster.type", "raster.dotDistance.horizontal", "raster.dotDistance.vertical", "raster.cellDistance.horizontal", "raster.cellDistance.vertical", "raster.dotDiameter"};
 
         // config shall extend the fallback
         HashSet<String> expectedPropertyNames = new HashSet<>(Arrays.asList(specifiedByConfig));
