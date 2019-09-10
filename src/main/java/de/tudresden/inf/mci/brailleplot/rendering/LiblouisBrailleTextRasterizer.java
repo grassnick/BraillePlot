@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import de.tudresden.inf.mci.brailleplot.GeneralResource;
 import de.tudresden.inf.mci.brailleplot.brailleparser.AbstractBrailleTableParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
@@ -12,6 +13,8 @@ import org.liblouis.TranslationException;
 import org.liblouis.TranslationResult;
 import org.liblouis.Translator;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.Objects;
 
 import static java.lang.Math.ceil;
@@ -45,9 +48,11 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             throw new RuntimeException(e);
         }
         try {
-            mTranslator = new Translator("src\\main\\resources\\mapping\\liblouis\\de-g0.utb");
+            GeneralResource table = new GeneralResource("/mapping/liblouis/de-g0.utb");
+            File tableFile = table.getFileOrExportResource();
+            mTranslator = new Translator(tableFile.getAbsolutePath());
         } catch (Exception e) {
-            throw new RuntimeException(e.getCause());
+            throw new RuntimeException("Error while creating liblouis translator:", e);
         }
     }
 

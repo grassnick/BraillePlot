@@ -42,6 +42,7 @@ import tec.units.ri.unit.MetricPrefix;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -166,9 +167,30 @@ public final class App {
             }
 
             // Config Parsing
+            String configPath;
+            if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument
+                configPath = this.getClass().getResource("/config/index_everest_d_v4.properties").getFile();
+                mLogger.info("Using default file: " + configPath);
+                if (!(new File(configPath)).isFile()) {
+                    mLogger.info("Does not exist!");
+                }
+            } else {
+                configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get();
+            }
+
+            /*
+            GeneralResource testResource = new GeneralResource("/config/default.properties");
+            if (testResource.isValidExternalFile()) {
+                File testFile = testResource.asValidExternalFile();
+            } else {
+                InputStream testStream = testResource.asInputStream();
+            }
+
+             */
+
             JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(
-                    getClass().getClassLoader().getResource("config/index_everest_d_v4.properties").getFile(),
-                    getClass().getClassLoader().getResource("config/default.properties").getFile()
+                    configPath,
+                    "/config/default.properties"
             );
             Printer indexV4Printer = configParser.getPrinter();
             Format a4Format = configParser.getFormat("A4");

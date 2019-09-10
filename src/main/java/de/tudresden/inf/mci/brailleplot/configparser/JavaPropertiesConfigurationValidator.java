@@ -1,13 +1,11 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
 
+import de.tudresden.inf.mci.brailleplot.GeneralResource;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,7 +85,7 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
     private String interpretProperty(final String propertyName, final String value) throws ConfigurationValidationException {
         try {
             switch (propertyName) {
-                case "brailletable": return checkFileLocation(value);
+                case "brailletable": return new GeneralResource(value, mSearchPath).getResourcePath();
                 default: return value;
             }
         } catch (Exception e) {
@@ -95,30 +93,31 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         }
     }
 
-    /**
-     * This will first check the given file path if it exists as it is, else interpret as absolute, else relative to the set search path.
-     * @param path The file path to be checked. (Must be a file, not directory!)
-     * @return The interpreted path string to an existing file.
-     * @throws FileNotFoundException If all options to interpret the path string result in non-existing files.
-     */
-    private String checkFileLocation(final String path) throws FileNotFoundException {
+/**
+ * This will first check the given file path if it exists as it is, else interpret as absolute, else relative to the set search path.
+ * @param path The file path to be checked. (Must be a file, not directory!)
+ * @return The interpreted path string to an existing file.
+ * @throws IOException If all options to interpret the path string result in non-existing files.
+ */
+    /*
+    private String checkFileLocation(final String path) throws IOException {
         File checkFile = new File(path);
         mLogger.info("checking referenced path: " + checkFile);
         if (checkFile.isFile()) {
-            mLogger.info("interpreting path as file: " + checkFile.getAbsolutePath());
+            mLogger.info("interpreting path as file: " + checkFile.getCanonicalPath());
             return checkFile.getAbsolutePath();
         }
         checkFile = checkFile.getAbsoluteFile();
         mLogger.info("checking referenced path as absolute path: " + checkFile);
         if (checkFile.isFile()) {
-            mLogger.info("interpreting path as absolute file: " + checkFile.getAbsolutePath());
+            mLogger.info("interpreting path as absolute file: " + checkFile.getCanonicalPath());
             return checkFile.getAbsolutePath();
         }
         if (Objects.nonNull(mSearchPath)) {
             checkFile = new File(mSearchPath + File.separator + path);
             mLogger.info("looking for referenced path in search path: " + checkFile);
             if (checkFile.isFile()) {
-                mLogger.info("interpreting path as search path relative file: " + checkFile.getAbsolutePath());
+                mLogger.info("interpreting path as search path relative file: " + checkFile.getCanonicalPath());
                 return checkFile.getAbsolutePath();
             }
         }
@@ -128,8 +127,16 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
             mLogger.info("interpreting path as resource stream: " + path);
             return path;
         }
+        String relativeResourcePath = mSearchPath + File.separator + path;
+        checkStream = getClass().getClassLoader().getResourceAsStream(relativeResourcePath);
+        mLogger.info("checking referenced path as relative resource: " + relativeResourcePath);
+        if (Objects.nonNull(checkStream)) {
+            mLogger.info("interpreting path as resource stream: " + relativeResourcePath);
+            return path;
+        }
         throw new FileNotFoundException("File/Resource not found: " + path);
     }
+     */
 
     @Override
     public void setSearchPath(final String searchPath) {

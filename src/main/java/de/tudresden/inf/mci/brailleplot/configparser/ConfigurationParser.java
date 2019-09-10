@@ -1,13 +1,18 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -28,8 +33,10 @@ public abstract class ConfigurationParser {
     private Printer mDefaultPrinter;
     private Format mDefaultFormat;
 
-    ConfigurationParser() {
+    private final Logger mLogger;
 
+    ConfigurationParser() {
+        mLogger = LoggerFactory.getLogger(this.getClass());
     };
 
     /**
@@ -42,7 +49,7 @@ public abstract class ConfigurationParser {
      * @throws ConfigurationParsingException On any error while accessing the configuration file or syntax.
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
-    protected abstract void parse(FileInputStream input) throws ConfigurationParsingException, ConfigurationValidationException;
+    protected abstract void parse(InputStream input) throws ConfigurationParsingException, ConfigurationValidationException;
 
 
     /**
@@ -147,8 +154,8 @@ public abstract class ConfigurationParser {
         mFormatProperties.clear();
         // load and parse file
         mCurrentConfigFile = new File(filePath);
-        FileInputStream input = openInputStream(filePath);
-        getValidator().setSearchPath(getConfigFile().getParentFile().getAbsolutePath());
+        InputStream input = openInputStream(filePath);
+        getValidator().setSearchPath(Objects.requireNonNullElse(getConfigFile().getParent(), ""));
         parse(input);
         closeInputStream(input);
         // build printer object from added properties
@@ -178,11 +185,23 @@ public abstract class ConfigurationParser {
      * @return A {@link FileInputStream} for the given file path.
      * @throws ConfigurationParsingException On any error while opening the stream. (e.g. missing file)
      */
-    final FileInputStream openInputStream(final String filePath) throws ConfigurationParsingException {
+    final InputStream openInputStream(final String filePath) throws ConfigurationParsingException {
+        // This has to take the fact into consideration, that a resource from a packaged jar is not a real file in
+        // the file system and must be read via classloader resource stream.  We want to be able to process files as
+        // well as packed resources.
         try {
+            // first try to read as file
+            mLogger.info("trying to open as file: " + filePath);
             return new FileInputStream(filePath);
         } catch (IOException e) {
-            throw new ConfigurationParsingException("Unable to read configuration file", e);
+            // if that fails, try to read as resource
+            mLogger.info("trying to open as resource: " + filePath);
+            InputStream resourceStream = this.getClass().getResourceAsStream(filePath);
+            if (Objects.isNull(resourceStream)) {
+                // if that also fails:
+                throw new ConfigurationParsingException("Unable to read configuration file / resource.", e);
+            }
+            return resourceStream;
         }
     }
 
@@ -191,7 +210,7 @@ public abstract class ConfigurationParser {
      * @param input The {@link FileInputStream} to be closed.
      * @throws ConfigurationParsingException On any error while closing the stream.
      */
-    final void closeInputStream(final FileInputStream input) throws ConfigurationParsingException {
+    final void closeInputStream(final InputStream input) throws ConfigurationParsingException {
         try {
             input.close();
         } catch (IOException e) {

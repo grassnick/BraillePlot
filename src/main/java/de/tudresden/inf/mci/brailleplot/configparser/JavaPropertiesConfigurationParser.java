@@ -1,8 +1,12 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Stack;
 
@@ -14,6 +18,7 @@ import java.util.Stack;
 public final class JavaPropertiesConfigurationParser extends ConfigurationParser {
 
     Stack<File> mInclusionStack = new Stack<>();
+    private final Logger mLogger;
 
     /**
      * Constructor.
@@ -28,6 +33,7 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
             final String filePath,
             final String defaultPath
     ) throws ConfigurationParsingException, ConfigurationValidationException {
+        mLogger = LoggerFactory.getLogger(this.getClass());
         setValidator(new JavaPropertiesConfigurationValidator());
         parseConfigFile(defaultPath, false);
         setDefaults(getPrinter(), getFormat("default"));
@@ -41,7 +47,7 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
      * @throws ConfigurationParsingException On any error while accessing the configuration file or syntax.
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
-    protected void parse(final FileInputStream input) throws ConfigurationParsingException, ConfigurationValidationException {
+    protected void parse(final InputStream input) throws ConfigurationParsingException, ConfigurationValidationException {
         // Create property instance for current recursion level
         Properties properties = new Properties();
         try {
@@ -77,7 +83,7 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
             if (mInclusionStack.empty()) {
                 mInclusionStack.push(getConfigFile());
             }
-            File includeFile, parentFile = mInclusionStack.peek().getParentFile();
+            File includeFile, parentFile = Objects.requireNonNullElse(mInclusionStack.peek().getParentFile(), new File(""));
             try {
                 String findIncludePath = parentFile.getAbsolutePath() + File.separator + includeName.trim();
                 File abstractPath = new File(findIncludePath);
@@ -94,13 +100,14 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
             if (mInclusionStack.contains(includeFile)) {
                 continue;
             }
-            FileInputStream includeInput = openInputStream(includeFile.getAbsolutePath());
+            InputStream includeInput = openInputStream(includeFile.getAbsolutePath());
             try {
                 mInclusionStack.push(includeFile);
-                getValidator().setSearchPath(mInclusionStack.peek().getParentFile().getAbsolutePath());
+                mLogger.info("Including config file: " + includeFile);
+                getValidator().setSearchPath(Objects.requireNonNullElse(mInclusionStack.peek().getParent(), ""));
                 parse(includeInput);
                 mInclusionStack.pop();
-                getValidator().setSearchPath(mInclusionStack.peek().getParentFile().getAbsolutePath());
+                getValidator().setSearchPath(Objects.requireNonNullElse(mInclusionStack.peek().getParent(), ""));
             } finally {
                 closeInputStream(includeInput);
             }
