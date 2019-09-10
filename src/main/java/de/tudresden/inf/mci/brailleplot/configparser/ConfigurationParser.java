@@ -148,6 +148,7 @@ public abstract class ConfigurationParser {
         // load and parse file
         mCurrentConfigFile = new File(filePath);
         FileInputStream input = openInputStream(filePath);
+        getValidator().setSearchPath(getConfigFile().getParentFile().getAbsolutePath());
         parse(input);
         closeInputStream(input);
         // build printer object from added properties

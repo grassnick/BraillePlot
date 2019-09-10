@@ -2,9 +2,12 @@ package de.tudresden.inf.mci.brailleplot.configparser;
 
 
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,9 +27,11 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
 
     private final HashMap<String, Predicate<String>> mValidPrinterProperties = new HashMap<>();
     private final HashMap<String, Predicate<String>> mValidFormatProperties = new HashMap<>();
-    private final HashMap<String, ArrayList<String>> mCompletenessCheck = new HashMap<>();
     private final ArrayList<String> mRequiredPrinterProperties = new ArrayList<>();
     private final ArrayList<String> mRequiredFormatProperties = new ArrayList<>();
+    private String mSearchPath;
+
+    Logger mLogger = LoggerFactory.getLogger(this.getClass());
 
     public JavaPropertiesConfigurationValidator() {
 
@@ -37,14 +42,13 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         Predicate<String> requireDouble = JavaPropertiesConfigurationValidator::checkIfDouble;
         Predicate<String> requireBoolean = JavaPropertiesConfigurationValidator::checkIfBoolean;
         Predicate<String> requirePositive = JavaPropertiesConfigurationValidator::checkIfPositive;
-        Predicate<String> requireFileExists = JavaPropertiesConfigurationValidator::checkIfFileExists;
 
         // Definition of valid printer properties
         Map<String, Predicate<String>> p = new HashMap<>();
         definePrinterProperty("name", requireNotEmpty);
         definePrinterProperty("mode", requireNotEmpty);
-        definePrinterProperty("brailletable", requireFileExists);
-        definePrinterProperty("semantictable", requireFileExists);
+        definePrinterProperty("brailletable", requireNotEmpty);  // these are checked/interpreted
+        definePrinterProperty("semantictable", requireNotEmpty); // before predicate validation
         definePrinterProperty("floatingDot.support", requireBoolean);
         definePrinterProperty("floatingDot.resolution", requireDouble.and(requirePositive), false);
         definePrinterProperty("constraint.top", requireDouble.and(requirePositive));
@@ -71,6 +75,73 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         defineFormatProperty("margin.bottom", requireInteger.and(requirePositive));
         defineFormatProperty("margin.left", requireInteger.and(requirePositive));
 
+    }
+
+    /**
+     * This method is called before validation for every property being read. It is used to interpret special properties
+     * like relative file locations, do value conversions, ...
+     * @param propertyName Key of the property
+     * @param value Raw value read from file
+     * @return Interpreted property value
+     */
+    private String interpretProperty(final String propertyName, final String value) throws ConfigurationValidationException {
+        try {
+            switch (propertyName) {
+                case "brailletable": return checkFileLocation(value);
+                default: return value;
+            }
+        } catch (Exception e) {
+            throw new ConfigurationValidationException("Problem while interpreting property.", e);
+        }
+    }
+
+    /**
+     * This will first check the given file path if it exists as it is, else interpret as absolute, else relative to the set search path.
+     * @param path The file path to be checked. (Must be a file, not directory!)
+     * @return The interpreted path string to an existing file.
+     * @throws FileNotFoundException If all options to interpret the path string result in non-existing files.
+     */
+    private String checkFileLocation(final String path) throws FileNotFoundException {
+        File checkFile = new File(path);
+        mLogger.info("checking referenced path: " + checkFile);
+        if (checkFile.isFile()) {
+            mLogger.info("interpreting path as file: " + checkFile.getAbsolutePath());
+            return checkFile.getAbsolutePath();
+        }
+        checkFile = checkFile.getAbsoluteFile();
+        mLogger.info("checking referenced path as absolute path: " + checkFile);
+        if (checkFile.isFile()) {
+            mLogger.info("interpreting path as absolute file: " + checkFile.getAbsolutePath());
+            return checkFile.getAbsolutePath();
+        }
+        if (Objects.nonNull(mSearchPath)) {
+            checkFile = new File(mSearchPath + File.separator + path);
+            mLogger.info("looking for referenced path in search path: " + checkFile);
+            if (checkFile.isFile()) {
+                mLogger.info("interpreting path as search path relative file: " + checkFile.getAbsolutePath());
+                return checkFile.getAbsolutePath();
+            }
+        }
+        InputStream checkStream = getClass().getClassLoader().getResourceAsStream(path);
+        mLogger.info("checking referenced path as resource: " + path);
+        if (Objects.nonNull(checkStream)) {
+            mLogger.info("interpreting path as resource stream: " + path);
+            return path;
+        }
+        throw new FileNotFoundException("File/Resource not found: " + path);
+    }
+
+    @Override
+    public void setSearchPath(final String searchPath) {
+        /*
+        File path = new File(searchPath);
+        if (!path.isDirectory()) {
+            throw new IOException("Not a directory.");
+        }
+        mSearchPath = path.getAbsolutePath();
+         */
+        mSearchPath = searchPath;
+        mLogger.info("search path for file references was updated: " + searchPath);
     }
 
     /**
@@ -191,7 +262,7 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
             throw new ConfigurationValidationException("Invalid property name: " + propertyName);
         }
         // Check against its type requirement predicate
-        if (!validation.get(propertyName).test(value)) {
+        if (!validation.get(propertyName).test(interpretProperty(propertyName, value))) {
             throw new ConfigurationValidationException(
                     "Invalid value '" + value + "' for property '" + propertyName + "'"
             );
@@ -234,15 +305,6 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         } catch (NumberFormatException e) {
             return false;
         }
-    }
-
-    private static boolean checkIfFileExists(final String filePath) {
-        try {
-            FileInputStream stream = new FileInputStream(filePath);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        return true;
     }
 
 

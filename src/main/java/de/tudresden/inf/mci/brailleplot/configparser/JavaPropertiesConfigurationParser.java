@@ -97,8 +97,10 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
             FileInputStream includeInput = openInputStream(includeFile.getAbsolutePath());
             try {
                 mInclusionStack.push(includeFile);
+                getValidator().setSearchPath(mInclusionStack.peek().getParentFile().getAbsolutePath());
                 parse(includeInput);
                 mInclusionStack.pop();
+                getValidator().setSearchPath(mInclusionStack.peek().getParentFile().getAbsolutePath());
             } finally {
                 closeInputStream(includeInput);
             }
