@@ -14,9 +14,9 @@ import java.util.List;
  */
 public class BoolMatrixDataSvgExporter extends AbstractSvgExporter<RasterCanvas, MatrixData<Boolean>> {
 
-    final static private int EMPTY_DOT_COLOR_GRAY = 225;
-    final static private Color EMPTY_DOT_COLOR = new Color(EMPTY_DOT_COLOR_GRAY, EMPTY_DOT_COLOR_GRAY, EMPTY_DOT_COLOR_GRAY);
-    final static private Color FULL_DOT_COLOR = Color.BLACK;
+    private static final int EMPTY_DOT_COLOR_GRAY = 225;
+    private static final Color EMPTY_DOT_COLOR = new Color(EMPTY_DOT_COLOR_GRAY, EMPTY_DOT_COLOR_GRAY, EMPTY_DOT_COLOR_GRAY);
+    private static final Color FULL_DOT_COLOR = Color.BLACK;
 
 
     public BoolMatrixDataSvgExporter(final RasterCanvas rasterCanvas) {
