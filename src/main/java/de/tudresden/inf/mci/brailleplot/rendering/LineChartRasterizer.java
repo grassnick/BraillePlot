@@ -9,10 +9,12 @@ import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 
 
-
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -84,6 +86,8 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         // Step three.5:  Calculate how many units are available for the x Axis. Units are in dots.
         int xUnitsAvailable = calculateUnitsWidthInCells(xAxisArea);
         int xStepWidth = (int) findXAxisStepWidth(rangeOfXValues, xUnitsAvailable);
+        int numberOfTicks = (int) getNumberOfTicks(rangeOfXValues,xUnitsAvailable);
+        Map<Integer,String> labels = setCorrectLabelsforX(xStepWidth, rangeOfXValues, numberOfTicks);
 
 
         Rectangle xAxisBound = xAxisArea.scaledBy(mCanvas.getCellWidth(), mCanvas.getCellHeight());
@@ -94,7 +98,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
 
         rasterizeTitle(mDiagramTitle, titleArea);
 
-        rasterizeXAxis(originY, originX, xStepWidth, xAxisBound);
+        rasterizeXAxis(originY, originX, xStepWidth, xAxisBound, labels);
 
         Rectangle yAxisArea = calculateYAxis();
         int yOriginY = yAxisArea.intWrapper().getY();
@@ -111,6 +115,27 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         //printHelp();
 
 
+    }
+
+    private Map<Integer, String> setCorrectLabelsforX(double xStepWidth, double rangeOfXValues, int numberOfTicks) {
+        double min = mDiagram.getMinX();
+        double increment = xStepWidth;
+        Map<Integer, String> result = new HashMap<>();
+        char letter = 'a';
+        for (int i = 0; i < numberOfTicks ; i++) {
+            if (increment > mDiagram.getMaxX()) {
+                break;
+            }
+            if (i == 0) {
+                result.put((int) min, String.valueOf(letter));
+                letter++;
+            } else {
+                result.put((int) (increment + min), String.valueOf(letter));
+                increment = increment + xStepWidth;
+                letter++;
+            }
+        }
+        return result;
     }
 
     private void printHelp() {
@@ -139,9 +164,10 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         }
     }
 
-    private void rasterizeXAxis(final int originY, final int originX, final int stepWidthX, final Rectangle xAxisBound) {
+    private void rasterizeXAxis(final int originY, final int originX, final int stepWidthX, final Rectangle xAxisBound, Map<Integer, String> labels) {
         Axis xAxis = new Axis(Axis.Type.X_AXIS, originX, originY, stepWidthX * 2, 2);
         xAxis.setBoundary(xAxisBound);
+        xAxis.setLabels(labels);
         Rectangle test = xAxis.getBoundary();
         try {
             mAxisRasterizer.rasterize(xAxis, mCanvas);
@@ -244,6 +270,12 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         return valueRangeOfXAxis;
     }
 
+    private double getNumberOfTicks(final double rangeOfXValues, final int xUnitsAvailable) {
+        int cellsToNextTick = (int) floor(xUnitsAvailable /  rangeOfXValues);
+        int numberOfTicks = (int) ceil(xUnitsAvailable / cellsToNextTick) + 1;
+        return numberOfTicks;
+    }
+
     private double findXAxisStepWidth(final double rangeOfXValues, final int xUnitsAvailable) throws InsufficientRenderingAreaException {
         int cellsToNextTick = (int) floor(xUnitsAvailable /  rangeOfXValues);
         int numberOfTicks = (int) ceil(xUnitsAvailable / cellsToNextTick) + 1;
@@ -260,9 +292,10 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
             break;
         }
 
+        // Why is this even here...
         if (testIfEquidistant(listOfFloats)) {
             Collections.sort(listOfFloats);
-            cellsToNextTick = abs((int) ((abs(listOfFloats.get(1)) - abs(listOfFloats.get(0)))));
+            //cellsToNextTick = abs((int) ((abs(listOfFloats.get(1)) - abs(listOfFloats.get(0)))));
             //cellsToNextTick = (int) floor(xUnitsAvailable / distance);
         }
 
