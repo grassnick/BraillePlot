@@ -5,7 +5,9 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
+import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -14,7 +16,7 @@ import java.util.Objects;
  */
 public final class BarChartPlotter extends AbstractPlotter<BarChart> implements Plotter<BarChart> {
 
-    CategoricalPointListContainer<PointList> mList;
+    private String[] mNamesX;
 
     /**
      * Plots a {@link BarChart} instance onto a {@link PlotCanvas}.
@@ -27,7 +29,7 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
     public void plot(final BarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
         mDiagram = Objects.requireNonNull(diagram);
-        mList = (CategoricalPointListContainer<PointList>) mDiagram.getDataSet();
+        CategoricalPointListContainer<PointList> mList = (CategoricalPointListContainer<PointList>) mDiagram.getDataSet();
         mCanvas = Objects.requireNonNull(canvas);
         mData = mCanvas.getCurrentPage();
         mCanvas.readConfig();
@@ -39,8 +41,44 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
         calculateRanges();
         drawAxes();
         mScaleY = scaleAxis("y");
+        mNamesX = new String[mList.getSize()];
 
-        // TODO
+        Iterator<PointList> catListIt = mList.iterator();
+        for (int i = 0; i < mNamesX.length; i++) {
+            if (catListIt.hasNext()) {
+                mNamesX[i] = catListIt.next().getName();
+            }
+        }
+
+        // TODO make this configurable by the user
+        int numBar = mList.getSize();
+        double minWidth = TWENTY; // minimum width of a bar
+        double maxWidth = FIFTY; // maximum width of a bar
+        double minDist = TEN; // maximum distance between two bars
+
+        double barWidth = (lengthX - (numBar + 1) * minDist) / numBar;
+        if (barWidth < minWidth) {
+            barWidth = minWidth;
+        } else if (barWidth > maxWidth) {
+            barWidth = maxWidth;
+        }
+
+        double barDist = (lengthX - numBar * barWidth) / (numBar + 1);
+
+        Iterator<PointList> bigListIt = mList.iterator();
+        for (int i = 0; i < mList.getSize(); i++) {
+            if (bigListIt.hasNext()) {
+                PointList smallList = bigListIt.next();
+                Iterator<Point2DDouble> smallListIt = smallList.iterator();
+                for (int j = 0; j < smallList.getSize(); j++) {
+                    if (smallListIt.hasNext()) {
+                        Point2DDouble point = smallListIt.next();
+                        double xValue = point.getX();
+                        drawRectangle(i, j, xValue);
+                    }
+                }
+            }
+        }
 
     }
 
@@ -59,7 +97,7 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
             addPoint(i, mBottomMargin);
             lastValueX = i;
         }
-        double lengthX = lastValueX - mLeftMargin;
+        lengthX = lastValueX - mLeftMargin;
         mNumberXTics = (int) Math.floor(lengthX / TICKDISTANCE);
         if (mNumberXTics < 2) {
             mNumberXTics = 2;
@@ -98,7 +136,7 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
             addPoint(mLeftMargin, i);
             lastValueY = i;
         }
-        double lengthY = mBottomMargin - lastValueY;
+        lengthY = mBottomMargin - lastValueY;
         mNumberYTics = (int) Math.floor(lengthY / TICKDISTANCE);
         if (mNumberYTics < 2) {
             mNumberYTics = 2;
@@ -115,6 +153,10 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
         addPoint(mLeftMargin + ARROWS1, lastValueY + ARROWS1);
         addPoint(mLeftMargin + ARROWS2, lastValueY + ARROWS2);
         addPoint(mLeftMargin + ARROWS3, lastValueY + ARROWS3);
+
+    }
+
+    private void drawRectangle(final int i, final int j, final double xValue) {
 
     }
 

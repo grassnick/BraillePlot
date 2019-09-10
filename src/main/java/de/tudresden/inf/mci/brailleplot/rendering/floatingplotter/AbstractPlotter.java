@@ -33,8 +33,6 @@ abstract class AbstractPlotter<T extends Diagram> {
     double mPageWidth;
     double mPageHeight;
     double mStepSize;
-    private double mXRange;
-    private double mYRange;
     double mXTickStep;
     double mYTickStep;
     double mLeftMargin;
@@ -42,12 +40,18 @@ abstract class AbstractPlotter<T extends Diagram> {
     double mTitleMargin;
     int mNumberXTics;
     int mNumberYTics;
+    double lengthX;
+    double lengthY;
+    private double mXRange;
+    private double mYRange;
 
     // constants
     static final int THREE = 3;
     static final int FOUR = 4;
     static final int FIVE = 5;
     static final int TEN = 10;
+    static final int TWENTY = 20;
+    static final int FIFTY = 50;
     static final double WMULT = 3;
     static final double HMULT = 2;
     static final double TMULT = 2;
@@ -90,7 +94,7 @@ abstract class AbstractPlotter<T extends Diagram> {
             addPoint(i, mBottomMargin);
             lastValueX = i;
         }
-        double lengthX = lastValueX - mLeftMargin;
+        lengthX = lastValueX - mLeftMargin;
         mNumberXTics = (int) Math.floor(lengthX / TICKDISTANCE);
         if (mNumberXTics < 2) {
             mNumberXTics = 2;
@@ -129,7 +133,7 @@ abstract class AbstractPlotter<T extends Diagram> {
             addPoint(mLeftMargin, i);
             lastValueY = i;
         }
-        double lengthY = mBottomMargin - lastValueY;
+        lengthY = mBottomMargin - lastValueY;
         mNumberYTics = (int) Math.floor(lengthY / TICKDISTANCE);
         if (mNumberYTics < 2) {
             mNumberYTics = 2;

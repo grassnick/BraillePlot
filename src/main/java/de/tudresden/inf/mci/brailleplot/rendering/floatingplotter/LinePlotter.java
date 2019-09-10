@@ -107,11 +107,11 @@ public final class LinePlotter extends AbstractPlotter<LinePlot> implements Plot
                                 addPoint(j, j * slope + n);
                             }
                         } else if (i == 1) {
-                            for (double j = calculateXValue(currentX) + steps; j < calculateXValue(nextX); j += 4 * steps) {
+                            for (double j = calculateXValue(currentX) + steps; j < calculateXValue(nextX); j += FOUR * steps) {
                                 addPoint(j, j * slope + n);
                             }
                         } else if (i == 2) {
-                            for (double j = calculateXValue(currentX) + steps; j < calculateXValue(nextX) - 3 * steps; j += 3 * steps) {
+                            for (double j = calculateXValue(currentX) + steps; j < calculateXValue(nextX) - THREE * steps; j += THREE * steps) {
                                 addPoint(j, j * slope + n);
                                 j += steps;
                                 addPoint(j, j * slope + n);
