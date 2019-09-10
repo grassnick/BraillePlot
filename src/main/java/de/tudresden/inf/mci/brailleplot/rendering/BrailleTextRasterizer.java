@@ -173,8 +173,6 @@ public final class BrailleTextRasterizer implements Rasterizer<BrailleText> {
         String[] textAsArray = text.split("");
         // Get maximum width in cells
         int availableWidth = rect.intWrapper().getWidth();
-        // Divide them, round up
-        // TODO:
         canvas.getDotRectangle().intWrapper().getX();
         int height = (int) Math.ceil((double) ((int) getBrailleStringLengthInCells(text, canvas)) / availableWidth);
         return height;
