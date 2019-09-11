@@ -34,24 +34,26 @@ abstract class AbstractPlotter<T extends Diagram> {
     double mPageHeight;
     double mStepSize;
     double mXTickStep;
-    double mYTickStep;
+    private double mYTickStep;
     double mLeftMargin;
     double mBottomMargin;
     double mTitleMargin;
     int mNumberXTics;
-    int mNumberYTics;
+    private int mNumberYTics;
     double lengthX;
     double lengthY;
     double mXRange;
-    double mYRange;
+    private double mYRange;
 
     // constants
     static final int THREE = 3;
     static final int FOUR = 4;
     static final int FIVE = 5;
+    static final int SIX = 6;
+    static final int SEVEN = 7;
     static final int TEN = 10;
     static final int TWENTY = 20;
-    static final int FIFTY = 50;
+    static final int THIRTY = 30;
     static final double WMULT = 3;
     static final double HMULT = 2;
     static final double TMULT = 2;
@@ -63,7 +65,6 @@ abstract class AbstractPlotter<T extends Diagram> {
     static final double TICK1 = 1.5;
     static final double TICK2 = 3;
     static final double TICK3 = 4.5;
-    private static final double TICK4 = 6;
     private static final double CIRCLESCALE = 1.45;
     private static final double CIRCLEDIA = 15;
 
@@ -187,20 +188,24 @@ abstract class AbstractPlotter<T extends Diagram> {
         int numberTics;
         double minimum;
 
-        if (type.equals("x")) {
-            calcRange = mXRange;
-            numberTics = mNumberXTics;
-            minimum = mDiagram.getMinX();
-        } else if (type.equals("y")) {
-            calcRange = mYRange;
-            numberTics = mNumberYTics;
-            minimum = mDiagram.getMinY();
-        } else if (type.equals("z")) {
-            calcRange = mXRange;
-            numberTics = mNumberXTics;
-            minimum = mDiagram.getMinY();
-        } else {
-            throw new IllegalArgumentException();
+        switch (type) {
+            case "x":
+                calcRange = mXRange;
+                numberTics = mNumberXTics;
+                minimum = mDiagram.getMinX();
+                break;
+            case "y":
+                calcRange = mYRange;
+                numberTics = mNumberYTics;
+                minimum = mDiagram.getMinY();
+                break;
+            case "z":
+                calcRange = mXRange;
+                numberTics = mNumberXTics;
+                minimum = mDiagram.getMinY();
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
 
         int range;

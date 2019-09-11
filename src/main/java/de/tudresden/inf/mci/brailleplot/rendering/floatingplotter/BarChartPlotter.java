@@ -17,12 +17,10 @@ import java.util.Objects;
 public final class BarChartPlotter extends AbstractPlotter<BarChart> implements Plotter<BarChart> {
 
     private String[] mNamesY;
-    private double minWidth;
-    private double maxWidth;
-    private double minDist;
-    private double barWidth;
-    private double barDist;
-    private double lastXValue;
+    private double mBarWidth;
+    private double mBarDist;
+    private double mLastXValue;
+    private static final double STAIRDIST = 6;
 
     /**
      * Plots a {@link BarChart} instance onto a {@link PlotCanvas}.
@@ -58,25 +56,25 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
 
         // TODO make this configurable by the user
         int numBar = catList.getSize();
-        minWidth = TWENTY; // minimum width of a bar
-        maxWidth = FIFTY; // maximum width of a bar
-        minDist = TEN; // minimum distance between two bars
+        double minWidth = TWENTY; // minimum width of a bar
+        double maxWidth = THIRTY; // maximum width of a bar
+        double minDist = TEN; // minimum distance between two bars
 
-        barWidth = (lengthY - (numBar + 1) * minDist) / numBar;
-        if (barWidth < minWidth) {
-            barWidth = minWidth;
-        } else if (barWidth > maxWidth) {
-            barWidth = maxWidth;
+        mBarWidth = (lengthY - (numBar + 1) * minDist) / numBar;
+        if (mBarWidth < minWidth) {
+            mBarWidth = minWidth;
+        } else if (mBarWidth > maxWidth) {
+            mBarWidth = maxWidth;
         }
 
-        barDist = (lengthY - numBar * barWidth) / (numBar + 1);
+        mBarDist = (lengthY - numBar * mBarWidth) / (numBar + 1);
 
         Iterator<PointList> bigListIt = catList.iterator();
         for (int i = 0; i < catList.getSize(); i++) {
             if (bigListIt.hasNext()) {
                 PointList smallList = bigListIt.next();
                 Iterator<Point2DDouble> smallListIt = smallList.iterator();
-                lastXValue = 0;
+                mLastXValue = 0;
                 for (int j = 0; j < smallList.getSize(); j++) {
                     if (smallListIt.hasNext()) {
                         Point2DDouble point = smallListIt.next();
@@ -165,11 +163,10 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
      * @param xValue Value on the x-axis.
      */
     private void drawRectangle(final int i, final int j, final double xValue) {
-        double startY = mBottomMargin - (barDist + i * (barWidth + barDist));
-        double endX = calculateXValue(xValue) + lastXValue;
-        lastXValue = endX;
+        double startY = mBottomMargin - (mBarDist + i * (mBarWidth + mBarDist));
+        double endX = calculateXValue(xValue) + mLastXValue;
         plotAndFillRectangle(startY, endX, j);
-
+        mLastXValue = endX;
     }
 
     /**
@@ -182,69 +179,242 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
         for (double i = mLeftMargin + mStepSize; i <= endX; i += mStepSize) {
             addPoint(i, startY);
         }
-        for (double i = startY - mStepSize; i >= startY - barWidth; i -= mStepSize) {
+        for (double i = startY - mStepSize; i >= startY - mBarWidth; i -= mStepSize) {
             addPoint(endX, i);
         }
         for (double i = mLeftMargin + mStepSize; i < endX; i += mStepSize) {
-            addPoint(i, startY - barWidth);
+            addPoint(i, startY - mBarWidth);
         }
 
+        // choose texture
         if (j == 0) {
-            fillType1(startY, endX);
+            fillFullPattern(startY, endX);
         } else if (j == 1) {
-            fillType2(startY, endX);
+            fillVerticalLine(startY, endX);
         } else if (j == 2) {
-            fillType3(startY, endX);
+            fillDiagonalRight(startY, endX);
         } else if (j == THREE) {
-            fillType4(startY, endX);
+            fillGridPattern(startY, endX);
         } else if (j == FOUR) {
-            fillType5(startY, endX);
+            fillDottedPattern(startY, endX);
+        } else if (j == FIVE) {
+            fillStairPattern(startY, endX);
+        } else if (j == SIX) {
+            fillDiagonalLeft(startY, endX);
         }
     }
 
     /**
-     * Fills a rectangle with the texture .
+     * Fills a rectangle with the texture full_pattern.
      * @param startY Starting y-coordinate.
      * @param endX Starting y-coordinate.
      */
-    private void fillType1(final double startY, final double endX) {
-
+    private void fillFullPattern(final double startY, final double endX) {
+        for (double i = mLeftMargin + mStepSize; i < endX - mStepSize / 2; i += mStepSize) {
+            for (double j = startY - mStepSize; j > startY - mBarWidth; j -= mStepSize) {
+                addPoint(i, j);
+            }
+        }
     }
 
     /**
-     * Fills a rectangle with the texture .
+     * Fills a rectangle with the texture vertical_line.
      * @param startY Starting y-coordinate.
      * @param endX Starting y-coordinate.
      */
-    private void fillType2(final double startY, final double endX) {
-
+    private void fillVerticalLine(final double startY, final double endX) {
+        for (double i = mLastXValue + FIVE * mStepSize; i < endX - mStepSize; i += FIVE * mStepSize) {
+            for (double j = startY - THREE * mStepSize; j > startY - mBarWidth + THREE * mStepSize; j -= mStepSize) {
+                addPoint(i, j);
+            }
+        }
     }
 
     /**
-     * Fills a rectangle with the texture .
+     * Fills a rectangle with the texture grid_pattern.
      * @param startY Starting y-coordinate.
      * @param endX Starting y-coordinate.
      */
-    private void fillType3(final double startY, final double endX) {
+    private void fillGridPattern(final double startY, final double endX) {
+        for (double i = mLastXValue + FIVE * mStepSize; i < endX - 2 * mStepSize; i += FIVE * mStepSize) {
+             for (double j = startY - mStepSize; j > startY - mBarWidth; j -= mStepSize) {
+                addPoint(i, j);
+            }
+        }
 
+        for (double j = startY - FIVE * mStepSize; j > startY - mBarWidth + mStepSize; j -= FIVE * mStepSize) {
+            for (double i = mLastXValue + mStepSize; i < endX; i += mStepSize) {
+                addPoint(i, j);
+            }
+        }
     }
 
     /**
-     * Fills a rectangle with the texture .
+     * Fills a rectangle with the texture dotted_pattern.
      * @param startY Starting y-coordinate.
      * @param endX Starting y-coordinate.
      */
-    private void fillType4(final double startY, final double endX) {
-
+    private void fillDottedPattern(final double startY, final double endX) {
+        for (double i = mLastXValue + FOUR * mStepSize; i < endX - mStepSize; i += FOUR * mStepSize) {
+            for (double j = startY - FOUR * mStepSize; j > startY - mBarWidth + mStepSize; j -= FOUR * mStepSize) {
+                addPoint(i, j);
+            }
+        }
     }
 
     /**
-     * Fills a rectangle with the texture .
+     * Fills a rectangle with the texture stair_pattern.
      * @param startY Starting y-coordinate.
      * @param endX Starting y-coordinate.
      */
-    private void fillType5(final double startY, final double endX) {
+    private void fillStairPattern(final double startY, final double endX) {
+        double last = 0;
+        outerloop:
+        for (double j = startY - STAIRDIST; j > startY - mBarWidth; j -= 2 * STAIRDIST) {
+            double lastX;
+            double lastY;
+            for (double i = mLastXValue + mStepSize; i <= mLastXValue + FOUR * mStepSize; i += mStepSize) {
+                if (i < endX) {
+                    addPoint(i, j);
+                    last = i;
+                } else {
+                    continue outerloop;
+                }
+            }
+            lastX = last;
 
+            for (double k = j - mStepSize; k >= j - FOUR * mStepSize; k -= mStepSize) {
+                if (k > startY - mBarWidth) {
+                    addPoint(lastX, k);
+                    last = k;
+                } else {
+                    continue outerloop;
+                }
+            }
+
+            lastY = last;
+
+            while (true) {
+                for (double i = lastX + mStepSize; i <= lastX + FOUR * mStepSize; i += mStepSize) {
+                    if (i < endX) {
+                        addPoint(i, lastY);
+                        last = i;
+                    } else {
+                        continue outerloop;
+                    }
+                }
+
+                lastX = last;
+
+                for (double k = lastY - mStepSize; k >= lastY - FOUR * mStepSize; k -= mStepSize) {
+                    if (k > startY - mBarWidth) {
+                        addPoint(lastX, k);
+                        last = k;
+                    } else {
+                        continue outerloop;
+                    }
+                }
+
+                lastY = last;
+            }
+
+        }
+
+        anotherloop:
+        for (double i = mLastXValue + 2 * STAIRDIST; i < endX; i += 2 * STAIRDIST) {
+            double lastX;
+            double lastY;
+            for (double j = startY - mStepSize; j >= startY - FOUR * mStepSize; j -= mStepSize) {
+                if (j > startY - mBarWidth) {
+                    addPoint(i, j);
+                    last = j;
+                } else {
+                    continue anotherloop;
+                }
+            }
+
+            lastY = last;
+
+            for (double k = i + mStepSize; k <= i + FOUR * mStepSize; k += mStepSize) {
+                if (k < endX) {
+                    addPoint(k, lastY);
+                    last = k;
+                } else {
+                    continue anotherloop;
+                }
+            }
+
+            lastX = last;
+
+            while (true) {
+                for (double j = lastY - mStepSize; j >= lastY - FOUR * mStepSize; j -= mStepSize) {
+                    if (j > startY - mBarWidth) {
+                        addPoint(lastX, j);
+                        last = j;
+                    } else {
+                        continue anotherloop;
+                    }
+                }
+                lastY = last;
+
+                for (double k = lastX + mStepSize; k <= lastX + FOUR * mStepSize; k += mStepSize) {
+                    if (k < endX) {
+                        addPoint(k, lastY);
+                        last = k;
+                    } else {
+                        continue anotherloop;
+                    }
+                }
+
+                lastX = last;
+            }
+        }
+    }
+
+    /**
+     * Fills a rectangle with the texture diagonal_left.
+     * @param startY Starting y-coordinate.
+     * @param endX Starting y-coordinate.
+     */
+    private void fillDiagonalLeft(final double startY, final double endX) {
+        for (double j = startY - mStepSize; j > startY - mBarWidth; j -= SIX * mStepSize) {
+            double y = j;
+            for (double i = mLastXValue + mStepSize; y > startY - mBarWidth && i < endX; i += mStepSize) {
+                addPoint(i, y);
+                y -= mStepSize;
+            }
+        }
+
+        for (double i = mLastXValue + SEVEN * mStepSize; i < endX; i += SIX * mStepSize) {
+            double y = startY - mStepSize;
+            for (double k = i; y > startY - mBarWidth && k < endX; k += mStepSize) {
+                addPoint(k, y);
+                y -= mStepSize;
+            }
+        }
+    }
+
+    /**
+     * Fills a rectangle with the texture diagonal_right.
+     * @param startY Starting y-coordinate.
+     * @param endX Starting y-coordinate.
+     */
+    private void fillDiagonalRight(final double startY, final double endX) {
+        for (double j = startY - mBarWidth + mStepSize; j < startY; j += SIX * mStepSize) {
+            double y = j;
+            for (double i = mLastXValue + mStepSize; y < startY && i < endX; i += mStepSize) {
+                addPoint(i, y);
+                y += mStepSize;
+            }
+        }
+
+        for (double i = mLastXValue + SEVEN * mStepSize; i < endX; i += SIX * mStepSize) {
+            double y = startY - mBarWidth + mStepSize;
+            for (double k = i; y < startY && k < endX; k += mStepSize) {
+                addPoint(k, y);
+                y += mStepSize;
+            }
+        }
     }
 
 }
