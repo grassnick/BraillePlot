@@ -16,7 +16,13 @@ import java.util.Objects;
  */
 public final class BarChartPlotter extends AbstractPlotter<BarChart> implements Plotter<BarChart> {
 
-    private String[] mNamesX;
+    private String[] mNamesY;
+    private double minWidth;
+    private double maxWidth;
+    private double minDist;
+    private double barWidth;
+    private double barDist;
+    private double lastXValue;
 
     /**
      * Plots a {@link BarChart} instance onto a {@link PlotCanvas}.
@@ -40,46 +46,52 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
 
         calculateRanges();
         drawAxes();
-        mScaleY = scaleAxis("y");
-        mNamesX = new String[catList.getSize()];
+        mScaleX = scaleAxis("z");
+        mNamesY = new String[catList.getSize()];
 
         Iterator<PointList> catListIt = catList.iterator();
-        for (int i = 0; i < mNamesX.length; i++) {
+        for (int i = 0; i < mNamesY.length; i++) {
             if (catListIt.hasNext()) {
-                mNamesX[i] = catListIt.next().getName();
+                mNamesY[i] = catListIt.next().getName();
             }
         }
 
         // TODO make this configurable by the user
         int numBar = catList.getSize();
-        double minWidth = TWENTY; // minimum width of a bar
-        double maxWidth = FIFTY; // maximum width of a bar
-        double minDist = TEN; // minimum distance between two bars
+        minWidth = TWENTY; // minimum width of a bar
+        maxWidth = FIFTY; // maximum width of a bar
+        minDist = TEN; // minimum distance between two bars
 
-        double barWidth = (lengthX - (numBar + 1) * minDist) / numBar;
+        barWidth = (lengthY - (numBar + 1) * minDist) / numBar;
         if (barWidth < minWidth) {
             barWidth = minWidth;
         } else if (barWidth > maxWidth) {
             barWidth = maxWidth;
         }
 
-        double barDist = (lengthX - numBar * barWidth) / (numBar + 1);
+        barDist = (lengthY - numBar * barWidth) / (numBar + 1);
 
         Iterator<PointList> bigListIt = catList.iterator();
         for (int i = 0; i < catList.getSize(); i++) {
             if (bigListIt.hasNext()) {
                 PointList smallList = bigListIt.next();
                 Iterator<Point2DDouble> smallListIt = smallList.iterator();
+                lastXValue = 0;
                 for (int j = 0; j < smallList.getSize(); j++) {
                     if (smallListIt.hasNext()) {
                         Point2DDouble point = smallListIt.next();
-                        double xValue = point.getX();
+                        double xValue = point.getY();
                         drawRectangle(i, j, xValue);
                     }
                 }
             }
         }
 
+    }
+
+    @Override
+    void calculateRanges() {
+        mXRange = Math.abs(mDiagram.getCumulatedMaxY() - mDiagram.getMinY());
     }
 
     @Override
@@ -123,11 +135,9 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
             addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK1);
             addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK2);
             addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK3);
-            // addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK4);
             addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK1);
             addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK2);
             addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK3);
-            // addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK4);
         }
 
         // y-axis:
@@ -137,14 +147,6 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
             lastValueY = i;
         }
         lengthY = mBottomMargin - lastValueY;
-        mNumberYTics = (int) Math.floor(lengthY / TICKDISTANCE);
-        if (mNumberYTics < 2) {
-            mNumberYTics = 2;
-        } else if (mNumberYTics <= FIVE) {
-            mNumberYTics = FIVE;
-        } else {
-            mNumberYTics = TEN;
-        }
 
         // arrows on y-axis
         addPoint(mLeftMargin - ARROWS1, lastValueY + ARROWS1);
@@ -156,7 +158,92 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
 
     }
 
+    /**
+     * Prepares rectangle drawing.
+     * @param i Corresponds to the position on the y-axis.
+     * @param j Corresponds to the category and the filling.
+     * @param xValue Value on the x-axis.
+     */
     private void drawRectangle(final int i, final int j, final double xValue) {
+        double startY = mBottomMargin - (barDist + i * (barWidth + barDist));
+        double endX = calculateXValue(xValue) + lastXValue;
+        lastXValue = endX;
+        plotAndFillRectangle(startY, endX, j);
+
+    }
+
+    /**
+     * Plots the rectangle and chooses a texture.
+     * @param startY Starting y-coordinate.
+     * @param endX Starting y-coordinate.
+     * @param j Corresponds to the category and the texture.
+     */
+    private void plotAndFillRectangle(final double startY, final double endX, final int j) {
+        for (double i = mLeftMargin + mStepSize; i <= endX; i += mStepSize) {
+            addPoint(i, startY);
+        }
+        for (double i = startY - mStepSize; i >= startY - barWidth; i -= mStepSize) {
+            addPoint(endX, i);
+        }
+        for (double i = mLeftMargin + mStepSize; i < endX; i += mStepSize) {
+            addPoint(i, startY - barWidth);
+        }
+
+        if (j == 0) {
+            fillType1(startY, endX);
+        } else if (j == 1) {
+            fillType2(startY, endX);
+        } else if (j == 2) {
+            fillType3(startY, endX);
+        } else if (j == THREE) {
+            fillType4(startY, endX);
+        } else if (j == FOUR) {
+            fillType5(startY, endX);
+        }
+    }
+
+    /**
+     * Fills a rectangle with the texture .
+     * @param startY Starting y-coordinate.
+     * @param endX Starting y-coordinate.
+     */
+    private void fillType1(final double startY, final double endX) {
+
+    }
+
+    /**
+     * Fills a rectangle with the texture .
+     * @param startY Starting y-coordinate.
+     * @param endX Starting y-coordinate.
+     */
+    private void fillType2(final double startY, final double endX) {
+
+    }
+
+    /**
+     * Fills a rectangle with the texture .
+     * @param startY Starting y-coordinate.
+     * @param endX Starting y-coordinate.
+     */
+    private void fillType3(final double startY, final double endX) {
+
+    }
+
+    /**
+     * Fills a rectangle with the texture .
+     * @param startY Starting y-coordinate.
+     * @param endX Starting y-coordinate.
+     */
+    private void fillType4(final double startY, final double endX) {
+
+    }
+
+    /**
+     * Fills a rectangle with the texture .
+     * @param startY Starting y-coordinate.
+     * @param endX Starting y-coordinate.
+     */
+    private void fillType5(final double startY, final double endX) {
 
     }
 

@@ -42,8 +42,8 @@ abstract class AbstractPlotter<T extends Diagram> {
     int mNumberYTics;
     double lengthX;
     double lengthY;
-    private double mXRange;
-    private double mYRange;
+    double mXRange;
+    double mYRange;
 
     // constants
     static final int THREE = 3;
@@ -120,11 +120,9 @@ abstract class AbstractPlotter<T extends Diagram> {
             addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK1);
             addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK2);
             addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK3);
-            // addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK4);
             addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK1);
             addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK2);
             addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK3);
-            // addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK4);
         }
 
         // y-axis:
@@ -196,6 +194,10 @@ abstract class AbstractPlotter<T extends Diagram> {
         } else if (type.equals("y")) {
             calcRange = mYRange;
             numberTics = mNumberYTics;
+            minimum = mDiagram.getMinY();
+        } else if (type.equals("z")) {
+            calcRange = mXRange;
+            numberTics = mNumberXTics;
             minimum = mDiagram.getMinY();
         } else {
             throw new IllegalArgumentException();
