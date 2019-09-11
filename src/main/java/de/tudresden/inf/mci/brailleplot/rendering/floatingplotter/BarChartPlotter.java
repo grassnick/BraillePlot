@@ -17,9 +17,6 @@ import java.util.Objects;
 public final class BarChartPlotter extends AbstractPlotter<BarChart> implements Plotter<BarChart> {
 
     private String[] mNamesY;
-    private double mMinWidth;
-    private double mMaxWidth;
-    private double mMinDist;
     private double mBarWidth;
     private double mBarDist;
     private double mLastXValue;
@@ -44,9 +41,9 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
         mStepSize = mCanvas.getDotDiameter();
         mPageWidth = mCanvas.getPrintableWidth();
         mPageHeight = mCanvas.getPrintableHeight();
-        mMinWidth = mCanvas.getMinBarWidth();
-        mMaxWidth = mCanvas.getMaxBarWidth();
-        mMinDist = mCanvas.getMinBarDist();
+        double mMinWidth = mCanvas.getMinBarWidth();
+        double mMaxWidth = mCanvas.getMaxBarWidth();
+        double mMinDist = mCanvas.getMinBarDist();
 
         calculateRanges();
         drawAxes();
@@ -60,9 +57,8 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
             }
         }
 
-        // TODO make this configurable by the user
+        // bar drawing and filling
         int numBar = catList.getSize();
-
         mBarWidth = (lengthY - (numBar + 1) * mMinDist) / numBar;
         if (mBarWidth < mMinWidth) {
             mBarWidth = mMinWidth;
@@ -183,6 +179,7 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
      * @param j Corresponds to the category and the texture.
      */
     private void plotAndFillRectangle(final double startY, final double endX, final int j) {
+        // plot rectangle
         for (double i = mLeftMargin + mStepSize; i <= endX; i += mStepSize) {
             addPoint(i, startY);
         }
