@@ -46,6 +46,9 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         definePrinterProperty("brailletable", requireFileExists);
         definePrinterProperty("floatingDot.support", requireBoolean);
         definePrinterProperty("floatingDot.resolution", requireDouble.and(requirePositive), false);
+        definePrinterProperty("floatingDot.minBarWidth", requireDouble.and(requirePositive), false);
+        definePrinterProperty("floatingDot.maxBarWidth", requireDouble.and(requirePositive), false);
+        definePrinterProperty("floatingDot.minBarDist", requireDouble.and(requirePositive), false);
         definePrinterProperty("constraint.top", requireDouble.and(requirePositive));
         definePrinterProperty("constraint.left", requireDouble.and(requirePositive));
         definePrinterProperty("constraint.width", requireDouble.and(requirePositive), false);

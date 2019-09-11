@@ -17,6 +17,9 @@ import java.util.Objects;
 public final class BarChartPlotter extends AbstractPlotter<BarChart> implements Plotter<BarChart> {
 
     private String[] mNamesY;
+    private double mMinWidth;
+    private double mMaxWidth;
+    private double mMinDist;
     private double mBarWidth;
     private double mBarDist;
     private double mLastXValue;
@@ -41,6 +44,9 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
         mStepSize = mCanvas.getDotDiameter();
         mPageWidth = mCanvas.getPrintableWidth();
         mPageHeight = mCanvas.getPrintableHeight();
+        mMinWidth = mCanvas.getMinBarWidth();
+        mMaxWidth = mCanvas.getMaxBarWidth();
+        mMinDist = mCanvas.getMinBarDist();
 
         calculateRanges();
         drawAxes();
@@ -56,15 +62,12 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
 
         // TODO make this configurable by the user
         int numBar = catList.getSize();
-        double minWidth = TWENTY; // minimum width of a bar
-        double maxWidth = THIRTY; // maximum width of a bar
-        double minDist = TEN; // minimum distance between two bars
 
-        mBarWidth = (lengthY - (numBar + 1) * minDist) / numBar;
-        if (mBarWidth < minWidth) {
-            mBarWidth = minWidth;
-        } else if (mBarWidth > maxWidth) {
-            mBarWidth = maxWidth;
+        mBarWidth = (lengthY - (numBar + 1) * mMinDist) / numBar;
+        if (mBarWidth < mMinWidth) {
+            mBarWidth = mMinWidth;
+        } else if (mBarWidth > mMaxWidth) {
+            mBarWidth = mMaxWidth;
         }
 
         mBarDist = (lengthY - numBar * mBarWidth) / (numBar + 1);
@@ -74,7 +77,6 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
             if (bigListIt.hasNext()) {
                 PointList smallList = bigListIt.next();
                 Iterator<Point2DDouble> smallListIt = smallList.iterator();
-                mLastXValue = 0;
                 for (int j = 0; j < smallList.getSize(); j++) {
                     if (smallListIt.hasNext()) {
                         Point2DDouble point = smallListIt.next();
@@ -164,7 +166,12 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
      */
     private void drawRectangle(final int i, final int j, final double xValue) {
         double startY = mBottomMargin - (mBarDist + i * (mBarWidth + mBarDist));
-        double endX = calculateXValue(xValue) + mLastXValue;
+        double endX;
+        if (j == 0) {
+            endX = calculateXValue(xValue);
+        } else {
+            endX = calculateXValue(xValue) + mLastXValue - mLeftMargin;
+        }
         plotAndFillRectangle(startY, endX, j);
         mLastXValue = endX;
     }

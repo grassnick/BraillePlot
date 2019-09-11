@@ -186,7 +186,7 @@ public final class App {
             classloader = Thread.currentThread().getContextClassLoader();
             csvStream = classloader.getResourceAsStream("examples/csv/1_scatter_plot.csv");
             csvReader = new BufferedReader(new InputStreamReader(csvStream));
-            InputStream csvStream2 = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_vertical.csv");
+            InputStream csvStream2 = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_max.csv");
             Reader csvReader2 = new BufferedReader(new InputStreamReader(csvStream2));
 
             csvParser = new CsvParser(csvReader, ',', '\"');
