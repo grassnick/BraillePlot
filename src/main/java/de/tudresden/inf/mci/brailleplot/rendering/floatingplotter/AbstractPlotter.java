@@ -195,7 +195,7 @@ abstract class AbstractPlotter<T extends Diagram> {
 
     /**
      * Scales axis numeration.
-     * @param type "x" for x-axis scaling and "y" for y-axis scaling.
+     * @param type "x" for x-axis scaling, "y" for y-axis scaling and "z" for bar charts.
      * @return Integer array with an Integer for a tic in each field. Last field contains scale factor as power of 10.
      * @throws IllegalArgumentException If argument is neither "x" nor "y".
      */

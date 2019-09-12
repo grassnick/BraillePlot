@@ -98,11 +98,17 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
 
     }
 
+    /**
+     * Calculates mXRange with cumulated maximum value.
+     */
     @Override
     void calculateRanges() {
         mXRange = Math.abs(mDiagram.getCumulatedMaxY() - mDiagram.getMinY());
     }
 
+    /**
+     * Draws axes without tick marks on the y-axis.
+     */
     @Override
     void drawAxes() {
         // margin left of y-axis
@@ -445,6 +451,9 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
         }
     }
 
+    /**
+     * Only draws grid on x-axis.
+     */
     @Override
     void drawGrid() {
         FloatingPointData<Boolean> grid = mCanvas.getNewPage();
