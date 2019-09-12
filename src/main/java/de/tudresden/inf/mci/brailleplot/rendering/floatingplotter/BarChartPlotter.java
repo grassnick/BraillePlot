@@ -140,13 +140,22 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
 
         // tick marks on x-axis
         mXTickStep = (lastValueX - MARGIN - mLeftMargin) / mNumberXTics;
-        for (int i = 1; i <= mNumberXTics; i++) {
-            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK1);
-            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK2);
-            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK3);
-            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK1);
-            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK2);
-            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK3);
+        for (double i = 1; i <= 2 * mNumberXTics; i++) {
+            if (i % 2 == 0) {
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK1);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK2);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK3);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK4);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK1);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK2);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK3);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK4);
+            } else {
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK1);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK2);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK1);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK2);
+            }
         }
 
         // y-axis:
@@ -155,6 +164,7 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
             addPoint(mLeftMargin, i);
             lastValueY = i;
         }
+
         lengthY = mBottomMargin - lastValueY;
 
         // arrows on y-axis
@@ -447,7 +457,7 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
                     if (j < mBottomMargin - k * (mBarDist + mBarWidth) && j > mBottomMargin - mBarDist - k * (mBarDist + mBarWidth)) {
                         Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                         if (!mData.checkPoint(point)) {
-                            mData.addPoint(point);
+                            grid.addPoint(point);
                         }
                         continue loop;
                     }
@@ -455,7 +465,7 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
                     if (j < mBottomMargin - mNumBar * (mBarDist + mBarWidth) && j > mTitleMargin) {
                         Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                         if (!mData.checkPoint(point)) {
-                            mData.addPoint(point);
+                            grid.addPoint(point);
                         }
                         continue loop;
                     }
@@ -463,7 +473,7 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
                     if ((mLeftMargin + (i / 2) * mXTickStep) > mGridHelp[k]) {
                         Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                         if (!mData.checkPoint(point)) {
-                            mData.addPoint(point);
+                            grid.addPoint(point);
                         }
                     }
                 }

@@ -65,6 +65,7 @@ abstract class AbstractPlotter<T extends Diagram> {
     static final double TICK1 = 1.5;
     static final double TICK2 = 3;
     static final double TICK3 = 4.5;
+    static final double TICK4 = 6;
     private static final double CIRCLESCALE = 1.45;
     private static final double CIRCLEDIA = 15;
 
@@ -117,13 +118,22 @@ abstract class AbstractPlotter<T extends Diagram> {
 
         // tick marks on x-axis
         mXTickStep = (lastValueX - MARGIN - mLeftMargin) / mNumberXTics;
-        for (int i = 1; i <= mNumberXTics; i++) {
-            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK1);
-            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK2);
-            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin + TICK3);
-            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK1);
-            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK2);
-            addPoint(mLeftMargin + i * mXTickStep, mBottomMargin - TICK3);
+        for (double i = 1; i <= 2 * mNumberXTics; i++) {
+            if (i % 2 == 0) {
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK1);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK2);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK3);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK4);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK1);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK2);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK3);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK4);
+            } else {
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK1);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK2);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK1);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK2);
+            }
         }
 
         // y-axis:
@@ -155,15 +165,22 @@ abstract class AbstractPlotter<T extends Diagram> {
 
         // tick marks on y-axis
         mYTickStep = (mBottomMargin - lastValueY - MARGIN) / mNumberYTics;
-        for (int i = 1; i <= mNumberYTics; i++) {
-            addPoint(mLeftMargin + TICK1, mBottomMargin - i * mYTickStep);
-            addPoint(mLeftMargin + TICK2, mBottomMargin - i * mYTickStep);
-            addPoint(mLeftMargin + TICK3, mBottomMargin - i * mYTickStep);
-            // addPoint(mLeftMargin + TICK4, mBottomMargin - i * mYTickStep);
-            addPoint(mLeftMargin - TICK1, mBottomMargin - i * mYTickStep);
-            addPoint(mLeftMargin - TICK2, mBottomMargin - i * mYTickStep);
-            addPoint(mLeftMargin - TICK3, mBottomMargin - i * mYTickStep);
-            // addPoint(mLeftMargin - TICK4, mBottomMargin - i * mYTickStep);
+        for (double i = 1; i <= 2 * mNumberYTics; i++) {
+            if (i % 2 == 0) {
+                addPoint(mLeftMargin + TICK1, mBottomMargin - (i / 2) * mYTickStep);
+                addPoint(mLeftMargin + TICK2, mBottomMargin - (i / 2) * mYTickStep);
+                addPoint(mLeftMargin + TICK3, mBottomMargin - (i / 2) * mYTickStep);
+                addPoint(mLeftMargin + TICK4, mBottomMargin - (i / 2) * mYTickStep);
+                addPoint(mLeftMargin - TICK1, mBottomMargin - (i / 2) * mYTickStep);
+                addPoint(mLeftMargin - TICK2, mBottomMargin - (i / 2) * mYTickStep);
+                addPoint(mLeftMargin - TICK3, mBottomMargin - (i / 2) * mYTickStep);
+                addPoint(mLeftMargin - TICK4, mBottomMargin - (i / 2) * mYTickStep);
+            } else {
+                addPoint(mLeftMargin + TICK1, mBottomMargin - (i / 2) * mYTickStep);
+                addPoint(mLeftMargin + TICK2, mBottomMargin - (i / 2) * mYTickStep);
+                addPoint(mLeftMargin - TICK1, mBottomMargin - (i / 2) * mYTickStep);
+                addPoint(mLeftMargin - TICK2, mBottomMargin - (i / 2) * mYTickStep);
+            }
         }
     }
 
