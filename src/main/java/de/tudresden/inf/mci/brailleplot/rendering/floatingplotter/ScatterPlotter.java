@@ -35,6 +35,10 @@ public final class ScatterPlotter extends AbstractPlotter<ScatterPlot> implement
         mPageWidth = mCanvas.getPrintableWidth();
         mPageHeight = mCanvas.getPrintableHeight();
 
+        if (mStepSize < mResolution) {
+            mStepSize = mResolution;
+        }
+
         calculateRanges();
         drawAxes();
         mScaleX = scaleAxis("x");
