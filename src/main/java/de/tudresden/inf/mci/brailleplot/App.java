@@ -42,7 +42,6 @@ import tec.units.ri.unit.MetricPrefix;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
