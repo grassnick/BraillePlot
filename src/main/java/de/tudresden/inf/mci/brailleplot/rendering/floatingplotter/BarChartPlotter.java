@@ -55,10 +55,7 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
         double mMaxWidth = mCanvas.getMaxBarWidth();
         double mMinDist = mCanvas.getMinBarDist();
 
-        if (mStepSize < mResolution) {
-            mStepSize = mResolution;
-        }
-
+        checkResolution();
         calculateRanges();
         drawAxes();
         mScaleX = scaleAxis("z");

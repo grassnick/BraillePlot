@@ -71,6 +71,15 @@ abstract class AbstractPlotter<T extends Diagram> {
 
 
     /**
+     * Checks if mStepSize is smaller than mResolution. In that case, mStepSize is set to mResolution.
+     */
+    void checkResolution() {
+        if (mStepSize < mResolution) {
+            mStepSize = mResolution;
+        }
+    }
+
+    /**
      * Calculates ranges of x and y values as a difference of max and min.
      */
     void calculateRanges() {
