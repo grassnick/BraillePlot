@@ -171,25 +171,11 @@ public final class App {
 
             // Config Parsing
             String configPath;
-            if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument
+            if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument, until then use default location for test runs
                 configPath = getClass().getResource("/config/index_everest_d_v4.properties").getFile();
-                mLogger.info("Using default file: " + configPath);
-                if (!(new File(configPath)).isFile()) {
-                    mLogger.info("Does not exist!");
-                }
             } else {
                 configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get();
             }
-
-            /*
-            GeneralResource testResource = new GeneralResource("/config/default.properties");
-            if (testResource.isValidExternalFile()) {
-                File testFile = testResource.asValidExternalFile();
-            } else {
-                InputStream testStream = testResource.getInputStream();
-            }
-
-             */
 
             JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(
                     configPath,
