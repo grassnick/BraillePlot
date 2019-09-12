@@ -39,7 +39,7 @@ public final class ScatterPlotter extends AbstractPlotter<ScatterPlot> implement
         drawAxes();
         mScaleX = scaleAxis("x");
         mScaleY = scaleAxis("y");
-        drawGrid();
+
 
         // draw points and frames
         PointListContainer<PointList> bigList = mDiagram.getDataSet();
@@ -59,6 +59,8 @@ public final class ScatterPlotter extends AbstractPlotter<ScatterPlot> implement
                 }
             }
         }
+
+        drawGrid();
 
     }
 

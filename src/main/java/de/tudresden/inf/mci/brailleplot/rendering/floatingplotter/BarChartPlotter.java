@@ -6,9 +6,17 @@ import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
+import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
+import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
+import tec.units.ri.quantity.Quantities;
+import tec.units.ri.unit.MetricPrefix;
 
+import javax.measure.Quantity;
+import javax.measure.quantity.Length;
 import java.util.Iterator;
 import java.util.Objects;
+
+import static tec.units.ri.unit.Units.METRE;
 
 /**
  * Provides a plotting algorithm for bar chart data.
@@ -17,6 +25,8 @@ import java.util.Objects;
 public final class BarChartPlotter extends AbstractPlotter<BarChart> implements Plotter<BarChart> {
 
     private String[] mNamesY;
+    private double[] mGridHelp;
+    private int mNumBar;
     private double mBarWidth;
     private double mBarDist;
     private double mLastXValue;
@@ -58,15 +68,16 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
         }
 
         // bar drawing and filling
-        int numBar = catList.getSize();
-        mBarWidth = (lengthY - (numBar + 1) * mMinDist) / numBar;
+        mNumBar = catList.getSize();
+        mGridHelp = new double[mNumBar];
+        mBarWidth = (lengthY - (mNumBar + 1) * mMinDist) / mNumBar;
         if (mBarWidth < mMinWidth) {
             mBarWidth = mMinWidth;
         } else if (mBarWidth > mMaxWidth) {
             mBarWidth = mMaxWidth;
         }
 
-        mBarDist = (lengthY - numBar * mBarWidth) / (numBar + 1);
+        mBarDist = (lengthY - mNumBar * mBarWidth) / (mNumBar + 1);
 
         Iterator<PointList> bigListIt = catList.iterator();
         for (int i = 0; i < catList.getSize(); i++) {
@@ -82,6 +93,8 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
                 }
             }
         }
+
+        drawGrid();
 
     }
 
@@ -169,6 +182,7 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
             endX = calculateXValue(xValue) + mLastXValue - mLeftMargin;
         }
         plotAndFillRectangle(startY, endX, j);
+        mGridHelp[i] = endX;
         mLastXValue = endX;
     }
 
@@ -419,6 +433,43 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
                 y += mStepSize;
             }
         }
+    }
+
+    @Override
+    void drawGrid() {
+        FloatingPointData<Boolean> grid = mCanvas.getNewPage();
+
+        // x-axis
+        for (double i = 1; i <= 2 * mNumberXTics; i++) {
+            loop:
+            for (double j = mBottomMargin; j > mTitleMargin; j -= mStepSize) {
+                for (int k = 0; k < mNumBar; k++) {
+                    if (j < mBottomMargin - k * (mBarDist + mBarWidth) && j > mBottomMargin - mBarDist - k * (mBarDist + mBarWidth)) {
+                        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                        if (!mData.checkPoint(point)) {
+                            mData.addPoint(point);
+                        }
+                        continue loop;
+                    }
+
+                    if (j < mBottomMargin - mNumBar * (mBarDist + mBarWidth) && j > mTitleMargin) {
+                        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                        if (!mData.checkPoint(point)) {
+                            mData.addPoint(point);
+                        }
+                        continue loop;
+                    }
+
+                    if ((mLeftMargin + (i / 2) * mXTickStep) > mGridHelp[k]) {
+                        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                        if (!mData.checkPoint(point)) {
+                            mData.addPoint(point);
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
 }
