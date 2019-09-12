@@ -475,6 +475,7 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
                         if (!mData.checkPoint(point)) {
                             grid.addPoint(point);
                         }
+                        continue loop;
                     }
                 }
             }
