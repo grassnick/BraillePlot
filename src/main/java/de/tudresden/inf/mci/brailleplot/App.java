@@ -166,9 +166,6 @@ public final class App {
                 return EXIT_SUCCESS;
             }
 
-            File defaultProp = GeneralResource.getOrExportResourceFile("config/default.properties");
-            mLogger.info(defaultProp.getAbsolutePath());
-
             // Config Parsing
             String configPath;
             if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument, until then use default location for test runs
