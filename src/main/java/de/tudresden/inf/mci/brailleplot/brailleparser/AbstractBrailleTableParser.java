@@ -21,16 +21,17 @@ public abstract class AbstractBrailleTableParser {
         String brailleTablePath = printer.getProperty(property).toString();
 
         //read which kind of parser is needed (properties, json, xml,...)
-        String fileEnding = brailleTablePath.split("\\.")[1];
+        String[] parts = brailleTablePath.split("\\.");
+        String fileEnding = parts[parts.length - 1]; // made safe for relative paths containing "./" or "../"
         switch (fileEnding) {
             case "properties":
-                return new PropertiesParser(printer.getProperty(property).toString());
+                return new PropertiesParser(brailleTablePath);
             case "json":
-                return new JsonParser(printer.getProperty(property).toString());
+                return new JsonParser(brailleTablePath);
             case "xml":
-                return new XmlParser(printer.getProperty(property).toString());
+                return new XmlParser(brailleTablePath);
             default:
-                throw new NotSupportedFileExtensionException("The Fileextension " + fileEnding + "is currently not supported.");
+                throw new NotSupportedFileExtensionException("The Fileextension " + fileEnding + " is currently not supported.");
         }
     }
 

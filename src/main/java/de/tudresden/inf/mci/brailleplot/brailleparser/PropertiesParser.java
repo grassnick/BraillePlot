@@ -1,6 +1,8 @@
 package de.tudresden.inf.mci.brailleplot.brailleparser;
 
-import java.io.FileInputStream;
+import de.tudresden.inf.mci.brailleplot.GeneralResource;
+
+import java.io.InputStream;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -21,9 +23,9 @@ public class PropertiesParser extends AbstractBrailleTableParser {
     public PropertiesParser(final String filePath) {
         Objects.requireNonNull(filePath);
 
-        FileInputStream stream;
+        InputStream stream;
         try {
-            stream = new FileInputStream(filePath);
+            stream = new GeneralResource(filePath).getInputStream(); // use input stream (jar resource) instead of file input stream.
             mProperties.load(stream);
             stream.close();
         } catch (java.io.IOException e) {

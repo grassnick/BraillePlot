@@ -14,7 +14,6 @@ import org.liblouis.TranslationResult;
 import org.liblouis.Translator;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.util.Objects;
 
 import static java.lang.Math.ceil;
@@ -35,6 +34,8 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
     private int mMaxWidth;
     private Translator mTranslator;
 
+    // translator needs whole table directory, therefore it is exported one time at start (static resource).
+    private static File mLibLouisTableDirectory = GeneralResource.getOrExportResourceFile("mapping/liblouis/");
 
     /**
      * Constructor for liblouistextrasterizer.
@@ -48,9 +49,9 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             throw new RuntimeException(e);
         }
         try {
-            GeneralResource table = new GeneralResource("/mapping/liblouis/de-g0.utb");
-            File tableFile = table.getFileOrExportResource();
-            mTranslator = new Translator(tableFile.getAbsolutePath());
+            File tableFile = mLibLouisTableDirectory.toPath().resolve("de-g0.utb").toFile(); // reference to specific table file in exported directory
+            String tableFilePath = tableFile.getAbsolutePath();
+            mTranslator = new Translator(tableFilePath);
         } catch (Exception e) {
             throw new RuntimeException("Error while creating liblouis translator:", e);
         }

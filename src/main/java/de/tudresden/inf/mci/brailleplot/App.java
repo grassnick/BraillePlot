@@ -166,10 +166,13 @@ public final class App {
                 return EXIT_SUCCESS;
             }
 
+            File defaultProp = GeneralResource.getOrExportResourceFile("config/default.properties");
+            mLogger.info(defaultProp.getAbsolutePath());
+
             // Config Parsing
             String configPath;
             if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument
-                configPath = this.getClass().getResource("/config/index_everest_d_v4.properties").getFile();
+                configPath = getClass().getResource("/config/index_everest_d_v4.properties").getFile();
                 mLogger.info("Using default file: " + configPath);
                 if (!(new File(configPath)).isFile()) {
                     mLogger.info("Does not exist!");
@@ -183,7 +186,7 @@ public final class App {
             if (testResource.isValidExternalFile()) {
                 File testFile = testResource.asValidExternalFile();
             } else {
-                InputStream testStream = testResource.asInputStream();
+                InputStream testStream = testResource.getInputStream();
             }
 
              */
