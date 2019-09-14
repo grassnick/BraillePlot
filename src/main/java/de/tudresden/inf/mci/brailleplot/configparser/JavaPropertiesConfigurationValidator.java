@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 /**
  * Concrete validator for properties parsed from configuration files in Java Property File format.
  * @author Leonard Kupper, Andrey Ruzhanskiy
- * @version 2019.07.30
+ * @version 2019-09-13
  */
 public final class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
 
@@ -45,6 +45,7 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         Map<String, Predicate<String>> p = new HashMap<>();
         definePrinterProperty("name", requireNotEmpty);
         definePrinterProperty("mode", requireNotEmpty);
+        definePrinterProperty("brailletable", requireNotEmpty, false);  // checked in interpretation
         definePrinterProperty("semantictable", requireNotEmpty, false); // before predicate validation
         definePrinterProperty("floatingDot.support", requireBoolean);
         definePrinterProperty("floatingDot.resolution", requireDouble.and(requirePositive), false);
@@ -84,11 +85,13 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
     private String interpretProperty(final String propertyName, final String value) throws ConfigurationValidationException {
         try {
             switch (propertyName) {
-                case "semantictable": return new GeneralResource(value, mSearchPath).getResourcePath();
+                case "brailletable":
+                case "semantictable":
+                    return new GeneralResource(value, mSearchPath).getResourcePath();
                 default: return value;
             }
         } catch (Exception e) {
-            throw new ConfigurationValidationException("Problem while interpreting property.", e);
+            throw new ConfigurationValidationException("Problem while interpreting property: " + propertyName + "=" + value, e);
         }
     }
 
