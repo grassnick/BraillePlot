@@ -83,6 +83,9 @@ public abstract class CsvParseAlgorithm<T extends PointListContainer<PointList>>
      */
     static <T> List<List<T>> transposeCSV(final List<? extends List<T>> csvData) {
         List<List<T>> transposedCsvData = new ArrayList<>();
+        if (csvData.size() < 1) {
+            return new ArrayList<>();
+        }
         final int columns = csvData.get(0).size();
         for (int i = 0; i < columns; i++) {
             List<T> col = new ArrayList<T>();
