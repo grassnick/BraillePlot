@@ -11,12 +11,10 @@ import javax.measure.quantity.Length;
 
 import static tec.units.ri.unit.Units.METRE;
 
-
 /**
- * Abstract parent class for all plotting algorithms. Provides methods for axis drawing and point adding.
- * @param <T> Type of diagram the plotter can plot. Needs to extend {@link Diagram}.
+ * Abstract class to provide methods for dot plotting. {@link LinePlotter} and {@link ScatterPlotter} extend this class.
+ * @param <T> Type of diagram the plotter can plot. Needs to extend {@link Diagram}. Can be {@link de.tudresden.inf.mci.brailleplot.diagrams.LinePlot} or {@link de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot}.
  * @author Richard Schmidt
- * @version 28.08.2019
  */
 abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T> {
 

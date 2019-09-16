@@ -10,6 +10,7 @@ import java.util.Objects;
 
 /**
  * Abstract class to provide methods for bar chart plotting.
+ * @author Richard Schmidt
  */
 abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
 
