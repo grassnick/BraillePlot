@@ -189,6 +189,9 @@ public final class App {
             CategoricalPointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
             mLogger.debug("Internal data representation:\n {}", container.toString());
             CategoricalBarChart barChart = new CategoricalBarChart(container);
+            barChart.setTitle("Beispieldiagramm");
+            barChart.setXAxisName("Gewicht in kg");
+            barChart.setYAxisName("Länge in m");
 
             // Render diagram
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
