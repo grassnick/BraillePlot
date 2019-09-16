@@ -21,8 +21,7 @@ import static tec.units.ri.unit.Units.METRE;
  * @author Richard Schmidt
  */
 public final class StackedBarChartPlotter extends AbstractBarChartPlotter implements Plotter<BarChart> {
-
-
+    
     /**
      * Plots a stacked {@link BarChart} instance onto a {@link PlotCanvas}.
      * @param diagram An instance of {@link  BarChart} representing the bar chart.

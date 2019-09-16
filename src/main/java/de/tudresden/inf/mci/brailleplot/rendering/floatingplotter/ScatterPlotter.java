@@ -14,7 +14,7 @@ import java.util.Objects;
  * Provides a plotting algorithm for scatter plot data.
  * @author Richard Schmidt
  */
-public final class ScatterPlotter extends AbstractPlotter<ScatterPlot> implements Plotter<ScatterPlot> {
+public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> implements Plotter<ScatterPlot> {
 
     /**
      * Plots a {@link ScatterPlot} instance onto a {@link PlotCanvas}.
@@ -64,6 +64,5 @@ public final class ScatterPlotter extends AbstractPlotter<ScatterPlot> implement
         drawGrid();
 
     }
-
 
 }

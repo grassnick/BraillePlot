@@ -14,7 +14,7 @@ import java.util.Objects;
  * Provides a plotting algorithm for line plot data.
  * @author Richard Schmidt
  */
-public final class LinePlotter extends AbstractPlotter<LinePlot> implements Plotter<LinePlot> {
+public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements Plotter<LinePlot> {
 
     /**
      * Plots a {@link LinePlot} instance onto a {@link PlotCanvas}.
