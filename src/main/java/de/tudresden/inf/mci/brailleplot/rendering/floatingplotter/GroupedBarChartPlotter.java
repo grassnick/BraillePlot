@@ -26,7 +26,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
     private double mBarGroupWidth;
 
     /**
-     * Plots a {@link BarChart} instance onto a {@link PlotCanvas}.
+     * Plots a grouped {@link BarChart} instance onto a {@link PlotCanvas}.
      * @param diagram An instance of {@link  BarChart} representing the bar chart.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
      * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas}, this is
@@ -96,6 +96,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
             loop:
             for (double j = mBottomMargin; j > mTitleMargin; j -= mStepSize) {
                 for (int k = 0; k < mNumBarGroup; k++) {
+                    // check if j is between bars
                     if (j < mBottomMargin - k * (mBarDist + mBarGroupWidth) && j > mBottomMargin - mBarDist - k * (mBarDist + mBarGroupWidth)) {
                         Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                         if (!mData.checkPoint(point)) {
@@ -104,6 +105,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
                         continue loop;
                     }
 
+                    // check if j is above highest bar
                     if (j < mBottomMargin - mNumBarGroup * (mBarDist + mBarGroupWidth) && j > mTitleMargin) {
                         Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                         if (!mData.checkPoint(point)) {
@@ -114,6 +116,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
                 }
 
 
+                // check if j is inside bar and i/2 outside bar
                 double barGroupStep = mCatList.getNumberOfCategories() * mBarWidth + mBarDist;
                 for (int l = 0; l < mNumBarGroup; l++) {
                     if (j <= mBottomMargin - l * barGroupStep && j >= mBottomMargin - (l + 1) * barGroupStep) {

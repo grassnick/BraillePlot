@@ -29,7 +29,6 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
     private double mCellDistVer;
 
     // bar dimensions
-    private double mMinBarWidth;
     private double mMaxBarWidth;
     private double mMinBarDist;
 
@@ -66,7 +65,6 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         mCellHeight = 2 * mPrinter.getProperty("raster.dotDistance.vertical").toDouble() + THREE * mPrinter.getProperty("raster.dotDiameter").toDouble();
         mCellDistHor = mPrinter.getProperty("raster.cellDistance.horizontal").toDouble();
         mCellDistVer = mPrinter.getProperty("raster.cellDistance.vertical").toDouble();
-        mMinBarWidth = mPrinter.getProperty("floatingDot.minBarWidth").toDouble();
         mMaxBarWidth = mPrinter.getProperty("floatingDot.maxBarWidth").toDouble();
         mMinBarDist = mPrinter.getProperty("floatingDot.minBarDist").toDouble();
 
@@ -92,9 +90,6 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         return mCellDistVer;
     }
 
-    public final double getMinBarWidth() {
-        return mMinBarWidth;
-    }
 
     public final double getMaxBarWidth() {
         return mMaxBarWidth;

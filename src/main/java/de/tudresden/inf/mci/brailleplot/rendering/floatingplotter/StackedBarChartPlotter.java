@@ -24,7 +24,7 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
 
 
     /**
-     * Plots a {@link BarChart} instance onto a {@link PlotCanvas}.
+     * Plots a stacked {@link BarChart} instance onto a {@link PlotCanvas}.
      * @param diagram An instance of {@link  BarChart} representing the bar chart.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
      * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas}, this is
@@ -104,6 +104,7 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
             loop:
             for (double j = mBottomMargin; j > mTitleMargin; j -= mStepSize) {
                 for (int k = 0; k < mNumBar; k++) {
+                    // check if j is between bars
                     if (j < mBottomMargin - k * (mBarDist + mBarWidth) && j > mBottomMargin - mBarDist - k * (mBarDist + mBarWidth)) {
                         Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                         if (!mData.checkPoint(point)) {
@@ -112,6 +113,7 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
                         continue loop;
                     }
 
+                    // check if j is above highest bar
                     if (j < mBottomMargin - mNumBar * (mBarDist + mBarWidth) && j > mTitleMargin) {
                         Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                         if (!mData.checkPoint(point)) {
@@ -120,6 +122,7 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
                         continue loop;
                     }
 
+                    // check if j is inside bar and i/2 outside bar
                     double barStep = lengthY / mNumBar;
                     if (j < mBottomMargin - k * barStep && j > mBottomMargin - (k + 1) * barStep) {
                         if ((mLeftMargin + (i / 2) * mXTickStep) > mGridHelp[k]) {
