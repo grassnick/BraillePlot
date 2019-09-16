@@ -199,7 +199,10 @@ abstract class AbstractPlotter<T extends Diagram> {
      * @param y Y-value.
      */
     void addPoint(final double x, final double y) {
-        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true));
+        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true);
+        if (!mData.checkPoint(point)) {
+            mData.addPoint(point);
+        }
     }
 
     /**

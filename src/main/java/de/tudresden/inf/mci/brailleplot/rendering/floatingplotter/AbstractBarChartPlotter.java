@@ -3,47 +3,35 @@ package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
-import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
-import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
-import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
-import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
-import tec.units.ri.quantity.Quantities;
-import tec.units.ri.unit.MetricPrefix;
 
-import javax.measure.Quantity;
-import javax.measure.quantity.Length;
 import java.util.Iterator;
 import java.util.Objects;
 
-import static tec.units.ri.unit.Units.METRE;
-
 /**
- * Provides a plotting algorithm for bar chart data.
- * @author Richard Schmidt
+ * Abstract class to provide methods for bar chart plotting.
  */
-public final class BarChartPlotter extends AbstractPlotter<BarChart> implements Plotter<BarChart> {
+abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
 
-    private String[] mNamesY;
-    private double[] mGridHelp;
-    private int mNumBar;
-    private double mBarWidth;
-    private double mBarDist;
-    private double mLastXValue;
+    String[] mNamesY;
+    double[] mGridHelp;
+    CategoricalPointListContainer<PointList> mCatList;
+    int mNumBar;
+    double mBarWidth;
+    double mBarDist;
+    double mLastXValue;
+    double mMaxWidth;
+    double mMinDist;
     private static final double STAIRDIST = 6;
 
     /**
-     * Plots a {@link BarChart} instance onto a {@link PlotCanvas}.
-     * @param diagram An instance of {@link  BarChart} representing the bar chart.
-     * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
-     * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas}, this is
-     * to display the given diagram.
+     * Prepares bar chart plot using the defined methods.
+     * @param diagram {@link BarChart} with the data.
+     * @param canvas An instance of {@link PlotCanvas} representing the target for the rasterizer output.
      */
-    @Override
-    public void plot(final BarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
-
+    void prereq(final BarChart diagram, final PlotCanvas canvas) {
         mDiagram = Objects.requireNonNull(diagram);
-        CategoricalPointListContainer<PointList> catList = (CategoricalPointListContainer<PointList>) mDiagram.getDataSet();
+        mCatList = (CategoricalPointListContainer<PointList>) mDiagram.getDataSet();
         mCanvas = Objects.requireNonNull(canvas);
         mData = mCanvas.getCurrentPage();
         mCanvas.readConfig();
@@ -51,60 +39,21 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
         mStepSize = mCanvas.getDotDiameter();
         mPageWidth = mCanvas.getPrintableWidth();
         mPageHeight = mCanvas.getPrintableHeight();
-        double mMinWidth = mCanvas.getMinBarWidth();
-        double mMaxWidth = mCanvas.getMaxBarWidth();
-        double mMinDist = mCanvas.getMinBarDist();
+        mMaxWidth = mCanvas.getMaxBarWidth();
+        mMinDist = mCanvas.getMinBarDist();
 
         checkResolution();
         calculateRanges();
         drawAxes();
         mScaleX = scaleAxis("z");
-        mNamesY = new String[catList.getSize()];
+        mNamesY = new String[mCatList.getSize()];
 
-        Iterator<PointList> catListIt = catList.iterator();
+        Iterator<PointList> catListIt = mCatList.iterator();
         for (int i = 0; i < mNamesY.length; i++) {
             if (catListIt.hasNext()) {
                 mNamesY[i] = catListIt.next().getName();
             }
         }
-
-        // bar drawing and filling
-        mNumBar = catList.getSize();
-        mGridHelp = new double[mNumBar];
-        mBarWidth = (lengthY - (mNumBar + 1) * mMinDist) / mNumBar;
-        if (mBarWidth < mMinWidth) {
-            mBarWidth = mMinWidth;
-        } else if (mBarWidth > mMaxWidth) {
-            mBarWidth = mMaxWidth;
-        }
-
-        mBarDist = (lengthY - mNumBar * mBarWidth) / (mNumBar + 1);
-
-        Iterator<PointList> bigListIt = catList.iterator();
-        for (int i = 0; i < catList.getSize(); i++) {
-            if (bigListIt.hasNext()) {
-                PointList smallList = bigListIt.next();
-                Iterator<Point2DDouble> smallListIt = smallList.iterator();
-                for (int j = 0; j < smallList.getSize(); j++) {
-                    if (smallListIt.hasNext()) {
-                        Point2DDouble point = smallListIt.next();
-                        double xValue = point.getY();
-                        drawRectangle(i, j, xValue);
-                    }
-                }
-            }
-        }
-
-        drawGrid();
-
-    }
-
-    /**
-     * Calculates mXRange with cumulated maximum value.
-     */
-    @Override
-    void calculateRanges() {
-        mXRange = Math.abs(mDiagram.getCumulatedMaxY() - mDiagram.getMinY());
     }
 
     /**
@@ -190,18 +139,7 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
      * @param j Corresponds to the category and the filling.
      * @param xValue Value on the x-axis.
      */
-    private void drawRectangle(final int i, final int j, final double xValue) {
-        double startY = mBottomMargin - (mBarDist + i * (mBarWidth + mBarDist));
-        double endX;
-        if (j == 0) {
-            endX = calculateXValue(xValue);
-        } else {
-            endX = calculateXValue(xValue) + mLastXValue - mLeftMargin;
-        }
-        plotAndFillRectangle(startY, endX, j);
-        mGridHelp[i] = endX;
-        mLastXValue = endX;
-    }
+    abstract void drawRectangle(int i, int j, double xValue);
 
     /**
      * Plots the rectangle and chooses a texture.
@@ -209,15 +147,15 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
      * @param endX Starting y-coordinate.
      * @param j Corresponds to the category and the texture.
      */
-    private void plotAndFillRectangle(final double startY, final double endX, final int j) {
+    void plotAndFillRectangle(final double startY, final double endX, final int j) {
         // plot rectangle
-        for (double i = mLeftMargin + mStepSize; i <= endX; i += mStepSize) {
+        for (double i = mLeftMargin; i <= endX; i += mStepSize) {
             addPoint(i, startY);
         }
         for (double i = startY - mStepSize; i >= startY - mBarWidth; i -= mStepSize) {
             addPoint(endX, i);
         }
-        for (double i = mLeftMargin + mStepSize; i < endX; i += mStepSize) {
+        for (double i = mLeftMargin; i <= endX; i += mStepSize) {
             addPoint(i, startY - mBarWidth);
         }
 
@@ -272,7 +210,7 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
      */
     private void fillGridPattern(final double startY, final double endX) {
         for (double i = mLastXValue + FIVE * mStepSize; i < endX - 2 * mStepSize; i += FIVE * mStepSize) {
-             for (double j = startY - mStepSize; j > startY - mBarWidth; j -= mStepSize) {
+            for (double j = startY - mStepSize; j > startY - mBarWidth; j -= mStepSize) {
                 addPoint(i, j);
             }
         }
@@ -450,47 +388,6 @@ public final class BarChartPlotter extends AbstractPlotter<BarChart> implements 
                 y += mStepSize;
             }
         }
-    }
-
-    /**
-     * Only draws grid on x-axis.
-     */
-    @Override
-    void drawGrid() {
-        FloatingPointData<Boolean> grid = mCanvas.getNewPage();
-
-        // x-axis
-        for (double i = 1; i <= 2 * mNumberXTics; i++) {
-            loop:
-            for (double j = mBottomMargin; j > mTitleMargin; j -= mStepSize) {
-                for (int k = 0; k < mNumBar; k++) {
-                    if (j < mBottomMargin - k * (mBarDist + mBarWidth) && j > mBottomMargin - mBarDist - k * (mBarDist + mBarWidth)) {
-                        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
-                        if (!mData.checkPoint(point)) {
-                            grid.addPoint(point);
-                        }
-                        continue loop;
-                    }
-
-                    if (j < mBottomMargin - mNumBar * (mBarDist + mBarWidth) && j > mTitleMargin) {
-                        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
-                        if (!mData.checkPoint(point)) {
-                            grid.addPoint(point);
-                        }
-                        continue loop;
-                    }
-
-                    if ((mLeftMargin + (i / 2) * mXTickStep) > mGridHelp[k]) {
-                        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
-                        if (!mData.checkPoint(point)) {
-                            grid.addPoint(point);
-                        }
-                        continue loop;
-                    }
-                }
-            }
-        }
-
     }
 
 }

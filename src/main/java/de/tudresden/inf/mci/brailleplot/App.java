@@ -23,7 +23,8 @@ import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
-import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.BarChartPlotter;
+import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.GroupedBarChartPlotter;
+import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.StackedBarChartPlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.LinePlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.ScatterPlotter;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolFloatingPointDataSvgExporter;
@@ -186,7 +187,7 @@ public final class App {
             classloader = Thread.currentThread().getContextClassLoader();
             csvStream = classloader.getResourceAsStream("examples/csv/1_scatter_plot.csv");
             csvReader = new BufferedReader(new InputStreamReader(csvStream));
-            InputStream csvStream2 = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_max.csv");
+            InputStream csvStream2 = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_vertical.csv");
             Reader csvReader2 = new BufferedReader(new InputStreamReader(csvStream2));
 
             csvParser = new CsvParser(csvReader, ',', '\"');
@@ -217,8 +218,11 @@ public final class App {
             // plotter2.plot(lineplot, floatCanvas);
 
             BarChart bar = new BarChart(container3);
-            BarChartPlotter plotter3 = new BarChartPlotter();
-            plotter3.plot(bar, floatCanvas);
+            StackedBarChartPlotter plotter3 = new StackedBarChartPlotter();
+            // plotter3.plot(bar, floatCanvas);
+
+            GroupedBarChartPlotter plotter4 = new GroupedBarChartPlotter();
+            plotter4.plot(bar, floatCanvas);
 
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();
