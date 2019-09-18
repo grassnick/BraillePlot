@@ -24,8 +24,8 @@ public class FunctionalPlotter<T extends Diagram> implements Plotter {
     /**
      * Constructor. Creates a new plotter from either a given plotter implementation or (keep in mind that
      * Plotter is a functional interface) from a ThrowingBiConsumer&lt;T, PlotCanvas, InsufficientRenderingAreaException&gt; method reference.
-     * @param supportedRenderableClass A reference to the accepted diagram class (e.g. 'BarChart.class')
-     * @param plotter A reference to a Plotter instance.
+     * @param supportedRenderableClass A reference to the accepted diagram class (e.g. 'BarChart.class').
+     * @param plotter A reference to a {@link Plotter} instance.
      */
     public FunctionalPlotter(final Class<T> supportedRenderableClass, final Plotter<T> plotter) {
         mLogger.info("Creating new FunctionalRasterizer: Binding rasterizer reference (renderable type {}): {}",

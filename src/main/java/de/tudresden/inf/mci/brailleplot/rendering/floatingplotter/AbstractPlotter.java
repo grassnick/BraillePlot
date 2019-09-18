@@ -17,7 +17,6 @@ import static tec.units.ri.unit.Units.METRE;
  * Abstract parent class for all plotting algorithms. Provides methods for axis drawing and point adding.
  * @param <T> Type of diagram the plotter can plot. Needs to extend {@link Diagram}.
  * @author Richard Schmidt
- * @version 28.08.2019
  */
 abstract class AbstractPlotter<T extends Diagram> {
 
@@ -89,22 +88,19 @@ abstract class AbstractPlotter<T extends Diagram> {
 
 
     /**
-     * Adds a point by its x- and y-value to the floating point data.
-     * @param x X-value.
-     * @param y Y-value.
+     * Adds a point by its absolute x- and y-value to the floating point data.
+     * @param x Absolute x-value.
+     * @param y Absolute y-value.
      */
     void addPoint(final double x, final double y) {
-        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true);
-        if (!mData.checkPoint(point)) {
-            mData.addPoint(point);
-        }
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true));
     }
 
     /**
      * Scales axis numeration.
      * @param type "x" for x-axis scaling, "y" for y-axis scaling and "z" for bar charts.
-     * @return Integer array with an Integer for a tic in each field. Last field contains scale factor as power of 10.
-     * @throws IllegalArgumentException If argument is neither "x" nor "y".
+     * @return Integer array with an Integer for a tick in each field. Last field contains scale factor as power of 10.
+     * @throws IllegalArgumentException If argument is neither "x", "y" nor "z".
      */
     int[] scaleAxis(final String type) throws IllegalArgumentException {
 

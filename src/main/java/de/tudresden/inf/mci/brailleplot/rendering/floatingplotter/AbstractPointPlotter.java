@@ -77,7 +77,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             }
         }
 
-        // y-axis:
+        // y-axis
         double lastValueY = mBottomMargin;
         for (double i = mBottomMargin; i > mTitleMargin; i -= mStepSize) {
             addPoint(mLeftMargin, i);
@@ -155,7 +155,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
 
 
     /**
-     * Adds a point by its x- and y-value to the floating point data. Chooses a corresponding frame.
+     * Adds a point by its absolute x- and y-value to the floating point data. Chooses a corresponding frame.
      * @param xValue Must be the absolute x-value on the paper.
      * @param yValue Must be the absolute y-value on the paper.
      * @param i Links to the data series, thus choosing one frame per data series.
@@ -172,9 +172,9 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
     }
 
     /**
-     * Draws a circle frame with xValue and yValue as center.
-     * @param xValue X-value of center.
-     * @param yValue Y-value of center.
+     * Draws a circle frame with absolute xValue and yValue as center.
+     * @param xValue Absolute x-value of center.
+     * @param yValue Absolute y-value of center.
      */
     private void drawCircle(final double xValue, final double yValue) {
         double lastX = 0;
@@ -195,9 +195,9 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
     }
 
     /**
-     * Draws an X with xValue and yValue as center.
-     * @param xValue X-value of center.
-     * @param yValue Y-value of center.
+     * Draws an X with absolute xValue and yValue as center.
+     * @param xValue Absolute x-value of center.
+     * @param yValue Absolute y-value of center.
      */
     private void drawX(final double xValue, final double yValue) {
         addPoint(xValue + mStepSize, yValue + mStepSize);
@@ -218,9 +218,9 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
     }
 
     /**
-     * Draws a cross with xValue and yValue as center.
-     * @param xValue X-value of center.
-     * @param yValue Y-value of center.
+     * Draws a cross with absolute xValue and yValue as center.
+     * @param xValue Absolute x-value of center.
+     * @param yValue Absolute y-value of center.
      */
     private void drawCross(final double xValue, final double yValue) {
         addPoint(xValue, yValue + mStepSize);

@@ -28,7 +28,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
     /**
      * Prepares bar chart plot using the defined methods.
      * @param diagram {@link BarChart} with the data.
-     * @param canvas An instance of {@link PlotCanvas} representing the target for the rasterizer output.
+     * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
      */
     void prereq(final BarChart diagram, final PlotCanvas canvas) {
         mDiagram = Objects.requireNonNull(diagram);
@@ -115,7 +115,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
             }
         }
 
-        // y-axis:
+        // y-axis
         double lastValueY = mBottomMargin;
         for (double i = mBottomMargin; i > mTitleMargin; i -= mStepSize) {
             addPoint(mLeftMargin, i);
@@ -136,7 +136,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
 
     /**
      * Prepares rectangle drawing.
-     * @param i Corresponds to the position on the y-axis.
+     * @param i Corresponds to the relative position on the y-axis.
      * @param j Corresponds to the category and the filling.
      * @param xValue Value on the x-axis.
      */
@@ -144,8 +144,8 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
 
     /**
      * Plots the rectangle and chooses a texture.
-     * @param startY Starting y-coordinate.
-     * @param endX Starting y-coordinate.
+     * @param startY Absolute starting y-coordinate.
+     * @param endX Absolute ending x-coordinate.
      * @param j Corresponds to the category and the texture.
      */
     void plotAndFillRectangle(final double startY, final double endX, final int j) {
@@ -180,8 +180,8 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
 
     /**
      * Fills a rectangle with the texture full_pattern.
-     * @param startY Starting y-coordinate.
-     * @param endX Starting y-coordinate.
+     * @param startY Absolute starting y-coordinate.
+     * @param endX Absolute starting y-coordinate.
      */
     private void fillFullPattern(final double startY, final double endX) {
         for (double i = mLeftMargin + mStepSize; i < endX - mStepSize / 2; i += mStepSize) {
@@ -193,8 +193,8 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
 
     /**
      * Fills a rectangle with the texture vertical_line.
-     * @param startY Starting y-coordinate.
-     * @param endX Starting y-coordinate.
+     * @param startY Absolute starting y-coordinate.
+     * @param endX Absolute starting y-coordinate.
      */
     private void fillVerticalLine(final double startY, final double endX) {
         for (double i = mLastXValue + FIVE * mStepSize; i < endX - mStepSize; i += FIVE * mStepSize) {
@@ -206,8 +206,8 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
 
     /**
      * Fills a rectangle with the texture grid_pattern.
-     * @param startY Starting y-coordinate.
-     * @param endX Starting y-coordinate.
+     * @param startY Absolute starting y-coordinate.
+     * @param endX Absolute starting y-coordinate.
      */
     private void fillGridPattern(final double startY, final double endX) {
         for (double i = mLastXValue + FIVE * mStepSize; i < endX - 2 * mStepSize; i += FIVE * mStepSize) {
@@ -225,8 +225,8 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
 
     /**
      * Fills a rectangle with the texture dotted_pattern.
-     * @param startY Starting y-coordinate.
-     * @param endX Starting y-coordinate.
+     * @param startY Absolute starting y-coordinate.
+     * @param endX Absolute starting y-coordinate.
      */
     private void fillDottedPattern(final double startY, final double endX) {
         for (double i = mLastXValue + FOUR * mStepSize; i < endX - mStepSize; i += FOUR * mStepSize) {
@@ -238,8 +238,8 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
 
     /**
      * Fills a rectangle with the texture stair_pattern.
-     * @param startY Starting y-coordinate.
-     * @param endX Starting y-coordinate.
+     * @param startY Absolute starting y-coordinate.
+     * @param endX Absolute starting y-coordinate.
      */
     private void fillStairPattern(final double startY, final double endX) {
         double last = 0;
@@ -347,8 +347,8 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
 
     /**
      * Fills a rectangle with the texture diagonal_left.
-     * @param startY Starting y-coordinate.
-     * @param endX Starting y-coordinate.
+     * @param startY Absolute starting y-coordinate.
+     * @param endX Absolute starting y-coordinate.
      */
     private void fillDiagonalLeft(final double startY, final double endX) {
         for (double j = startY - mStepSize; j > startY - mBarWidth; j -= SIX * mStepSize) {
@@ -370,8 +370,8 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
 
     /**
      * Fills a rectangle with the texture diagonal_right.
-     * @param startY Starting y-coordinate.
-     * @param endX Starting y-coordinate.
+     * @param startY Absolute starting y-coordinate.
+     * @param endX Absolute starting y-coordinate.
      */
     private void fillDiagonalRight(final double startY, final double endX) {
         for (double j = startY - mBarWidth + mStepSize; j < startY; j += SIX * mStepSize) {
