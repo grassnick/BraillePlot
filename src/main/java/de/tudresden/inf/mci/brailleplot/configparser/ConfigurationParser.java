@@ -5,8 +5,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,41 +32,34 @@ public abstract class ConfigurationParser {
     private ConfigurationValidator mValidator;
     private Printer mPrinter;
     private Map<String, Format> mFormats = new HashMap<>();
-    private File mCurrentConfigFile;
     private List<PrinterProperty> mPrinterProperties = new ArrayList<>();
     private Map<String, List<FormatProperty>> mFormatProperties = new HashMap<>();
     private Printer mDefaultPrinter;
     private Format mDefaultFormat;
 
-    private final Logger mLogger;
+    protected final Logger mLogger = LoggerFactory.getLogger(getClass());
 
     ConfigurationParser() {
-        mLogger = LoggerFactory.getLogger(this.getClass());
-    };
+    }
+
+    ;
 
     /**
      * Internal algorithm used for parsing of the configuration file.
      * Implement this method by parsing information from the given input stream, optionally validating it (see {@link ConfigurationValidator}),
      * constructing {@link PrinterProperty} and {@link FormatProperty} objects from this information and adding them with the methods
      * {@link #addProperty(PrinterProperty)} and {@link #addProperty(FormatProperty)}.
-     * This method is called by ({@link #parseConfigFile(String, boolean)}).
-     * @param input The input stream to read the configuration from.
-     * @throws ConfigurationParsingException On any error while accessing the configuration file or syntax.
+     * This method is called by ({@link #parseConfigFile(InputStream, URL, boolean)}).
+     *
+     * @param inStream The input stream to read the configuration from.
+     * @throws ConfigurationParsingException    On any error while accessing the configuration file or syntax.
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
-    protected abstract void parse(InputStream input) throws ConfigurationParsingException, ConfigurationValidationException;
-
-
-    /**
-     * Get the current configuration file.
-     * @return A {@link File} object representing the configuration file.
-     */
-    public final File getConfigFile() {
-        return mCurrentConfigFile;
-    }
+    protected abstract void parse(InputStream inStream, URL path) throws ConfigurationParsingException, ConfigurationValidationException;
 
     /**
      * Get the printer configuration.
+     *
      * @return A {@link Printer} object, representing the printers properties.
      */
     public final Printer getPrinter() {
@@ -70,6 +68,7 @@ public abstract class ConfigurationParser {
 
     /**
      * Get the names of all available format configurations.
+     *
      * @return A {@link Set}&lt;{@link String}&gt; containing the name of each format.
      */
     public final Set<String> getFormatNames() {
@@ -78,6 +77,7 @@ public abstract class ConfigurationParser {
 
     /**
      * Get a specific format configuration.
+     *
      * @param formatName The name of the format.
      * @return A {@link Format} object, representing the formats properties.
      * @throws NoSuchElementException If no format has the specified name.
@@ -93,6 +93,7 @@ public abstract class ConfigurationParser {
     /**
      * Set a {@link ConfigurationValidator} for this parser.
      * This method should be called inside the concrete parsers constructor
+     *
      * @param validator The {@link ConfigurationValidator} object.
      */
     protected void setValidator(final ConfigurationValidator validator) {
@@ -101,6 +102,7 @@ public abstract class ConfigurationParser {
 
     /**
      * Get the {@link ConfigurationValidator} for this parser.
+     *
      * @return A {@link ConfigurationValidator} object.
      */
     protected ConfigurationValidator getValidator() {
@@ -109,6 +111,7 @@ public abstract class ConfigurationParser {
 
     /**
      * Add a general printer property to the internal printer configuration representation.
+     *
      * @param property The represented property of the printer.
      */
     protected void addProperty(final PrinterProperty property) {
@@ -117,6 +120,7 @@ public abstract class ConfigurationParser {
 
     /**
      * Add a specific format property to the internal list of format configuration representation.
+     *
      * @param property The represented property of a specific format.
      */
     protected void addProperty(final FormatProperty property) {
@@ -130,8 +134,9 @@ public abstract class ConfigurationParser {
     /**
      * Set the optional default configurations for {@link Printer} and {@link Format} objects created by this parser.
      * This method should be called inside the concrete parsers constructor.
+     *
      * @param defaultPrinter A {@link Printer} object containing the default properties or null for no default to be set.
-     * @param defaultFormat A {@link Format} object containing the default properties or null for no default to be set.
+     * @param defaultFormat  A {@link Format} object containing the default properties or null for no default to be set.
      */
     protected final void setDefaults(final Printer defaultPrinter, final Format defaultFormat) {
         mDefaultPrinter = defaultPrinter;
@@ -139,25 +144,51 @@ public abstract class ConfigurationParser {
     }
 
     /**
+     * Parse a configuration file from the resource folder
+     * As we know the root path of the configuration files, there is no need to specify any further.
+     */
+    protected final void parseConfigFileFromResource(final URL resource, final boolean assertCompleteness) throws ConfigurationParsingException, ConfigurationValidationException {
+        Objects.requireNonNull(resource);
+
+        mLogger.debug("Starting parsing properties file from java resources: \"{}\"", resource);
+
+        try {
+            parseConfigFile(resource.openStream(), getParentUrl(resource), assertCompleteness);
+        } catch (IOException|ConfigurationParsingException e) {
+            throw new ConfigurationParsingException("Could not open resource at \"" + resource.toString() + "\"", e);
+        }
+    }
+
+    protected final void parseConfigFileFromFileSystem(final Path filePath, final boolean assertCompleteness) throws ConfigurationParsingException, ConfigurationValidationException {
+        Objects.requireNonNull(filePath);
+
+        mLogger.debug("Starting parsing properties file from file system: \"{}\"", filePath);
+
+        try {
+            parseConfigFile(new FileInputStream(filePath.toFile()), filePath.toFile().toURI().toURL(), assertCompleteness);
+        } catch (FileNotFoundException | MalformedURLException e) {
+            throw new ConfigurationParsingException("Configuration file could not be read at \"" + filePath.toString() + "\"");
+        }
+    }
+
+    /**
      * Parse the specified configuration file.
      * This method should be called inside the concrete parsers constructor after the optional default configurations
      * ({@link #setDefaults(Printer, Format)}) and the validator ({@link #setValidator(ConfigurationValidator)}) have been set.
-     * @param filePath The configuration file to be parsed. The type depends on the concrete implementation of the parser.
+     *
+     * @param config             The {@link File} to be parsed. The type depends on the concrete implementation of the parser.
      * @param assertCompleteness Signals whether to check for existence of all required properties or not.
-     * @throws ConfigurationParsingException On any error while accessing the configuration file or syntax
+     * @throws ConfigurationParsingException    On any error while accessing the configuration file or syntax
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
-    protected final void parseConfigFile(final String filePath, final boolean assertCompleteness)
+    private void parseConfigFile(final InputStream config, final URL path, final boolean assertCompleteness)
             throws ConfigurationParsingException, ConfigurationValidationException {
         // reset internal property buffer
         mPrinterProperties.clear();
         mFormatProperties.clear();
+        mValidator.setSearchPath(getPath(path));
         // load and parse file
-        mCurrentConfigFile = new File(filePath);
-        InputStream input = openInputStream(filePath);
-        getValidator().setSearchPath(Objects.requireNonNullElse(getConfigFile().getParent(), ""));
-        parse(input);
-        closeInputStream(input);
+        parse(config, path);
         // build printer object from added properties
         mPrinter = new Printer(mPrinterProperties);
         if (mDefaultPrinter != null) {
@@ -179,42 +210,19 @@ public abstract class ConfigurationParser {
         }
     }
 
-    /**
-     * Opens the input stream for the given file path.
-     * @param filePath The file to read from.
-     * @return A {@link FileInputStream} for the given file path.
-     * @throws ConfigurationParsingException On any error while opening the stream. (e.g. missing file)
-     */
-    final InputStream openInputStream(final String filePath) throws ConfigurationParsingException {
-        // This has to take the fact into consideration, that a resource from a packaged jar is not a real file in
-        // the file system and must be read via classloader resource stream.  We want to be able to process files as
-        // well as packed resources.
+    private URL getParentUrl(final URL resourcePath) throws ConfigurationParsingException {
+        String fileString = resourcePath.getPath();
+        String parentString = fileString.substring(0, fileString.lastIndexOf("/"));
         try {
-            // first try to read as file
-            mLogger.info("trying to open as file: " + filePath);
-            return new FileInputStream(filePath);
-        } catch (IOException e) {
-            // if that fails, try to read as resource
-            mLogger.info("trying to open as resource: " + filePath);
-            InputStream resourceStream = this.getClass().getResourceAsStream(filePath);
-            if (Objects.isNull(resourceStream)) {
-                // if that also fails:
-                throw new ConfigurationParsingException("Unable to read configuration file / resource.", e);
-            }
-            return resourceStream;
+            return new URL(resourcePath.getProtocol(), resourcePath.getHost(), parentString);
+        } catch (MalformedURLException e) {
+            throw new ConfigurationParsingException("Could not create URL to parent path", e);
         }
     }
 
-    /**
-     * Closes the given input stream.
-     * @param input The {@link FileInputStream} to be closed.
-     * @throws ConfigurationParsingException On any error while closing the stream.
-     */
-    final void closeInputStream(final InputStream input) throws ConfigurationParsingException {
-        try {
-            input.close();
-        } catch (IOException e) {
-            throw new ConfigurationParsingException("Unable to close input stream.", e);
-        }
+    protected String getPath(final URL url) {
+        String urlString = url.getPath();
+        String ret = urlString.replace("file:", "");
+        return ret;
     }
 }

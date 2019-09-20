@@ -1,24 +1,27 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.Stack;
 
 /**
  * Concrete parser for configuration files in Java Property File format.
- * @author Leonard Kupper
- * @version 2019.07.18
+ * @author Leonard Kupper, Georg Graßnick
+ * @version 2019.09.16
  */
 public final class JavaPropertiesConfigurationParser extends ConfigurationParser {
 
-    Stack<File> mInclusionStack = new Stack<>();
-    private final Logger mLogger;
+    private static final String INCLUDE_FILE_EXTENSION = ".properties";
 
     /**
      * Constructor.
@@ -29,39 +32,66 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
      * @throws ConfigurationParsingException On any error while accessing the configuration file or syntax.
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
-    public JavaPropertiesConfigurationParser(
-            final String filePath,
-            final String defaultPath
-    ) throws ConfigurationParsingException, ConfigurationValidationException {
-        mLogger = LoggerFactory.getLogger(this.getClass());
-        setValidator(new JavaPropertiesConfigurationValidator());
-        parseConfigFile(defaultPath, false);
+    public JavaPropertiesConfigurationParser(final Path filePath, final URL defaultPath) throws ConfigurationParsingException, ConfigurationValidationException {
+        setup();
+        parseConfigFileFromResource(defaultPath, false);
         setDefaults(getPrinter(), getFormat("default"));
-        parseConfigFile(filePath, true);
+        parseConfigFileFromFileSystem(filePath, true);
+    }
+
+    public JavaPropertiesConfigurationParser(final Path filePath, final Path defaultPath) throws ConfigurationParsingException, ConfigurationValidationException {
+        setup();
+        parseConfigFileFromFileSystem(defaultPath, false);
+        setDefaults(getPrinter(), getFormat("default"));
+        parseConfigFileFromFileSystem(filePath, true);
+    }
+
+    public JavaPropertiesConfigurationParser(final URL filePath, final Path defaultPath) throws ConfigurationParsingException, ConfigurationValidationException {
+        setup();
+        parseConfigFileFromFileSystem(defaultPath, false);
+        setDefaults(getPrinter(), getFormat("default"));
+        parseConfigFileFromResource(filePath, true);
+    }
+
+    public JavaPropertiesConfigurationParser(final URL filePath, final URL defaultPath) throws ConfigurationParsingException, ConfigurationValidationException {
+        setup();
+        parseConfigFileFromResource(defaultPath, false);
+        setDefaults(getPrinter(), getFormat("default"));
+        parseConfigFileFromResource(filePath, true);
+    }
+
+    private void setup() {
+        setValidator(new JavaPropertiesConfigurationValidator());
     }
 
     /**
      * Concrete internal algorithm used for parsing the Java Property File.
-     * This method is called by ({@link #parseConfigFile(String, boolean)}) and will call itself recursively for every included file.
-     * @param input The input stream to read the configuration properties from.
+     * This method is called by ({@link ConfigurationParser#parseConfigFileFromFileSystem(Path, boolean)} (InputStream, boolean)})
+     * or {@link ConfigurationParser#parseConfigFileFromResource(URL, boolean)} and will call itself recursively for every included file.
+     * @param inStream The fileToParse stream to read the configuration properties from.
      * @throws ConfigurationParsingException On any error while accessing the configuration file or syntax.
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
-    protected void parse(final InputStream input) throws ConfigurationParsingException, ConfigurationValidationException {
+    protected void parse(final InputStream inStream, final URL path) throws ConfigurationParsingException, ConfigurationValidationException {
+        Objects.requireNonNull(inStream);
+        Objects.requireNonNull(path);
         // Create property instance for current recursion level
         Properties properties = new Properties();
+
         try {
             // Load properties from the .properties file
-            properties.load(input);
+            properties.load(inStream);
         } catch (IOException e) {
-            throw new ConfigurationParsingException("Unable to load properties from file.", e);
+            throw new ConfigurationParsingException("Unable to load properties from file \"" + inStream + "\"", e);
         }
         // Iterate over all properties as key -> value pairs
         for (String key : properties.stringPropertyNames()) {
             String value = properties.getProperty(key);
             // check for special property key: 'include'
-            if (("include").equals(key.toLowerCase())) {
-                includeFiles(value);
+            if (key.equalsIgnoreCase("include")) {
+                includeResource(value, path);
+            } else if (key.equalsIgnoreCase("include-file")) {
+                includeFiles(value, path);
             } else {
                 parseProperty(key, value);
             }
@@ -69,6 +99,7 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
     }
 
     private void parseProperty(final String key, final String value) throws ConfigurationValidationException {
+        mLogger.trace("Parsed property \"{}\" with value \"{}\"", key, value);
         ValidProperty property = getValidator().validate(key, value);
         if (property instanceof FormatProperty) {
             addProperty((FormatProperty) property);
@@ -78,38 +109,51 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
         }
     }
 
-    private void includeFiles(final String fileList) throws ConfigurationParsingException, ConfigurationValidationException {
-        for (String includeName : fileList.split(",")) {
-            if (mInclusionStack.empty()) {
-                mInclusionStack.push(getConfigFile());
-            }
-            File includeFile, parentFile = Objects.requireNonNullElse(mInclusionStack.peek().getParentFile(), new File(""));
+    /**
+     * Recursively parses the configuration file.
+     * This method handles files on the local file system.
+     * @param fileList
+     * @throws ConfigurationParsingException
+     * @throws ConfigurationValidationException
+     */
+    private void includeFiles(final String fileList, final URL parentUrl) throws ConfigurationParsingException, ConfigurationValidationException {
+        for (String s : fileList.split(",")) {
+
+            Path parentPath = null;
             try {
-                String findIncludePath = parentFile.getAbsolutePath() + File.separator + includeName.trim();
-                File abstractPath = new File(findIncludePath);
-                if (!abstractPath.exists()) {
-                    abstractPath = new File(findIncludePath + ".properties");
-                }
-                includeFile = abstractPath.getCanonicalFile();
-                if (!includeFile.isFile()) {
-                    throw new ConfigurationParsingException("Given include path is not a file: " + includeFile);
-                }
+                parentPath = Path.of(parentUrl.toURI());
+            } catch (URISyntaxException e) {
+                throw new ConfigurationParsingException("Could not generate URI", e);
+            }
+            Path newPath = parentPath.getParent().resolve(s.trim() + INCLUDE_FILE_EXTENSION);
+            String newPathString = newPath.toAbsolutePath().toString();
+
+            mLogger.debug("Prepare recursive parsing of properties file in the file system for file \"{}\"", newPathString);
+
+            try (InputStream is = new BufferedInputStream(new FileInputStream(newPathString))) {
+                parse(is, newPath.toUri().toURL());
             } catch (IOException e) {
-                throw new ConfigurationParsingException("Can not find include file.", e);
+                throw new ConfigurationParsingException("Could not open include file", e);
             }
-            if (mInclusionStack.contains(includeFile)) {
-                continue;
-            }
-            InputStream includeInput = openInputStream(includeFile.getAbsolutePath());
+        }
+    }
+
+    private void includeResource(final String fileList, final URL parentUrl) throws ConfigurationParsingException, ConfigurationValidationException {
+        for (String s : fileList.split(",")) {
+
+            URL newUrl = null;
             try {
-                mInclusionStack.push(includeFile);
-                mLogger.info("Including config file: " + includeFile);
-                getValidator().setSearchPath(Objects.requireNonNullElse(mInclusionStack.peek().getParent(), ""));
-                parse(includeInput);
-                mInclusionStack.pop();
-                getValidator().setSearchPath(Objects.requireNonNullElse(mInclusionStack.peek().getParent(), ""));
-            } finally {
-                closeInputStream(includeInput);
+                newUrl = new URL(parentUrl + "/" + s.trim() + INCLUDE_FILE_EXTENSION);
+            } catch (MalformedURLException e) {
+                throw new ConfigurationParsingException("Could not generate URI", e);
+            }
+
+            mLogger.debug("Prepare recursive parsing of properties file in the java resources at \"{}\"", newUrl);
+
+            try (InputStream is = newUrl.openStream()) {
+                parse(is, newUrl);
+            } catch (IOException e) {
+                throw new ConfigurationParsingException("Could not open include resource", e);
             }
         }
     }

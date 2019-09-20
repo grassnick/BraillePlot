@@ -70,8 +70,8 @@ public final class GeneralResource {
                 validExternalFile = true;
             }
         }
-        String resourceClassPath = resourcePath.replace("\\", "/"); // classpaths are always separated by forward slash
-        InputStream checkStream = getClass().getResourceAsStream(resourceClassPath);
+        String resourceClassPath = resourcePath.replace(File.separator, "/"); // classpaths are always separated by forward slash
+        InputStream checkStream = getClass().getClassLoader().getResourceAsStream(resourceClassPath);
         mLogger.trace("checking referenced path as resource: " + resourceClassPath);
         if (Objects.nonNull(checkStream)) {
             mLogger.trace("interpreting path as resource stream: " + resourceClassPath);
@@ -81,7 +81,7 @@ public final class GeneralResource {
         if (Objects.nonNull(searchPath)) {
             String relativeResourcePath = new File(searchPath + File.separator + resourceClassPath).toPath().normalize().toString();
             relativeResourcePath = relativeResourcePath.replace("\\", "/");
-            checkStream = getClass().getResourceAsStream(relativeResourcePath);
+            checkStream = getClass().getClassLoader().getResourceAsStream(relativeResourcePath);
             mLogger.trace("checking referenced path as search path relative resource: " + relativeResourcePath);
             if (Objects.nonNull(checkStream)) {
                 mLogger.trace("interpreting path as resource stream: " + relativeResourcePath);

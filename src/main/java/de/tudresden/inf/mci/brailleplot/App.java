@@ -42,9 +42,11 @@ import tec.units.ri.unit.MetricPrefix;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -166,17 +168,14 @@ public final class App {
             }
 
             // Config Parsing
-            String configPath;
+            URL configPath;
             if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument, until then use default location for test runs
-                configPath = getClass().getResource("/config/index_everest_d_v4.properties").getFile();
+                configPath = getClass().getResource("/config/index_everest_d_v4.properties");
             } else {
-                configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get();
+                configPath = new URL(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
             }
 
-            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(
-                    configPath,
-                    "/config/default.properties"
-            );
+            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath, getClass().getClassLoader().getResource("config/default.properties"));
             Printer indexV4Printer = configParser.getPrinter();
             Format a4Format = configParser.getFormat("A4");
 
