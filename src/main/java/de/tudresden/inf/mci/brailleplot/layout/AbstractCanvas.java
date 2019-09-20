@@ -171,6 +171,16 @@ public abstract class AbstractCanvas<T extends PrintableData> {
         return mPageContainer.listIterator();
     }
 
+
+    /**
+     * Get the Printer Configuration.
+     * @return A {@link Printer}.
+     */
+    public Printer getPrinter() {
+        return mPrinter;
+    }
+
+
     public final T getCurrentPage() {
         if (mPageContainer.size() < 1) {
             return getNewPage();
@@ -179,5 +189,6 @@ public abstract class AbstractCanvas<T extends PrintableData> {
     }
 
     public abstract T getNewPage();
+
 
 }

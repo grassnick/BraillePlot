@@ -83,4 +83,63 @@ public interface Rasterizer<T extends Renderable> {
         fill(x2, intRect.getY(), x2, y2, data, value);
         fill(intRect.getX(), intRect.getY(), x2, intRect.getY(), data, value);
     }
+
+    /**
+     * Draws an orthogonal line of specified length from given point onto the raster.
+     * @param xStart X coordinate of start point.
+     * @param yStart Y coordinate of start point.
+     * @param length Length of the line.
+     * @param orientation Pass true for vertical, false for horizontal.
+     * @param data The target raster data container.
+     * @param value The value to fill the area with.
+     */
+    static void line(int xStart, int yStart, int length, boolean orientation, MatrixData<Boolean> data, boolean value) {
+        if (length != 0) {
+            int xEnd = xStart;
+            int yEnd = yStart;
+            //int span = (int) Math.signum(length) * max(length - 1, 0);
+            if (orientation) {
+                xEnd = xStart + length;
+            } else {
+                yEnd = yStart + length;
+            }
+            fill(xStart, yStart, xEnd, yEnd, data, value);
+        }
+    }
+
+    /**
+     * Draws an orthogonal dashed line of specified length from given point onto the raster.
+     * @param xStart X coordinate of start point.
+     * @param yStart Y coordinate of start point.
+     * @param length Length of the line.
+     * @param orientation Pass true for vertical, false for horizontal.
+     * @param data The target raster data container.
+     * @param dashSize The size of the line segments.
+     */
+    static void dashedLine(int xStart, int yStart, int length, boolean orientation, MatrixData<Boolean> data, int dashSize) {
+        if (dashSize <= 0) {
+            throw new IllegalArgumentException("Dash size cannot be zero or negative!");
+        }
+        if (length != 0) {
+            boolean value = false;
+            int xEnd = xStart;
+            int yEnd = yStart;
+            //int span = (int) Math.signum(length) * max(length - 1, 0);
+            if (orientation) {
+                xEnd = xStart + length;
+            } else {
+                yEnd = yStart + length;
+            }
+            int i = 0;
+            for (int y = min(yStart, yEnd); y <= Math.max(yStart, yEnd); y++) {
+                for (int x = min(xStart, xEnd); x <= Math.max(xStart, xEnd); x++) {
+                    if (i % dashSize == 0) {
+                        value = !value;
+                    }
+                    data.setValue(y, x, value);
+                    i++;
+                }
+            }
+        }
+    }
 }

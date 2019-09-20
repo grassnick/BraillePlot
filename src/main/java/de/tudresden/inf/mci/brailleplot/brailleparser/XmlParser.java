@@ -6,7 +6,7 @@ package de.tudresden.inf.mci.brailleplot.brailleparser;
  * @author Andrey Ruzhanskiy
  * @version 12.07.2019
  */
-public class XmlParser implements AbstractBrailleTableParser {
+public class XmlParser extends AbstractBrailleTableParser {
 
 
     /**
@@ -25,7 +25,12 @@ public class XmlParser implements AbstractBrailleTableParser {
      * @return The byte(int) representing the braille cell specified in the braille table.
      */
     @Override
-    public int getValue(final String key) {
+    public int getByteAsIntBackEnd(final String key) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getCharToBraille(final String key) {
         throw new UnsupportedOperationException();
     }
 }

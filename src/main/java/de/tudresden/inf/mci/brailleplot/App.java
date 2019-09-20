@@ -1,5 +1,21 @@
 package de.tudresden.inf.mci.brailleplot;
 
+import de.tudresden.inf.mci.brailleplot.configparser.Format;
+import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
+import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+
+import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
+import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
+import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
+import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
+import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
+import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
+
+import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
+
+
 import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
@@ -12,6 +28,7 @@ import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
 import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
+
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
@@ -22,6 +39,12 @@ import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
+
+import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
+import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
+import de.tudresden.inf.mci.brailleplot.rendering.LiblouisBrailleTextRasterizer;
+
+
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.GroupedBarChartPlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.StackedBarChartPlotter;
@@ -140,7 +163,8 @@ public final class App {
         try {
             // Logging example
             mLogger.info("Application started");
-
+            // Needed for Windows machines
+            System.setProperty("jna.library.path", System.getProperty("user.dir") + "/third_party");
             // Parse command line parameters
             CommandLineParser cliParser = new CommandLineParser();
             SettingsWriter settings = cliParser.parse(args);
@@ -170,14 +194,11 @@ public final class App {
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
             CategoricalPointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
             mLogger.debug("Internal data representation:\n {}", container.toString());
-            BarChart barChart = new BarChart(container);
+            CategoricalBarChart barChart = new CategoricalBarChart(container);
 
             // Render diagram
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
             RasterCanvas canvas = renderer.rasterize(barChart);
-            SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
-            mLogger.debug("Render preview:\n" + mat.toBoolString());
-
             // SVG exporting
             SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
             svgExporter.render();
@@ -227,6 +248,14 @@ public final class App {
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();
             floatSvgExporter.dump("floatingPointData");
+            LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(indexV4Printer);
+            renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BrailleText>(BrailleText.class, textRasterizer));
+            RasterCanvas refCanvas = renderer.rasterize(new BrailleText(" ", new Rectangle(0, 0, 0, 0)));
+           // RasterCanvas m2canvas = renderer.rasterize(new BrailleText(text2, textArea));
+            SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
+            mLogger.debug("Render preview:\n" + mat.toBoolString());
+
+
 
             // Check if some SpoolerService/Printservice exists
             if (!PrintDirector.isPrintServiceOn()) {

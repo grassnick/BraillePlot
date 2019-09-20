@@ -5,7 +5,7 @@ package de.tudresden.inf.mci.brailleplot.brailleparser;
  * @author Andrey Ruzhanskiy
  * @version 12.07.2019
  */
-public class JsonParser implements AbstractBrailleTableParser {
+public class JsonParser extends AbstractBrailleTableParser {
 
     /**
      * Currently not supported.
@@ -22,7 +22,12 @@ public class JsonParser implements AbstractBrailleTableParser {
      * @return The byte(int) representing the Braille cell specified in the braille table.
      */
     @Override
-    public int getValue(final String key) {
+    public int getByteAsIntBackEnd(final String key) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getCharToBraille(final String key) {
+       throw new UnsupportedOperationException();
     }
 }
