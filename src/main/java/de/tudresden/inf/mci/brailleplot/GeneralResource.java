@@ -48,14 +48,14 @@ public final class GeneralResource {
      */
     public GeneralResource(final String resourcePath, final String searchPath) throws IOException {
         File checkFile = new File(resourcePath);
-        mLogger.trace("checking referenced path: " + checkFile);
+        mLogger.debug("checking referenced path: " + checkFile);
         if (checkFile.isFile()) {
             mLogger.trace("interpreting path as file: " + checkFile.getCanonicalPath());
             mResourcePath = checkFile.getCanonicalPath();
             validExternalFile = true;
         }
         checkFile = checkFile.getAbsoluteFile();
-        mLogger.trace("checking referenced path as absolute path: " + checkFile);
+        mLogger.debug("checking referenced path as absolute path: " + checkFile);
         if (checkFile.isFile()) {
             mLogger.trace("interpreting path as absolute file: " + checkFile.getCanonicalPath());
             mResourcePath = checkFile.getCanonicalPath();
@@ -63,26 +63,31 @@ public final class GeneralResource {
         }
         if (Objects.nonNull(searchPath)) {
             checkFile = new File(searchPath + File.separator + resourcePath);
-            mLogger.trace("looking for referenced path in search path: " + checkFile);
+            mLogger.debug("looking for referenced path in search path: " + checkFile);
             if (checkFile.isFile()) {
                 mLogger.trace("interpreting path as search path relative file: " + checkFile.getCanonicalPath());
                 mResourcePath = checkFile.getCanonicalPath();
                 validExternalFile = true;
             }
         }
-        String resourceClassPath = resourcePath.replace(File.separator, "/"); // classpaths are always separated by forward slash
+        String resourceSearchPath = searchPath;
+        if (resourceSearchPath != null) {
+            resourceSearchPath = stripJarPath(resourceSearchPath);
+        }
+        String resourceClassPath = stripJarPath(resourcePath);
+        resourceClassPath = resourceClassPath.replace(File.separator, "/"); // class paths are always separated by forward slash
         InputStream checkStream = getClass().getClassLoader().getResourceAsStream(resourceClassPath);
-        mLogger.trace("checking referenced path as resource: " + resourceClassPath);
+        mLogger.debug("checking referenced path as resource: " + resourceClassPath);
         if (Objects.nonNull(checkStream)) {
             mLogger.trace("interpreting path as resource stream: " + resourceClassPath);
             mResourcePath = resourceClassPath;
             validPackedResource = true;
         }
-        if (Objects.nonNull(searchPath)) {
-            String relativeResourcePath = new File(searchPath + File.separator + resourceClassPath).toPath().normalize().toString();
+        if (Objects.nonNull(resourceSearchPath)) {
+            String relativeResourcePath = new File(resourceSearchPath + File.separator + resourceClassPath).toPath().normalize().toString();
             relativeResourcePath = relativeResourcePath.replace("\\", "/");
             checkStream = getClass().getClassLoader().getResourceAsStream(relativeResourcePath);
-            mLogger.trace("checking referenced path as search path relative resource: " + relativeResourcePath);
+            mLogger.debug("checking referenced path as search path relative resource: " + relativeResourcePath);
             if (Objects.nonNull(checkStream)) {
                 mLogger.trace("interpreting path as resource stream: " + relativeResourcePath);
                 mResourcePath = relativeResourcePath;
@@ -111,7 +116,7 @@ public final class GeneralResource {
             if (isValidExternalFile()) {
                 return new FileInputStream(getResourcePath());
             }
-            return getClass().getResourceAsStream(mResourcePath);
+            return getClass().getClassLoader().getResourceAsStream(mResourcePath);
         } catch (Exception e) {
             throw new RuntimeException("Error while opening resource as stream: ", e);
         }
@@ -196,5 +201,13 @@ public final class GeneralResource {
 
     private static Class getClassRef() {
         return GeneralResource.class;
+    }
+
+    private static String stripJarPath(final String path) {
+        String ret = path.substring(path.lastIndexOf('!') + 1);
+        if (ret.startsWith("/")) {
+            ret = ret.substring(1);
+        }
+        return ret;
     }
 }

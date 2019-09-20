@@ -154,7 +154,7 @@ public abstract class ConfigurationParser {
 
         try {
             parseConfigFile(resource.openStream(), getParentUrl(resource), assertCompleteness);
-        } catch (IOException|ConfigurationParsingException e) {
+        } catch (IOException | ConfigurationParsingException e) {
             throw new ConfigurationParsingException("Could not open resource at \"" + resource.toString() + "\"", e);
         }
     }
@@ -220,7 +220,7 @@ public abstract class ConfigurationParser {
         }
     }
 
-    protected String getPath(final URL url) {
+    private static String getPath(final URL url) {
         String urlString = url.getPath();
         String ret = urlString.replace("file:", "");
         return ret;
