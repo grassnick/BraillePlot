@@ -198,11 +198,11 @@ public final class App {
 
             // Render diagram
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
-            RasterCanvas canvas = renderer.rasterize(barChart);
+            //RasterCanvas canvas = renderer.rasterize(barChart);
             // SVG exporting
-            SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
-            svgExporter.render();
-            svgExporter.dump("boolMat");
+            //SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
+            //svgExporter.render();
+            //svgExporter.dump("boolMat");
 
             // Plotting
             classloader = Thread.currentThread().getContextClassLoader();
@@ -248,12 +248,12 @@ public final class App {
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();
             floatSvgExporter.dump("floatingPointData");
-            LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(indexV4Printer);
-            renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BrailleText>(BrailleText.class, textRasterizer));
-            RasterCanvas refCanvas = renderer.rasterize(new BrailleText(" ", new Rectangle(0, 0, 0, 0)));
+            // LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(indexV4Printer);
+            // renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BrailleText>(BrailleText.class, textRasterizer));
+            // RasterCanvas refCanvas = renderer.rasterize(new BrailleText(" ", new Rectangle(0, 0, 0, 0)));
            // RasterCanvas m2canvas = renderer.rasterize(new BrailleText(text2, textArea));
-            SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
-            mLogger.debug("Render preview:\n" + mat.toBoolString());
+           // SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
+            //mLogger.debug("Render preview:\n" + mat.toBoolString());
 
 
 
@@ -276,7 +276,7 @@ public final class App {
             @SuppressWarnings("checkstyle:MagicNumber")
             String printerConfigUpperCase = indexV4Printer.getProperty("mode").toString().toUpperCase();
             PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), indexV4Printer);
-            printD.print(mat);
+            //printD.print(mat);
 
 
 
