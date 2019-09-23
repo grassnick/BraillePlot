@@ -35,7 +35,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         final int cellHeight = canvas.getCellHeight();
         final String title = "I am a Scatter plot beep beep.";
 
-        BrailleTextRasterizer textRasterizer = new BrailleTextRasterizer();
+        LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(canvas.getPrinter());
         LinearMappingAxisRasterizer axisRasterizer = new LinearMappingAxisRasterizer();
 
         Rectangle completeArea = canvas.getCellRectangle();
