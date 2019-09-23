@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * The representation of a visible axis with a line, tickmarks and labels.
  * @author Leonard Kupper
- * @version 2019.07.09
+ * @version 2019.08.29
  */
 public class Axis implements Renderable {
 
@@ -157,7 +157,7 @@ public class Axis implements Renderable {
     }
 
     /**
-     * Get the area of the canvas on which the area is to be drawn.
+     * Get the area of the canvas on which the axis is to be drawn.
      * @return A {@link Rectangle} representing the area.
      */
     public Rectangle getBoundary() {
@@ -165,7 +165,8 @@ public class Axis implements Renderable {
     }
 
     /**
-     * Set the area of the canvas on which the area is to be drawn.
+     * Set the area of the canvas on which the axis is to be drawn.
+     * Please note that this only limits the length of the axis in its respective orientation.
      * @param boundary A {@link Rectangle} representing the area.
      */
     public void setBoundary(final Rectangle boundary) {

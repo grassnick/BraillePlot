@@ -10,7 +10,7 @@ import java.util.Properties;
  * @version 12.07.2019
  */
 
-public class PropertiesParser implements AbstractBrailleTableParser {
+public class PropertiesParser extends AbstractBrailleTableParser {
     private Properties mProperties = new Properties();
 
     /**
@@ -38,8 +38,19 @@ public class PropertiesParser implements AbstractBrailleTableParser {
      * @return The byte(int) representing the braille cell specified in the braille table,
      */
     @Override
-    public int getValue(final String key) {
+    public int getByteAsIntBackEnd(final String key) {
         Objects.requireNonNull(key);
         return Integer.parseInt(mProperties.getProperty(key));
+    }
+
+    @Override
+    public String getCharToBraille(final String key) {
+        String result = (String) mProperties.get(key);
+        if (Objects.isNull(result)) {
+            throw new RuntimeException("Could not find the letter: '" + key + "' in the table! Maybe using the wrong"
+                    + "semantic table in the config?");
+        }
+        return result;
+
     }
 }
