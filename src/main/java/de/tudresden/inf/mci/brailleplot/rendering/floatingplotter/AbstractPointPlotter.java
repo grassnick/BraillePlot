@@ -20,6 +20,7 @@ import static tec.units.ri.unit.Units.METRE;
 abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T> {
 
     boolean mFrames = true;
+    private boolean mRightAxis;
 
     /**
      * Draws x- and y-axis.
@@ -28,16 +29,21 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
     void drawAxes() {
 
         // margin left of y-axis
-        mLeftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
+        mLeftMargin = (WMULT + 1) * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
         // margin from bottom to x-axis
         mBottomMargin = mPageHeight - (HMULT * mCanvas.getCellHeight() + HMULT * mCanvas.getCellDistVer());
         // margin from top for title
         mTitleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
 
-        boolean rightAxis = mCanvas.getSecondAxis();
+        mTickDistance = mLeftMargin;
+        if (mTickDistance < THIRTY) {
+            mTickDistance = THIRTY;
+        }
+
+        mRightAxis = mCanvas.getSecondAxis();
 
         double secondAxis = 0;
-        if (rightAxis) {
+        if (mRightAxis) {
             secondAxis = mLeftMargin;
         }
 
@@ -47,18 +53,21 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             addPoint(i, mBottomMargin);
             lastValueX = i;
         }
-        lengthX = lastValueX - mLeftMargin;
-        mNumberXTicks = (int) Math.floor(lengthX / TICKDISTANCE);
+        mLengthX = lastValueX - mLeftMargin;
+        mNumberXTicks = (int) Math.floor(mLengthX / mTickDistance);
         if (mNumberXTicks < 2) {
             mNumberXTicks = 2;
-        } else if (mNumberXTicks <= FIVE) {
-            mNumberXTicks = FIVE;
+        } else if (mNumberXTicks <= SIX) {
+            mNumberXTicks = SIX;
+        } else if (mNumberXTicks <= ELEVEN) {
+            mNumberXTicks = ELEVEN;
+        } else if (mNumberXTicks <= SIXTEEN) {
+            mNumberXTicks = SIXTEEN;
         } else {
-            mNumberXTicks = TEN;
+            mNumberXTicks = TWENTYONE;
         }
 
         mScaleX = new int[mNumberXTicks + 1];
-
 
         // tick marks on x-axis
         mXTickStep = (lastValueX - MARGIN - mLeftMargin) / mNumberXTicks;
@@ -80,20 +89,24 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             addPoint(mLeftMargin, i);
             lastValueY = i;
         }
-        lengthY = mBottomMargin - lastValueY;
-        mNumberYTicks = (int) Math.floor(lengthY / TICKDISTANCE);
+        mLengthY = mBottomMargin - lastValueY;
+        mNumberYTicks = (int) Math.floor(mLengthY / mTickDistance);
         if (mNumberYTicks < 2) {
             mNumberYTicks = 2;
-        } else if (mNumberYTicks <= FIVE) {
-            mNumberYTicks = FIVE;
+        } else if (mNumberYTicks <= SIX) {
+            mNumberYTicks = SIX;
+        } else if (mNumberYTicks <= ELEVEN) {
+            mNumberYTicks = ELEVEN;
+        } else if (mNumberYTicks <= SIXTEEN) {
+            mNumberYTicks = SIXTEEN;
         } else {
-            mNumberYTicks = TEN;
+            mNumberYTicks = TWENTYONE;
         }
 
         mScaleY = new int[mNumberYTicks + 1];
 
         // y-axis on right side
-        if (rightAxis) {
+        if (mRightAxis) {
             for (double i = mBottomMargin; i > mTitleMargin; i -= mStepSize) {
                 addPoint(lastValueX, i);
             }
@@ -108,7 +121,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
                 addPoint(mLeftMargin - TICK3, mBottomMargin - (i / 2) * mYTickStep);
                 addPoint(mLeftMargin - TICK4, mBottomMargin - (i / 2) * mYTickStep);
 
-                if (rightAxis) {
+                if (mRightAxis) {
                     addPoint(lastValueX + TICK1, mBottomMargin - (i / 2) * mYTickStep);
                     addPoint(lastValueX + TICK2, mBottomMargin - (i / 2) * mYTickStep);
                     addPoint(lastValueX + TICK3, mBottomMargin - (i / 2) * mYTickStep);
@@ -118,7 +131,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
                 addPoint(mLeftMargin - TICK1, mBottomMargin - (i / 2) * mYTickStep);
                 addPoint(mLeftMargin - TICK2, mBottomMargin - (i / 2) * mYTickStep);
 
-                if (rightAxis) {
+                if (mRightAxis) {
                     addPoint(lastValueX + TICK1, mBottomMargin - (i / 2) * mYTickStep);
                     addPoint(lastValueX + TICK2, mBottomMargin - (i / 2) * mYTickStep);
                 }
@@ -133,9 +146,14 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
     void drawGrid() {
         FloatingPointData<Boolean> grid = mCanvas.getNewPage();
 
+        double secondAxis = 0;
+        if (mRightAxis) {
+            secondAxis = mLeftMargin;
+        }
+
         // x-axis
         for (double i = 1; i <= 2 * mNumberXTicks; i++) {
-            for (double j = mBottomMargin; j > mTitleMargin; j -= mStepSize) {
+            for (double j = mBottomMargin - mStepSize; j > mTitleMargin; j -= mStepSize) {
                 Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                 if (!mData.checkPoint(point)) {
                     grid.addPoint(point);
@@ -145,7 +163,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
 
         // y-axis
         for (double i = 1; i <= 2 * mNumberYTicks; i++) {
-            for (double j = mLeftMargin; j <= mPageWidth; j += mStepSize) {
+            for (double j = mLeftMargin + mStepSize; j <= mPageWidth - secondAxis; j += mStepSize) {
                 Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(mBottomMargin - (i / 2) * mYTickStep, MetricPrefix.MILLI(METRE)), true);
                 if (!mData.checkPoint(point)) {
                     grid.addPoint(point);
@@ -160,6 +178,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
      * @param xValue Must be the absolute x-value on the paper.
      * @param yValue Must be the absolute y-value on the paper.
      * @param i Links to the data series, thus choosing one frame per data series.
+     * @throws InsufficientRenderingAreaException If there are more data series than frames.
      */
     void drawPoint(final double xValue, final double yValue, final int i) throws InsufficientRenderingAreaException {
         addPoint(xValue, yValue);
@@ -172,7 +191,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             } else if (i == 2) {
                 drawCross(xValue, yValue);
             } else {
-                throw new InsufficientRenderingAreaException();
+                throw new InsufficientRenderingAreaException("There are more data series than frames.");
             }
         }
     }

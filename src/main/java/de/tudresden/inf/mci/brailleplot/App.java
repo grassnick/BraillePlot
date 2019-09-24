@@ -18,15 +18,22 @@ import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
 import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
+// import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
+// import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
+// import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
+// import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
+// import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
+// import de.tudresden.inf.mci.brailleplot.rendering.LiblouisBrailleTextRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.GroupedBarChartPlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.LinePlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.ScatterPlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.StackedBarChartPlotter;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolFloatingPointDataSvgExporter;
+// import de.tudresden.inf.mci.brailleplot.svgexporter.BoolMatrixDataSvgExporter;
 import de.tudresden.inf.mci.brailleplot.svgexporter.SvgExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,17 +180,17 @@ public final class App {
 
             // Render diagram
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
-            //RasterCanvas canvas = renderer.rasterize(barChart);
+            /*RasterCanvas canvas = renderer.rasterize(barChart);
             // SVG exporting
-            //SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
-            //svgExporter.render();
-            //svgExporter.dump("boolMat");
+            SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
+            svgExporter.render();
+            svgExporter.dump("boolMat");*/
 
             // Plotting
             classloader = Thread.currentThread().getContextClassLoader();
             csvStream = classloader.getResourceAsStream("examples/csv/1_scatter_plot.csv");
             csvReader = new BufferedReader(new InputStreamReader(csvStream));
-            InputStream csvStream2 = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_vertical.csv");
+            InputStream csvStream2 = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_grouped.csv");
             Reader csvReader2 = new BufferedReader(new InputStreamReader(csvStream2));
 
             csvParser = new CsvParser(csvReader, ',', '\"');
@@ -223,12 +230,12 @@ public final class App {
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();
             floatSvgExporter.dump("floatingPointData");
-            // LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(indexV4Printer);
-            // renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BrailleText>(BrailleText.class, textRasterizer));
-            // RasterCanvas refCanvas = renderer.rasterize(new BrailleText(" ", new Rectangle(0, 0, 0, 0)));
-           // RasterCanvas m2canvas = renderer.rasterize(new BrailleText(text2, textArea));
-           // SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
-            //mLogger.debug("Render preview:\n" + mat.toBoolString());
+            /*LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(indexV4Printer);
+            renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BrailleText>(BrailleText.class, textRasterizer));
+            RasterCanvas refCanvas = renderer.rasterize(new BrailleText(" ", new Rectangle(0, 0, 0, 0)));*/
+            // RasterCanvas m2canvas = renderer.rasterize(new BrailleText(text2, textArea));
+            /*SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
+            mLogger.debug("Render preview:\n" + mat.toBoolString());*/
 
 
 
@@ -251,7 +258,7 @@ public final class App {
             @SuppressWarnings("checkstyle:MagicNumber")
             String printerConfigUpperCase = indexV4Printer.getProperty("mode").toString().toUpperCase();
             PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), indexV4Printer);
-            //printD.print(mat);
+            /*printD.print(mat);*/
 
 
 

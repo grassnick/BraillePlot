@@ -20,20 +20,20 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
      * Plots a {@link ScatterPlot} instance onto a {@link PlotCanvas}.
      * @param diagram An instance of {@link ScatterPlot} representing the scatter plot.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
-     * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas}, this is
-     * to display the given diagram.
+     * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas} or
+     * if there are more data series than frames.
      */
     @Override
     public void plot(final ScatterPlot diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
-        mDiagram = Objects.requireNonNull(diagram);
         mCanvas = Objects.requireNonNull(canvas);
-        mData = mCanvas.getCurrentPage();
         mCanvas.readConfig();
+        mData = mCanvas.getCurrentPage();
+        mDiagram = Objects.requireNonNull(diagram);
+        mPageHeight = mCanvas.getPrintableHeight();
+        mPageWidth = mCanvas.getPrintableWidth();
         mResolution = mCanvas.getResolution();
         mStepSize = mCanvas.getDotDiameter();
-        mPageWidth = mCanvas.getPrintableWidth();
-        mPageHeight = mCanvas.getPrintableHeight();
 
         checkResolution();
         calculateRanges();

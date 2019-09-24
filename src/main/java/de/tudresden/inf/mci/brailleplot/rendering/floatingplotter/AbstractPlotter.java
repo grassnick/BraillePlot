@@ -20,29 +20,38 @@ import static tec.units.ri.unit.Units.METRE;
  */
 abstract class AbstractPlotter<T extends Diagram> {
 
-    T mDiagram;
     PlotCanvas mCanvas;
     FloatingPointData<Boolean> mData;
+    T mDiagram;
+
+
+    int mNumberXTicks;
+    int mNumberYTicks;
+    double mBottomMargin;
+    double mLeftMargin;
+    double mLengthX;
+    double mLengthY;
+    double mPageHeight;
+    double mPageWidth;
+    double mResolution;
+    double mStepSize;
+    double mTickDistance;
+    double mTitleMargin;
+    double mXTickStep;
+    double mYRange;
+    double mYTickStep;
+    private int decimalPlaces;
+    private int len;
+    private int newRange;
+    private int numberTicks;
+    private double mXRange;
+    private boolean singleDigit;
+    private boolean startOrigin;
+    private int[] digits;
 
     // arrays with int for axis ticks starting at the origin; last field contains scale factor as power of 10
     int[] mScaleX;
     int[] mScaleY;
-
-    double mResolution;
-    double mPageWidth;
-    double mPageHeight;
-    double mStepSize;
-    double mXTickStep;
-    double mYTickStep;
-    double mLeftMargin;
-    double mBottomMargin;
-    double mTitleMargin;
-    int mNumberXTicks;
-    int mNumberYTicks;
-    double lengthX;
-    double lengthY;
-    double mXRange;
-    double mYRange;
 
     // constants
     static final int THREE = 3;
@@ -51,23 +60,22 @@ abstract class AbstractPlotter<T extends Diagram> {
     static final int SIX = 6;
     static final int SEVEN = 7;
     static final int TEN = 10;
+    static final int ELEVEN = 11;
+    static final int FIFTEEN = 15;
+    static final int SIXTEEN = 16;
     static final int TWENTY = 20;
+    static final int TWENTYONE = 21;
     static final int THIRTY = 30;
-    static final double WMULT = 3;
+    static final double CIRCLEDIA = 15;
+    static final double CIRCLESCALE = 1.45;
     static final double HMULT = 2;
     static final double TMULT = 2;
-    static final double TICKDISTANCE = 35;
-    static final double ARROWS1 = 1;
-    static final double ARROWS2 = 2;
-    static final double ARROWS3 = 3;
+    static final double WMULT = 3;
     static final double MARGIN = 15;
     static final double TICK1 = 1.5;
     static final double TICK2 = 3;
     static final double TICK3 = 4.5;
     static final double TICK4 = 6;
-    static final double CIRCLESCALE = 1.45;
-    static final double CIRCLEDIA = 15;
-
 
     /**
      * Checks if mStepSize is smaller than mResolution. In that case, mStepSize is set to mResolution.
@@ -105,33 +113,36 @@ abstract class AbstractPlotter<T extends Diagram> {
     int[] scaleAxis(final String type) throws IllegalArgumentException {
 
         double calcRange;
-        int numberTics;
         double minimum;
 
         switch (type) {
             case "x":
                 calcRange = mXRange;
-                numberTics = mNumberXTicks;
+                numberTicks = mNumberXTicks;
                 minimum = mDiagram.getMinX();
+                startOrigin = false;
                 break;
             case "y":
                 calcRange = mYRange;
-                numberTics = mNumberYTicks;
+                numberTicks = mNumberYTicks;
                 minimum = mDiagram.getMinY();
+                startOrigin = false;
                 break;
             case "z":
                 calcRange = mYRange;
-                numberTics = mNumberXTicks;
+                numberTicks = mNumberXTicks;
                 minimum = mDiagram.getMinY();
+                startOrigin = true;
                 break;
             default:
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("The argument must be either 'x', 'y' or 'z'.");
         }
 
         int range;
-        int decimalPlaces = 0;
+        decimalPlaces = 0;
+        double distance;
         boolean scaled = false;
-        boolean singleDigit = false;
+        singleDigit = false;
 
         if (calcRange > 1) {
             range = (int) Math.ceil(calcRange);
@@ -141,84 +152,141 @@ abstract class AbstractPlotter<T extends Diagram> {
             scaled = true;
         }
 
-        int[] array = new int[numberTics + 1];
+        int[] array = new int[numberTicks + 1];
 
         double newMinimum = minimum;
-        if (minimum > 0) {
+        if (minimum > 0 && startOrigin) {
             range += minimum;
             newMinimum = 0;
         }
 
+
         // converting range into int array
         String number = String.valueOf(range);
         String[] dummy = number.split("");
-        int[] digits = new int[dummy.length];
+        digits = new int[dummy.length];
         for (int i = 0; i < dummy.length; i++) {
             digits[i] = Integer.parseInt(dummy[i]);
         }
 
-        int len = digits.length;
-
-        // rounding
-        int newRange;
-        if (len == 1) {
-            if (digits[0] <= SIX) {
-                newRange = FIVE;
-                singleDigit = true;
-            } else {
-                newRange = TEN;
-                len = 2;
-            }
-        } else {
-            if (digits[1] < 2) {
-                digits[1] = 0;
-                if (len > 2) {
-                    for (int i = 2; i < len; i++) {
-                        digits[i] = 0;
-                    }
-                }
-            } else if (digits[1] < FIVE) {
-                digits[1] = FIVE;
-                if (len > 2) {
-                    for (int i = 2; i < len; i++) {
-                        digits[i] = 0;
-                    }
-                }
-            } else {
-                digits[0]++;
-                for (int i = 1; i < len; i++) {
-                    digits[i] = 0;
-                }
-            }
-
-            // converting back to number value
-            newRange = 0;
-            for (int i = 0; i < len; i++) {
-                newRange = (int) (newRange + digits[i] * Math.pow(TEN, len - i - 1));
-            }
-
-        }
+        len = digits.length;
+        roundRange();
 
         // filling the array
-        double distance = (double) newRange / numberTics;
-        for (int i = 0; i < numberTics; i++) {
-            if (singleDigit) {
-                array[i] = (int) (((i + 1) * distance) + newMinimum);
-            } else {
-                array[i] = (int) ((((i + 1) * distance) + newMinimum) / Math.pow(TEN, len - 2));
+        if (startOrigin) {
+            distance = (double) newRange / (numberTicks);
+            for (int i = 0; i < numberTicks; i++) {
+                if (singleDigit) {
+                    if (distance != Math.round(distance)) {
+                        array[i] = (int) (((i + 1) * distance) / Math.pow(TEN, -1));
+                    } else {
+                        array[i] = (int) ((i + 1) * distance);
+                    }
+                } else {
+                    if (distance != Math.round(distance)) {
+                        array[i] = (int) (((i + 1) * distance) / Math.pow(TEN, len - THREE));
+                    } else {
+                        array[i] = (int) (((i + 1) * distance) / Math.pow(TEN, len - 2));
+                    }
+                }
+            }
+        } else {
+            distance = (double) newRange / (numberTicks - 1);
+            for (int i = 0; i < numberTicks; i++) {
+                if (singleDigit) {
+                    if (distance != Math.round(distance)) {
+                        array[i] = (int) (((i * distance) + newMinimum * Math.pow(TEN, -decimalPlaces)) / Math.pow(TEN, -1));
+                    } else {
+                        array[i] = (int) ((i * distance) + newMinimum * Math.pow(TEN, -decimalPlaces));
+                    }
+                } else {
+                    if (distance != Math.round(distance)) {
+                        array[i] = (int) (((i * distance) + newMinimum * Math.pow(TEN, -decimalPlaces)) / Math.pow(TEN, len - THREE));
+                    } else {
+                        array[i] = (int) (((i * distance) + newMinimum * Math.pow(TEN, -decimalPlaces)) / Math.pow(TEN, len - 2));
+                    }
+                }
             }
         }
 
         // power of 10 which is used to scale; for legend
         if (scaled) {
-            array[numberTics] = decimalPlaces;
+            array[numberTicks] = decimalPlaces;
         } else if (singleDigit) {
-            array[numberTics] = 0;
+            if (distance != Math.round(distance)) {
+                array[numberTicks] = -1;
+            } else {
+                array[numberTicks] = decimalPlaces;
+            }
+        } else if (distance != Math.round(distance)) {
+            array[numberTicks] = len - THREE;
         } else {
-            array[numberTics] = len - 2;
+            array[numberTicks] = len - 2;
         }
 
         return array;
+    }
+
+    /**
+     * Rounds the range to 5 or 10, if the range is a single digit.
+     * Rounds the range so that the second digit is either 0 or 5 and all following digits are 0.
+     */
+    private void roundRange() {
+        if ((startOrigin && numberTicks == FIFTEEN) || (!startOrigin && numberTicks == SIXTEEN)) {
+            if (len == 1) {
+                newRange = digits[0] * TEN;
+                singleDigit = true;
+                decimalPlaces--;
+            } else {
+                newRange = digits[0] * TEN + digits[1];
+            }
+            newRange = closestNumber(newRange, FIFTEEN);
+            if (len > 2) {
+                for (int i = 2; i < len; i++) {
+                    newRange = newRange * TEN;
+                }
+            }
+        } else {
+
+            // rounding
+            if (len == 1) {
+                if (digits[0] <= SIX) {
+                    newRange = FIVE;
+                    singleDigit = true;
+                } else {
+                    newRange = TEN;
+                    len = 2;
+                }
+            } else {
+                if (digits[1] < 2) {
+                    digits[1] = 0;
+                    if (len > 2) {
+                        for (int i = 2; i < len; i++) {
+                            digits[i] = 0;
+                        }
+                    }
+                } else if (digits[1] < FIVE) {
+                    digits[1] = FIVE;
+                    if (len > 2) {
+                        for (int i = 2; i < len; i++) {
+                            digits[i] = 0;
+                        }
+                    }
+                } else {
+                    digits[0]++;
+                    for (int i = 1; i < len; i++) {
+                        digits[i] = 0;
+                    }
+                }
+
+                // converting back to number value
+                newRange = 0;
+                for (int i = 0; i < len; i++) {
+                    newRange = (int) (newRange + digits[i] * Math.pow(TEN, len - i - 1));
+                }
+
+            }
+        }
     }
 
     /**
@@ -228,8 +296,7 @@ abstract class AbstractPlotter<T extends Diagram> {
      */
     double calculateXValue(final double x) {
         double ratio = mXTickStep / (mScaleX[1] - mScaleX[0]);
-        double y = (x / Math.pow(TEN, mScaleX[mScaleX.length - 1]) - mScaleX[0]) * ratio + mLeftMargin + mXTickStep;
-        return y;
+        return (x / Math.pow(TEN, mScaleX[mScaleX.length - 1]) - mScaleX[0]) * ratio + mLeftMargin + mXTickStep;
     }
 
     /**
@@ -240,6 +307,31 @@ abstract class AbstractPlotter<T extends Diagram> {
     double calculateYValue(final double y) {
         double ratio = mYTickStep / (mScaleY[1] - mScaleY[0]);
         return mBottomMargin - mYTickStep - (y / Math.pow(TEN, mScaleY[mScaleY.length - 1]) - mScaleY[0]) * ratio;
+    }
+
+    /**
+     * Function to find the number closest to n and divisible by m.
+     * @param n Range.
+     * @param m Number of ticks.
+     * @return Clostest int to n divisible by m.
+     */
+    private int closestNumber(final int n, final int m) {
+        // find the quotient
+        int q = n / m;
+
+        // 1st possible closest number
+        int n1 = m * q;
+
+        // 2nd possible closest number
+        int n2 = m * (q + 1);
+
+        // if true, then n1 is the required closest number
+        if (n1 > n2) {
+            return n1;
+        }
+
+        // else n2 is the required closest number
+        return n2;
     }
 
     /**

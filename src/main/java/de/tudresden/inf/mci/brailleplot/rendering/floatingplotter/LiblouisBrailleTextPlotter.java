@@ -32,16 +32,12 @@ import static tec.units.ri.unit.Units.METRE;
 
 public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
 
-    private AbstractBrailleTableParser mParser;
-
-    // Parameters for plotting
-    private PlotCanvas mCanvas;
-    private Translator mTranslator;
     private FloatingPointData<Boolean> mData;
+    private AbstractBrailleTableParser mParser;
+    private Translator mTranslator;
 
     // constant
     private static final double THREE = 3;
-
 
     /**
      * Constructor for liblouistextplotter.
@@ -66,11 +62,11 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
     public void plot(final BrailleText data, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
         Objects.requireNonNull(data, "The data given to the brailletextplotter was null!");
         Objects.requireNonNull(canvas, "The canvas given to the brailletextplotter was null!");
-        if (data.getText() == "") {
+        if (data.getText().equals("")) {
             return;
         }
         Rectangle rect = data.getArea();
-        mCanvas = canvas;
+        /* Parameters for plotting */
         TranslationResult result = null;
         try {
             result = mTranslator.translate(data.getText(), null, null, null, DisplayTable.StandardDisplayTables.DEFAULT);
@@ -82,11 +78,11 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
 
         double startX = rect.getX();
         double startY = rect.getX();
-        double widthJump = mCanvas.getCellWidth() - mCanvas.getDotDiameter();
-        double heightJump = (mCanvas.getCellHeight() - mCanvas.getDotDiameter()) / 2;
-        double cellJumpHor = mCanvas.getCellDistHor();
-        double cellJumpVer = mCanvas.getCellDistVer();
-        mData = mCanvas.getCurrentPage();
+        double widthJump = canvas.getCellWidth() - canvas.getDotDiameter();
+        double heightJump = (canvas.getCellHeight() - canvas.getDotDiameter()) / 2;
+        double cellJumpHor = canvas.getCellDistHor();
+        double cellJumpVer = canvas.getCellDistVer();
+        mData = canvas.getCurrentPage();
 
         for (int k = 0; k < resultAsArray.length; k++) {
             String[] braille = mParser.getCharToBraille(resultAsArray[k]).split("");
@@ -161,11 +157,10 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
         TranslationResult result = null;
         try {
             result = mTranslator.translate(text, null, null, null, DisplayTable.StandardDisplayTables.DEFAULT);
-        } catch (TranslationException e) {
-            e.printStackTrace();
-        } catch (DisplayException e) {
+        } catch (TranslationException | DisplayException e) {
             e.printStackTrace();
         }
+        assert result != null;
         String sResult = result.getBraille();
         int widthOfText = sResult.length();
         int tempMaxWidth;
@@ -186,17 +181,16 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
      */
     public int getBrailleStringLength(final String text) {
         Objects.requireNonNull(text, "The given string for getBrailleStringLength was null!");
-        if (text == "") {
+        if (text.equals("")) {
             return 0;
         }
         TranslationResult result = null;
         try {
             result = mTranslator.translate(text, null, null, null, DisplayTable.StandardDisplayTables.DEFAULT);
-        } catch (TranslationException e) {
-            e.printStackTrace();
-        } catch (DisplayException e) {
+        } catch (TranslationException | DisplayException e) {
             e.printStackTrace();
         }
+        assert result != null;
         return result.getBraille().length();
     }
 }

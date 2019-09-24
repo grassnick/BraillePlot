@@ -22,15 +22,15 @@ import static tec.units.ri.unit.Units.METRE;
  */
 public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implements Plotter<BarChart> {
 
-    private double mNumBarGroup;
     private double mBarGroupWidth;
+    private double mNumBarGroup;
 
     /**
      * Plots a grouped {@link BarChart} instance onto a {@link PlotCanvas}.
      * @param diagram An instance of {@link  BarChart} representing the bar chart.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
-     * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas}, this is
-     * to display the given diagram.
+     * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas} or
+     * if there are more data series than textures.
      */
     @Override
     public void plot(final BarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
@@ -45,7 +45,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
             mGridHelp[i] = 0;
         }
 
-        mBarGroupWidth = (lengthY - (mNumBarGroup + 1) * mMinDist) / mNumBarGroup;
+        mBarGroupWidth = (mLengthY - (mNumBarGroup + 1) * mMinDist) / mNumBarGroup;
         mBarWidth = mBarGroupWidth / mCatList.getNumberOfCategories();
         if (mBarWidth > mMaxWidth) {
             mBarWidth = mMaxWidth;
@@ -53,7 +53,8 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
             throw new InsufficientRenderingAreaException();
         }
 
-        mBarDist = (lengthY - mNumBarGroup * mBarGroupWidth) / (mNumBarGroup + 1);
+        mBarGroupWidth = mCatList.getNumberOfCategories() * mBarWidth;
+        mBarDist = (mLengthY - mNumBarGroup * mBarGroupWidth) / (mNumBarGroup + 1);
 
         Iterator<PointList> bigListIt = mCatList.iterator();
         for (int i = 0; i < mCatList.getSize(); i++) {
@@ -96,7 +97,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
         // x-axis
         for (double i = 1; i <= 2 * mNumberXTicks; i++) {
             loop:
-            for (double j = mBottomMargin; j > mTitleMargin; j -= mStepSize) {
+            for (double j = mBottomMargin - mStepSize; j > mTitleMargin; j -= mStepSize) {
                 for (int k = 0; k < mNumBarGroup; k++) {
                     // check if j is between bars
                     if (j < mBottomMargin - k * (mBarDist + mBarGroupWidth) && j > mBottomMargin - mBarDist - k * (mBarDist + mBarGroupWidth)) {

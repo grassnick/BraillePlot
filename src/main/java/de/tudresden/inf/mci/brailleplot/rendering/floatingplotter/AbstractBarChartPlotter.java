@@ -15,16 +15,19 @@ import java.util.Objects;
  */
 abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
 
-    String[] mNamesY;
-    double[] mGridHelp;
     CategoricalPointListContainer<PointList> mCatList;
+
     int mNumBar;
-    double mBarWidth;
     double mBarDist;
+    double mBarWidth;
     double mLastXValue;
-    double mMinWidth;
     double mMaxWidth;
     double mMinDist;
+    double mMinWidth;
+    double[] mGridHelp;
+    String[] mNamesY;
+
+    // constants
     private static final double STAIRDIST = 6;
 
     /**
@@ -33,18 +36,19 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
      */
     void prereq(final BarChart diagram, final PlotCanvas canvas) {
+
+        mCanvas = Objects.requireNonNull(canvas);
+        mCanvas.readConfig();
+        mData = mCanvas.getCurrentPage();
         mDiagram = Objects.requireNonNull(diagram);
         mCatList = (CategoricalPointListContainer<PointList>) mDiagram.getDataSet();
-        mCanvas = Objects.requireNonNull(canvas);
-        mData = mCanvas.getCurrentPage();
-        mCanvas.readConfig();
-        mResolution = mCanvas.getResolution();
-        mStepSize = mCanvas.getDotDiameter();
-        mPageWidth = mCanvas.getPrintableWidth();
-        mPageHeight = mCanvas.getPrintableHeight();
-        mMinWidth = mCanvas.getMinBarWidth();
         mMaxWidth = mCanvas.getMaxBarWidth();
         mMinDist = mCanvas.getMinBarDist();
+        mMinWidth = mCanvas.getMinBarWidth();
+        mPageHeight = mCanvas.getPrintableHeight();
+        mPageWidth = mCanvas.getPrintableWidth();
+        mResolution = mCanvas.getResolution();
+        mStepSize = mCanvas.getDotDiameter();
 
         checkResolution();
         calculateRanges();
@@ -72,20 +76,29 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
         // margin from top for title
         mTitleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
 
+        mTickDistance = mLeftMargin;
+        if (mTickDistance < THIRTY) {
+            mTickDistance = THIRTY;
+        }
+
         // x-axis
         double lastValueX = mLeftMargin;
         for (double i = mLeftMargin; i <= mPageWidth; i += mStepSize) {
             addPoint(i, mBottomMargin);
             lastValueX = i;
         }
-        lengthX = lastValueX - mLeftMargin;
-        mNumberXTicks = (int) Math.floor(lengthX / TICKDISTANCE);
+        mLengthX = lastValueX - mLeftMargin;
+        mNumberXTicks = (int) Math.floor(mLengthX / mTickDistance);
         if (mNumberXTicks < 2) {
             mNumberXTicks = 2;
         } else if (mNumberXTicks <= FIVE) {
             mNumberXTicks = FIVE;
+        } else if (mNumberYTicks <= TEN) {
+            mNumberYTicks = TEN;
+        } else if (mNumberYTicks <= FIFTEEN) {
+            mNumberYTicks = FIFTEEN;
         } else {
-            mNumberXTicks = TEN;
+            mNumberYTicks = TWENTY;
         }
 
         mScaleX = new int[mNumberXTicks + 1];
@@ -112,7 +125,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
             lastValueY = i;
         }
 
-        lengthY = mBottomMargin - lastValueY;
+        mLengthY = mBottomMargin - lastValueY;
 
     }
 
@@ -121,6 +134,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
      * @param i Corresponds to the relative position on the y-axis.
      * @param j Corresponds to the category and the filling.
      * @param xValue Value on the x-axis.
+     * @throws InsufficientRenderingAreaException If there are more data series than textures.
      */
     abstract void drawRectangle(int i, int j, double xValue) throws InsufficientRenderingAreaException;
 
@@ -129,6 +143,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
      * @param startY Absolute starting y-coordinate.
      * @param endX Absolute ending x-coordinate.
      * @param j Corresponds to the category and the texture.
+     * @throws InsufficientRenderingAreaException If there are more data series than textures.
      */
     void plotAndFillRectangle(final double startY, final double endX, final int j) throws InsufficientRenderingAreaException {
         // plot rectangle
@@ -158,7 +173,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
         } else if (j == SIX) {
             fillDiagonalLeft(startY, endX);
         } else {
-            throw new InsufficientRenderingAreaException();
+            throw new InsufficientRenderingAreaException("There are more data series than textures.");
         }
     }
 

@@ -26,8 +26,8 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
      * Plots a stacked {@link BarChart} instance onto a {@link PlotCanvas}.
      * @param diagram An instance of {@link  BarChart} representing the bar chart.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
-     * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas}, this is
-     * to display the given diagram.
+     * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas} or
+     * if there are more data series than textures.
      */
     @Override
     public void plot(final BarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
@@ -41,14 +41,14 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
             mGridHelp[i] = 0;
         }
 
-        mBarWidth = (lengthY - (mNumBar + 1) * mMinDist) / mNumBar;
+        mBarWidth = (mLengthY - (mNumBar + 1) * mMinDist) / mNumBar;
         if (mBarWidth > mMaxWidth) {
             mBarWidth = mMaxWidth;
         } else if (mBarWidth < mMinWidth) {
             throw new InsufficientRenderingAreaException();
         }
 
-        mBarDist = (lengthY - mNumBar * mBarWidth) / (mNumBar + 1);
+        mBarDist = (mLengthY - mNumBar * mBarWidth) / (mNumBar + 1);
 
         Iterator<PointList> bigListIt = mCatList.iterator();
         for (int i = 0; i < mCatList.getSize(); i++) {
@@ -124,7 +124,7 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
                     }
 
                     // check if j is inside bar and i/2 outside bar
-                    double barStep = lengthY / mNumBar;
+                    double barStep = mLengthY / mNumBar;
                     if (j < mBottomMargin - k * barStep && j > mBottomMargin - (k + 1) * barStep) {
                         if ((mLeftMargin + (i / 2) * mXTickStep) > mGridHelp[k]) {
                             Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);

@@ -17,8 +17,8 @@ public interface Plotter<T extends Renderable> {
      * Rasterizes a {@link Renderable} instance onto a {@link PlotCanvas}.
      * @param data The renderable representation.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the rasterizer output.
-     * @throws InsufficientRenderingAreaException If too few space is available on the {@link PlotCanvas}
-     * to display the given data.
+     * @throws InsufficientRenderingAreaException If too few space is available on the {@link PlotCanvas} or
+     * if there are more data series than textures, frames or line styles.
      */
     void plot(T data, PlotCanvas canvas) throws InsufficientRenderingAreaException;
 }

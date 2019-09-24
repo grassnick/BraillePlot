@@ -20,21 +20,21 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
      * Plots a {@link LinePlot} instance onto a {@link PlotCanvas}. Add new line styles in if statement.
      * @param diagram An instance of {@link LinePlot} representing the line plot.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
-     * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas}, this is
-     * to display the given diagram.
+     * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas} or
+     * if there are more data series than frames or line styles.
      */
     @Override
     public void plot(final LinePlot diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
-        mDiagram = Objects.requireNonNull(diagram);
         mCanvas = Objects.requireNonNull(canvas);
-        mData = mCanvas.getCurrentPage();
         mCanvas.readConfig();
+        mData = mCanvas.getCurrentPage();
+        mDiagram = Objects.requireNonNull(diagram);
+        mFrames = mCanvas.getFrames();
+        mPageHeight = mCanvas.getPrintableHeight();
+        mPageWidth = mCanvas.getPrintableWidth();
         mResolution = mCanvas.getResolution();
         mStepSize = mCanvas.getDotDiameter();
-        mPageWidth = mCanvas.getPrintableWidth();
-        mPageHeight = mCanvas.getPrintableHeight();
-        mFrames = mCanvas.getFrames();
 
         checkResolution();
         calculateRanges();
@@ -123,7 +123,7 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
                                 addPoint(j, j * slope + n);
                             }
                         } else {
-                            throw new InsufficientRenderingAreaException();
+                            throw new InsufficientRenderingAreaException("There are more data series than line types.");
                         }
 
                         currentX = nextX;
