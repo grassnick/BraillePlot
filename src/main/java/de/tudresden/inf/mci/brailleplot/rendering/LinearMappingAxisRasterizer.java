@@ -16,7 +16,7 @@ import static java.lang.Integer.signum;
 
 public class LinearMappingAxisRasterizer implements Rasterizer<Axis> {
 
-    private BrailleTextRasterizer mTextRasterizer = new BrailleTextRasterizer();
+    private LiblouisBrailleTextRasterizer mTextRasterizer;
     private RasterCanvas mCanvas;
     private MatrixData<Boolean> mPage;
 
@@ -35,6 +35,7 @@ public class LinearMappingAxisRasterizer implements Rasterizer<Axis> {
     @Override
     public void rasterize(final Axis axis, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
 
+        mTextRasterizer = new LiblouisBrailleTextRasterizer(canvas.getPrinter());
         mCanvas = canvas;
         mPage = mCanvas.getCurrentPage();
 

@@ -4,6 +4,8 @@ out
 *gradle*
 !build.gradle
 !integrationTest.gradle
+# Tables
+src/main/resources/mapping/liblouis
 
 # IntelliJ
 .idea

@@ -59,7 +59,7 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
     private List<Integer> mNegativeTextureAlignments = new ArrayList<>(); // ... or a negative value (it matters)
 
     // Sub rasterizers
-    private BrailleTextRasterizer mTextRasterizer = new BrailleTextRasterizer();
+    private LiblouisBrailleTextRasterizer mTextRasterizer;
     private LinearMappingAxisRasterizer mAxisRasterizer = new LinearMappingAxisRasterizer();
     private TextureRasterizer mTextureRasterizer = new TextureRasterizer();
     private LegendRasterizer mLegendRasterizer = new LegendRasterizer();
@@ -118,6 +118,7 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
      */
     public void rasterize(final CategoricalBarChart diagram, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
 
+        mTextRasterizer = new LiblouisBrailleTextRasterizer(canvas.getPrinter());
         if (!canvas.isSixDotBrailleRaster()) {
             throw new InsufficientRenderingAreaException("This rasterizer can only work with a 6-dot braille grid.");
         }
