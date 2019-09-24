@@ -25,8 +25,8 @@ import java.util.jar.JarFile;
 public final class GeneralResource {
 
     private String mResourcePath;
-    private boolean validExternalFile = false;
-    private boolean validPackedResource = false;
+    private boolean mValidExternalFile = false;
+    private boolean mValidPackedResource = false;
     private static boolean mExportOverride = !isRunFromCompiledJar();
     private static File tempDirectory = new File(System.getProperty("java.io.tmpdir") + File.separator + "brailleplot");
     private static Logger mLogger = LoggerFactory.getLogger(getClassRef());
@@ -52,14 +52,14 @@ public final class GeneralResource {
         if (checkFile.isFile()) {
             mLogger.trace("Interpreting path as file: " + checkFile.getCanonicalPath());
             mResourcePath = checkFile.getCanonicalPath();
-            validExternalFile = true;
+            mValidExternalFile = true;
         }
         checkFile = checkFile.getAbsoluteFile();
         mLogger.trace("Checking referenced path as absolute path: " + checkFile);
         if (checkFile.isFile()) {
             mLogger.trace("Interpreting path as absolute file: " + checkFile.getCanonicalPath());
             mResourcePath = checkFile.getCanonicalPath();
-            validExternalFile = true;
+            mValidExternalFile = true;
         }
         if (Objects.nonNull(searchPath)) {
             checkFile = new File(searchPath + File.separator + resourcePath);
@@ -67,7 +67,7 @@ public final class GeneralResource {
             if (checkFile.isFile()) {
                 mLogger.trace("Interpreting path as search path relative file: " + checkFile.getCanonicalPath());
                 mResourcePath = checkFile.getCanonicalPath();
-                validExternalFile = true;
+                mValidExternalFile = true;
             }
         }
         String resourceClassPath = resourcePath.replace("\\", "/"); // classpaths are always separated by forward slash
@@ -76,7 +76,7 @@ public final class GeneralResource {
         if (Objects.nonNull(checkStream)) {
             mLogger.trace("Interpreting path as resource stream: " + resourceClassPath);
             mResourcePath = resourceClassPath;
-            validPackedResource = true;
+            mValidPackedResource = true;
         }
         if (Objects.nonNull(searchPath)) {
             String relativeResourcePath = new File(searchPath + File.separator + resourceClassPath).toPath().normalize().toString();
@@ -86,7 +86,7 @@ public final class GeneralResource {
             if (Objects.nonNull(checkStream)) {
                 mLogger.trace("Interpreting path as resource stream: " + relativeResourcePath);
                 mResourcePath = relativeResourcePath;
-                validPackedResource = true;
+                mValidPackedResource = true;
             }
         }
         if (!(isValidExternalFile() || isValidPackedResource())) {
@@ -95,11 +95,11 @@ public final class GeneralResource {
     }
 
     public boolean isValidExternalFile() {
-        return validExternalFile;
+        return mValidExternalFile;
     }
 
     public boolean isValidPackedResource() {
-        return validPackedResource;
+        return mValidPackedResource;
     }
 
     /**
