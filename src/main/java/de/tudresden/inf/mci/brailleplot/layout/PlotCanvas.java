@@ -17,27 +17,27 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
 
     private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
 
-    //floating dot area resolution
-    private double mResolution;
-
-    // dimensions for Braille characters (e.g. axes, title)
-    private double mCellWidth;
-    private double mCellHeight;
-
     // cell distances horizontal and vertical
     private double mCellDistHor;
     private double mCellDistVer;
 
+    // dimensions for Braille characters (e.g. axes, title)
+    private double mCellHeight;
+    private double mCellWidth;
+
     // bar dimensions
-    private double mMinBarWidth;
     private double mMaxBarWidth;
     private double mMinBarDist;
+    private double mMinBarWidth;
 
-    // second y-axis
-    private boolean mSecondAxis;
+    //floating dot area resolution
+    private double mResolution;
 
     // frames for line plot
     private boolean mFrames;
+
+    // second y-axis
+    private boolean mSecondAxis;
 
     // constants
     private static final int THREE = 3;

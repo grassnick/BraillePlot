@@ -2,7 +2,7 @@ package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 
 import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
-import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
+import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 
@@ -13,7 +13,7 @@ import java.util.Objects;
  * Abstract class to provide methods for bar chart plotting.
  * @author Richard Schmidt
  */
-abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
+abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarChart> {
 
     CategoricalPointListContainer<PointList> mCatList;
 
@@ -32,10 +32,10 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
 
     /**
      * Prepares bar chart plot using the defined methods.
-     * @param diagram {@link BarChart} with the data.
+     * @param diagram {@link de.tudresden.inf.mci.brailleplot.diagrams.BarChart} with the data.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
      */
-    void prereq(final BarChart diagram, final PlotCanvas canvas) {
+    void prereq(final CategoricalBarChart diagram, final PlotCanvas canvas) {
 
         mCanvas = Objects.requireNonNull(canvas);
         mCanvas.readConfig();

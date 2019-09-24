@@ -1,7 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
-import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
+import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
@@ -20,17 +20,17 @@ import static tec.units.ri.unit.Units.METRE;
  * Provides a plotting algorithm for stacked bar chart data.
  * @author Richard Schmidt
  */
-public final class StackedBarChartPlotter extends AbstractBarChartPlotter implements Plotter<BarChart> {
+public final class StackedBarChartPlotter extends AbstractBarChartPlotter implements Plotter<CategoricalBarChart> {
 
     /**
-     * Plots a stacked {@link BarChart} instance onto a {@link PlotCanvas}.
-     * @param diagram An instance of {@link  BarChart} representing the bar chart.
+     * Plots a stacked {@link de.tudresden.inf.mci.brailleplot.diagrams.BarChart} instance onto a {@link PlotCanvas}.
+     * @param diagram An instance of {@link  de.tudresden.inf.mci.brailleplot.diagrams.BarChart} representing the bar chart.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
      * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas} or
      * if there are more data series than textures.
      */
     @Override
-    public void plot(final BarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
+    public void plot(final CategoricalBarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
         prereq(diagram, canvas);
 

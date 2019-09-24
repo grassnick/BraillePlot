@@ -4,7 +4,7 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListConta
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 
 /**
- * Representation of a bar chart composed from categories of multiple bars each. Implements Renderable.
+ * Representation of a bar chart composed from categories of multiple bars each. Implements {@link de.tudresden.inf.mci.brailleplot.rendering.Renderable}.
  * @author Leonard Kupper
  * @version 2019.09.02
  */

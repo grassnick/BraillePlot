@@ -14,7 +14,8 @@ import static tec.units.ri.unit.Units.METRE;
 
 /**
  * Abstract class to provide methods for dot plotting. {@link LinePlotter} and {@link ScatterPlotter} extend this class.
- * @param <T> Type of diagram the plotter can plot. Needs to extend {@link Diagram}. Can be {@link de.tudresden.inf.mci.brailleplot.diagrams.LinePlot} or {@link de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot}.
+ * @param <T> Type of diagram the plotter can plot. Needs to extend {@link Diagram}.
+ * Can be {@link de.tudresden.inf.mci.brailleplot.diagrams.LinePlot} or {@link de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot}.
  * @author Richard Schmidt
  */
 abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T> {

@@ -9,10 +9,10 @@ import java.util.Objects;
 /**
  * General representation of a diagram with basic data functions. {@link BarChart}, {@link LinePlot} and {@link ScatterPlot} extend this class.
  * Implements {@link Renderable}.
- *
  * @author Richard Schmidt
  */
 public abstract class Diagram implements Renderable {
+
     PointListContainer<PointList> mData;
 
     Diagram(final PointListContainer<PointList> data) {

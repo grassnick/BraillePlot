@@ -1,7 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
-import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
+import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
@@ -20,25 +20,25 @@ import static tec.units.ri.unit.Units.METRE;
  * Provides a plotting algorithm for grouped bar chart data.
  * @author Richard Schmidt
  */
-public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implements Plotter<BarChart> {
+public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implements Plotter<CategoricalBarChart> {
 
     private double mBarGroupWidth;
     private double mNumBarGroup;
 
     /**
-     * Plots a grouped {@link BarChart} instance onto a {@link PlotCanvas}.
-     * @param diagram An instance of {@link  BarChart} representing the bar chart.
+     * Plots a grouped {@link de.tudresden.inf.mci.brailleplot.diagrams.BarChart} instance onto a {@link PlotCanvas}.
+     * @param diagram An instance of {@link  de.tudresden.inf.mci.brailleplot.diagrams.BarChart} representing the bar chart.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
      * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas} or
      * if there are more data series than textures.
      */
     @Override
-    public void plot(final BarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
+    public void plot(final CategoricalBarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
         prereq(diagram, canvas);
 
         // bar drawing and filling
-        mNumBar = mCatList.getSize() * mCatList.getNumberOfCategories();
+        mNumBar = mCatList.getSize() * mDiagram.getNumberOfCategories();
         mNumBarGroup = mCatList.getSize();
         mGridHelp = new double[mNumBar];
         for (int i = 0; i < mNumBar; i++) {
@@ -46,14 +46,14 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
         }
 
         mBarGroupWidth = (mLengthY - (mNumBarGroup + 1) * mMinDist) / mNumBarGroup;
-        mBarWidth = mBarGroupWidth / mCatList.getNumberOfCategories();
+        mBarWidth = mBarGroupWidth / mDiagram.getNumberOfCategories();
         if (mBarWidth > mMaxWidth) {
             mBarWidth = mMaxWidth;
         } else if (mBarWidth < mMinWidth) {
             throw new InsufficientRenderingAreaException();
         }
 
-        mBarGroupWidth = mCatList.getNumberOfCategories() * mBarWidth;
+        mBarGroupWidth = mDiagram.getNumberOfCategories() * mBarWidth;
         mBarDist = (mLengthY - mNumBarGroup * mBarGroupWidth) / (mNumBarGroup + 1);
 
         Iterator<PointList> bigListIt = mCatList.iterator();

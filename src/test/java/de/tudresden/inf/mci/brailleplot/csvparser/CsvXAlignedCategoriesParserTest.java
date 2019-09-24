@@ -24,6 +24,7 @@ class CsvXAlignedCategoriesParserTest {
     static void initialize() throws Exception {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         InputStream csvStream = classloader.getResourceAsStream("examples.csv/0_bar_chart_categorical.csv");
+        assert csvStream != null;
         Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
         parser = new CsvParser(csvReader, ',', '\"');
 

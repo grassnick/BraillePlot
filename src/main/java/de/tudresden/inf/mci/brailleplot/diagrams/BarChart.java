@@ -27,15 +27,6 @@ public class BarChart extends Diagram {
     }
 
     /**
-     * Getter for the total number of categories.
-     *
-     * @return int number of categories
-     */
-    public int getCategoryCount() {
-        return mData.getSize();
-    }
-
-    /**
      * Adds all y-values of on data series.
      * @return double maximum y-value
      */
@@ -59,4 +50,3 @@ public class BarChart extends Diagram {
     }
 
 }
-
