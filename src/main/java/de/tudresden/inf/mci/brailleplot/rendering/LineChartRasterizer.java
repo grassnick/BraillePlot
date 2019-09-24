@@ -1,38 +1,40 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
+import de.tudresden.inf.mci.brailleplot.datacontainers.SimplePointListImpl;
 import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 
-import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static java.lang.Math.abs;
 import static java.lang.Math.ceil;
+import static java.lang.Math.log10;
+import static java.lang.Math.pow;
 import static java.lang.StrictMath.floor;
+import static java.lang.StrictMath.round;
 
 /**
  * Class representing a line chart rasterizer.
  * @author Andrey Ruzhanskiy
- * @version 2019.08.17
+ * @version 2019.09.24
  */
 public class LineChartRasterizer implements Rasterizer<LineChart> {
     private LineChart mDiagram;
     private RasterCanvas mCanvas;
+
     private LiblouisBrailleTextRasterizer mTextRasterizer;
     private LinearMappingAxisRasterizer mAxisRasterizer;
-
+    private Legend mLegend;
+    private final double tenth = 0.1, fifth = 0.2, quarter = 0.25, half = 0.5;
+    private final double[] mUnitScalings = new double[]{tenth, fifth, quarter, half, 1.0};
 
     /*
         Parameters which should be read somewhere, not be hardcoded.
@@ -41,19 +43,27 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     private String mDiagramTitle =  "I am a line chart";
     private String mXAxisUnit = "Units per Memes";
     private String mYAxisUnit = "Pepes per Wojacks";
-    private int offset = 2;
 
-
-
-    // Layout Variables
-
+    private int mXStepWidth;
+    private int mYStepWidth;
+    private double mDpiX;
+    private double mDpiY;
+    @SuppressWarnings("magicnumber")
+    private int offset = 3;
     private Rectangle mCellLineArea;
 
-    LineChartRasterizer() {
 
+
+    LineChartRasterizer() {
         mAxisRasterizer = new LinearMappingAxisRasterizer();
     }
 
+    /**
+     * Method for rasterizing a {@link LineChart}-diagram.
+     * @param data The renderable representation.
+     * @param canvas An instance of {@link RasterCanvas} representing the target for the rasterizer output.
+     * @throws InsufficientRenderingAreaException
+     */
     @Override
     public void rasterize(final LineChart data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
         if (data.equals(null)) {
@@ -63,98 +73,330 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
             throw new NullPointerException("The given canvas for the LineChartRasterizer was null!");
         }
         mTextRasterizer = new LiblouisBrailleTextRasterizer(canvas.getPrinter());
-        PointListContainer list =  data.getData();
+        mLegend = new Legend(mDiagramTitle);
+
         mCanvas = canvas;
         mDiagram = data;
         // Important: Its a cell rectangle, not a dot rectangle.
         mCellLineArea = mCanvas.getCellRectangle();
 
-        // Step one: Calculate area needed for Title.
+        // ITS CALCULATION TIME //
+
+        // Step one: Calculate area needed for the title.
         Rectangle titleArea = calculateTitle();
-        // Step two: Calculate area needed for the x axis.
-        Rectangle xAxisArea = calculateXAxis();
+        Rectangle yAxisText;
+        Rectangle xAxisText;
         try {
-            xAxisArea.removeFromLeft(2);
+            yAxisText = canvas.toDotRectangle(mCellLineArea.removeFromTop(1));
+            xAxisText = canvas.toDotRectangle(mCellLineArea.removeFromBottom(1));
         } catch (Rectangle.OutOfSpaceException e) {
-            e.printStackTrace();
+            throw new InsufficientRenderingAreaException("The axis text cant fit to the layout.", e);
         }
 
-        // Step three: Calculate the range of the x values (example: -5 - 1000)
+        // Step two: Calculate area needed for the x/y axis.
+        Rectangle xAxisArea = calculateXAxis();
+        Rectangle yAxisArea = calculateYAxis();
+
+        // Step three: Calculate various things needed for computing the most simple approach for the x axis.
         double rangeOfXValues = valueRangeOfXAxis();
-        double negValueRangeSize = abs(min(mDiagram.getMinY(), 0));
-        double posValueRangeSize = max(mDiagram.getMaxY(), 0);
-        // Step three.5:  Calculate how many units are available for the x Axis. Units are in dots.
         int xUnitsAvailable = calculateUnitsWidthInCells(xAxisArea);
-        int xStepWidth = (int) findXAxisStepWidth(rangeOfXValues, xUnitsAvailable);
-        int numberOfTicks = (int) getNumberOfTicks(rangeOfXValues,xUnitsAvailable);
-        Map<Integer,String> labels = setCorrectLabelsforX(xStepWidth, rangeOfXValues, numberOfTicks);
-
-
-        Rectangle xAxisBound = xAxisArea.scaledBy(mCanvas.getCellWidth(), mCanvas.getCellHeight());
+        mDpiX = calculateDPI(rangeOfXValues, xUnitsAvailable);
+        mXStepWidth = (int) findXAxisStepWidth(rangeOfXValues, xUnitsAvailable);
+        int xNumberOfTicks = (int) getNumberOfTicks(xUnitsAvailable);
+        Rectangle xAxisBound = xAxisArea.scaledBy(mCanvas.getCellWidth(), mCanvas.getCellHeight());  // Change to canvas convert toDotRectangle
         int originY = xAxisBound.intWrapper().getY();
         int originX = xAxisBound.intWrapper().getX();
 
-        //int yUnitsAvailable = calculateUnitsWidhtInCells();
-
-        rasterizeTitle(mDiagramTitle, titleArea);
-
-        rasterizeXAxis(originY, originX, xStepWidth, xAxisBound, labels);
-
-        Rectangle yAxisArea = calculateYAxis();
-        int yOriginY = yAxisArea.intWrapper().getY();
-
-        int yOriginX = originX - 1;
-        double rangeOfYValues = valueRangeOfYAxis();
-        int yUnitsAvailable = calculateUnitsHeightWidthInCells(yAxisArea);
-        int yStepWidth =  findYAxisStepWidth(rangeOfYValues, yUnitsAvailable);
+        // Step four: Same thing for the y axis.
         Rectangle yAxisBound = yAxisArea.scaledBy(mCanvas.getCellWidth(), mCanvas.getCellHeight());
-        rasterizeYAxis(yOriginY, yOriginX, yStepWidth, yAxisBound);
+        int yOriginY = originY - 1;
+        int yOriginX = yAxisBound.intWrapper().getRight();
+        double rangeOfYValues = valueRangeOfYAxis();
+        int yUnitsAvailable = calculateUnitsHeightInCells(yAxisArea);
+        mYStepWidth =  findYAxisStepWidth(rangeOfYValues, yUnitsAvailable);
+        mDpiY = calculateDPI(rangeOfYValues, yUnitsAvailable);
+        int yNumberOfTicks = (int) getNumberOfTicks(yUnitsAvailable);
 
+        // Step five: Setting correct labels for x and y axis.
+        Map<Double, String> xLabelsForLegend = new TreeMap<>();
+        Map<Double, String> yLabelsForLegend = new TreeMap<>();
+        Map<Integer, String> labels = setCorrectLabelsforX(rangeOfXValues, xNumberOfTicks, mDpiX, xLabelsForLegend);
+        Map<Integer, String> yLabels = setCorrectLabelsforY(rangeOfYValues, yNumberOfTicks, mDpiY, yLabelsForLegend);
 
-       // Rasterizer.rectangle(mCanvas.toDotRectangle(xAxisArea), mCanvas.getCurrentPage(), true);
-        //printHelp();
+        // Step six: Filling the legend.
+        mLegend.addSymbolExplanation("Achsenskalierung:", "X-Achse", "Größenordung " + mDpiX);
+        mLegend.addSymbolExplanation("Achsenskalierung:", "Y-Achse", "Größenordung " + mDpiY);
+        setLabelsXForLegend(xLabelsForLegend);
+        // Currently commented out because the legendrasterizer cant handle that much legend.
+        //setLabelsYForLegend(yLabelsForLegend);
 
-
+        // Step seven: Iterate through the lines, rasterize the axis for each paper.
+        LegendRasterizer mLegendRasterizer = new LegendRasterizer();
+        Iterator<PointList> iter  = mDiagram.getData().iterator();
+        while (iter.hasNext()) {
+            rasterizeTitle(mDiagramTitle, titleArea);
+            rasterizeXAxis(originY, originX, mXStepWidth, xAxisBound, labels);
+            rasterizeYAxis(yOriginY, yOriginX, mYStepWidth, yAxisBound, yLabels);
+            mTextRasterizer.rasterize(new BrailleText(mYAxisUnit, yAxisText), mCanvas);
+            mTextRasterizer.rasterize(new BrailleText(mXAxisUnit, xAxisText), mCanvas);
+            rasterizeData(mDiagram.getMinX(), mDiagram.getMinY(), iter.next());
+            if (iter.hasNext()) {
+                mCanvas.getNewPage();
+            }
+        }
+        // Last Step eight: Rasterize the legend (only needed one time).
+        mLegendRasterizer.rasterize(mLegend, mCanvas);
     }
 
-    private Map<Integer, String> setCorrectLabelsforX(double xStepWidth, double rangeOfXValues, int numberOfTicks) {
-        double min = mDiagram.getMinX();
-        double increment = xStepWidth;
-        Map<Integer, String> result = new HashMap<>();
-        char letter = 'a';
-        for (int i = 0; i < numberOfTicks ; i++) {
-            if (increment > mDiagram.getMaxX()) {
+    // Various helper methods //
+
+    /**
+     * Method for setting the correct x-labels to the {@link Legend}.
+     * Places first the value of the map and then the corresponding key.
+     * @param labelsForLegend A map containing the values and the letters which will be put on the legend.
+     */
+    private void setLabelsXForLegend(final Map<Double, String> labelsForLegend) {
+        Iterator itX = labelsForLegend.entrySet().iterator();
+        while (itX.hasNext()) {
+            Map.Entry pair = (Map.Entry) itX.next();
+            mLegend.addSymbolExplanation("Werte für die Tickmarks auf der X-Achse", pair.getValue().toString(), pair.getKey().toString());
+        }
+    }
+
+    /**
+     * Method for setting the correct y-labels to the {@link Legend}.
+     * Places first the value of the map and then the corresponding key.
+     * @param labelsForLegend A map containing the values and the letters which will be put on the legend.
+     */
+    private void setLabelsYForLegend(final Map<Double, String> labelsForLegend) {
+        Iterator itX = labelsForLegend.entrySet().iterator();
+        while (itX.hasNext()) {
+            Map.Entry pair = (Map.Entry) itX.next();
+            mLegend.addSymbolExplanation("Werte für die Tickmarks auf der Y-Achse", pair.getValue().toString(), pair.getKey().toString());
+        }
+    }
+
+    /**
+     * Method for rasterizing the data inside a {@link LineChart}.
+     * @param globalMinX The global minimum of the x values in the {@link LineChart}.
+     * @param globalMinY The global minimum of the y values in the {@link LineChart}.
+     * @param next The {@link PointList} containing the data for rasterization.
+     */
+    private void rasterizeData(final double globalMinX, final double globalMinY, final PointList next) {
+        PointList sorted = next.sortXAscend();
+        SimplePointListImpl points = rasterizePoints(sorted, globalMinX, globalMinY);
+        Iterator<Point2DDouble> iter = points.getListIterator();
+        Point2DDouble previous = null;
+        while (iter.hasNext()) {
+            Point2DDouble current = iter.next();
+            if (previous == null) {
+                previous = current;
+                continue;
+            }
+            // Here you can swap bresenham to a new linerasterizing algorithm
+            bresenham(previous.getX(), previous.getY(), current.getX(), current.getY());
+            previous = current;
+        }
+    }
+
+    /**
+     * Bresenham algorithm for rasterizing lines.
+     * Important: It translates the y coordinates to a normal coordinate-system. Currently, the Y-coordinate of the
+     * {@link RasterCanvas} lies on the left upper corner, representing 0. But Bresenham assumes the Y-coordinate lies
+     * in the left buttom corner. The difference is that the Y-Coordinate grows in a normal coordinate system as it lies
+     * further and further above, but in a {@link RasterCanvas} it actually decreases as it goes further up.
+     * Before setting the point on to the {@link RasterCanvas} it translates it back to the {@link RasterCanvas}-coordinate
+     * system.
+     * @param xStart X-coordinate of the startpoint.
+     * @param yStart Y-coordinate of the startpoint.
+     * @param xEnd X-coordinate of the endpoint.
+     * @param yEnd Y-coordinate of the endpoint.
+     */
+    @SuppressWarnings("avoidinlineconditionals")
+    private void bresenham(final Double xStart, final Double yStart, final Double xEnd, final Double yEnd) {
+        int y0 = (int) (mCanvas.toDotRectangle(mCellLineArea).intWrapper().getHeight() - yStart);
+        int y1 = (int) (mCanvas.toDotRectangle(mCellLineArea).intWrapper().getHeight() - yEnd);
+        int x0 = (int) (xStart.doubleValue());
+        int x1 = (int) (xEnd.doubleValue());
+        int dx =  abs(x1 - x0);
+        int dy = -abs(y1 - y0);
+        int sx = x0 < x1 ? 1 : -1;
+        int sy = y0 < y1 ? 1 : -1;
+        int err = dx + dy;
+        int e2;
+        while (true) {
+            mCanvas.getCurrentPage().setValue((int) (mCanvas.toDotRectangle(mCellLineArea).getHeight() - y0), (int) x0, true);
+            if (x0 == x1 && y0 == y1) {
                 break;
             }
+            e2 = 2 * err;
+            if (e2 > dy) {
+                err += dy;
+                x0 += sx;
+            }
+            if (e2 < dx) {
+                err += dx;
+                y0 += sy;
+            }
+        }
+    }
+
+    /**
+     * Method for rasterizing the points.
+     * @param list A {@link PointList} containing points which will be rasterized.
+     * @param globalMinX The global minimum of the x values in the {@link LineChart}.
+     * @param globalMinY The global minimum of the y values in the {@link LineChart}.
+     * @return The {@link SimplePointListImpl} containing the converted coordinates of the points.
+     */
+    private SimplePointListImpl rasterizePoints(final PointList list, final double globalMinX, final double globalMinY) {
+        Objects.requireNonNull(list, "The given PointList for the rasterization of points was null!");
+        double xMin = globalMinX;
+        double yMin = globalMinY;
+        Iterator<Point2DDouble> iter = list.getListIterator();
+        Rectangle canvas = mCanvas.toDotRectangle(mCellLineArea);
+        double canvasStartX = canvas.intWrapper().getX();
+        double canvasStartY = canvas.intWrapper().getBottom();
+        SimplePointListImpl result = new SimplePointListImpl();
+        while (iter.hasNext()) {
+            Point2DDouble current = iter.next();
+            double currentValueX = current.getX() - xMin;
+            double currentValueY = current.getY() - yMin;
+            double stepX = currentValueX / mDpiX;
+            double stepY = currentValueY / mDpiY;
+            result.pushBack(new Point2DDouble(round(canvasStartX + mXStepWidth * mCanvas.getCellWidth() * stepX), round(canvasStartY - mYStepWidth * mCanvas.getCellHeight() * stepY)));
+            mCanvas.getCurrentPage().setValue((int) round(canvasStartY - mYStepWidth * mCanvas.getCellHeight() * stepY), (int) round(canvasStartX + mXStepWidth * mCanvas.getCellWidth() * stepX), true);
+        }
+        result.calculateExtrema();
+        return result;
+    }
+
+
+    /**
+     * Method for creating a map containing the key-value pair for the datapoints for the y-axis. The key represents an integer, which has
+     * no special meaning (but is needed for the {@link LinearMappingAxisRasterizer}, the value is a letter which will be
+     * drawn on to the diagram. This same letter will appear on the legend with its representational value
+     * (for example: 'a' -> 0.5 ).
+     * @param rangeOfYValues The value range for the y datapoints.
+     * @param numberOfTicks The number of ticks wich will be drawn on to the diagram.
+     * @param dpi The resolution, or in other words, what one step for the tickmark along the axis means for the datapoints (for example 0.5 means
+     *            for each tickmark the coordinatesystem where the datapoints lies is increased by 0.5)
+     * @param yLabelsForLegend The map (can be empty, but must be initialized) in which the representation of the letters will be stored.
+     *                         For example: 2.5 -> a, 3.0 -> b and so on.
+     * @return A map containing the correct number of labels which will be needed to address all datapoints in {@link LineChart}.
+     */
+    @SuppressWarnings("finalparameters")
+    private Map<Integer, String> setCorrectLabelsforY(final double rangeOfYValues, final int numberOfTicks, double dpi, Map<Double, String> yLabelsForLegend) {
+        Objects.requireNonNull(yLabelsForLegend, "The given map for setting the correct labels for the y-axis was null!");
+        double min = mDiagram.getData().getMinY();
+        Map<Integer, String> result = new HashMap<>();
+        double tmpDpi = dpi;
+        char letter = 'a';
+        int datapoints = (int) ceil(rangeOfYValues / dpi);
+        for (int i = 0; i < numberOfTicks; i++) {
+            result.put(i, String.valueOf(letter));
             if (i == 0) {
-                result.put((int) min, String.valueOf(letter));
-                letter++;
+                yLabelsForLegend.put(min, String.valueOf(letter));
             } else {
-                result.put((int) (increment + min), String.valueOf(letter));
-                increment = increment + xStepWidth;
-                letter++;
+                yLabelsForLegend.put((dpi + min), String.valueOf(letter));
+                dpi = dpi + tmpDpi;
+            }
+            letter++;
+            if (i >= datapoints) {
+                break;
             }
         }
         return result;
     }
 
-    private void printHelp() {
-        Rectangle mCellLineAreatemp = mCanvas.toDotRectangle(mCellLineArea);
-        Rasterizer.fill(mCellLineAreatemp.intWrapper().getX(), mCellLineAreatemp.intWrapper().getY(),
-                mCellLineAreatemp.intWrapper().getRight(),
-                mCellLineAreatemp.intWrapper().getBottom(),
-                mCanvas.getCurrentPage(), true);
+    /**
+     * Calculates the resolution (meaning how much in the datapoint we go if we do one tickmark-step).
+     * @param rangeOfValues The range of values in the {@link LineChart}.
+     * @param UnitsAvailable How many units (Braillecells) are available on the axis.
+     * @return Double representing the resolution.
+     */
+    @SuppressWarnings("magicnumber")
+    private double calculateDPI(final double rangeOfValues, final int unitsAvailable) {
+        if (unitsAvailable < 0) {
+            throw new RuntimeException("The units available were less then zero!");
+        }
+        double minRangePerUnit = rangeOfValues / unitsAvailable; // this range must fit into one 'axis step'
+        double orderOfMagnitude = pow(10, ceil(log10(minRangePerUnit)));
+        double scaledRangePerUnit = 0;
+        for (double scaling : mUnitScalings) {
+            scaledRangePerUnit = (scaling * orderOfMagnitude);
+            if (scaledRangePerUnit >= minRangePerUnit) {
+                break;
+            }
+        }
+        return scaledRangePerUnit;
     }
 
-    private int findYAxisStepWidth(final double rangeOfYValues, final int xUnitsAvailable) {
-        int cellsToNextTick = (int) floor(xUnitsAvailable /  rangeOfYValues);
-        return cellsToNextTick;
+    /**
+     * Method for creating a map containing the key-value pair for the datapoints for the x-axis. The key represents an integer, which has
+     * no special meaning (but is needed for the {@link LinearMappingAxisRasterizer}, the value is a letter which will be
+     * drawn on to the diagram. This same letter will appear on the legend with its representational value
+     * (for example: 'a' -> 0.5 ).
+     * @param rangeOfXValues The value range for the y datapoints.
+     * @param numberOfTicks The number of ticks wich will be drawn on to the diagram.
+     * @param dpi The resolution, or in other words, what one step for the tickmark along the axis means for the datapoints (for example 0.5 means
+     *            for each tickmark the coordinatesystem where the datapoints lies is increased by 0.5)
+     * @param xLabelsForLegend The map (can be empty, but must be initialized) in which the representation of the letters will be stored.
+     *                         For example: 2.5 -> a, 3.0 -> b and so on.
+     * @return A map containing the correct number of labels which will be needed to address all datapoints in {@link LineChart}.
+     */
+    @SuppressWarnings("finalparameters")
+    private Map<Integer, String> setCorrectLabelsforX(final double rangeOfXValues, final int numberOfTicks, double dpi, Map<Double, String> xLabelsForLegend) {
+        Objects.requireNonNull(xLabelsForLegend, "The given map to set the correct labels for the x-axis was null!");
+        double min = mDiagram.getMinX();
+        Map<Integer, String> result = new HashMap<>();
+        double tmpDpi = dpi;
+        char letter = 'a';
+        double datapoints = rangeOfXValues / dpi;
+        for (int i = 0; i < numberOfTicks; i++) {
+            result.put(i, String.valueOf(letter));
+            if (i == 0) {
+                xLabelsForLegend.put(min, String.valueOf(letter));
+            } else {
+                xLabelsForLegend.put((dpi + min), String.valueOf(letter));
+                dpi = dpi + tmpDpi;
+            }
+            letter++;
+            if (i >= datapoints) {
+                break;
+            }
+        }
+        return result;
     }
 
-    private int calculateUnitsHeightWidthInCells(final Rectangle rectangle) {
-        return (int) floor(rectangle.getHeight() * mCanvas.getCellWidth());
+    /**
+     * Method for the calculation of the stepwidth for the y-axis on the canvas.
+     * Important: Not meant in the datapoints, but on the canvas.
+     * @param rangeOfYValues The range of values along the y-axis.
+     * @param yUnitsAvailable The number of available units along the y-axis, measured in braillecells.
+     * @return Integer representing the number of braillecells between two tickmarks.
+     */
+    private int findYAxisStepWidth(final double rangeOfYValues, final int yUnitsAvailable) {
+        // You can change the following step width to cater your needs.
+        // The minimum int taken by the y-axis rasterizer is 1
+        return 1;
     }
 
+    /**
+     * Method for calculating the height for a given {@link Rectangle} in braillecells.
+     * @param rectangle The rectangle for which the height is computed.
+     * @return Integer, representing the height in braillecells.
+     */
+    private int calculateUnitsHeightInCells(final Rectangle rectangle) {
+        // Needed because one can get a height that encapsulates a fraction of a braillecell, so we need to ensure that
+        // we work on whole cells.
+        return (int) floor((rectangle.getHeight() * mCanvas.getCellHeight()) / mCanvas.getCellHeight());
+    }
+
+    /**
+     * Method for rasterizing the title of the diagram.
+     * @param title String which contains the title of the diagram.
+     * @param titleArea The {@link Rectangle} on which the the text will be rasterized.
+     */
     private void rasterizeTitle(final String title, final Rectangle titleArea) {
         BrailleText diagramTitle = new BrailleText(title, titleArea);
         try {
@@ -164,8 +406,16 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         }
     }
 
-    private void rasterizeXAxis(final int originY, final int originX, final int stepWidthX, final Rectangle xAxisBound, Map<Integer, String> labels) {
-        Axis xAxis = new Axis(Axis.Type.X_AXIS, originX, originY, stepWidthX * 2, 2);
+    /**
+     * Wrapper method for creating an X-{@link Axis} and rasterize it. Delegates to the {@link LinearMappingAxisRasterizer} for rasterizing.
+     * @param originY The y coordinate of the position where the axis line and the tickmark and label corresponding to the value '0' is placed.
+     * @param originX The x coordinate of the position where the axis line and the tickmark and label corresponding to the value '0' is placed.
+     * @param stepWidthX The distance between two tickmarks on the axis in cells. This will be automatically converted in dots for the {@link Axis}.
+     * @param xAxisBound The x-axis bound so that the borders are considered.
+     * @param labels Map containing the labels (letters).
+     */
+    private void rasterizeXAxis(final int originY, final int originX, final int stepWidthX, final Rectangle xAxisBound, final Map<Integer, String> labels) {
+        Axis xAxis = new Axis(Axis.Type.X_AXIS, originX, originY, stepWidthX * mCanvas.getCellWidth(), 2);
         xAxis.setBoundary(xAxisBound);
         xAxis.setLabels(labels);
         Rectangle test = xAxis.getBoundary();
@@ -176,17 +426,32 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         }
     }
 
+    /**
+     * Wrapper method for creating an Y-{@link Axis} and rasterize it. Delegates to the {@link LinearMappingAxisRasterizer} for rasterizing.
+     * @param originY The y coordinate of the position where the axis line and the tickmark and label corresponding to the value '0' is placed.
+     * @param originX The x coordinate of the position where the axis line and the tickmark and label corresponding to the value '0' is placed.
+     * @param stepWidthY The distance between two tickmarks on the axis in cells. This will be automatically converted in dots for the {@link Axis}.
+     * @param yAxisBound The x-axis bound so that the borders are considered.
+     * @param labels Map containing the labels (letters).
+     */
     @SuppressWarnings("magicnumber")
-    private void rasterizeYAxis(final int originY, final int originX, final int step, final Rectangle rect) {
-        Axis yAxis = new Axis(Axis.Type.Y_AXIS, originX, originY, step * 2, -2);
-        yAxis.setBoundary(rect);
+    private void rasterizeYAxis(final int originY, final int originX, final int stepWidthY, final Rectangle yAxisBound, final Map<Integer, String> labels) {
+        Axis yAxis = new Axis(Axis.Type.Y_AXIS, originX, originY, stepWidthY * mCanvas.getCellHeight(), -2);
+        yAxis.setBoundary(yAxisBound);
+        yAxis.setLabels(labels);
         try {
             mAxisRasterizer.rasterize(yAxis, mCanvas);
         } catch (InsufficientRenderingAreaException e) {
             e.printStackTrace();
         }
     }
-    // Works Cell based
+
+    /**
+     * Method for cutting off the right {@link Rectangle} from the whole {@link RasterCanvas}.
+     * Internally it uses the mDiagram variable.
+     * @return {@link Rectangle} with the correct length and width so that the diagramtitle can be rasterized on it.
+     * @throws InsufficientRenderingAreaException If the text is too big to fit on the {@link RasterCanvas}.
+     */
     private Rectangle calculateTitle() throws InsufficientRenderingAreaException {
         if (mDiagramTitle.isEmpty()) {
             throw new IllegalArgumentException("The title in LineChartRasterizer was empty!");
@@ -200,14 +465,31 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         }
     }
 
+    /**
+     * Method for cutting off the right {@link Rectangle} from the whole {@link RasterCanvas}.
+     * Currently it cuts of from the bottom and left by the amount of the offset variable
+     * @return {@link Rectangle} for the x-axis.
+     * @throws InsufficientRenderingAreaException If the offset amount cant be cut off the mCellLineArea.
+     */
     private Rectangle calculateXAxis() throws InsufficientRenderingAreaException {
+        Objects.requireNonNull(mCellLineArea, "The given Rectangle for the x axis to be removed from was null!");
         try {
-            return mCellLineArea.removeFromBottom(offset);
+            Rectangle result = mCellLineArea.removeFromBottom(offset);
+            result.removeFromLeft(offset);
+            return result;
         } catch (Rectangle.OutOfSpaceException e) {
             throw new InsufficientRenderingAreaException("Not enough space to build the X-Axis for the line chart!");
         }
     }
+
+    /**
+     * Method for cutting off the right {@link Rectangle} from the whole {@link RasterCanvas}.
+     * Currently it cuts of from the left by the amount of the offset variable
+     * @return {@link Rectangle} for the y-axis.
+     * @throws InsufficientRenderingAreaException If the offset amount cant be cut off the mCellLineArea.
+     */
     private Rectangle calculateYAxis() throws InsufficientRenderingAreaException {
+        Objects.requireNonNull(mCellLineArea, "The given Rectangle for the y axis to be removed from was null!");
         try {
             return mCellLineArea.removeFromLeft(offset);
         } catch (Rectangle.OutOfSpaceException e) {
@@ -215,13 +497,15 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         }
     }
 
+    /**
+     * Method for calculating the valuerange of the x-axis.
+     * @return {@link Double} representing the value range of the x-axis.
+     */
     private double valueRangeOfYAxis() {
+        Objects.requireNonNull(mDiagram, "The given linechart for the calculation of the value range of the y-axis was null!");
         double minY = mDiagram.getMinY();
         double maxY = mDiagram.getMaxY();
-
         double valueRangeOfYAxis;
-
-
         //Needs testing
         if (minY >= 0) {
             valueRangeOfYAxis = maxY - minY;
@@ -232,123 +516,34 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     }
 
     /**
-     * Calculate the width, measured in dots.
-     * Important: Because the rectangle width is measured in doubles, we need to round off the product of
-     *            the width and the cellwidth.
-     * Important: Only use it with CellRectangles
+     * Calculate width, measured in cells. Important: it divides by two and floors the result. The current axis rasterizer
+     * does not support a width of 1.
      * @param rectangle The cell rectangle which you want to know the width.
-     * @return Width in dots.
-     */
-    private int calculateUnitsWidthInDots(final Rectangle rectangle) {
-        return (int) floor(rectangle.getWidth() * mCanvas.getCellWidth());
-    }
-
-    /**
-     * Calculate width, measured in cells.
-     * @param rectangle The cell rectangle which you want to know the width.
-     * @return Width in cells.
+     * @return Width in cells divided by two and floored.
      */
     private int calculateUnitsWidthInCells(final Rectangle rectangle) {
-        return (int) rectangle.getWidth();
-    }
-
-    private int calculateUnitsWidhtInCells(final Rectangle rectangle) {
-        return 0;
+        Objects.requireNonNull(rectangle, "The given rectangle for the calculation of its width was null!");
+        return (int) floor((rectangle.getWidth() - 1) / 2);
     }
 
     private double valueRangeOfXAxis() {
+        Objects.requireNonNull(mDiagram, "The given linechart for the calculation of the value range of the x-axis was null!");
         double minX = mDiagram.getMinX();
         double maxX = mDiagram.getMaxX();
-
-        double valueRangeOfXAxis;
-        //Needs testing
-        if (minX >= 0) {
-            valueRangeOfXAxis = maxX - minX + 1;
-        } else {
-            valueRangeOfXAxis = abs(maxX) + abs(minX) + 1;
-        }
+        double valueRangeOfXAxis = maxX - minX;
         return valueRangeOfXAxis;
     }
 
-    private double getNumberOfTicks(final double rangeOfXValues, final int xUnitsAvailable) {
-        int cellsToNextTick = (int) floor(xUnitsAvailable /  rangeOfXValues);
-        int numberOfTicks = (int) ceil(xUnitsAvailable / cellsToNextTick) + 1;
-        return numberOfTicks;
+    private double getNumberOfTicks(final int xUnitsAvailable) {
+        if (xUnitsAvailable < 0) {
+            throw new RuntimeException("The units available was less then zero!");
+        }
+        return xUnitsAvailable + 1;
     }
 
     private double findXAxisStepWidth(final double rangeOfXValues, final int xUnitsAvailable) throws InsufficientRenderingAreaException {
-        int cellsToNextTick = (int) floor(xUnitsAvailable /  rangeOfXValues);
-        int numberOfTicks = (int) ceil(xUnitsAvailable / cellsToNextTick) + 1;
-        PointListContainer<PointList> data = mDiagram.getData();
-        ArrayList<Double> listOfFloats = new ArrayList<Double>();
-        Iterator<PointList> iter = data.iterator();
-        while (iter.hasNext()) {
-            PointList list = iter.next();
-            Iterator<Point2DDouble> iter2 = list.getListIterator();
-            while (iter2.hasNext()) {
-                Point2DDouble value = iter2.next();
-                listOfFloats.add(value.getX());
-            }
-            break;
-        }
-
-        // Why is this even here...
-        if (testIfEquidistant(listOfFloats)) {
-            Collections.sort(listOfFloats);
-            //cellsToNextTick = abs((int) ((abs(listOfFloats.get(1)) - abs(listOfFloats.get(0)))));
-            //cellsToNextTick = (int) floor(xUnitsAvailable / distance);
-        }
-
-        return cellsToNextTick;
-
-
-
-        // Test if every number has the same distance to the next number
-        // If yes, try the distance as distance between tickmarks
-        // If there are to many to fit in the maximum width, or if they dont have the same distance, then
-        // try a mapping either:
-        // Try so that the most values are on the tick marks,
-        // Try so that atleas the maximum value is present ont the last tickmark.
-        // TODO Auskommentieren, Ansatz funktioniert nicht.
-       /* double minRange = rangeOfXValues / xUnitsAvailable;
-        // Get the Number, represented as String (-5,23 for example) so that we can adjust the minimum space needed
-        // between two ticks
-        int lengthMax = String.valueOf(mDiagram.getMaxX()).length() + 1;
-        int lengthMin = String.valueOf(mDiagram.getMinX()).length() + 1;
-        int length = max(lengthMax, lengthMin);
-        int maximumDistinguishableTicks = floorDiv(xUnitsAvailable, length);
-        // For example: 3: 3   6   9   12 etc
-        // or 2: 2   4   6 etc
-        int unitJumps = (int) ceil((rangeOfXValues) / maximumDistinguishableTicks);
-        int numberOfTicks = (int) ceil(rangeOfXValues / unitJumps);
-        int result = floorDiv(xUnitsAvailable, numberOfTicks);
-        if(result <length) {
-            throw new InsufficientRenderingAreaException("The area does not have enough space. For the biggest number to " +
-                    "be written down on the axis, you would need: " + length + ". But the calculated distance was: " + result +".");
-        }
-        //LinearMappingAxisRasterizer rast = new LinearMappingAxisRasterizer(new Axis(X_AXIS,0,0,unitJumps,);
-        return result;
-        */
-    }
-
-    private boolean testIfEquidistant(final ArrayList<Double> listOfFloats) {
-        Collections.sort(listOfFloats);
-        double temp = 0;
-        double distance = 0;
-        boolean isEqidistant = true;
-        for (int i = 0; i < listOfFloats.size() - 1; i++) {
-            distance = listOfFloats.get(i + 1) - listOfFloats.get(i);
-
-            if (i == 0) {
-                temp = distance;
-            }
-            if (temp != distance) {
-                isEqidistant = false;
-            }
-            if (i + 1 == listOfFloats.size()) {
-                break;
-            }
-        }
-        return isEqidistant;
+        // Most simple approach: always take the minimum stepwidth, which the x-axis rasterizer can handle
+        // The signature is not adjusted so that someone can change the calculation if he needs it
+        return 2;
     }
 }

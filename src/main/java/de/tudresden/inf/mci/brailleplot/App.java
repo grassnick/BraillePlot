@@ -20,7 +20,6 @@ import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 
 
-import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
@@ -42,19 +41,15 @@ import de.tudresden.inf.mci.brailleplot.svgexporter.SvgExporter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tec.units.ri.quantity.Quantities;
-import tec.units.ri.unit.MetricPrefix;
 
-import javax.measure.Quantity;
-import javax.measure.quantity.Length;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import static tec.units.ri.unit.Units.METRE;
 
 /**
  * Main class.
@@ -178,7 +173,7 @@ public final class App {
             Format formatA4 = configParser.getFormat("A4");
             // Parse csv data
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream csvStream = classloader.getResourceAsStream("examples/csv/2_1_line_plot_equal_distance.csv");
+            InputStream csvStream = classloader.getResourceAsStream("examples/csv/2_line_plot.csv");
             Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
 
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
@@ -190,8 +185,12 @@ public final class App {
             // SVG exporting
             MasterRenderer renderer = new MasterRenderer(printer, formatA4);
             RasterCanvas canvas = renderer.rasterize(lineChart);
+            Iterator<MatrixData<Boolean>> iter = canvas.getPageIterator();
             SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
-            mLogger.debug("Render preview:\n" + mat.toBoolString());
+            while (iter.hasNext()) {
+                SimpleMatrixDataImpl<Boolean> temp = (SimpleMatrixDataImpl<Boolean>) iter.next();
+                mLogger.debug("Render preview:\n" + temp.toBoolString());
+            }
 
             //CategoricalBarChart barChart = new CategoricalBarChart(container);
 
@@ -207,15 +206,6 @@ public final class App {
             // FloatingPointData SVG exporting example
             PlotCanvas floatCanvas = new PlotCanvas(printer, formatA4);
             FloatingPointData<Boolean> points = floatCanvas.getNewPage();
-
-            final int blockX = 230;
-            final int blockY = 400;
-            for (int y = 0; y < blockY; y += 2) {
-                for (int x = 0; x < blockX; x += 2) {
-                    Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true);
-                    points.addPoint(point);
-                }
-            }
 
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();

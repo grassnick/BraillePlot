@@ -64,9 +64,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
         TranslationResult result = null;
         try {
             result = mTranslator.translate(data.getText(), null, null, null, DisplayTable.StandardDisplayTables.DEFAULT);
-        } catch (TranslationException e) {
-            e.printStackTrace();
-        } catch (DisplayException e) {
+        } catch (TranslationException | DisplayException e) {
             e.printStackTrace();
         }
         String[]resultAsArray = result.getBraille().split("");
