@@ -311,6 +311,7 @@ abstract class AbstractPlotter<T extends Diagram> {
 
     /**
      * Function to find the number closest to n and divisible by m.
+     * Source: https://www.geeksforgeeks.org/find-number-closest-n-divisible-m/; 24.09.2019
      * @param n Range.
      * @param m Number of ticks.
      * @return Clostest int to n divisible by m.
