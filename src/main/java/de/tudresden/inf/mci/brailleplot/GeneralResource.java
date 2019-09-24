@@ -103,7 +103,7 @@ public final class GeneralResource {
     }
 
     /**
-     * Open the resource as InputStream. Don't forget to close it!
+     * Open the resource as InputStream. The caller is supposed to close the stream on his own after usage.
      * @return InputStream of the external file / jar resource represented by this instance.
      */
     public InputStream getInputStream() {
