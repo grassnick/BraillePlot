@@ -168,6 +168,7 @@ public final class App {
             // Config Parsing
             String configPath;
             if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument, until then use default location for test runs
+                mLogger.warn("ATTENTION! Using default specific config from resources. Please remove default config behavior before packaging the jar.");
                 configPath = getClass().getResource("/config/index_everest_d_v4.properties").getFile();
             } else {
                 configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get();
