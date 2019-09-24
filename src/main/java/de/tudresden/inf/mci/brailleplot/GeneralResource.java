@@ -48,33 +48,33 @@ public final class GeneralResource {
      */
     public GeneralResource(final String resourcePath, final String searchPath) throws IOException {
         File checkFile = new File(resourcePath);
-        mLogger.trace("checking referenced path: " + checkFile);
+        mLogger.trace("Checking referenced path: " + checkFile);
         if (checkFile.isFile()) {
-            mLogger.trace("interpreting path as file: " + checkFile.getCanonicalPath());
+            mLogger.trace("Interpreting path as file: " + checkFile.getCanonicalPath());
             mResourcePath = checkFile.getCanonicalPath();
             validExternalFile = true;
         }
         checkFile = checkFile.getAbsoluteFile();
-        mLogger.trace("checking referenced path as absolute path: " + checkFile);
+        mLogger.trace("Checking referenced path as absolute path: " + checkFile);
         if (checkFile.isFile()) {
-            mLogger.trace("interpreting path as absolute file: " + checkFile.getCanonicalPath());
+            mLogger.trace("Interpreting path as absolute file: " + checkFile.getCanonicalPath());
             mResourcePath = checkFile.getCanonicalPath();
             validExternalFile = true;
         }
         if (Objects.nonNull(searchPath)) {
             checkFile = new File(searchPath + File.separator + resourcePath);
-            mLogger.trace("looking for referenced path in search path: " + checkFile);
+            mLogger.trace("Looking for referenced path in search path: " + checkFile);
             if (checkFile.isFile()) {
-                mLogger.trace("interpreting path as search path relative file: " + checkFile.getCanonicalPath());
+                mLogger.trace("Interpreting path as search path relative file: " + checkFile.getCanonicalPath());
                 mResourcePath = checkFile.getCanonicalPath();
                 validExternalFile = true;
             }
         }
         String resourceClassPath = resourcePath.replace("\\", "/"); // classpaths are always separated by forward slash
         InputStream checkStream = getClass().getResourceAsStream(resourceClassPath);
-        mLogger.trace("checking referenced path as resource: " + resourceClassPath);
+        mLogger.trace("Checking referenced path as resource: " + resourceClassPath);
         if (Objects.nonNull(checkStream)) {
-            mLogger.trace("interpreting path as resource stream: " + resourceClassPath);
+            mLogger.trace("Interpreting path as resource stream: " + resourceClassPath);
             mResourcePath = resourceClassPath;
             validPackedResource = true;
         }
@@ -82,9 +82,9 @@ public final class GeneralResource {
             String relativeResourcePath = new File(searchPath + File.separator + resourceClassPath).toPath().normalize().toString();
             relativeResourcePath = relativeResourcePath.replace("\\", "/");
             checkStream = getClass().getResourceAsStream(relativeResourcePath);
-            mLogger.trace("checking referenced path as search path relative resource: " + relativeResourcePath);
+            mLogger.trace("Checking referenced path as search path relative resource: " + relativeResourcePath);
             if (Objects.nonNull(checkStream)) {
-                mLogger.trace("interpreting path as resource stream: " + relativeResourcePath);
+                mLogger.trace("Interpreting path as resource stream: " + relativeResourcePath);
                 mResourcePath = relativeResourcePath;
                 validPackedResource = true;
             }
