@@ -1,6 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.brailleparser;
 
-import de.tudresden.inf.mci.brailleplot.GeneralResource;
+import de.tudresden.inf.mci.brailleplot.util.GeneralResource;
 
 import java.io.InputStream;
 import java.util.Objects;
