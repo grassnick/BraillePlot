@@ -49,6 +49,8 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
         mBarWidth = mBarGroupWidth / mCatList.getNumberOfCategories();
         if (mBarWidth > mMaxWidth) {
             mBarWidth = mMaxWidth;
+        } else if (mBarWidth < mMinWidth) {
+            throw new InsufficientRenderingAreaException();
         }
 
         mBarDist = (lengthY - mNumBarGroup * mBarGroupWidth) / (mNumBarGroup + 1);
@@ -73,11 +75,11 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
     }
 
     @Override
-    void drawRectangle(final int i, final int j, final double xValue) {
+    void drawRectangle(final int i, final int j, final double xValue) throws InsufficientRenderingAreaException {
         double startY = mBottomMargin - mBarDist - i * (mBarGroupWidth + mBarDist) - j * mBarWidth;
         double endX = calculateXValue(xValue);
         plotAndFillRectangle(startY, endX, j);
-        int k = THREE * i + j;
+        int k = mCatList.getNumberOfCategories() * i + j;
         if (mGridHelp[k] < endX) {
             mGridHelp[k] = endX;
         }
@@ -92,7 +94,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
         FloatingPointData<Boolean> grid = mCanvas.getNewPage();
 
         // x-axis
-        for (double i = 1; i <= 2 * mNumberXTics; i++) {
+        for (double i = 1; i <= 2 * mNumberXTicks; i++) {
             loop:
             for (double j = mBottomMargin; j > mTitleMargin; j -= mStepSize) {
                 for (int k = 0; k < mNumBarGroup; k++) {
@@ -122,7 +124,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
                     if (j <= mBottomMargin - l * barGroupStep && j >= mBottomMargin - (l + 1) * barGroupStep) {
                         for (int m = 0; m < mCatList.getNumberOfCategories(); m++) {
                             if (j <= mBottomMargin - l * barGroupStep - mBarDist - m * mBarWidth && j >= mBottomMargin - l * barGroupStep - mBarDist - (m + 1) * mBarWidth) {
-                                int n = THREE * l + m;
+                                int n = mCatList.getNumberOfCategories() * l + m;
                                 if ((mLeftMargin + (i / 2) * mXTickStep) > mGridHelp[n]) {
                                     Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                                     if (!mData.checkPoint(point)) {

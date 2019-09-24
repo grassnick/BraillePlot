@@ -47,8 +47,6 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         definePrinterProperty("semantictable", requireFileExists);
         definePrinterProperty("floatingDot.support", requireBoolean);
         definePrinterProperty("floatingDot.resolution", requireDouble.and(requirePositive), false);
-        definePrinterProperty("floatingDot.maxBarWidth", requireDouble.and(requirePositive), false);
-        definePrinterProperty("floatingDot.minBarDist", requireDouble.and(requirePositive), false);
         definePrinterProperty("constraint.top", requireDouble.and(requirePositive));
         definePrinterProperty("constraint.left", requireDouble.and(requirePositive));
         definePrinterProperty("constraint.width", requireDouble.and(requirePositive), false);
@@ -72,6 +70,11 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         defineFormatProperty("margin.right", requireInteger.and(requirePositive));
         defineFormatProperty("margin.bottom", requireInteger.and(requirePositive));
         defineFormatProperty("margin.left", requireInteger.and(requirePositive));
+        defineFormatProperty("floatingDot.minBarWidth", requireDouble.and(requirePositive), false);
+        defineFormatProperty("floatingDot.maxBarWidth", requireDouble.and(requirePositive), false);
+        defineFormatProperty("floatingDot.minBarDist", requireDouble.and(requirePositive), false);
+        defineFormatProperty("floatingDot.secondAxis", requireBoolean, false);
+        defineFormatProperty("floatingDot.frames", requireBoolean, false);
 
     }
 

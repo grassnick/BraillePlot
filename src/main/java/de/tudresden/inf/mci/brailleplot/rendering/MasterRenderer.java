@@ -3,20 +3,15 @@ package de.tudresden.inf.mci.brailleplot.rendering;
 
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
-import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
-import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
-
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
-
+import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.SixDotBrailleRasterCanvas;
-
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.FunctionalPlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.Plotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.ScatterPlotter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

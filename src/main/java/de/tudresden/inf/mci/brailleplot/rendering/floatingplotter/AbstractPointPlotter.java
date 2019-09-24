@@ -1,6 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 
 import de.tudresden.inf.mci.brailleplot.diagrams.Diagram;
+import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import tec.units.ri.quantity.Quantities;
@@ -18,6 +19,8 @@ import static tec.units.ri.unit.Units.METRE;
  */
 abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T> {
 
+    boolean mFrames = true;
+
     /**
      * Draws x- and y-axis.
      */
@@ -31,96 +34,94 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         // margin from top for title
         mTitleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
 
+        boolean rightAxis = mCanvas.getSecondAxis();
+
+        double secondAxis = 0;
+        if (rightAxis) {
+            secondAxis = mLeftMargin;
+        }
+
         // x-axis
         double lastValueX = mLeftMargin;
-        for (double i = mLeftMargin; i <= mPageWidth; i += mStepSize) {
+        for (double i = mLeftMargin; i <= mPageWidth - secondAxis; i += mStepSize) {
             addPoint(i, mBottomMargin);
             lastValueX = i;
         }
         lengthX = lastValueX - mLeftMargin;
-        mNumberXTics = (int) Math.floor(lengthX / TICKDISTANCE);
-        if (mNumberXTics < 2) {
-            mNumberXTics = 2;
-        } else if (mNumberXTics <= FIVE) {
-            mNumberXTics = FIVE;
+        mNumberXTicks = (int) Math.floor(lengthX / TICKDISTANCE);
+        if (mNumberXTicks < 2) {
+            mNumberXTicks = 2;
+        } else if (mNumberXTicks <= FIVE) {
+            mNumberXTicks = FIVE;
         } else {
-            mNumberXTics = TEN;
+            mNumberXTicks = TEN;
         }
 
-        mScaleX = new int[mNumberXTics + 1];
+        mScaleX = new int[mNumberXTicks + 1];
 
-        // arrows on x-axis
-        addPoint(lastValueX - ARROWS1, mBottomMargin + ARROWS1);
-        addPoint(lastValueX - ARROWS2, mBottomMargin + ARROWS2);
-        addPoint(lastValueX - ARROWS3, mBottomMargin + ARROWS3);
-        addPoint(lastValueX - ARROWS1, mBottomMargin - ARROWS1);
-        addPoint(lastValueX - ARROWS2, mBottomMargin - ARROWS2);
-        addPoint(lastValueX - ARROWS3, mBottomMargin - ARROWS3);
 
         // tick marks on x-axis
-        mXTickStep = (lastValueX - MARGIN - mLeftMargin) / mNumberXTics;
-        for (double i = 1; i <= 2 * mNumberXTics; i++) {
+        mXTickStep = (lastValueX - MARGIN - mLeftMargin) / mNumberXTicks;
+        for (double i = 1; i <= 2 * mNumberXTicks; i++) {
             if (i % 2 == 0) {
                 addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK1);
                 addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK2);
                 addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK3);
                 addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK4);
-                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK1);
-                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK2);
-                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK3);
-                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK4);
             } else {
                 addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK1);
                 addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK2);
-                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK1);
-                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK2);
             }
         }
 
-        // y-axis
+        // y-axis on left side
         double lastValueY = mBottomMargin;
         for (double i = mBottomMargin; i > mTitleMargin; i -= mStepSize) {
             addPoint(mLeftMargin, i);
             lastValueY = i;
         }
         lengthY = mBottomMargin - lastValueY;
-        mNumberYTics = (int) Math.floor(lengthY / TICKDISTANCE);
-        if (mNumberYTics < 2) {
-            mNumberYTics = 2;
-        } else if (mNumberYTics <= FIVE) {
-            mNumberYTics = FIVE;
+        mNumberYTicks = (int) Math.floor(lengthY / TICKDISTANCE);
+        if (mNumberYTicks < 2) {
+            mNumberYTicks = 2;
+        } else if (mNumberYTicks <= FIVE) {
+            mNumberYTicks = FIVE;
         } else {
-            mNumberYTics = TEN;
+            mNumberYTicks = TEN;
         }
 
-        mScaleY = new int[mNumberYTics + 1];
+        mScaleY = new int[mNumberYTicks + 1];
 
-        // arrows on y-axis
-        addPoint(mLeftMargin - ARROWS1, lastValueY + ARROWS1);
-        addPoint(mLeftMargin - ARROWS2, lastValueY + ARROWS2);
-        addPoint(mLeftMargin - ARROWS3, lastValueY + ARROWS3);
-        addPoint(mLeftMargin + ARROWS1, lastValueY + ARROWS1);
-        addPoint(mLeftMargin + ARROWS2, lastValueY + ARROWS2);
-        addPoint(mLeftMargin + ARROWS3, lastValueY + ARROWS3);
-
+        // y-axis on right side
+        if (rightAxis) {
+            for (double i = mBottomMargin; i > mTitleMargin; i -= mStepSize) {
+                addPoint(lastValueX, i);
+            }
+        }
 
         // tick marks on y-axis
-        mYTickStep = (mBottomMargin - lastValueY - MARGIN) / mNumberYTics;
-        for (double i = 1; i <= 2 * mNumberYTics; i++) {
+        mYTickStep = (mBottomMargin - lastValueY - MARGIN) / mNumberYTicks;
+        for (double i = 1; i <= 2 * mNumberYTicks; i++) {
             if (i % 2 == 0) {
-                addPoint(mLeftMargin + TICK1, mBottomMargin - (i / 2) * mYTickStep);
-                addPoint(mLeftMargin + TICK2, mBottomMargin - (i / 2) * mYTickStep);
-                addPoint(mLeftMargin + TICK3, mBottomMargin - (i / 2) * mYTickStep);
-                addPoint(mLeftMargin + TICK4, mBottomMargin - (i / 2) * mYTickStep);
                 addPoint(mLeftMargin - TICK1, mBottomMargin - (i / 2) * mYTickStep);
                 addPoint(mLeftMargin - TICK2, mBottomMargin - (i / 2) * mYTickStep);
                 addPoint(mLeftMargin - TICK3, mBottomMargin - (i / 2) * mYTickStep);
                 addPoint(mLeftMargin - TICK4, mBottomMargin - (i / 2) * mYTickStep);
+
+                if (rightAxis) {
+                    addPoint(lastValueX + TICK1, mBottomMargin - (i / 2) * mYTickStep);
+                    addPoint(lastValueX + TICK2, mBottomMargin - (i / 2) * mYTickStep);
+                    addPoint(lastValueX + TICK3, mBottomMargin - (i / 2) * mYTickStep);
+                    addPoint(lastValueX + TICK4, mBottomMargin - (i / 2) * mYTickStep);
+                }
             } else {
-                addPoint(mLeftMargin + TICK1, mBottomMargin - (i / 2) * mYTickStep);
-                addPoint(mLeftMargin + TICK2, mBottomMargin - (i / 2) * mYTickStep);
                 addPoint(mLeftMargin - TICK1, mBottomMargin - (i / 2) * mYTickStep);
                 addPoint(mLeftMargin - TICK2, mBottomMargin - (i / 2) * mYTickStep);
+
+                if (rightAxis) {
+                    addPoint(lastValueX + TICK1, mBottomMargin - (i / 2) * mYTickStep);
+                    addPoint(lastValueX + TICK2, mBottomMargin - (i / 2) * mYTickStep);
+                }
             }
         }
     }
@@ -133,7 +134,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         FloatingPointData<Boolean> grid = mCanvas.getNewPage();
 
         // x-axis
-        for (double i = 1; i <= 2 * mNumberXTics; i++) {
+        for (double i = 1; i <= 2 * mNumberXTicks; i++) {
             for (double j = mBottomMargin; j > mTitleMargin; j -= mStepSize) {
                 Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                 if (!mData.checkPoint(point)) {
@@ -143,7 +144,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         }
 
         // y-axis
-        for (double i = 1; i <= 2 * mNumberYTics; i++) {
+        for (double i = 1; i <= 2 * mNumberYTicks; i++) {
             for (double j = mLeftMargin; j <= mPageWidth; j += mStepSize) {
                 Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(mBottomMargin - (i / 2) * mYTickStep, MetricPrefix.MILLI(METRE)), true);
                 if (!mData.checkPoint(point)) {
@@ -155,19 +156,24 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
 
 
     /**
-     * Adds a point by its absolute x- and y-value to the floating point data. Chooses a corresponding frame.
+     * Adds a point by its absolute x- and y-value to the floating point data. Chooses a corresponding frame. Add new frames in if statement.
      * @param xValue Must be the absolute x-value on the paper.
      * @param yValue Must be the absolute y-value on the paper.
      * @param i Links to the data series, thus choosing one frame per data series.
      */
-    void drawPoint(final double xValue, final double yValue, final int i) {
+    void drawPoint(final double xValue, final double yValue, final int i) throws InsufficientRenderingAreaException {
         addPoint(xValue, yValue);
-        if (i == 0) {
-            drawCircle(xValue, yValue);
-        } else if (i == 1) {
-            drawX(xValue, yValue);
-        } else if (i == 2) {
-            drawCross(xValue, yValue);
+        // new frames are added here
+        if (mFrames) {
+            if (i == 0) {
+                drawCircle(xValue, yValue);
+            } else if (i == 1) {
+                drawX(xValue, yValue);
+            } else if (i == 2) {
+                drawCross(xValue, yValue);
+            } else {
+                throw new InsufficientRenderingAreaException();
+            }
         }
     }
 

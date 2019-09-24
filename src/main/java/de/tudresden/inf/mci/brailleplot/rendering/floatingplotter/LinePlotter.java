@@ -17,7 +17,7 @@ import java.util.Objects;
 public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements Plotter<LinePlot> {
 
     /**
-     * Plots a {@link LinePlot} instance onto a {@link PlotCanvas}.
+     * Plots a {@link LinePlot} instance onto a {@link PlotCanvas}. Add new line styles in if statement.
      * @param diagram An instance of {@link LinePlot} representing the line plot.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
      * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas}, this is
@@ -34,6 +34,7 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
         mStepSize = mCanvas.getDotDiameter();
         mPageWidth = mCanvas.getPrintableWidth();
         mPageHeight = mCanvas.getPrintableHeight();
+        mFrames = mCanvas.getFrames();
 
         checkResolution();
         calculateRanges();
@@ -102,6 +103,7 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
                             steps = mStepSize / FIVE;
                         }
 
+                        // new line styles are added here
                         if (i == 0) {
                             for (double j = calculateXValue(currentX) + steps; j < calculateXValue(nextX); j += steps) {
                                 addPoint(j, j * slope + n);
@@ -120,6 +122,8 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
                                 j += steps;
                                 addPoint(j, j * slope + n);
                             }
+                        } else {
+                            throw new InsufficientRenderingAreaException();
                         }
 
                         currentX = nextX;

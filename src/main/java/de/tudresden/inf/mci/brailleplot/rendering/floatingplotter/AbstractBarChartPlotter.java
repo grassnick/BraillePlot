@@ -3,6 +3,7 @@ package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
+import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 
 import java.util.Iterator;
@@ -21,6 +22,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
     double mBarWidth;
     double mBarDist;
     double mLastXValue;
+    double mMinWidth;
     double mMaxWidth;
     double mMinDist;
     private static final double STAIRDIST = 6;
@@ -40,6 +42,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
         mStepSize = mCanvas.getDotDiameter();
         mPageWidth = mCanvas.getPrintableWidth();
         mPageHeight = mCanvas.getPrintableHeight();
+        mMinWidth = mCanvas.getMinBarWidth();
         mMaxWidth = mCanvas.getMaxBarWidth();
         mMinDist = mCanvas.getMinBarDist();
 
@@ -76,42 +79,29 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
             lastValueX = i;
         }
         lengthX = lastValueX - mLeftMargin;
-        mNumberXTics = (int) Math.floor(lengthX / TICKDISTANCE);
-        if (mNumberXTics < 2) {
-            mNumberXTics = 2;
-        } else if (mNumberXTics <= FIVE) {
-            mNumberXTics = FIVE;
+        mNumberXTicks = (int) Math.floor(lengthX / TICKDISTANCE);
+        if (mNumberXTicks < 2) {
+            mNumberXTicks = 2;
+        } else if (mNumberXTicks <= FIVE) {
+            mNumberXTicks = FIVE;
         } else {
-            mNumberXTics = TEN;
+            mNumberXTicks = TEN;
         }
 
-        mScaleX = new int[mNumberXTics + 1];
+        mScaleX = new int[mNumberXTicks + 1];
 
-        // arrows on x-axis
-        addPoint(lastValueX - ARROWS1, mBottomMargin + ARROWS1);
-        addPoint(lastValueX - ARROWS2, mBottomMargin + ARROWS2);
-        addPoint(lastValueX - ARROWS3, mBottomMargin + ARROWS3);
-        addPoint(lastValueX - ARROWS1, mBottomMargin - ARROWS1);
-        addPoint(lastValueX - ARROWS2, mBottomMargin - ARROWS2);
-        addPoint(lastValueX - ARROWS3, mBottomMargin - ARROWS3);
 
         // tick marks on x-axis
-        mXTickStep = (lastValueX - MARGIN - mLeftMargin) / mNumberXTics;
-        for (double i = 1; i <= 2 * mNumberXTics; i++) {
+        mXTickStep = (lastValueX - MARGIN - mLeftMargin) / mNumberXTicks;
+        for (double i = 1; i <= 2 * mNumberXTicks; i++) {
             if (i % 2 == 0) {
                 addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK1);
                 addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK2);
                 addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK3);
                 addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK4);
-                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK1);
-                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK2);
-                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK3);
-                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK4);
             } else {
                 addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK1);
                 addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK2);
-                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK1);
-                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin - TICK2);
             }
         }
 
@@ -124,14 +114,6 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
 
         lengthY = mBottomMargin - lastValueY;
 
-        // arrows on y-axis
-        addPoint(mLeftMargin - ARROWS1, lastValueY + ARROWS1);
-        addPoint(mLeftMargin - ARROWS2, lastValueY + ARROWS2);
-        addPoint(mLeftMargin - ARROWS3, lastValueY + ARROWS3);
-        addPoint(mLeftMargin + ARROWS1, lastValueY + ARROWS1);
-        addPoint(mLeftMargin + ARROWS2, lastValueY + ARROWS2);
-        addPoint(mLeftMargin + ARROWS3, lastValueY + ARROWS3);
-
     }
 
     /**
@@ -140,15 +122,15 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
      * @param j Corresponds to the category and the filling.
      * @param xValue Value on the x-axis.
      */
-    abstract void drawRectangle(int i, int j, double xValue);
+    abstract void drawRectangle(int i, int j, double xValue) throws InsufficientRenderingAreaException;
 
     /**
-     * Plots the rectangle and chooses a texture.
+     * Plots the rectangle and chooses a texture. Add new textures in if statement.
      * @param startY Absolute starting y-coordinate.
      * @param endX Absolute ending x-coordinate.
      * @param j Corresponds to the category and the texture.
      */
-    void plotAndFillRectangle(final double startY, final double endX, final int j) {
+    void plotAndFillRectangle(final double startY, final double endX, final int j) throws InsufficientRenderingAreaException {
         // plot rectangle
         for (double i = mLeftMargin; i <= endX; i += mStepSize) {
             addPoint(i, startY);
@@ -160,7 +142,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
             addPoint(i, startY - mBarWidth);
         }
 
-        // choose texture
+        // choose texture; new textures are added here
         if (j == 0) {
             fillFullPattern(startY, endX);
         } else if (j == 1) {
@@ -175,6 +157,8 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<BarChart> {
             fillStairPattern(startY, endX);
         } else if (j == SIX) {
             fillDiagonalLeft(startY, endX);
+        } else {
+            throw new InsufficientRenderingAreaException();
         }
     }
 

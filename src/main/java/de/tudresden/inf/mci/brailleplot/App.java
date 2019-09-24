@@ -1,21 +1,5 @@
 package de.tudresden.inf.mci.brailleplot;
 
-import de.tudresden.inf.mci.brailleplot.configparser.Format;
-import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
-import de.tudresden.inf.mci.brailleplot.configparser.Printer;
-
-import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
-import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
-import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
-import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
-import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
-import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
-import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
-import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
-
-import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
-
-
 import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
@@ -28,30 +12,21 @@ import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
 import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
-
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
+import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
 import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
-import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
-import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
-
-import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
-import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
-import de.tudresden.inf.mci.brailleplot.rendering.LiblouisBrailleTextRasterizer;
-
-
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.GroupedBarChartPlotter;
-import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.StackedBarChartPlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.LinePlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.ScatterPlotter;
+import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.StackedBarChartPlotter;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolFloatingPointDataSvgExporter;
-import de.tudresden.inf.mci.brailleplot.svgexporter.BoolMatrixDataSvgExporter;
 import de.tudresden.inf.mci.brailleplot.svgexporter.SvgExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -236,14 +211,14 @@ public final class App {
 
             LinePlot lineplot = new LinePlot(container2);
             LinePlotter plotter2 = new LinePlotter();
-            // plotter2.plot(lineplot, floatCanvas);
+            plotter2.plot(lineplot, floatCanvas);
 
             BarChart bar = new BarChart(container3);
             StackedBarChartPlotter plotter3 = new StackedBarChartPlotter();
             // plotter3.plot(bar, floatCanvas);
 
             GroupedBarChartPlotter plotter4 = new GroupedBarChartPlotter();
-            plotter4.plot(bar, floatCanvas);
+            // plotter4.plot(bar, floatCanvas);
 
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();

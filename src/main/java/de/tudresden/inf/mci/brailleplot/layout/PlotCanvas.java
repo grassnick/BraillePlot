@@ -29,8 +29,15 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
     private double mCellDistVer;
 
     // bar dimensions
+    private double mMinBarWidth;
     private double mMaxBarWidth;
     private double mMinBarDist;
+
+    // second y-axis
+    private boolean mSecondAxis;
+
+    // frames for line plot
+    private boolean mFrames;
 
     // constants
     private static final int THREE = 3;
@@ -65,8 +72,11 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         mCellHeight = 2 * mPrinter.getProperty("raster.dotDistance.vertical").toDouble() + THREE * mPrinter.getProperty("raster.dotDiameter").toDouble();
         mCellDistHor = mPrinter.getProperty("raster.cellDistance.horizontal").toDouble();
         mCellDistVer = mPrinter.getProperty("raster.cellDistance.vertical").toDouble();
-        mMaxBarWidth = mPrinter.getProperty("floatingDot.maxBarWidth").toDouble();
-        mMinBarDist = mPrinter.getProperty("floatingDot.minBarDist").toDouble();
+        mMinBarWidth = mFormat.getProperty("floatingDot.minBarWidth").toDouble();
+        mMaxBarWidth = mFormat.getProperty("floatingDot.maxBarWidth").toDouble();
+        mMinBarDist = mFormat.getProperty("floatingDot.minBarDist").toDouble();
+        mSecondAxis = mFormat.getProperty("floatingDot.secondAxis").toBool();
+        mFrames = mFormat.getProperty("floatingDot.frames").toBool();
 
     }
 
@@ -90,6 +100,9 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         return mCellDistVer;
     }
 
+    public final double getMinBarWidth() {
+        return mMinBarWidth;
+    }
 
     public final double getMaxBarWidth() {
         return mMaxBarWidth;
@@ -97,6 +110,14 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
 
     public final double getMinBarDist() {
         return mMinBarDist;
+    }
+
+    public final boolean getSecondAxis() {
+        return mSecondAxis;
+    }
+
+    public final boolean getFrames() {
+        return mFrames;
     }
 
 }

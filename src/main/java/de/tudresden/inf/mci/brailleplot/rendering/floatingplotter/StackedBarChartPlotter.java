@@ -44,6 +44,8 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
         mBarWidth = (lengthY - (mNumBar + 1) * mMinDist) / mNumBar;
         if (mBarWidth > mMaxWidth) {
             mBarWidth = mMaxWidth;
+        } else if (mBarWidth < mMinWidth) {
+            throw new InsufficientRenderingAreaException();
         }
 
         mBarDist = (lengthY - mNumBar * mBarWidth) / (mNumBar + 1);
@@ -72,11 +74,11 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
      */
     @Override
     void calculateRanges() {
-        mXRange = Math.abs(mDiagram.getCumulatedMaxY() - mDiagram.getMinY());
+        mYRange = Math.abs(mDiagram.getCumulatedMaxY() - mDiagram.getMinY());
     }
 
     @Override
-    void drawRectangle(final int i, final int j, final double xValue) {
+    void drawRectangle(final int i, final int j, final double xValue) throws InsufficientRenderingAreaException {
         double startY = mBottomMargin - (mBarDist + i * (mBarWidth + mBarDist));
         double endX;
         if (j == 0) {
@@ -99,7 +101,7 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
         FloatingPointData<Boolean> grid = mCanvas.getNewPage();
 
         // x-axis
-        for (double i = 1; i <= 2 * mNumberXTics; i++) {
+        for (double i = 1; i <= 2 * mNumberXTicks; i++) {
             loop:
             for (double j = mBottomMargin; j > mTitleMargin; j -= mStepSize) {
                 for (int k = 0; k < mNumBar; k++) {

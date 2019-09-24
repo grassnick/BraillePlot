@@ -37,12 +37,12 @@ abstract class AbstractPlotter<T extends Diagram> {
     double mLeftMargin;
     double mBottomMargin;
     double mTitleMargin;
-    int mNumberXTics;
-    int mNumberYTics;
+    int mNumberXTicks;
+    int mNumberYTicks;
     double lengthX;
     double lengthY;
     double mXRange;
-    private double mYRange;
+    double mYRange;
 
     // constants
     static final int THREE = 3;
@@ -111,17 +111,17 @@ abstract class AbstractPlotter<T extends Diagram> {
         switch (type) {
             case "x":
                 calcRange = mXRange;
-                numberTics = mNumberXTics;
+                numberTics = mNumberXTicks;
                 minimum = mDiagram.getMinX();
                 break;
             case "y":
                 calcRange = mYRange;
-                numberTics = mNumberYTics;
+                numberTics = mNumberYTicks;
                 minimum = mDiagram.getMinY();
                 break;
             case "z":
-                calcRange = mXRange;
-                numberTics = mNumberXTics;
+                calcRange = mYRange;
+                numberTics = mNumberXTicks;
                 minimum = mDiagram.getMinY();
                 break;
             default:
@@ -162,7 +162,7 @@ abstract class AbstractPlotter<T extends Diagram> {
         // rounding
         int newRange;
         if (len == 1) {
-            if (digits[0] < FIVE) {
+            if (digits[0] <= SIX) {
                 newRange = FIVE;
                 singleDigit = true;
             } else {
@@ -228,7 +228,8 @@ abstract class AbstractPlotter<T extends Diagram> {
      */
     double calculateXValue(final double x) {
         double ratio = mXTickStep / (mScaleX[1] - mScaleX[0]);
-        return (x / Math.pow(TEN, mScaleX[mScaleX.length - 1]) - mScaleX[0]) * ratio + mLeftMargin + mXTickStep;
+        double y = (x / Math.pow(TEN, mScaleX[mScaleX.length - 1]) - mScaleX[0]) * ratio + mLeftMargin + mXTickStep;
+        return y;
     }
 
     /**

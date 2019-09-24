@@ -58,4 +58,5 @@ public class SimpleFloatingPointDataImpl<T> extends AbstractPrintableData implem
 
         return present;
     }
+
 }
