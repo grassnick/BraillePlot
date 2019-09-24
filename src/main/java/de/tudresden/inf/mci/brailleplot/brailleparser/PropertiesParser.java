@@ -23,11 +23,8 @@ public class PropertiesParser extends AbstractBrailleTableParser {
     public PropertiesParser(final String filePath) {
         Objects.requireNonNull(filePath);
 
-        InputStream stream;
-        try {
-            stream = new GeneralResource(filePath).getInputStream(); // use input stream (jar resource) instead of file input stream.
+        try (InputStream stream = new GeneralResource(filePath).getInputStream()) {  // use input stream (jar resource) instead of file input stream.
             mProperties.load(stream);
-            stream.close();
         } catch (java.io.IOException e) {
             throw new RuntimeException(e);
         }
