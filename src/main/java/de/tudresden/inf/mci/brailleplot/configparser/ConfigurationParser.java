@@ -23,8 +23,8 @@ import java.util.Set;
 /**
  * Abstract parser for configuration files. Interface for {@link Printer} and multiple {@link Format} configurations.
  * Must be extended to implement a concrete parsing algorithm for a specific file format.
- * @author Leonard Kupper
- * @version 2019.07.18
+ * @author Leonard Kupper, Georg Graßnick
+ * @version 2019.09.23
  */
 
 public abstract class ConfigurationParser {
@@ -42,16 +42,14 @@ public abstract class ConfigurationParser {
     ConfigurationParser() {
     }
 
-    ;
-
     /**
      * Internal algorithm used for parsing of the configuration file.
      * Implement this method by parsing information from the given input stream, optionally validating it (see {@link ConfigurationValidator}),
      * constructing {@link PrinterProperty} and {@link FormatProperty} objects from this information and adding them with the methods
      * {@link #addProperty(PrinterProperty)} and {@link #addProperty(FormatProperty)}.
      * This method is called by ({@link #parseConfigFile(InputStream, URL, boolean)}).
-     *
      * @param inStream The input stream to read the configuration from.
+     * @param path The URL identifying the location of the source of the {@link InputStream}. Required the inclusion of configurations from relative paths.
      * @throws ConfigurationParsingException    On any error while accessing the configuration file or syntax.
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
@@ -144,8 +142,11 @@ public abstract class ConfigurationParser {
     }
 
     /**
-     * Parse a configuration file from the resource folder
-     * As we know the root path of the configuration files, there is no need to specify any further.
+     * Parse a configuration file from the resource folder.
+     * @param resource The URL identifying the configuration file.
+     * @param assertCompleteness Signals whether to check for existence of all required properties or not
+     * @throws ConfigurationParsingException if an error occurred reading from the resource identified by the URL resource parameter
+     * @throws ConfigurationValidationException if an exception occurred while calling the {@link JavaPropertiesConfigurationValidator}
      */
     protected final void parseConfigFileFromResource(final URL resource, final boolean assertCompleteness) throws ConfigurationParsingException, ConfigurationValidationException {
         Objects.requireNonNull(resource);
@@ -154,11 +155,18 @@ public abstract class ConfigurationParser {
 
         try {
             parseConfigFile(resource.openStream(), getParentUrl(resource), assertCompleteness);
-        } catch (IOException | ConfigurationParsingException e) {
+        } catch (IOException e) {
             throw new ConfigurationParsingException("Could not open resource at \"" + resource.toString() + "\"", e);
         }
     }
 
+    /**
+     * Parse a configuration file from the file system.
+     * @param filePath The location of the file to parse.
+     * @param assertCompleteness Signals whether to check for existence of all required properties or not
+     * @throws ConfigurationParsingException if the file could not be read correctly
+     * @throws ConfigurationValidationException if an exception occurred while calling the {@link JavaPropertiesConfigurationValidator}
+     */
     protected final void parseConfigFileFromFileSystem(final Path filePath, final boolean assertCompleteness) throws ConfigurationParsingException, ConfigurationValidationException {
         Objects.requireNonNull(filePath);
 
@@ -175,8 +183,7 @@ public abstract class ConfigurationParser {
      * Parse the specified configuration file.
      * This method should be called inside the concrete parsers constructor after the optional default configurations
      * ({@link #setDefaults(Printer, Format)}) and the validator ({@link #setValidator(ConfigurationValidator)}) have been set.
-     *
-     * @param config             The {@link File} to be parsed. The type depends on the concrete implementation of the parser.
+     * @param config             The {@link InputStream} to be parsed
      * @param assertCompleteness Signals whether to check for existence of all required properties or not.
      * @throws ConfigurationParsingException    On any error while accessing the configuration file or syntax
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
@@ -210,7 +217,13 @@ public abstract class ConfigurationParser {
         }
     }
 
-    private URL getParentUrl(final URL resourcePath) throws ConfigurationParsingException {
+    /**
+     * Returns the URL to the parent directory of a File / Resource.
+     * @param resourcePath The URL to analyze.
+     * @return The URL to the parent directory of the specified URL.
+     * @throws ConfigurationParsingException if the generated URL is not a valid URL.
+     */
+    private static URL getParentUrl(final URL resourcePath) throws ConfigurationParsingException {
         String fileString = resourcePath.getPath();
         String parentString = fileString.substring(0, fileString.lastIndexOf("/"));
         try {
@@ -220,9 +233,14 @@ public abstract class ConfigurationParser {
         }
     }
 
+    /**
+     * Return a String representation of the path of a {@link URL}.
+     * Strips the {@literal "}file:{@literal "} prefix from an URL, if it exist.
+     * @param url The URL that needs to be stripped
+     * @return The String representation of the path of a URL where the leading {@literal "}file:{@literal "} prefix is stripped.
+     */
     private static String getPath(final URL url) {
         String urlString = url.getPath();
-        String ret = urlString.replace("file:", "");
-        return ret;
+        return urlString.replaceAll("^file:", "");
     }
 }

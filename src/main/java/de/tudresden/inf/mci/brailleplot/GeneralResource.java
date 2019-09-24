@@ -18,9 +18,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * This class is used to make files & resources available across the app independent from the application running as packed jar or not.
- * @author Leonard Kupper
- * @version 2019-09-11
+ * This class is used to make files and resources available across the app independent from the application running as packed jar or not.
+ * @author Leonard Kupper, Georg Graßnick
+ * @version 2019-09-24
  */
 public final class GeneralResource {
 
@@ -203,6 +203,14 @@ public final class GeneralResource {
         return GeneralResource.class;
     }
 
+    /**
+     * Removes the the jar file path from the given path.
+     * Example: file:/home/user/BraillePlot.jar!/config/example.properties -> config/example.properties.
+     * Note that this method identifies the distinction between jar path and inner path by the '!' (exclamation mark) character. Please
+     * make sure your packaged resource does not contain this character in it's name or path. If you don't, things will break.
+     * @param path The string representation of the path to use.
+     * @return The input path where any leading path outside of the jar file is truncated.
+     */
     private static String stripJarPath(final String path) {
         String ret = path.substring(path.lastIndexOf('!') + 1);
         if (ret.startsWith("/")) {

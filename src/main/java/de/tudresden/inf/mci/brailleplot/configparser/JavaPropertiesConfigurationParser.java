@@ -17,7 +17,7 @@ import java.util.Properties;
 /**
  * Concrete parser for configuration files in Java Property File format.
  * @author Leonard Kupper, Georg Graßnick
- * @version 2019.09.16
+ * @version 2019.09.23
  */
 public final class JavaPropertiesConfigurationParser extends ConfigurationParser {
 
@@ -67,8 +67,9 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
     /**
      * Concrete internal algorithm used for parsing the Java Property File.
      * This method is called by ({@link ConfigurationParser#parseConfigFileFromFileSystem(Path, boolean)} (InputStream, boolean)})
-     * or {@link ConfigurationParser#parseConfigFileFromResource(URL, boolean)} and will call itself recursively for every included file.
+     * or {@link ConfigurationParser#parseConfigFileFromResource(URL, boolean)} where it was called to include other configurations.
      * @param inStream The fileToParse stream to read the configuration properties from.
+     * @param path The URL identifying the location of the source of the {@link InputStream}. Required the inclusion of configurations from relative paths.
      * @throws ConfigurationParsingException On any error while accessing the configuration file or syntax.
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
@@ -112,9 +113,10 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
     /**
      * Recursively parses the configuration file.
      * This method handles files on the local file system.
-     * @param fileList
-     * @throws ConfigurationParsingException
-     * @throws ConfigurationValidationException
+     * @param fileList The string representations of the paths to include.
+     * @param parentUrl The URL identifying the context from where the method was called. Required to construct relative paths.
+     * @throws ConfigurationParsingException If something went wrong while reading from the included files.
+     * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
     private void includeFiles(final String fileList, final URL parentUrl) throws ConfigurationParsingException, ConfigurationValidationException {
         for (String s : fileList.split(",")) {
@@ -138,6 +140,13 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
         }
     }
 
+    /**
+     * Recursively parse configuration from a java resource.
+     * @param fileList The string representations of the paths to include.
+     * @param parentUrl The URL identifying the context from where the method was called. Required to construct relative paths.
+     * @throws ConfigurationParsingException If errors occurred while reading from a resource.
+     * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
+     */
     private void includeResource(final String fileList, final URL parentUrl) throws ConfigurationParsingException, ConfigurationValidationException {
         for (String s : fileList.split(",")) {
 
