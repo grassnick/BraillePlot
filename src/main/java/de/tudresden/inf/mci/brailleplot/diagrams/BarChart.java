@@ -5,6 +5,7 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 
+
 import java.util.Iterator;
 
 /**
@@ -13,6 +14,8 @@ import java.util.Iterator;
  * @version 2019.09.02
  */
 public class BarChart extends Diagram {
+
+    private PointListContainer<PointList> mData;
 
     public BarChart(final CategoricalPointListContainer<PointList> data) {
         super(data);

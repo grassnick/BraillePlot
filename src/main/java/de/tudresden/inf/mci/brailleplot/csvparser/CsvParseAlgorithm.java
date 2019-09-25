@@ -7,6 +7,7 @@ import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -72,6 +73,29 @@ public abstract class CsvParseAlgorithm<T extends PointListContainer<PointList>>
             it.next();
         }
         it.next().pushBack(point);
+    }
+
+    /**
+     * Transpose CSV data (List of Lists) as if it were a matrix.
+     * @param csvData CSV as List of Lists&lt;T&gt;
+     * @param <T> Generic list type (e.g. String)
+     * @return The transposed version of the CSV data as List of Lists
+     */
+    static <T> List<List<T>> transposeCSV(final List<? extends List<T>> csvData) {
+        List<List<T>> transposedCsvData = new ArrayList<>();
+        if (csvData.size() < 1) {
+            return new ArrayList<>();
+        }
+        final int columns = csvData.get(0).size();
+        for (int i = 0; i < columns; i++) {
+            List<T> col = new ArrayList<T>();
+            for (List<T> row : csvData) {
+                col.add(row.get(i));
+            }
+            // add column from original table as row of new one.
+            transposedCsvData.add(col);
+        }
+        return transposedCsvData;
     }
 
 }

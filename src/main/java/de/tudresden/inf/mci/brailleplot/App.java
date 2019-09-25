@@ -40,6 +40,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -159,10 +160,15 @@ public final class App {
             }
 
             // Config Parsing
-            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(
-                    getClass().getClassLoader().getResource("config/index_everest_d_v4.properties").getFile(),
-                    getClass().getClassLoader().getResource("config/default.properties").getFile()
-            );
+            URL configPath;
+            if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument, until then use default location for test runs
+                configPath = getClass().getResource("/config/index_everest_d_v4.properties");
+                mLogger.warn("ATTENTION! Using default specific config from resources. Please remove default config behavior before packaging the jar.");
+            } else {
+                configPath = new URL(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
+            }
+
+            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath, getClass().getClassLoader().getResource("config/default.properties"));
             Printer indexV4Printer = configParser.getPrinter();
             Format a4Format = configParser.getFormat("A4");
 
@@ -175,6 +181,9 @@ public final class App {
             CategoricalPointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
             mLogger.debug("Internal data representation:\n {}", container.toString());
             CategoricalBarChart barChart = new CategoricalBarChart(container);
+            barChart.setTitle("Beispieldiagramm");
+            barChart.setXAxisName("Gewicht in kg");
+            barChart.setYAxisName("Länge in m");
 
             // Render diagram
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);

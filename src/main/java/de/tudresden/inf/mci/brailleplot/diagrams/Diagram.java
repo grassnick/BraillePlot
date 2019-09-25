@@ -9,11 +9,14 @@ import java.util.Objects;
 /**
  * General representation of a diagram with basic data functions. {@link BarChart}, {@link LinePlot} and {@link ScatterPlot} extend this class.
  * Implements {@link Renderable}.
- * @author Richard Schmidt
+ * @author Leonard Kupper, Richard Schmidt
  */
 public abstract class Diagram implements Renderable {
 
     PointListContainer<PointList> mData;
+    private String mTitle;
+    private String mXAxisName;
+    private String mYAxisName;
 
     Diagram(final PointListContainer<PointList> data) {
         Objects.requireNonNull(data);
@@ -57,6 +60,30 @@ public abstract class Diagram implements Renderable {
      */
     public PointListContainer<PointList> getDataSet() {
         return mData;
+    }
+
+    public final String getTitle() {
+        return mTitle;
+    }
+
+    public final void setTitle(final String title) {
+        this.mTitle = Objects.requireNonNull(title);
+    }
+
+    public final String getXAxisName() {
+        return mXAxisName;
+    }
+
+    public final void setXAxisName(final String xAxisName) {
+        this.mXAxisName = Objects.requireNonNull(xAxisName);
+    }
+
+    public final String getYAxisName() {
+        return mYAxisName;
+    }
+
+    public final void setYAxisName(final String yAxisName) {
+        this.mYAxisName = Objects.requireNonNull(yAxisName);
     }
 
 }

@@ -7,7 +7,6 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.SimplePointListImpl;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +18,7 @@ import java.util.Objects;
  */
 public class CsvXAlignedParser extends CsvParseAlgorithm<PointListContainer<PointList>> {
 
+    /*
     @Override
     public PointListContainer<PointList> parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
         Objects.requireNonNull(csvData);
@@ -101,6 +101,16 @@ public class CsvXAlignedParser extends CsvParseAlgorithm<PointListContainer<Poin
         // TODO First add points to PointList, then add PointList to PointListContainer, so that there is no need for a calculateExtrema call
         container.calculateExtrema();
         return container;
+    }
+     */
+
+    @Override
+    public PointListContainer<PointList> parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
+        Objects.requireNonNull(csvData);
+
+        // The csv representation of horizontal datasets is essentially the transposition of vertical datasets.
+        List<? extends List<String>> transposedCsvData = transposeCSV(csvData);
+        return parseAsVerticalDataSets(transposedCsvData);
     }
 
     @Override
