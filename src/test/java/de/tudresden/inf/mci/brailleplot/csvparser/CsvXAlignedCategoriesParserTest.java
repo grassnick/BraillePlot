@@ -32,10 +32,10 @@ public class CsvXAlignedCategoriesParserTest {
     @Test
     public void testVerticalParsing() {
         CategoricalPointListContainer<PointList> container = parser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
-        Assertions.assertEquals(container.getCategory(1), " Reihe a ");
-        Assertions.assertEquals(container.getCategory(2), " Reihe b ");
-        Assertions.assertEquals(container.getCategory(3), " Reihe c");
-        Assertions.assertEquals(container.getCategory(4), " Reihe d");
+        Assertions.assertEquals(container.getCategory(0), " Reihe a ");
+        Assertions.assertEquals(container.getCategory(1), " Reihe b ");
+        Assertions.assertEquals(container.getCategory(2), " Reihe c");
+        Assertions.assertEquals(container.getCategory(3), " Reihe d");
 
         Iterator<PointList> containerIt = container.iterator();
         PointList list_1 = containerIt.next();
