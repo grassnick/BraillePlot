@@ -173,6 +173,14 @@ public final class App {
             Printer indexV4Printer = configParser.getPrinter();
             Format a4Format = configParser.getFormat("A4");
 
+            // Parse CLI parameters
+            String[] axes = new String[5];
+            axes[0] = settingsReader.getSetting(SettingType.TITLE).get();
+            axes[1] = settingsReader.getSetting(SettingType.X_NAME).get();
+            axes[2] = settingsReader.getSetting(SettingType.X_UNIT).get();
+            axes[3] = settingsReader.getSetting(SettingType.Y_NAME).get();
+            axes[4] = settingsReader.getSetting(SettingType.Y_UNIT).get();
+
             // Parse csv data
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
             InputStream csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_vertical.csv");
@@ -221,19 +229,19 @@ public final class App {
             }*/
 
             ScatterPlot scatterplot = new ScatterPlot(container2);
-            ScatterPlotter plotter = new ScatterPlotter();
-            // plotter.plot(scatterplot, floatCanvas);
+            ScatterPlotter plotter = new ScatterPlotter(axes);
+            plotter.plot(scatterplot, floatCanvas);
 
             LinePlot lineplot = new LinePlot(container2);
-            LinePlotter plotter2 = new LinePlotter();
+            LinePlotter plotter2 = new LinePlotter(axes);
             // plotter2.plot(lineplot, floatCanvas);
 
             CategoricalBarChart bar = new CategoricalBarChart(new SimpleCategoricalPointListContainerImpl(container3));
-            StackedBarChartPlotter plotter3 = new StackedBarChartPlotter();
+            StackedBarChartPlotter plotter3 = new StackedBarChartPlotter(axes);
             // plotter3.plot(bar, floatCanvas);
 
-            GroupedBarChartPlotter plotter4 = new GroupedBarChartPlotter();
-            plotter4.plot(bar, floatCanvas);
+            GroupedBarChartPlotter plotter4 = new GroupedBarChartPlotter(axes);
+            // plotter4.plot(bar, floatCanvas);
 
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();

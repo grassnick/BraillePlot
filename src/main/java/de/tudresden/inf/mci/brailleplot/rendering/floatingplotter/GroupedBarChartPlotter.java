@@ -27,6 +27,10 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
     private double mBarGroupWidth;
     private double mNumBarGroup;
 
+    public GroupedBarChartPlotter(String[] axes) {
+        super(axes);
+    }
+
     /**
      * Plots a grouped {@link de.tudresden.inf.mci.brailleplot.diagrams.BarChart} instance onto a {@link PlotCanvas}.
      * @param diagram An instance of {@link  de.tudresden.inf.mci.brailleplot.diagrams.BarChart} representing the bar chart.

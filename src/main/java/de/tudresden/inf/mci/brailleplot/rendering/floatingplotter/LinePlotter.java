@@ -16,6 +16,10 @@ import java.util.Objects;
  */
 public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements Plotter<LinePlot> {
 
+    public LinePlotter(String[] axes) {
+        super(axes);
+    }
+
     /**
      * Plots a {@link LinePlot} instance onto a {@link PlotCanvas}. Add new line styles in if statement.
      * @param diagram An instance of {@link LinePlot} representing the line plot.

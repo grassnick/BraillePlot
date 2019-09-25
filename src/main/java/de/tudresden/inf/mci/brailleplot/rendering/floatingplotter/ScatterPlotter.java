@@ -17,6 +17,10 @@ import java.util.Objects;
  */
 public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> implements Plotter<ScatterPlot> {
 
+    public ScatterPlotter(String[] axes) {
+        super(axes);
+    }
+
     /**
      * Plots a {@link ScatterPlot} instance onto a {@link PlotCanvas}.
      * @param diagram An instance of {@link ScatterPlot} representing the scatter plot.

@@ -24,6 +24,10 @@ import static tec.units.ri.unit.Units.METRE;
  */
 public final class StackedBarChartPlotter extends AbstractBarChartPlotter implements Plotter<CategoricalBarChart> {
 
+    public StackedBarChartPlotter(String[] axes) {
+        super(axes);
+    }
+
     /**
      * Plots a stacked {@link de.tudresden.inf.mci.brailleplot.diagrams.BarChart} instance onto a {@link PlotCanvas}.
      * @param diagram An instance of {@link  de.tudresden.inf.mci.brailleplot.diagrams.BarChart} representing the bar chart.

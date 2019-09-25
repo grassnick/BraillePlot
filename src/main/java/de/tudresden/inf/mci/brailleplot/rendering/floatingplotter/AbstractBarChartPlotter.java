@@ -31,6 +31,10 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     // constants
     private static final double STAIRDIST = 6;
 
+    AbstractBarChartPlotter(String[] axes) {
+        super(axes);
+    }
+
     /**
      * Prepares bar chart plot using the defined methods.
      * @param diagram {@link de.tudresden.inf.mci.brailleplot.diagrams.BarChart} with the data.
