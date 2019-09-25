@@ -36,14 +36,6 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     private final double tenth = 0.1, fifth = 0.2, quarter = 0.25, half = 0.5;
     private final double[] mUnitScalings = new double[]{tenth, fifth, quarter, half, 1.0};
 
-    /*
-        Parameters which should be read somewhere, not be hardcoded.
-        For the time being, these constants will be used.
-     */
-    private String mDiagramTitle =  "I am a line chart";
-    private String mXAxisUnit = "Units per Memes";
-    private String mYAxisUnit = "Pepes per Wojacks";
-
     private int mXStepWidth;
     private int mYStepWidth;
     private double mDpiX;
@@ -75,7 +67,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
             throw new NullPointerException("The given canvas for the LineChartRasterizer was null!");
         }
         mTextRasterizer = new LiblouisBrailleTextRasterizer(canvas.getPrinter());
-        mLegend = new Legend(mDiagramTitle);
+        mLegend = new Legend(data.getTitle());
 
         mCanvas = canvas;
         mDiagram = data;
@@ -137,11 +129,11 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         LegendRasterizer mLegendRasterizer = new LegendRasterizer();
         Iterator<PointList> iter  = mDiagram.getData().iterator();
         while (iter.hasNext()) {
-            rasterizeTitle(mDiagramTitle, titleArea);
+            rasterizeTitle(data.getTitle(), titleArea);
             rasterizeXAxis(originY, originX, mXStepWidth, xAxisBound, labels);
             rasterizeYAxis(yOriginY, yOriginX, mYStepWidth, yAxisBound, yLabels);
-            mTextRasterizer.rasterize(new BrailleText(mYAxisUnit, yAxisText), mCanvas);
-            mTextRasterizer.rasterize(new BrailleText(mXAxisUnit, xAxisText), mCanvas);
+            mTextRasterizer.rasterize(new BrailleText(data.getYAxisName(), yAxisText), mCanvas);
+            mTextRasterizer.rasterize(new BrailleText(data.getXAxisName(), xAxisText), mCanvas);
             rasterizeData(mDiagram.getMinX(), mDiagram.getMinY(), iter.next());
             if (iter.hasNext() && !printOnSamePaper) {
                 mCanvas.getNewPage();
@@ -427,7 +419,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
      * @param originX The x coordinate of the position where the axis line and the tickmark and label corresponding to the value '0' is placed.
      * @param stepWidthY The distance between two tickmarks on the axis in cells. This will be automatically converted in dots for the {@link Axis}.
      * @param yAxisBound The x-axis bound so that the borders are considered.
-     * @param labels Map containing the labels (letters).
+     * @param labels {@link Map} containing the labels (letters).
      */
     @SuppressWarnings("magicnumber")
     private void rasterizeYAxis(final int originY, final int originX, final int stepWidthY, final Rectangle yAxisBound, final Map<Integer, String> labels) {
@@ -448,11 +440,11 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
      * @throws InsufficientRenderingAreaException If the text is too big to fit on the {@link RasterCanvas}.
      */
     private Rectangle calculateTitle() throws InsufficientRenderingAreaException {
-        if (mDiagramTitle.isEmpty()) {
+        if (mDiagram.getTitle().isEmpty()) {
             throw new IllegalArgumentException("The title in LineChartRasterizer was empty!");
         }
         int widthOfCompleteArea = mCellLineArea.intWrapper().getWidth();
-        int titleBarHeight = mTextRasterizer.calculateRequiredHeight(mDiagramTitle, 0, 0, widthOfCompleteArea, mCanvas);
+        int titleBarHeight = mTextRasterizer.calculateRequiredHeight(mDiagram.getTitle(), 0, 0, widthOfCompleteArea, mCanvas);
         try {
             return  mCellLineArea.removeFromTop(mCanvas.getCellYFromDotY(titleBarHeight) + 1);
         } catch (Rectangle.OutOfSpaceException e) {

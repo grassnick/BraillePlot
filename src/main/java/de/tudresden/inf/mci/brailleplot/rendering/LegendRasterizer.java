@@ -10,8 +10,8 @@ import static java.lang.StrictMath.min;
 
 /**
  * A rasterizer that is able to draw a legend on a new page.
- * @author Leonard Kupper
- * @version 2019.08.28
+ * @author Leonard Kupper, Andrey Ruzhanskiy
+ * @version 2019.09.25
  */
 public class LegendRasterizer implements Rasterizer<Legend> {
 

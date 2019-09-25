@@ -6,8 +6,8 @@ import java.util.Objects;
 
 /**
  * Simple representation of a legend.
- * @author Leonard Kupper
- * @version 2019.08.29
+ * @author Leonard Kupper, Andrey Ruzhanskiy
+ * @version 2019.09.25
  */
 public class Legend implements Renderable {
 

@@ -195,6 +195,9 @@ public final class App {
             mLogger.debug("Internal data representation:\n {}", container.toString());
 
             LineChart lineChart = new LineChart(container);
+            lineChart.setTitle("I am a line chart");
+            lineChart.setXAxisName("Units per Memes");
+            lineChart.setYAxisName("Pepes per Wojacks");
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
             RasterCanvas canvas = renderer.rasterize(lineChart);
             Iterator<MatrixData<Boolean>> iter = canvas.getPageIterator();

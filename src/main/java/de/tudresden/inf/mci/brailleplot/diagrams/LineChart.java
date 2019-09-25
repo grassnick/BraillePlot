@@ -11,7 +11,7 @@ import java.util.Objects;
  * @author Andrey Ruzhanskiy
  * @version 2019.08.17
  */
-public class LineChart implements Renderable {
+public class LineChart extends Diagram {
 
     private PointListContainer<PointList> mData;
 
