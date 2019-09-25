@@ -1,5 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.printerbackend;
 
+import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
+
 /**
  * Abstract class for Documents, that need special escape sequences for the Index Everest-V4.
  * All special documents (i.e. Floating Dot Area) should implement this class. All information taken
@@ -11,7 +13,7 @@ package de.tudresden.inf.mci.brailleplot.printerbackend;
  */
 
 @SuppressWarnings("checkstyle:MagicNumber")
-abstract class AbstractIndexV4Builder extends AbstractDocumentBuilder {
+abstract class AbstractIndexV4Builder<T extends PrintableData> extends AbstractDocumentBuilder<T> {
 
 
 
@@ -21,6 +23,10 @@ abstract class AbstractIndexV4Builder extends AbstractDocumentBuilder {
      */
 
     final byte[] mStartTemporaryDoc = new byte[] {0x1B, 0x44};
+
+    final byte[] mStartFloatingMode = new byte[] {0x1B, 0xF};
+
+    final byte[] mNewLine = new byte[] {0x0A};
 
     /**
      * Standard variable name for binding margin (BI).

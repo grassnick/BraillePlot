@@ -236,7 +236,7 @@ public final class App {
             want to print.
             Please do not commit changes to this.
             */
-            if (true) {
+            if (false) {
                 return EXIT_SUCCESS;
             }
 
