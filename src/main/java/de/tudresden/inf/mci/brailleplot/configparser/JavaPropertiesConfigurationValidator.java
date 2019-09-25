@@ -1,7 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
 
-import de.tudresden.inf.mci.brailleplot.GeneralResource;
+import de.tudresden.inf.mci.brailleplot.util.GeneralResource;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

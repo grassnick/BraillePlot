@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
@@ -13,15 +13,13 @@ import java.util.Set;
 
 public class JavaPropertiesConfigurationParserTest {
 
-    public static final String mDefaultConfigPath = getResource("config/default.properties").getAbsolutePath();
-    public static final String mConcreteConfigPath = getResource("config/concrete.properties").getAbsolutePath();
+    public static final URL mDefaultConfigPath = getResource("config/default.properties");
+    public static final URL mConcreteConfigPath = getResource("config/concrete.properties");
     public static Printer mPrinterConfig;
     public static Format mFormatConfig;
 
-    public static File getResource(String fileName) {
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        File resourceFile = new File(classLoader.getResource(fileName).getFile());
-        return resourceFile;
+    public static URL getResource(final String location) {
+        return ClassLoader.getSystemClassLoader().getResource(location);
     }
 
     // Correct use testcases
@@ -79,13 +77,13 @@ public class JavaPropertiesConfigurationParserTest {
     @Test
     public void testIllegalFile() {
         Assertions.assertThrows(
-                ConfigurationParsingException.class,
-                () -> new JavaPropertiesConfigurationParser("config/nonexistent.properties", mDefaultConfigPath)
+                NullPointerException.class,
+                () -> new JavaPropertiesConfigurationParser(getResource("config/nonexistent.properties"), mDefaultConfigPath)
         );
     }
     @Test
     public void testMissingRequired() {
-        String configPath = getResource("config/missingRequiredPropertyExample.properties").getAbsolutePath();
+        URL configPath = getResource("config/missingRequiredPropertyExample.properties");
         Assertions.assertThrows(
                 IllegalStateException.class,
                 () -> new JavaPropertiesConfigurationParser(configPath, mDefaultConfigPath)
@@ -93,7 +91,7 @@ public class JavaPropertiesConfigurationParserTest {
     }
     @Test
     public void testIllegalProperty() {
-        String configPath = getResource("config/illegalPropertyNameExample.properties").getAbsolutePath();
+        URL configPath = getResource("config/illegalPropertyNameExample.properties");
         Assertions.assertThrows(
                 ConfigurationValidationException.class,
                 () -> new JavaPropertiesConfigurationParser(configPath, mDefaultConfigPath)
@@ -101,7 +99,7 @@ public class JavaPropertiesConfigurationParserTest {
     }
     @Test
     public void testIllegalValue() {
-        String configPath = getResource("config/illegalPropertyValueExample.properties").getAbsolutePath();
+        URL configPath = getResource("config/illegalPropertyValueExample.properties");
         Assertions.assertThrows(
                 ConfigurationValidationException.class,
                 () -> new JavaPropertiesConfigurationParser(configPath, mDefaultConfigPath)

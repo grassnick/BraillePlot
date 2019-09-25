@@ -1,4 +1,4 @@
-package de.tudresden.inf.mci.brailleplot;
+package de.tudresden.inf.mci.brailleplot.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +18,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * This class is used to make files & resources available across the app independent from the application running as packed jar or not.
- * @author Leonard Kupper
- * @version 2019-09-11
+ * This class is used to make files and resources available across the app independent from the application running as packed jar or not.
+ * @author Leonard Kupper, Georg Graßnick
+ * @version 2019-09-24
  */
 public final class GeneralResource {
 
@@ -48,14 +48,14 @@ public final class GeneralResource {
      */
     public GeneralResource(final String resourcePath, final String searchPath) throws IOException {
         File checkFile = new File(resourcePath);
-        mLogger.trace("Checking referenced path: " + checkFile);
+        mLogger.debug("Checking referenced path: " + checkFile);
         if (checkFile.isFile()) {
             mLogger.trace("Interpreting path as file: " + checkFile.getCanonicalPath());
             mResourcePath = checkFile.getCanonicalPath();
             mValidExternalFile = true;
         }
         checkFile = checkFile.getAbsoluteFile();
-        mLogger.trace("Checking referenced path as absolute path: " + checkFile);
+        mLogger.debug("Checking referenced path as absolute path: " + checkFile);
         if (checkFile.isFile()) {
             mLogger.trace("Interpreting path as absolute file: " + checkFile.getCanonicalPath());
             mResourcePath = checkFile.getCanonicalPath();
@@ -63,26 +63,31 @@ public final class GeneralResource {
         }
         if (Objects.nonNull(searchPath)) {
             checkFile = new File(searchPath + File.separator + resourcePath);
-            mLogger.trace("Looking for referenced path in search path: " + checkFile);
+            mLogger.debug("Looking for referenced path in search path: " + checkFile);
             if (checkFile.isFile()) {
                 mLogger.trace("Interpreting path as search path relative file: " + checkFile.getCanonicalPath());
                 mResourcePath = checkFile.getCanonicalPath();
                 mValidExternalFile = true;
             }
         }
-        String resourceClassPath = resourcePath.replace("\\", "/"); // classpaths are always separated by forward slash
-        InputStream checkStream = getClass().getResourceAsStream(resourceClassPath);
-        mLogger.trace("Checking referenced path as resource: " + resourceClassPath);
+        String resourceSearchPath = searchPath;
+        if (resourceSearchPath != null) {
+            resourceSearchPath = stripJarPath(resourceSearchPath);
+        }
+        String resourceClassPath = stripJarPath(resourcePath);
+        resourceClassPath = resourceClassPath.replace(File.separator, "/"); // class paths are always separated by forward slash
+        InputStream checkStream = getClass().getClassLoader().getResourceAsStream(resourceClassPath);
+        mLogger.debug("Checking referenced path as resource: " + resourceClassPath);
         if (Objects.nonNull(checkStream)) {
             mLogger.trace("Interpreting path as resource stream: " + resourceClassPath);
             mResourcePath = resourceClassPath;
             mValidPackedResource = true;
         }
-        if (Objects.nonNull(searchPath)) {
-            String relativeResourcePath = new File(searchPath + File.separator + resourceClassPath).toPath().normalize().toString();
+        if (Objects.nonNull(resourceSearchPath)) {
+            String relativeResourcePath = new File(resourceSearchPath + File.separator + resourceClassPath).toPath().normalize().toString();
             relativeResourcePath = relativeResourcePath.replace("\\", "/");
-            checkStream = getClass().getResourceAsStream(relativeResourcePath);
-            mLogger.trace("Checking referenced path as search path relative resource: " + relativeResourcePath);
+            checkStream = getClass().getClassLoader().getResourceAsStream(relativeResourcePath);
+            mLogger.debug("Checking referenced path as search path relative resource: " + relativeResourcePath);
             if (Objects.nonNull(checkStream)) {
                 mLogger.trace("Interpreting path as resource stream: " + relativeResourcePath);
                 mResourcePath = relativeResourcePath;
@@ -111,7 +116,7 @@ public final class GeneralResource {
             if (isValidExternalFile()) {
                 return new FileInputStream(getResourcePath());
             }
-            return getClass().getResourceAsStream(mResourcePath);
+            return getClass().getClassLoader().getResourceAsStream(mResourcePath);
         } catch (Exception e) {
             throw new RuntimeException("Error while opening resource as stream: ", e);
         }
@@ -196,5 +201,21 @@ public final class GeneralResource {
 
     private static Class getClassRef() {
         return GeneralResource.class;
+    }
+
+    /**
+     * Removes the the jar file path from the given path.
+     * Example: file:/home/user/BraillePlot.jar!/config/example.properties -> config/example.properties.
+     * Note that this method identifies the distinction between jar path and inner path by the '!' (exclamation mark) character. Please
+     * make sure your packaged resource does not contain this character in it's name or path. If you don't, things will break.
+     * @param path The string representation of the path to use.
+     * @return The input path where any leading path outside of the jar file is truncated.
+     */
+    private static String stripJarPath(final String path) {
+        String ret = path.substring(path.lastIndexOf('!') + 1);
+        if (ret.startsWith("/")) {
+            ret = ret.substring(1);
+        }
+        return ret;
     }
 }

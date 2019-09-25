@@ -1,6 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
-import de.tudresden.inf.mci.brailleplot.GeneralResource;
+import de.tudresden.inf.mci.brailleplot.util.GeneralResource;
 import de.tudresden.inf.mci.brailleplot.brailleparser.AbstractBrailleTableParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
