@@ -14,10 +14,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import javax.print.DocFlavor;
-import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
 
 /**
  * Integrationtests for the components PrintableData and Exporter.
@@ -45,8 +45,8 @@ public class PrintableDataExporterIntegTest {
     @BeforeAll
     public static void setUp() {
         Assertions.assertDoesNotThrow(() -> {
-            String correct = getResource("config/correct.properties").getAbsolutePath();
-            String standard = getResource("config/default.properties").getAbsolutePath();
+            URL correct = ClassLoader.getSystemClassLoader().getResource("config/correct.properties");
+            URL standard = ClassLoader.getSystemClassLoader().getResource("config/default.properties");
             JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(correct, standard);
             printer = configParser.getPrinter();
             printer.getProperty("brailletable").toString();
@@ -55,11 +55,6 @@ public class PrintableDataExporterIntegTest {
         });
     }
 
-    public static File getResource(String fileName) {
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        File resourceFile = new File(classLoader.getResource(fileName).getFile());
-        return resourceFile;
-    }
     /**
      * Unittest/Integrationtest for the private Print method with a Null Servive.
      * Expected: Nullpointerexception.

@@ -46,7 +46,11 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+
 import java.util.Iterator;
+
+import java.net.URL;
+
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -166,11 +170,21 @@ public final class App {
                 return EXIT_SUCCESS;
             }
 
-            // Parse properties File
-            Optional<String> configPath = settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH);
-            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath.get(), "src/main/resources/config/default.properties");
-            Printer printer = configParser.getPrinter();
-            Format formatA4 = configParser.getFormat("A4");
+
+            // Config Parsing
+            URL configPath;
+            if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument, until then use default location for test runs
+                configPath = getClass().getResource("/config/index_everest_d_v4.properties");
+                mLogger.warn("ATTENTION! Using default specific config from resources. Please remove default config behavior before packaging the jar.");
+            } else {
+                configPath = new URL(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
+            }
+
+            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath, getClass().getClassLoader().getResource("config/default.properties"));
+            Printer indexV4Printer = configParser.getPrinter();
+            Format a4Format = configParser.getFormat("A4");
+
+
             // Parse csv data
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
             InputStream csvStream = classloader.getResourceAsStream("examples/csv/2_line_plot.csv");
@@ -181,9 +195,7 @@ public final class App {
             mLogger.debug("Internal data representation:\n {}", container.toString());
 
             LineChart lineChart = new LineChart(container);
-
-            // SVG exporting
-            MasterRenderer renderer = new MasterRenderer(printer, formatA4);
+            MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
             RasterCanvas canvas = renderer.rasterize(lineChart);
             Iterator<MatrixData<Boolean>> iter = canvas.getPageIterator();
             SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
@@ -192,7 +204,7 @@ public final class App {
                 mLogger.debug("Render preview:\n" + temp.toBoolString());
             }
 
-            //CategoricalBarChart barChart = new CategoricalBarChart(container);
+
 
             // Render diagram
             //MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
@@ -204,7 +216,7 @@ public final class App {
             svgExporter.dump("boolMat");
 
             // FloatingPointData SVG exporting example
-            PlotCanvas floatCanvas = new PlotCanvas(printer, formatA4);
+            PlotCanvas floatCanvas = new PlotCanvas(indexV4Printer, a4Format);
             FloatingPointData<Boolean> points = floatCanvas.getNewPage();
 
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
@@ -230,9 +242,7 @@ public final class App {
 
             // Last Step: Printing
             @SuppressWarnings("checkstyle:MagicNumber")
-            MatrixData<Boolean> data = new SimpleMatrixDataImpl<>(printer, formatA4, 18, 20, true);
-            String printerConfigUpperCase = printer.getProperty("mode").toString().toUpperCase();
-            PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), printer);
+            PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(indexV4Printer.getProperty("mode").toString().toUpperCase()), indexV4Printer);
             printD.print(mat);
 
         } catch (final Exception e) {

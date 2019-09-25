@@ -62,7 +62,7 @@ abstract class Configurable {
      * Set the default/fallback {@link Configurable} that will be used if a property cannot be found.
      * @param fallback A {@link Configurable} object.
      */
-    protected final void setFallback(final Configurable fallback) {
+    public final void setFallback(final Configurable fallback) {
         mFallback = fallback;
     }
 

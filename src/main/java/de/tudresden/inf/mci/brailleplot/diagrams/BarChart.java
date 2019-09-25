@@ -4,7 +4,6 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.Named;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
-import de.tudresden.inf.mci.brailleplot.rendering.Renderable;
 
 import java.util.List;
 import java.util.Objects;
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
  * @author Richard Schmidt, Georg Graßnick
  * @version 2019.09.02
  */
-public class BarChart implements Renderable {
+public class BarChart extends Diagram {
     private PointListContainer<PointList> mData;
 
     public BarChart(final PointListContainer<PointList> data) {
