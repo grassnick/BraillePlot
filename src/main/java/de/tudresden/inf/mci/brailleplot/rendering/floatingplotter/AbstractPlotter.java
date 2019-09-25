@@ -13,8 +13,6 @@ import tec.units.ri.unit.MetricPrefix;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 
-import java.util.Objects;
-
 import static tec.units.ri.unit.Units.METRE;
 
 
@@ -83,10 +81,6 @@ abstract class AbstractPlotter<T extends Diagram> {
     static final double TICK2 = 3;
     static final double TICK3 = 4.5;
     static final double TICK4 = 6;
-
-    AbstractPlotter(String[] axes) {
-        mAxes = Objects.requireNonNull(axes);
-    }
 
     /**
      * Checks if mStepSize is smaller than mResolution. In that case, mStepSize is set to mResolution.

@@ -20,6 +20,7 @@ public abstract class AbstractPointContainer<T extends MinMaxPos2D<Double>> impl
     protected Double mMaxY = Double.NEGATIVE_INFINITY;
     protected Double mMinX = Double.POSITIVE_INFINITY;
     protected Double mMinY = Double.POSITIVE_INFINITY;
+    String[] mAxes;
 
     @Override
     public final int getSize() {
@@ -124,6 +125,16 @@ public abstract class AbstractPointContainer<T extends MinMaxPos2D<Double>> impl
 
     public LinkedList<T> getElements() {
         return mElements;
+    }
+
+    @Override
+    public void setAxes(String[] axes) {
+        mAxes = Objects.requireNonNull(axes);
+    }
+
+    @Override
+    public String[] getAxes() {
+        return mAxes;
     }
 
 }

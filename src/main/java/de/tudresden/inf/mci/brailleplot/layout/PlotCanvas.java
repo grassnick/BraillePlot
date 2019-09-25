@@ -43,18 +43,11 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
     private int mXScaleFactor;
     private int mYScaleFactor;
 
-    // diagram type
-    int mType;
-
-    // CLI parameter
-    String[] mAxes;
-
     // constants
     private static final int THREE = 3;
 
-    public PlotCanvas(final Printer printer, final Format format, final String[] axes) throws InsufficientRenderingAreaException {
+    public PlotCanvas(final Printer printer, final Format format) throws InsufficientRenderingAreaException {
         super(printer, format);
-        mAxes = axes;
     }
 
     public final FloatingPointData<Boolean> getNewPage() {
@@ -147,16 +140,6 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         return mYScaleFactor;
     }
 
-    public final void setType(final int type) {
-        mType = type;
-    }
 
-    public final int getType() {
-        return mType;
-    }
-
-    public final String[] getAxes() {
-        return mAxes;
-    }
 
 }

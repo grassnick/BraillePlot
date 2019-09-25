@@ -16,10 +16,6 @@ import java.util.Objects;
  */
 public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements Plotter<LinePlot> {
 
-    public LinePlotter(String[] axes) {
-        super(axes);
-    }
-
     /**
      * Plots a {@link LinePlot} instance onto a {@link PlotCanvas}. Add new line styles in if statement.
      * @param diagram An instance of {@link LinePlot} representing the line plot.
@@ -48,9 +44,9 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
         mCanvas.setXScaleFactor(mScaleX[mScaleX.length - 1]);
         mCanvas.setYScaleFactor(mScaleY[mScaleY.length - 1]);
         if (mFrames) {
-            mCanvas.setType(2);
+            //mCanvas.setType(2);
         } else {
-            mCanvas.setType(1);
+            //mCanvas.setType(1);
         }
         nameXAxis();
         nameYAxis();

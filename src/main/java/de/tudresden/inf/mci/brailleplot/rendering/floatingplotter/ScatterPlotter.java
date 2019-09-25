@@ -17,10 +17,6 @@ import java.util.Objects;
  */
 public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> implements Plotter<ScatterPlot> {
 
-    public ScatterPlotter(String[] axes) {
-        super(axes);
-    }
-
     /**
      * Plots a {@link ScatterPlot} instance onto a {@link PlotCanvas}.
      * @param diagram An instance of {@link ScatterPlot} representing the scatter plot.
@@ -49,7 +45,7 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
         mScaleY = scaleAxis("y");
         mCanvas.setXScaleFactor(mScaleX[mScaleX.length - 1]);
         mCanvas.setYScaleFactor(mScaleY[mScaleY.length - 1]);
-        mCanvas.setType(0);
+        //mCanvas.setType(0);
         nameXAxis();
         nameYAxis();
         nameTitle();

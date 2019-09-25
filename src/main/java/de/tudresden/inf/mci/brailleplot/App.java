@@ -201,6 +201,7 @@ public final class App {
 
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
             CategoricalPointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
+            container.setAxes(axes);
             mLogger.debug("Internal data representation:\n {}", container.toString());
             CategoricalBarChart barChart = new CategoricalBarChart(container);
             barChart.setTitle("Beispieldiagramm");
@@ -208,7 +209,7 @@ public final class App {
             barChart.setYAxisName("Länge in m");
 
             // Render diagram
-            MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format, axes);
+            MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
             /*RasterCanvas canvas = renderer.rasterize(barChart);
             // SVG exporting
             SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
@@ -224,12 +225,14 @@ public final class App {
 
             csvParser = new CsvParser(csvReader, ',', '\"');
             PointListContainer<PointList> container2 = csvParser.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
+            container2.setAxes(axes);
             CsvParser csvParser2 = new CsvParser(csvReader2, ',', '\"');
             PointListContainer<PointList> container3 = csvParser2.parse(CsvType.X_ALIGNED, CsvOrientation.VERTICAL);
+            container3.setAxes(axes);
             mLogger.debug("Internal data representation:\n {}", container.toString());
 
             // FloatingPointData SVG exporting example
-            PlotCanvas floatCanvas = new PlotCanvas(indexV4Printer, a4Format, axes);
+            PlotCanvas floatCanvas = new PlotCanvas(indexV4Printer, a4Format);
             FloatingPointData<Boolean> points = floatCanvas.getNewPage();
 
             final int blockX = 230;
@@ -242,18 +245,18 @@ public final class App {
             }*/
 
             ScatterPlot scatterplot = new ScatterPlot(container2);
-            ScatterPlotter plotter = new ScatterPlotter(axes);
+            ScatterPlotter plotter = new ScatterPlotter();
             plotter.plot(scatterplot, floatCanvas);
 
             LinePlot lineplot = new LinePlot(container2);
-            LinePlotter plotter2 = new LinePlotter(axes);
+            LinePlotter plotter2 = new LinePlotter();
             // plotter2.plot(lineplot, floatCanvas);
 
             CategoricalBarChart bar = new CategoricalBarChart(new SimpleCategoricalPointListContainerImpl(container3));
-            StackedBarChartPlotter plotter3 = new StackedBarChartPlotter(axes);
+            StackedBarChartPlotter plotter3 = new StackedBarChartPlotter();
             // plotter3.plot(bar, floatCanvas);
 
-            GroupedBarChartPlotter plotter4 = new GroupedBarChartPlotter(axes);
+            GroupedBarChartPlotter plotter4 = new GroupedBarChartPlotter();
             // plotter4.plot(bar, floatCanvas);
 
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);

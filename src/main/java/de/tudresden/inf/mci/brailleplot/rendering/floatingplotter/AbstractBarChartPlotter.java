@@ -25,15 +25,11 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     double mMinDist;
     double mMinWidth;
     double[] mGridHelp;
-    String[] mNamesY;
+    private String[] mNamesY;
     char[] mSymbolsY;
 
     // constants
     private static final double STAIRDIST = 6;
-
-    AbstractBarChartPlotter(String[] axes) {
-        super(axes);
-    }
 
     /**
      * Prepares bar chart plot using the defined methods.
@@ -42,6 +38,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
      */
     void prereq(final CategoricalBarChart diagram, final PlotCanvas canvas) {
 
+        mAxes = diagram.getAxes();
         mCanvas = Objects.requireNonNull(canvas);
         mCanvas.readConfig();
         mData = mCanvas.getCurrentPage();
@@ -64,7 +61,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
         mScaleX = scaleAxis("z");
         mNamesY = new String[mCatList.getSize()];
         mCanvas.setXScaleFactor(mScaleX[mScaleX.length - 1]);
-        mCanvas.setType(THREE);
+        // mCanvas.setType(THREE);
         // nameXAxis();
         // nameYAxis();
         // nameTitle();

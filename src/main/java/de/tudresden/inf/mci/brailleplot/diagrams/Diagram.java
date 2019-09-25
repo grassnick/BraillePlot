@@ -86,4 +86,13 @@ public abstract class Diagram implements Renderable {
         this.mYAxisName = Objects.requireNonNull(yAxisName);
     }
 
+
+    public final String[] getAxes() {
+        return mData.getAxes();
+    }
+
+    public final void setAxes(final String[] axes) {
+        mData.setAxes(axes);
+    }
+
 }

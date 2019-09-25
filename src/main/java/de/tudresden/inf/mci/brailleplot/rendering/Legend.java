@@ -11,9 +11,11 @@ import java.util.Objects;
  */
 public class Legend implements Renderable {
 
-    private String[] mYNames;
+    private String[] mAxes;
     private String mTitle;
+    private String mXName;
     private String mXUnit;
+    private String mYName;
     private String mYUnit;
     private Map<String, Map<String, String>> mStringExplanationLists = new LinkedHashMap<>();
     private Map<String, Map<Texture<Boolean>, String>> mTextureExplanationLists = new LinkedHashMap<>();
@@ -21,12 +23,50 @@ public class Legend implements Renderable {
     private int mTextureExampleWidthCells = 1;
     private int mTextureExampleHeightCells = 1;
 
+    // diagram type
+    int mType;
+
     /**
      * Constructor. Creates a legend.
      * @param title The title of the legend.
      */
     public Legend(final String title) {
         setTitle(title);
+    }
+
+
+    /**
+     * Constructor. Creates a legend.
+     * @param axes The string array with the CLI parameters.
+     */
+    public Legend(final String[] axes) {
+        setAxes(axes);
+        extractAxes();
+    }
+
+    /**
+     * Sets a new mAxes.
+     * @param axes The string array with the CLI parameters.
+     */
+    public void setAxes(final String[] axes) {
+        mAxes = Objects.requireNonNull(axes);
+    }
+
+    /**
+     * Gets the current mAxes of the legend.
+     * @return The string array with the CLI parameters.
+     */
+    public String[] getAxes() {
+        return mAxes;
+    }
+
+    private void extractAxes() {
+
+        mTitle = mAxes[0];
+        mXName = mAxes[1];
+        mXUnit = mAxes[2];
+        mYName = mAxes[3];
+        mYUnit = mAxes[4];
     }
 
     /**
@@ -123,12 +163,20 @@ public class Legend implements Renderable {
         return mTextureExampleHeightCells;
     }
 
-    public final void setYNames(final String[] names) {
-        mYNames = names;
+    public final void setXName(final String name) {
+        mXName = name;
     }
 
-    public final String[] getYNames() {
-        return mYNames;
+    public final String getXName() {
+        return mXName;
+    }
+
+    public final void setYName(final String name) {
+        mYName = name;
+    }
+
+    public final String getYName() {
+        return mYName;
     }
 
     public final void setXUnit(final String xUnit) {
@@ -145,5 +193,13 @@ public class Legend implements Renderable {
 
     public final String getYUnit() {
         return mYUnit;
+    }
+
+    public final void setType(final int type) {
+        mType = type;
+    }
+
+    public final int getType() {
+        return mType;
     }
 }

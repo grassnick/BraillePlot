@@ -31,9 +31,8 @@ public final class MasterRenderer {
     Printer mPrinter;
     Format mFormat;
     FunctionalRenderingBase mRenderingBase;
-    String[] mAxes;
 
-    public MasterRenderer(final Printer printer, final Format format, final String[] axes) {
+    public MasterRenderer(final Printer printer, final Format format) {
 
         mLogger.info("Creating MasterRenderer with default context");
 
@@ -53,14 +52,13 @@ public final class MasterRenderer {
         //renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, ScatterPlotRasterizing::fooRasterizing));
         //...
 
-        Plotter<ScatterPlot> scatterPlotter = new ScatterPlotter(axes);
+        Plotter<ScatterPlot> scatterPlotter = new ScatterPlotter();
 
         mLogger.trace("Registering default rasterizers");
         renderingBase.registerPlotter(new FunctionalPlotter<ScatterPlot>(ScatterPlot.class, scatterPlotter));
 
         setRenderingContext(printer, format, renderingBase);
 
-        mAxes = axes;
     }
 
     public MasterRenderer(final Printer printer, final Format format, final FunctionalRenderingBase renderingBase) {
@@ -82,7 +80,7 @@ public final class MasterRenderer {
     public PlotCanvas plot(final Renderable data) throws InsufficientRenderingAreaException {
         mLogger.info("Preparing a new {} plotting on RenderingBase {}",
                 data.getClass().getSimpleName(), mRenderingBase);
-        PlotCanvas canvas = new PlotCanvas(mPrinter, mFormat, mAxes);
+        PlotCanvas canvas = new PlotCanvas(mPrinter, mFormat);
         mRenderingBase.setPlotCanvas(canvas);
         mRenderingBase.plot(data);
         mLogger.info("Plotting of {} on RenderingBase {} has finished, result containing {} pages",

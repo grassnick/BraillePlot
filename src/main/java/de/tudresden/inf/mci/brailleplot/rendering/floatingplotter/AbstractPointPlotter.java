@@ -27,10 +27,6 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
     static final double CIRCLEDIA = 15;
     static final double CIRCLESCALE = 1.45;
 
-    AbstractPointPlotter(String[] axes) {
-        super(axes);
-    }
-
     /**
      * Draws x- and y-axis.
      */
