@@ -41,6 +41,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -227,12 +228,12 @@ public final class App {
             LinePlotter plotter2 = new LinePlotter();
             // plotter2.plot(lineplot, floatCanvas);
 
-            CategoricalBarChart bar = new CategoricalBarChart(container3);
+            CategoricalBarChart bar = new CategoricalBarChart(new SimpleCategoricalPointListContainerImpl(container3));
             StackedBarChartPlotter plotter3 = new StackedBarChartPlotter();
-            plotter3.plot(bar, floatCanvas);
+            // plotter3.plot(bar, floatCanvas);
 
             GroupedBarChartPlotter plotter4 = new GroupedBarChartPlotter();
-            // plotter4.plot(bar, floatCanvas);
+            plotter4.plot(bar, floatCanvas);
 
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();

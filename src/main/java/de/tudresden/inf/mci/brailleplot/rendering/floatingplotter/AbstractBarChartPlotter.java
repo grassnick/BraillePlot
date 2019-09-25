@@ -42,6 +42,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
         mCanvas.readConfig();
         mData = mCanvas.getCurrentPage();
         mDiagram = Objects.requireNonNull(diagram);
+        System.out.print(mDiagram.getDataSet());
         mCatList = (CategoricalPointListContainer<PointList>) mDiagram.getDataSet();
         mMaxWidth = mCanvas.getMaxBarWidth();
         mMinDist = mCanvas.getMinBarDist();

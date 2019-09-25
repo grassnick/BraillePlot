@@ -2,6 +2,7 @@ package de.tudresden.inf.mci.brailleplot.diagrams;
 
 import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 
 /**
  * Representation of a bar chart composed from categories of multiple bars each. Implements {@link de.tudresden.inf.mci.brailleplot.rendering.Renderable}.
@@ -38,5 +39,13 @@ public class CategoricalBarChart extends BarChart {
      */
     public int getNumberOfCategories() {
         return mData.getNumberOfCategories();
+    }
+
+    /**
+     * Getter for a list with x-y-Pairs: x is the index (always just counts from 0 up), y is the value.
+     * @return PointList with the corresponding data set.
+     */
+    public PointListContainer<PointList> getDataSet() {
+        return mData;
     }
 }

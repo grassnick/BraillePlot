@@ -122,4 +122,8 @@ public abstract class AbstractPointContainer<T extends MinMaxPos2D<Double>> impl
         return toRecursiveString(0);
     }
 
+    public LinkedList<T> getElements() {
+        return mElements;
+    }
+
 }
