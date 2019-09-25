@@ -2,6 +2,7 @@ package de.tudresden.inf.mci.brailleplot.layout;
 
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.printabledata.BrailleCell6;
 
 /**
@@ -11,7 +12,7 @@ import de.tudresden.inf.mci.brailleplot.printabledata.BrailleCell6;
  */
 public class SixDotBrailleRasterCanvas extends RasterCanvas {
 
-    public SixDotBrailleRasterCanvas(final Printer printer, final Format format) throws InsufficientRenderingAreaException {
-        super(printer, format, BrailleCell6.COLUMN_COUNT, BrailleCell6.ROW_COUNT);
+    public SixDotBrailleRasterCanvas(final Printer printer, final Representation representation, final Format format) throws InsufficientRenderingAreaException {
+        super(printer, representation, format, BrailleCell6.COLUMN_COUNT, BrailleCell6.ROW_COUNT);
     }
 }

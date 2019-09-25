@@ -11,6 +11,7 @@ import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
     // Constants
     private static final int X_AXIS_UNIT_SIZE_DOTS = 4; // the size of one step on the x-axis in dots. Equals the amount of dots after which the used bar textures will repeat
     private static final int X_AXIS_TICK_SIZE_DOTS = 2; // the size of the x-axis tickmarks in dots
-    private static final int HELP_LINE_MIN_LENGTH_DOTS = 5; // the min. distance in dots for which a help line from group caption to the groups first bar will appear
+    private static final int HELP_LINE_MIN_LENGTH_DOTS = 3; // the min. distance in dots for which a help line from group caption to the groups first bar will appear
     private static final int LEGEND_TEXTURE_BAR_LENGTH = 3; // tells how big (in axis units) texture example bars in the legend are.
 
     private static final int DECIMAL_BASE = 10; // the base to which the magnitude of the axis scale will be calculated. change if you love headaches.
@@ -51,6 +52,7 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
     private int mCaptionPaddingCells; // the padding size between the group captions on the left and the bar groups in cells
     private int mGroupPaddingCells; // the padding size between two neighbouring bar groups in cells
     private int mBarPaddingCells; // the padding size between two bars inside the same group in cells
+    private String nonexistentDataText; // the text which is displayed for a missing datapoint
 
     // Texture Management
     private List<Texture<Boolean>> mTextures = new ArrayList<>(); // A list of textures to differentiate bars inside a group
@@ -71,27 +73,29 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
 
     /**
      * Initialization of algorithm parameters.
+     * @param canvas The {@link RasterCanvas} on which the rasterizer will work.
      */
-    private void initConfig() {
+    private void initConfig(final RasterCanvas canvas) {
 
         // This method will currently set the properties to some default values,
         // but we could change it to load them from somewhere else. Please comment in review.
 
-        final double tenth = 0.1, fifth = 0.2, quarter = 0.25, half = 0.5;
-        mUnitScalings = new double[]{tenth, fifth, quarter, half, 1.0};
+        final double tenth = 0.1, fifth = 0.2, quarter = 0.25, half = 0.5, full = 1.0;
+        mUnitScalings = new double[]{tenth, fifth, quarter, half, full};
 
-        mMaximumTitleHeightCells = 2;
+        mMaximumTitleHeightCells = canvas.getRepresentation().getProperty("general.maxTitleHeight").toInt();
         mCaptionLengthCells = 1;
         mXAxisHeightCells = 2;
 
-        final int defaultMaxBarThicknessCells = 3;
-        mMaxBarThicknessCells = defaultMaxBarThicknessCells;
-        mMinBarThicknessCells = 1;
+        mMaxBarThicknessCells = canvas.getRepresentation().getProperty("rasterize.barChart.maxBarThickness").toInt();
+        mMinBarThicknessCells = canvas.getRepresentation().getProperty("rasterize.barChart.minBarThickness").toInt();
 
-        mTitlePaddingCells = 0;
-        mCaptionPaddingCells = 2;
-        mGroupPaddingCells = 2;
-        mBarPaddingCells = 1;
+        mTitlePaddingCells = canvas.getRepresentation().getProperty("rasterize.barChart.padding.title").toInt();
+        mCaptionPaddingCells = canvas.getRepresentation().getProperty("rasterize.barChart.padding.caption").toInt();
+        mGroupPaddingCells = canvas.getRepresentation().getProperty("rasterize.barChart.padding.groups").toInt();
+        mBarPaddingCells = canvas.getRepresentation().getProperty("rasterize.barChart.padding.bars").toInt();
+
+        nonexistentDataText = canvas.getRepresentation().getProperty("general.nonexistentDataText").toString();
 
         // Load textures
         double[] rotate90 = {0, 0, 0, 1, 1, 0};
@@ -123,7 +127,7 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
             throw new InsufficientRenderingAreaException("This rasterizer can only work with a 6-dot braille grid.");
         }
 
-        initConfig();
+        initConfig(canvas);
         drawDiagram(diagram, canvas);
     }
 
@@ -213,16 +217,15 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
             Rectangle borderBeforeCellArea, barCellArea, borderAfterCellArea;
             Map<String, String> groupNameExplanations = new LinkedHashMap<>();
             Map<Texture<Boolean>, String> textureExplanations = new LinkedHashMap<>();
-            // Reserve first line for first border.
-            borderBeforeCellArea = mFullChartCellArea.removeFromTop(1);
+            borderBeforeCellArea = mFullChartCellArea.removeFromTop(1); // Reserve first line for first border.
             char groupCaptionLetter = 'a';
             int group = 0;
             for (PointList pointList : diagram.getDataSet()) { // For each group:
                 String groupName = pointList.getName(); // Save group name for legend
                 groupNameExplanations.put(Character.toString(groupCaptionLetter), groupName);
-                int bar = 0, amountOfBarsInGroup = pointList.getSize();
-                for (Point2DDouble point : pointList) { // For each bar in group:
-                    int barLength = (int) round(X_AXIS_UNIT_SIZE_DOTS * point.getY() / xAxisScaling);
+                int amountOfBarsInGroup = amountOfBars / amountOfGroups;
+                Iterator<Point2DDouble> points = pointList.getListIterator();
+                for (int bar = 0; bar < amountOfBarsInGroup; bar++) {
                     barCellArea = mFullChartCellArea.removeFromTop(mBarThickness);
                     if (bar < (amountOfBarsInGroup - 1)) {
                         borderAfterCellArea = mFullChartCellArea.removeFromTop(mBarPaddingCells); // If another bar in the same group follows, use bar padding.
@@ -232,16 +235,26 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
                         borderAfterCellArea = mFullChartCellArea.removeFromTop(1); // If nothing follows, use single line for last border.
                     }
                     // the actual bar
-                    int textureID = bar % mTextures.size();
-                    drawBar(barLength, originXDotCoordinate, borderBeforeCellArea, barCellArea, borderAfterCellArea, textureID, canvas);
+                    int barLength;
+                    if (points.hasNext()) {
+                        Point2DDouble point = points.next();
+                        barLength = (int) round(X_AXIS_UNIT_SIZE_DOTS * point.getY() / xAxisScaling);
+                        int textureID = bar % mTextures.size();
+                        drawBar(barLength, originXDotCoordinate, borderBeforeCellArea, barCellArea, borderAfterCellArea, textureID, canvas);
+                        // Save used texture and corresponding name for explanation in legend
+                        Texture<Boolean> exampleTexture = mTextures.get(textureID).setAffineTransformation(new double[]{mPositiveTextureAlignments.get(textureID), 0});
+                        textureExplanations.put(exampleTexture, diagram.getCategoryName(bar));
+                    } else {
+                        barLength = 0; // nonexistent data point
+                        Rectangle hintTextCellArea = new Rectangle(barCellArea);
+                        hintTextCellArea.removeFromLeft(1 + ceil(originXDotCoordinate / (double) canvas.getCellWidth())); // move to left side of y axis
+                        BrailleText nonexistentDataHint = new BrailleText(nonexistentDataText, canvas.toDotRectangle(hintTextCellArea));
+                        mTextRasterizer.rasterize(nonexistentDataHint, canvas);
+                    }
                     borderBeforeCellArea = borderAfterCellArea;
-                    // Save used texture and corresponding name for explanation in legend
-                    Texture<Boolean> exampleTexture = mTextures.get(textureID).setAffineTransformation(new double[]{mPositiveTextureAlignments.get(textureID), 0});
-                    textureExplanations.put(exampleTexture, diagram.getCategoryName(bar));
-                    // the group caption for each first bar in a group
-                    if (bar == 0) {
-                        Rectangle groupCaptionCellArea = canvas.toDotRectangle(mCaptionCellArea.intersectedWith(barCellArea));
-                        BrailleText captionName = new BrailleText(Character.toString(groupCaptionLetter), groupCaptionCellArea);
+                    if (bar == (amountOfBarsInGroup - 1) / 2) { // the group caption for each first bar in a group
+                        Rectangle groupCaptionDotArea = canvas.toDotRectangle(mCaptionCellArea.intersectedWith(barCellArea));
+                        BrailleText captionName = new BrailleText(Character.toString(groupCaptionLetter), groupCaptionDotArea.translatedBy(0, mBarThickness * canvas.getCellHeight() * (1 - (amountOfBarsInGroup % 2))));
                         mTextRasterizer.rasterize(captionName, canvas);
                         groupCaptionLetter++;
                         int dashedLineStartX = canvas.toDotRectangle(mNegativeChartCellArea).intWrapper().getX(); // dashed caption help line
@@ -251,14 +264,13 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
                             Rasterizer.dashedLine(dashedLineStartX, dashedLineStartY, dashedLineLength, true, canvas.getCurrentPage(), 1);
                         }
                     }
-                    bar++;
                 }
                 group++;
             }
 
             // PHASE 3 - DIAGRAM LEGEND: Symbols and textures are explained in the legend which will be created by the LegendRasterizer
             Legend diagramLegend = new Legend(title); // Create a legend container
-            diagramLegend.addSymbolExplanation("Achsenskalierung:", "X-Achse", "Größenordung " + xAxisScalingMagnitude); // Explain axis scaling
+            diagramLegend.addSymbolExplanation("Achsenskalierung:", "X-Achse", "Faktor " + xAxisScalingMagnitude); // Explain axis scaling
             diagramLegend.addSymbolExplanationGroup("Kategorien:", groupNameExplanations); // Explain bar group single character captions
             if (textureExplanations.size() > 1) { // Explain textures (if multiple of them were used)
                 diagramLegend.addTextureExplanationGroup("Reihen:", textureExplanations);
@@ -348,6 +360,20 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
 
     private int countTotalBarAmount(final BarChart diagram) throws InsufficientRenderingAreaException {
         int amountOfBars = 0;
+
+        int barsPerGroup = 0;
+        for (PointList group : diagram.getDataSet()) {
+            if (group.getSize() > barsPerGroup) {
+                barsPerGroup = group.getSize();
+            }
+
+        }
+        if (barsPerGroup > mTextures.size()) {
+            throw new InsufficientRenderingAreaException("The maximum amount of bars in a group is " + mTextures.size());
+        }
+        amountOfBars = diagram.getDataSet().getSize() * barsPerGroup;
+
+        /*
         for (PointList group : diagram.getDataSet()) {
             int barsInGroup = group.getSize();
             if (barsInGroup > mTextures.size()) {
@@ -355,6 +381,7 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
             }
             amountOfBars += barsInGroup;
         }
+         */
         if (amountOfBars < 1) {
             throw new IllegalArgumentException("The given diagram does not contain any data.");
         }

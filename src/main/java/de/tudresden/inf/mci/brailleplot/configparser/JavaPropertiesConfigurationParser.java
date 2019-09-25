@@ -30,7 +30,7 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
     ) throws ConfigurationParsingException, ConfigurationValidationException {
         setValidator(new JavaPropertiesConfigurationValidator());
         parseConfigFile(defaultPath, false);
-        setDefaults(getPrinter(), getFormat("default"));
+        setDefaults(getPrinter(), getRepresentation(), getFormat("default"));
         parseConfigFile(filePath, true);
     }
 
@@ -69,6 +69,9 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
         }
         if (property instanceof PrinterProperty) {
             addProperty((PrinterProperty) property);
+        }
+        if (property instanceof RepresentationProperty) {
+            addProperty((RepresentationProperty) property);
         }
     }
 

@@ -21,11 +21,14 @@ public abstract class ConfigurationParser {
 
     private ConfigurationValidator mValidator;
     private Printer mPrinter;
+    private Representation mRepresentation;
     private Map<String, Format> mFormats = new HashMap<>();
     private File mCurrentConfigFile;
     private List<PrinterProperty> mPrinterProperties = new ArrayList<>();
+    private List<RepresentationProperty> mRepresentationProperties = new ArrayList<>();
     private Map<String, List<FormatProperty>> mFormatProperties = new HashMap<>();
     private Printer mDefaultPrinter;
+    private Representation mDefaultRepresentation;
     private Format mDefaultFormat;
 
     ConfigurationParser() {
@@ -51,6 +54,14 @@ public abstract class ConfigurationParser {
      */
     public final File getConfigFile() {
         return mCurrentConfigFile;
+    }
+
+    /**
+     * Get the representation configuration.
+     * @return A {@link Representation} object, representing the representation properties.
+     */
+    public final Representation getRepresentation() {
+        return mRepresentation;
     }
 
     /**
@@ -101,16 +112,24 @@ public abstract class ConfigurationParser {
     }
 
     /**
-     * Add a general printer property to the internal printer configuration representation.
-     * @param property The represented property of the printer.
+     * Add a general printer property to the internal representation configuration.
+     * @param property The property of the printer.
      */
     protected void addProperty(final PrinterProperty property) {
         mPrinterProperties.add(property);
     }
 
     /**
-     * Add a specific format property to the internal list of format configuration representation.
-     * @param property The represented property of a specific format.
+     * Add a general representation property to the internal printer configuration.
+     * @param property The property of the representation.
+     */
+    protected void addProperty(final RepresentationProperty property) {
+        mRepresentationProperties.add(property);
+    }
+
+    /**
+     * Add a specific format property to the internal list of format configuration.
+     * @param property The property of a specific format.
      */
     protected void addProperty(final FormatProperty property) {
         String formatName = property.getFormat();
@@ -124,17 +143,19 @@ public abstract class ConfigurationParser {
      * Set the optional default configurations for {@link Printer} and {@link Format} objects created by this parser.
      * This method should be called inside the concrete parsers constructor.
      * @param defaultPrinter A {@link Printer} object containing the default properties or null for no default to be set.
+     * @param defaultRepresentation A {@link Representation} object containing the default properties or null for no default to be set.
      * @param defaultFormat A {@link Format} object containing the default properties or null for no default to be set.
      */
-    protected final void setDefaults(final Printer defaultPrinter, final Format defaultFormat) {
+    protected final void setDefaults(final Printer defaultPrinter, final Representation defaultRepresentation, final Format defaultFormat) {
         mDefaultPrinter = defaultPrinter;
+        mDefaultRepresentation = defaultRepresentation;
         mDefaultFormat = defaultFormat;
     }
 
     /**
      * Parse the specified configuration file.
      * This method should be called inside the concrete parsers constructor after the optional default configurations
-     * ({@link #setDefaults(Printer, Format)}) and the validator ({@link #setValidator(ConfigurationValidator)}) have been set.
+     * ({@link #setDefaults(Printer, Representation, Format)}) and the validator ({@link #setValidator(ConfigurationValidator)}) have been set.
      * @param filePath The configuration file to be parsed. The type depends on the concrete implementation of the parser.
      * @param assertCompleteness Signals whether to check for existence of all required properties or not.
      * @throws ConfigurationParsingException On any error while accessing the configuration file or syntax
@@ -152,11 +173,16 @@ public abstract class ConfigurationParser {
         closeInputStream(input);
         // build printer object from added properties
         mPrinter = new Printer(mPrinterProperties);
+        mRepresentation = new Representation(mRepresentationProperties);
         if (mDefaultPrinter != null) {
             mPrinter.setFallback(mDefaultPrinter);
         }
+        if (mDefaultRepresentation != null) {
+            mRepresentation.setFallback(mDefaultRepresentation);
+        }
         if (assertCompleteness) {
             mValidator.checkPrinterConfigComplete(mPrinter);
+            mValidator.checkRepresentationConfigComplete(mRepresentation);
         }
         // build format objects from added properties
         for (String formatName : mFormatProperties.keySet()) {

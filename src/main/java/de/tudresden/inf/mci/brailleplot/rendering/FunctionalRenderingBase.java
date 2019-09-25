@@ -53,7 +53,7 @@ public class FunctionalRenderingBase {
             selectedRasterizer.rasterize(renderData, mRaster);
         } else {
             mLogger.error("No rasterizer found for given renderable type!");
-            throw new IllegalArgumentException("No rasterizer registered for renderData class: '"
+            throw new IllegalArgumentException("No rasterizer registered for renderable class: '"
                     + renderableClass.getCanonicalName() + "'");
         }
     }
