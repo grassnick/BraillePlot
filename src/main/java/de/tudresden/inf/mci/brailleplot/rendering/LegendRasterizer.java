@@ -6,6 +6,7 @@ import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import java.util.Map;
 import static java.lang.Integer.max;
+import static java.lang.StrictMath.min;
 
 /**
  * A rasterizer that is able to draw a legend on a new page.
@@ -38,7 +39,7 @@ public class LegendRasterizer implements Rasterizer<Legend> {
         mLegend = legend;
 
         // Create a fresh page on the canvas.
-        MatrixData<Boolean> page = canvas.getNewPage();
+        canvas.getNewPage();
         Rectangle referenceCellArea = canvas.getCellRectangle();
 
         try {
@@ -49,7 +50,6 @@ public class LegendRasterizer implements Rasterizer<Legend> {
             // String explanation lists
             for (Map.Entry<String, Map<String, String>> list : legend.getSymbolExplanationGroups().entrySet()) {
                 String groupName = list.getKey();
-                writeLine("", referenceCellArea); // Leave space of one empty line
                 writeLine(groupName + ":", referenceCellArea);
                 moveIndentation(referenceCellArea, EXPLANATION_TEXT_INDENTATION_CELLS); // set indentation
                 for (Map.Entry<String, String> explanation : list.getValue().entrySet()) {
@@ -63,7 +63,6 @@ public class LegendRasterizer implements Rasterizer<Legend> {
             // Texture explanation lists
             for (Map.Entry<String, Map<Texture<Boolean>, String>> list : legend.getTextureExplanationGroups().entrySet()) {
                 String groupName = list.getKey();
-                writeLine("", referenceCellArea); // Leave space of one empty line
                 writeLine(groupName + ":", referenceCellArea);
                 moveIndentation(referenceCellArea, EXPLANATION_TEXT_INDENTATION_CELLS); // set indentation
                 for (Map.Entry<Texture<Boolean>, String> explanation : list.getValue().entrySet()) {
@@ -72,6 +71,42 @@ public class LegendRasterizer implements Rasterizer<Legend> {
                     drawTextureExample(referenceCellArea, texture, description);
                 }
                 moveIndentation(referenceCellArea, -1 * EXPLANATION_TEXT_INDENTATION_CELLS); // reset indentation
+            }
+
+            // Columnview
+            if (legend.getColumnView().size() > 0) {
+                writeLine(legend.getColumnViewTitle(), referenceCellArea);
+                // int columnWidthCells = referenceCellArea.intWrapper().getWidth() / legend.getColumnView().size();
+                for (Map.Entry<String, Map<String, String>> list : legend.getColumnView().entrySet()) {
+                    //Rectangle columnCellArea = referenceCellArea.removeFromLeft(columnWidthCells);
+                    Rectangle columnCellArea = new Rectangle(referenceCellArea);
+                    //moveIndentation(columnCellArea, EXPLANATION_TEXT_INDENTATION_CELLS);
+                    writeLine(list.getKey(), columnCellArea);
+                    int maxWidth = 0;
+                    for (Map.Entry<String, String> explanation : list.getValue().entrySet()) {
+                        String symbol = explanation.getKey();
+                        String description = explanation.getValue();
+                        String textToWrite = symbol + " - " + description;
+                        try {
+                            int usedWidth = writeLine(textToWrite, columnCellArea);
+                            if (usedWidth > maxWidth) {
+                                maxWidth = usedWidth;
+                            }
+                        } catch (Rectangle.OutOfSpaceException e) {
+                            referenceCellArea.removeFromLeft(maxWidth + 1);
+                            maxWidth = 0;
+                            columnCellArea = new Rectangle(referenceCellArea);
+                            columnCellArea.removeFromTop(1);
+                            int usedWidth = writeLine(textToWrite, columnCellArea);
+                            if (usedWidth > maxWidth) {
+                                maxWidth = usedWidth;
+                            }
+                        }
+
+                    }
+                    referenceCellArea.removeFromLeft(maxWidth + 1 + EXPLANATION_TEXT_INDENTATION_CELLS);
+                    //moveIndentation(columnCellArea, -1 * EXPLANATION_TEXT_INDENTATION_CELLS); // reset indentation
+                }
             }
 
         } catch (Rectangle.OutOfSpaceException e) {
@@ -131,7 +166,7 @@ public class LegendRasterizer implements Rasterizer<Legend> {
         cellArea.setWidth(cellArea.getWidth() - indent);
     }
 
-    private void writeLine(final String text, final Rectangle cellArea) throws InsufficientRenderingAreaException, Rectangle.OutOfSpaceException {
+    private int writeLine(final String text, final Rectangle cellArea) throws InsufficientRenderingAreaException, Rectangle.OutOfSpaceException {
         if (cellArea.getWidth() < MIN_TEXT_WIDTH_CELLS) {
             throw new InsufficientRenderingAreaException("Not enough space for legend text.");
         }
@@ -140,6 +175,6 @@ public class LegendRasterizer implements Rasterizer<Legend> {
         int textHeight = max(1, (int) Math.ceil(textLength / cellArea.getWidth()));
         Rectangle textLineDotArea = mCanvas.toDotRectangle(cellArea.removeFromTop(textHeight));
         mTextRasterizer.rasterize(new BrailleText(text, textLineDotArea), mCanvas);
+        return min(textLength, cellArea.intWrapper().getWidth());
     }
-
 }

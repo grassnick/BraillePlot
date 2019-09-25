@@ -1,6 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -14,7 +15,12 @@ public class Legend implements Renderable {
     private String mTitle;
     private Map<String, Map<String, String>> mStringExplanationLists = new LinkedHashMap<>();
     private Map<String, Map<Texture<Boolean>, String>> mTextureExplanationLists = new LinkedHashMap<>();
-
+    private String mColumnViewTitle; //
+    private Map<String, Map<String, String>> mColumnView = new LinkedHashMap<>();
+    //
+    //          column title (x-axis e.g.)
+    //                       symbol
+    //                               explanation
     private int mTextureExampleWidthCells = 1;
     private int mTextureExampleHeightCells = 1;
 
@@ -54,6 +60,24 @@ public class Legend implements Renderable {
         }
         mStringExplanationLists.get(groupName).put(symbol, descriptionText);
     }
+
+
+
+    public void addColumn(final String columnName, Map<String, String> explanations) {
+            mColumnView.put(columnName, explanations);
+    }
+
+    public void setColumnViewTitle(String columnViewTitle) {
+        this.mColumnViewTitle = columnViewTitle;
+    }
+
+    public Map<String, Map<String, String>> getColumnView() {
+        return mColumnView;
+    }
+    public String getColumnViewTitle() {
+        return mColumnViewTitle;
+    }
+
 
     /**
      * Add a texture and the associated description text to the legend.
@@ -119,4 +143,5 @@ public class Legend implements Renderable {
     final int getTextureExampleHeightCells() {
         return mTextureExampleHeightCells;
     }
+
 }

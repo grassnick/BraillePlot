@@ -51,6 +51,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     @SuppressWarnings("magicnumber")
     private int offset = 3;
     private Rectangle mCellLineArea;
+    private boolean printOnSamePaper = false;
 
 
 
@@ -118,17 +119,18 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         int yNumberOfTicks = (int) getNumberOfTicks(yUnitsAvailable);
 
         // Step five: Setting correct labels for x and y axis.
-        Map<Double, String> xLabelsForLegend = new TreeMap<>();
-        Map<Double, String> yLabelsForLegend = new TreeMap<>();
+        Map<String, String> xLabelsForLegend = new TreeMap<>();
+        Map<String, String> yLabelsForLegend = new TreeMap<>();
         Map<Integer, String> labels = setCorrectLabelsforX(rangeOfXValues, xNumberOfTicks, mDpiX, xLabelsForLegend);
         Map<Integer, String> yLabels = setCorrectLabelsforY(rangeOfYValues, yNumberOfTicks, mDpiY, yLabelsForLegend);
 
         // Step six: Filling the legend.
-        mLegend.addSymbolExplanation("Achsenskalierung:", "X-Achse", "Größenordung " + mDpiX);
-        mLegend.addSymbolExplanation("Achsenskalierung:", "Y-Achse", "Größenordung " + mDpiY);
+        mLegend.addSymbolExplanation("Achsenskalierung:", "X-Achse", "Faktor " + mDpiX);
+        mLegend.addSymbolExplanation("Achsenskalierung:", "Y-Achse", "Faktor " + mDpiY);
+        mLegend.setColumnViewTitle("Werte der Tickmarks");
         setLabelsXForLegend(xLabelsForLegend);
         // Currently commented out because the legendrasterizer cant handle that much legend.
-        //setLabelsYForLegend(yLabelsForLegend);
+        setLabelsYForLegend(yLabelsForLegend);
 
         // Step seven: Iterate through the lines, rasterize the axis for each paper.
         LegendRasterizer mLegendRasterizer = new LegendRasterizer();
@@ -140,7 +142,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
             mTextRasterizer.rasterize(new BrailleText(mYAxisUnit, yAxisText), mCanvas);
             mTextRasterizer.rasterize(new BrailleText(mXAxisUnit, xAxisText), mCanvas);
             rasterizeData(mDiagram.getMinX(), mDiagram.getMinY(), iter.next());
-            if (iter.hasNext()) {
+            if (iter.hasNext() && !printOnSamePaper) {
                 mCanvas.getNewPage();
             }
         }
@@ -155,12 +157,8 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
      * Places first the value of the map and then the corresponding key.
      * @param labelsForLegend A map containing the values and the letters which will be put on the legend.
      */
-    private void setLabelsXForLegend(final Map<Double, String> labelsForLegend) {
-        Iterator itX = labelsForLegend.entrySet().iterator();
-        while (itX.hasNext()) {
-            Map.Entry pair = (Map.Entry) itX.next();
-            mLegend.addSymbolExplanation("Werte für die Tickmarks auf der X-Achse", pair.getValue().toString(), pair.getKey().toString());
-        }
+    private void setLabelsXForLegend(final Map<String, String> labelsForLegend) {
+        mLegend.addColumn("X-Achse", labelsForLegend);
     }
 
     /**
@@ -168,12 +166,8 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
      * Places first the value of the map and then the corresponding key.
      * @param labelsForLegend A map containing the values and the letters which will be put on the legend.
      */
-    private void setLabelsYForLegend(final Map<Double, String> labelsForLegend) {
-        Iterator itX = labelsForLegend.entrySet().iterator();
-        while (itX.hasNext()) {
-            Map.Entry pair = (Map.Entry) itX.next();
-            mLegend.addSymbolExplanation("Werte für die Tickmarks auf der Y-Achse", pair.getValue().toString(), pair.getKey().toString());
-        }
+    private void setLabelsYForLegend(final Map<String, String> labelsForLegend) {
+        mLegend.addColumn("Y-Achse", labelsForLegend);
     }
 
     /**
@@ -285,7 +279,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
      * @return A map containing the correct number of labels which will be needed to address all datapoints in {@link LineChart}.
      */
     @SuppressWarnings("finalparameters")
-    private Map<Integer, String> setCorrectLabelsforY(final double rangeOfYValues, final int numberOfTicks, double dpi, Map<Double, String> yLabelsForLegend) {
+    private Map<Integer, String> setCorrectLabelsforY(final double rangeOfYValues, final int numberOfTicks, double dpi, Map<String, String> yLabelsForLegend) {
         Objects.requireNonNull(yLabelsForLegend, "The given map for setting the correct labels for the y-axis was null!");
         double min = mDiagram.getData().getMinY();
         Map<Integer, String> result = new HashMap<>();
@@ -295,9 +289,9 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         for (int i = 0; i < numberOfTicks; i++) {
             result.put(i, String.valueOf(letter));
             if (i == 0) {
-                yLabelsForLegend.put(min, String.valueOf(letter));
+                yLabelsForLegend.put(String.valueOf(letter), String.valueOf(min));
             } else {
-                yLabelsForLegend.put((dpi + min), String.valueOf(letter));
+                yLabelsForLegend.put(String.valueOf(letter), String.valueOf((dpi + min)));
                 dpi = dpi + tmpDpi;
             }
             letter++;
@@ -311,7 +305,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     /**
      * Calculates the resolution (meaning how much in the datapoint we go if we do one tickmark-step).
      * @param rangeOfValues The range of values in the {@link LineChart}.
-     * @param UnitsAvailable How many units (Braillecells) are available on the axis.
+     * @param unitsAvailable How many units (Braillecells) are available on the axis.
      * @return Double representing the resolution.
      */
     @SuppressWarnings("magicnumber")
@@ -345,7 +339,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
      * @return A map containing the correct number of labels which will be needed to address all datapoints in {@link LineChart}.
      */
     @SuppressWarnings("finalparameters")
-    private Map<Integer, String> setCorrectLabelsforX(final double rangeOfXValues, final int numberOfTicks, double dpi, Map<Double, String> xLabelsForLegend) {
+    private Map<Integer, String> setCorrectLabelsforX(final double rangeOfXValues, final int numberOfTicks, double dpi, Map<String, String> xLabelsForLegend) {
         Objects.requireNonNull(xLabelsForLegend, "The given map to set the correct labels for the x-axis was null!");
         double min = mDiagram.getMinX();
         Map<Integer, String> result = new HashMap<>();
@@ -355,9 +349,9 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         for (int i = 0; i < numberOfTicks; i++) {
             result.put(i, String.valueOf(letter));
             if (i == 0) {
-                xLabelsForLegend.put(min, String.valueOf(letter));
+                xLabelsForLegend.put(String.valueOf(letter), String.valueOf(min));
             } else {
-                xLabelsForLegend.put((dpi + min), String.valueOf(letter));
+                xLabelsForLegend.put(String.valueOf(letter), String.valueOf((dpi + min)));
                 dpi = dpi + tmpDpi;
             }
             letter++;
