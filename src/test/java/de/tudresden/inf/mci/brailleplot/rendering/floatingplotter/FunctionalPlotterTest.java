@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * @author Leonard Kupper and Richard Schmidt
@@ -26,7 +27,7 @@ class FunctionalPlotterTest {
 
     static File getResource(String fileName) {
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        return new File(classLoader.getResource(fileName).getFile());
+        return new File(Objects.requireNonNull(classLoader.getResource(fileName)).getFile());
     }
 
     @BeforeAll

@@ -6,6 +6,7 @@ import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
+import de.tudresden.inf.mci.brailleplot.rendering.Legend;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -30,6 +31,8 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
         mCanvas.readConfig();
         mData = mCanvas.getCurrentPage();
         mDiagram = Objects.requireNonNull(diagram);
+        String title = "";
+        mLegend = new Legend(title);
         mPageHeight = mCanvas.getPrintableHeight();
         mPageWidth = mCanvas.getPrintableWidth();
         mResolution = mCanvas.getResolution();
@@ -40,9 +43,12 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
         drawAxes();
         mScaleX = scaleAxis("x");
         mScaleY = scaleAxis("y");
+        mCanvas.setXScaleFactor(mScaleX[mScaleX.length - 1]);
+        mCanvas.setYScaleFactor(mScaleY[mScaleY.length - 1]);
+        mCanvas.setType(0);
         nameXAxis();
         nameYAxis();
-
+        nameTitle();
 
         // draw points and frames
         PointListContainer<PointList> bigList = mDiagram.getDataSet();
@@ -51,6 +57,7 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
         for (int i = 0; i < bigList.getSize(); i++) {
             if (bigListIt.hasNext()) {
                 PointList smallList = bigListIt.next();
+                mLegend.addSymbolExplanation("frames", Integer.toString(i), smallList.getName());
                 Iterator<Point2DDouble> smallListIt = smallList.iterator();
                 for (int j = 0; j < smallList.getSize(); j++) {
                     if (smallListIt.hasNext()) {
@@ -64,6 +71,7 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
         }
 
         drawGrid();
+        plotLegend();
 
         return 0;
 

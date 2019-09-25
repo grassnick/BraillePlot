@@ -74,6 +74,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
         }
 
         drawGrid();
+        plotLegend();
 
         return 0;
 

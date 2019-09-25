@@ -39,6 +39,13 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
     // second y-axis
     private boolean mSecondAxis;
 
+    // scale factors
+    private int mXScaleFactor;
+    private int mYScaleFactor;
+
+    // diagram type
+    int mType;
+
     // constants
     private static final int THREE = 3;
 
@@ -118,6 +125,30 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
 
     public final boolean getFrames() {
         return mFrames;
+    }
+
+    public final void setXScaleFactor(final int factor) {
+        mXScaleFactor = factor;
+    }
+
+    public final int getXScaleFactor() {
+        return mXScaleFactor;
+    }
+
+    public final void setYScaleFactor(final int factor) {
+        mYScaleFactor = factor;
+    }
+
+    public final int getYScaleFactor() {
+        return mYScaleFactor;
+    }
+
+    public final void setType(final int type) {
+        mType = type;
+    }
+
+    public final int getType() {
+        return mType;
     }
 
 }

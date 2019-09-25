@@ -40,7 +40,7 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
      * Constructor for liblouistextplotter.
      * @param printer Needed to get the semantictable according to the printer config.
      */
-    public LiblouisBrailleTextPlotter(final Printer printer) {
+    LiblouisBrailleTextPlotter(final Printer printer) {
 
         Objects.requireNonNull(printer, "The given printer for the LiblouisBrailleTextPlotter was null!");
         try {

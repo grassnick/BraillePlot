@@ -41,8 +41,16 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
         drawAxes();
         mScaleX = scaleAxis("x");
         mScaleY = scaleAxis("y");
+        mCanvas.setXScaleFactor(mScaleX[mScaleX.length - 1]);
+        mCanvas.setYScaleFactor(mScaleY[mScaleY.length - 1]);
+        if (mFrames) {
+            mCanvas.setType(2);
+        } else {
+            mCanvas.setType(1);
+        }
         nameXAxis();
         nameYAxis();
+        nameTitle();
 
         // draw points, frames and lines
         PointListContainer<PointList> bigList = mDiagram.getDataSet();
@@ -139,6 +147,7 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
         }
 
         drawGrid();
+        plotLegend();
 
         return 0;
 

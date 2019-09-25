@@ -6,6 +6,7 @@ import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
+import de.tudresden.inf.mci.brailleplot.rendering.Legend;
 import tec.units.ri.quantity.Quantities;
 import tec.units.ri.unit.MetricPrefix;
 
@@ -25,6 +26,7 @@ abstract class AbstractPlotter<T extends Diagram> {
     PlotCanvas mCanvas;
     FloatingPointData<Boolean> mData;
     T mDiagram;
+    Legend mLegend;
 
 
     int mNumberXTicks;
@@ -68,8 +70,6 @@ abstract class AbstractPlotter<T extends Diagram> {
     static final int TWENTY = 20;
     static final int TWENTYONE = 21;
     static final int THIRTY = 30;
-    static final double CIRCLEDIA = 15;
-    static final double CIRCLESCALE = 1.45;
     static final double HMULT = 2;
     static final double TMULT = 2;
     static final double WMULT = 3;
@@ -383,6 +383,11 @@ abstract class AbstractPlotter<T extends Diagram> {
                 }
             }
         }
+    }
+
+    void plotLegend() {
+        LegendPlotter plotter = new LegendPlotter();
+        plotter.plot(mLegend, mCanvas);
     }
 
     /**

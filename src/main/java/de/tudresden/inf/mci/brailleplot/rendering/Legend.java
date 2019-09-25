@@ -11,7 +11,10 @@ import java.util.Objects;
  */
 public class Legend implements Renderable {
 
+    private String[] mYNames;
     private String mTitle;
+    private String mXUnit;
+    private String mYUnit;
     private Map<String, Map<String, String>> mStringExplanationLists = new LinkedHashMap<>();
     private Map<String, Map<Texture<Boolean>, String>> mTextureExplanationLists = new LinkedHashMap<>();
 
@@ -100,7 +103,7 @@ public class Legend implements Renderable {
      * Get all text symbol explanation groups from the legend.
      * @return A map associating every group name with a map listing the text symbols and their associated description texts.
      */
-    final Map<String, Map<String, String>> getSymbolExplanationGroups() {
+    public final Map<String, Map<String, String>> getSymbolExplanationGroups() {
         return mStringExplanationLists;
     }
 
@@ -118,5 +121,29 @@ public class Legend implements Renderable {
 
     final int getTextureExampleHeightCells() {
         return mTextureExampleHeightCells;
+    }
+
+    public final void setYNames(final String[] names) {
+        mYNames = names;
+    }
+
+    public final String[] getYNames() {
+        return mYNames;
+    }
+
+    public final void setXUnit(final String xUnit) {
+        mXUnit = xUnit;
+    }
+
+    public final String getXUnit() {
+        return mXUnit;
+    }
+
+    public final void setYUnit(final String yUnit) {
+        mYUnit = yUnit;
+    }
+
+    public final String getYUnit() {
+        return mYUnit;
     }
 }

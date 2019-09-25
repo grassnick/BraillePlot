@@ -24,6 +24,8 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
 
     boolean mFrames = true;
     private boolean mRightAxis;
+    static final double CIRCLEDIA = 15;
+    static final double CIRCLESCALE = 1.45;
 
     /**
      * Draws x- and y-axis.
@@ -221,7 +223,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
      * @param xValue Absolute x-value of center.
      * @param yValue Absolute y-value of center.
      */
-    private void drawCircle(final double xValue, final double yValue) {
+    void drawCircle(final double xValue, final double yValue) {
         double lastX = 0;
 
         for (double x = xValue - CIRCLEDIA / 2; x <= xValue + CIRCLEDIA / 2; x += mStepSize) {
