@@ -60,9 +60,9 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
         mNamesY = new String[mCatList.getSize()];
         mCanvas.setXScaleFactor(mScaleX[mScaleX.length - 1]);
         mCanvas.setType(THREE);
-        nameXAxis();
-        nameYAxis();
-        nameTitle();
+        // nameXAxis();
+        // nameYAxis();
+        // nameTitle();
 
         Iterator<PointList> catListIt = mCatList.iterator();
         for (int i = 0; i < mNamesY.length; i++) {

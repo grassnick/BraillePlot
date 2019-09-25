@@ -10,9 +10,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
-import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
+import de.tudresden.inf.mci.brailleplot.datacontainers.*;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
@@ -190,13 +188,13 @@ public final class App {
             classloader = Thread.currentThread().getContextClassLoader();
             csvStream = classloader.getResourceAsStream("examples/csv/1_scatter_plot.csv");
             csvReader = new BufferedReader(new InputStreamReader(csvStream));
-            InputStream csvStream2 = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_grouped.csv");
+            InputStream csvStream2 = classloader.getResourceAsStream("examples/csv/0_bar_chart.csv");
             Reader csvReader2 = new BufferedReader(new InputStreamReader(csvStream2));
 
             csvParser = new CsvParser(csvReader, ',', '\"');
             PointListContainer<PointList> container2 = csvParser.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
             CsvParser csvParser2 = new CsvParser(csvReader2, ',', '\"');
-            CategoricalPointListContainer<PointList> container3 = csvParser2.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
+            PointListContainer<PointList> container3 = csvParser2.parse(CsvType.X_ALIGNED, CsvOrientation.VERTICAL);
             mLogger.debug("Internal data representation:\n {}", container.toString());
 
             // FloatingPointData SVG exporting example
@@ -218,11 +216,11 @@ public final class App {
 
             LinePlot lineplot = new LinePlot(container2);
             LinePlotter plotter2 = new LinePlotter();
-            plotter2.plot(lineplot, floatCanvas);
+            // plotter2.plot(lineplot, floatCanvas);
 
-            BarChart bar = new BarChart(container3);
+            CategoricalBarChart bar = new CategoricalBarChart(container3);
             StackedBarChartPlotter plotter3 = new StackedBarChartPlotter();
-            // plotter3.plot(bar, floatCanvas);
+            plotter3.plot(bar, floatCanvas);
 
             GroupedBarChartPlotter plotter4 = new GroupedBarChartPlotter();
             // plotter4.plot(bar, floatCanvas);

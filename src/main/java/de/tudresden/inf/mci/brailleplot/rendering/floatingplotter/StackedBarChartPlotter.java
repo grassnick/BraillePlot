@@ -68,7 +68,7 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
         }
 
         drawGrid();
-        plotLegend();
+        // plotLegend();
 
         return 0;
 
