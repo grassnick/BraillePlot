@@ -34,7 +34,7 @@ public class RasterCanvasTest {
         Assertions.assertDoesNotThrow(
                 () -> {
                     ConfigurationParser parser = new JavaPropertiesConfigurationParser(mBaseConfig, mDefaultConfig);
-                    RasterCanvas canvas = new SixDotBrailleRasterCanvas(parser.getPrinter(), parser.getFormat("test"));
+                    RasterCanvas canvas = new SixDotBrailleRasterCanvas(parser.getPrinter(), parser.getRepresentation(), parser.getFormat("test"));
 
                     // pre-calculated and measured correct values:
                     int x = 0;
@@ -80,7 +80,7 @@ public class RasterCanvasTest {
         Assertions.assertDoesNotThrow(
                 () -> {
                     ConfigurationParser parser = new JavaPropertiesConfigurationParser(mMarginsOnlyConfig, mDefaultConfig);
-                    RasterCanvas canvas = new SixDotBrailleRasterCanvas(parser.getPrinter(), parser.getFormat("test"));
+                    RasterCanvas canvas = new SixDotBrailleRasterCanvas(parser.getPrinter(), parser.getRepresentation(), parser.getFormat("test"));
 
                     // pre-calculated and measured correct values:
                     // 6 mm left margin -> 1 cell border
@@ -114,7 +114,7 @@ public class RasterCanvasTest {
         Assertions.assertDoesNotThrow(
                 () -> {
                     ConfigurationParser parser = new JavaPropertiesConfigurationParser(mConstraintOnlyConfig, mDefaultConfig);
-                    RasterCanvas canvas = new SixDotBrailleRasterCanvas(parser.getPrinter(), parser.getFormat("test"));
+                    RasterCanvas canvas = new SixDotBrailleRasterCanvas(parser.getPrinter(), parser.getRepresentation(), parser.getFormat("test"));
 
                     // pre-calculated and measured correct values:
                     // width-constraint: 190.0 mm -> fits 32 cells h.
@@ -147,7 +147,7 @@ public class RasterCanvasTest {
         Assertions.assertDoesNotThrow(
                 () -> {
                     ConfigurationParser parser = new JavaPropertiesConfigurationParser(mBothConfig, mDefaultConfig);
-                    RasterCanvas canvas = new SixDotBrailleRasterCanvas(parser.getPrinter(), parser.getFormat("test"));
+                    RasterCanvas canvas = new SixDotBrailleRasterCanvas(parser.getPrinter(), parser.getRepresentation(), parser.getFormat("test"));
 
                     // pre-calculated and measured correct values:
                     // width-constraint: 190.0 mm -> fits 32 cells h.
@@ -181,7 +181,7 @@ public class RasterCanvasTest {
         Assertions.assertDoesNotThrow(
                 () -> {
                     ConfigurationParser parser = new JavaPropertiesConfigurationParser(mBaseConfig, mDefaultConfig);
-                    MasterRenderer renderer = new MasterRenderer(parser.getPrinter(), parser.getFormat("test"));
+                    MasterRenderer renderer = new MasterRenderer(parser.getPrinter(), parser.getRepresentation(), parser.getFormat("test"));
                     RasterCanvas result = renderer.rasterize(new Image(getResource("examples/img/dummy.bmp")));
                     ListIterator iter = result.getPageIterator();
                     while (iter.hasNext()) {
