@@ -26,6 +26,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     double mMinWidth;
     double[] mGridHelp;
     String[] mNamesY;
+    char[] mSymbolsY;
 
     // constants
     private static final double STAIRDIST = 6;
@@ -50,11 +51,15 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
         mResolution = mCanvas.getResolution();
         mStepSize = mCanvas.getDotDiameter();
 
+        mSymbolsY = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+
         checkResolution();
         calculateRanges();
         drawAxes();
         mScaleX = scaleAxis("z");
         mNamesY = new String[mCatList.getSize()];
+        nameXAxis();
+        nameYAxis();
 
         Iterator<PointList> catListIt = mCatList.iterator();
         for (int i = 0; i < mNamesY.length; i++) {

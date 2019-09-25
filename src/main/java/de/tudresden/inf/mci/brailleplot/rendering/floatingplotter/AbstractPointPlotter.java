@@ -2,8 +2,10 @@ package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 
 import de.tudresden.inf.mci.brailleplot.diagrams.Diagram;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
+import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
+import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
 import tec.units.ri.quantity.Quantities;
 import tec.units.ri.unit.MetricPrefix;
 
@@ -170,6 +172,23 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
                     grid.addPoint(point);
                 }
             }
+        }
+    }
+
+    @Override
+    void nameYAxis() {
+
+        double height = mCanvas.getCellHeight();
+        double width = mCanvas.getCellWidth();
+        double startX = mLeftMargin - mCanvas.getCellDistHor() - width;
+        double halfCell = (height - mCanvas.getDotDiameter()) / 2;
+
+        LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
+
+        for (int i = 0; i < mNumberYTicks; i++) {
+            Rectangle rect = new Rectangle(startX, mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
+            BrailleText text = new BrailleText(Integer.toString(mScaleY[i]), rect);
+            tplotter.plot(text, mCanvas);
         }
     }
 

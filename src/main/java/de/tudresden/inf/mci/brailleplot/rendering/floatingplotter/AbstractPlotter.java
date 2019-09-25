@@ -2,8 +2,10 @@ package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 
 import de.tudresden.inf.mci.brailleplot.diagrams.Diagram;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
+import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
 import tec.units.ri.quantity.Quantities;
 import tec.units.ri.unit.MetricPrefix;
 
@@ -336,6 +338,54 @@ abstract class AbstractPlotter<T extends Diagram> {
     }
 
     /**
+     * Names the axis ticks on x-axis.
+     */
+    void nameXAxis() {
+
+        double startY = mBottomMargin + mCanvas.getCellDistVer();
+        double height = mCanvas.getCellHeight();
+        double width = mCanvas.getCellWidth();
+        double halfCell = (width - mCanvas.getDotDiameter()) / 2;
+
+        LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
+
+        for (int i = 0; i < mNumberXTicks; i++) {
+            Rectangle rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - halfCell, startY, width, height);
+            BrailleText text = new BrailleText(Integer.toString(mScaleX[i]), rect);
+            tplotter.plot(text, mCanvas);
+        }
+    }
+
+    /**
+     * Puts the title above the diagram.
+     */
+    void nameTitle() {
+
+        int k = 0;
+        double height = mCanvas.getCellHeight();
+        double width = mCanvas.getCellWidth();
+        double stepHor = width + mCanvas.getCellDistHor();
+        double stepVer = height + mCanvas.getCellDistVer();
+        String[] title = "Hallo".split("");
+
+        LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
+
+        loop:
+        for (int i = 0; i < 2; i++) {
+            for (double j = mCanvas.getCellDistHor() + mCanvas.getDotDiameter() / 2; j < mCanvas.getPageWidth() - width - mCanvas.getCellDistHor(); j += stepHor) {
+                if (k < title.length) {
+                    Rectangle rect = new Rectangle(j, mCanvas.getCellDistVer() + i * stepVer, width, height);
+                    BrailleText text = new BrailleText(title[k], rect);
+                    k++;
+                    j = tplotter.plot(text, mCanvas);
+                } else {
+                    break loop;
+                }
+            }
+        }
+    }
+
+    /**
      * Draws x- and y-axis.
      */
     abstract void drawAxes();
@@ -344,5 +394,10 @@ abstract class AbstractPlotter<T extends Diagram> {
      * Draw a grid with twice as many lines as ticks per axis.
      */
     abstract void drawGrid();
+
+    /**
+     * Names the y-axis.
+     */
+    abstract void nameYAxis();
 
 }

@@ -4,9 +4,11 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
+import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
 import tec.units.ri.quantity.Quantities;
 import tec.units.ri.unit.MetricPrefix;
 
@@ -33,7 +35,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
      * if there are more data series than textures.
      */
     @Override
-    public void plot(final CategoricalBarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
+    public double plot(final CategoricalBarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
         prereq(diagram, canvas);
 
@@ -72,6 +74,8 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
         }
 
         drawGrid();
+
+        return 0;
 
     }
 
@@ -139,6 +143,23 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
             }
         }
 
+    }
+
+    @Override
+    void nameYAxis() {
+
+        double height = mCanvas.getCellHeight();
+        double width = mCanvas.getCellWidth();
+        double startX = mLeftMargin - mCanvas.getCellDistHor() - width;
+        double halfCell = (height - mCanvas.getDotDiameter()) / 2;
+
+        LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
+
+        for (int i = 0; i < mNumBarGroup; i++) {
+            Rectangle rect = new Rectangle(startX, mBottomMargin - mBarDist - mBarGroupWidth / 2 - halfCell - i * (mBarDist + mBarGroupWidth), width, height);
+            BrailleText text = new BrailleText(Character.toString(mSymbolsY[i]), rect);
+            tplotter.plot(text, mCanvas);
+        }
     }
 
 }

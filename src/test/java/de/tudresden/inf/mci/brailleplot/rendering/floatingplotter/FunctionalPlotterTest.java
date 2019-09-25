@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 
 /**
- * @author Leonard Kupper
+ * @author Leonard Kupper and Richard Schmidt
  */
 class FunctionalPlotterTest {
 
@@ -45,8 +45,9 @@ class FunctionalPlotterTest {
     @Test
     void testInvalidDirectCall() {
         // Create FunctionalPlotter
-        FunctionalPlotter<ScatterPlot> plotter = new FunctionalPlotter<>(ScatterPlot.class, (data, canvas) -> {
+        FunctionalPlotter<ScatterPlot> plotter = new FunctionalPlotter<ScatterPlot>(ScatterPlot.class, (data, canvas) -> {
             // dummy
+            return 0;
         });
 
         // The FunctionalRasterizer should not be called directly, it is meant to be called by its RenderingBase

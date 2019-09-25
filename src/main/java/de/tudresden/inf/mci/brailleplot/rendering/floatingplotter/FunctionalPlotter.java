@@ -35,11 +35,12 @@ public class FunctionalPlotter<T extends Diagram> implements Plotter {
     }
 
     @Override
-    public void plot(final Renderable data, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
+    public double plot(final Renderable data, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
         // invoke the given plotting algorithm
         T safeData = safeCast(data);
         mLogger.trace("Delegating task to bound rasterizing algorithm {}", mPlottingAlgorithm);
         mPlottingAlgorithm.accept(safeData, canvas);
+        return 0;
     }
 
     /**

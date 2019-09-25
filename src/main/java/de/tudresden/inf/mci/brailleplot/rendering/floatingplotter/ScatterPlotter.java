@@ -24,7 +24,7 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
      * if there are more data series than frames.
      */
     @Override
-    public void plot(final ScatterPlot diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
+    public double plot(final ScatterPlot diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
         mCanvas = Objects.requireNonNull(canvas);
         mCanvas.readConfig();
@@ -40,6 +40,8 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
         drawAxes();
         mScaleX = scaleAxis("x");
         mScaleY = scaleAxis("y");
+        nameXAxis();
+        nameYAxis();
 
 
         // draw points and frames
@@ -62,6 +64,8 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
         }
 
         drawGrid();
+
+        return 0;
 
     }
 

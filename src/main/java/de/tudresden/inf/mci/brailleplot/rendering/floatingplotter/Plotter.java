@@ -20,5 +20,5 @@ public interface Plotter<T extends Renderable> {
      * @throws InsufficientRenderingAreaException If too few space is available on the {@link PlotCanvas} or
      * if there are more data series than textures, frames or line styles.
      */
-    void plot(T data, PlotCanvas canvas) throws InsufficientRenderingAreaException;
+    double plot(T data, PlotCanvas canvas) throws InsufficientRenderingAreaException;
 }

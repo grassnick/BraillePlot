@@ -24,7 +24,7 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
      * if there are more data series than frames or line styles.
      */
     @Override
-    public void plot(final LinePlot diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
+    public double plot(final LinePlot diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
         mCanvas = Objects.requireNonNull(canvas);
         mCanvas.readConfig();
@@ -41,6 +41,8 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
         drawAxes();
         mScaleX = scaleAxis("x");
         mScaleY = scaleAxis("y");
+        nameXAxis();
+        nameYAxis();
 
         // draw points, frames and lines
         PointListContainer<PointList> bigList = mDiagram.getDataSet();
@@ -137,6 +139,8 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
         }
 
         drawGrid();
+
+        return 0;
 
     }
 }
