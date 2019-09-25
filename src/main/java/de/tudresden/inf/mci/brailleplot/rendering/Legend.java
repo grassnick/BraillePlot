@@ -1,7 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -61,19 +60,35 @@ public class Legend implements Renderable {
         mStringExplanationLists.get(groupName).put(symbol, descriptionText);
     }
 
-
-
-    public void addColumn(final String columnName, Map<String, String> explanations) {
+    /**
+     * Add a column to the columnview.
+     * @param columnName Name of column.
+     * @param explanations {@link Map} of symbols and descriptions inside the column.
+     */
+    public void addColumn(final String columnName, final Map<String, String> explanations) {
             mColumnView.put(columnName, explanations);
     }
 
-    public void setColumnViewTitle(String columnViewTitle) {
+    /**
+     * Set the columnview title.
+     * @param columnViewTitle The title for the columnview.
+     */
+    public void setColumnViewTitle(final String columnViewTitle) {
         this.mColumnViewTitle = columnViewTitle;
     }
 
+    /**
+     * Getter for the column-view.
+     * @return {@link Map} representing the columnview.
+     */
     public Map<String, Map<String, String>> getColumnView() {
         return mColumnView;
     }
+
+    /**
+     * Getter for the columnview-title.
+     * @return {@link String} representing the columnview-title.
+     */
     public String getColumnViewTitle() {
         return mColumnViewTitle;
     }

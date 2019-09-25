@@ -63,7 +63,8 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
      * Method for rasterizing a {@link LineChart}-diagram.
      * @param data The renderable representation.
      * @param canvas An instance of {@link RasterCanvas} representing the target for the rasterizer output.
-     * @throws InsufficientRenderingAreaException
+     * @throws InsufficientRenderingAreaException If the data can not be rasterized due to shortcomings of the algorithm
+     *                                              or because the data was too big.
      */
     @Override
     public void rasterize(final LineChart data, final RasterCanvas canvas) throws InsufficientRenderingAreaException {

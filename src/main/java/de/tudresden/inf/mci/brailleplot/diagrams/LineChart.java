@@ -33,14 +33,6 @@ public class LineChart implements Renderable {
     }
 
     /**
-     * Getter for the number of lines in the chart.
-     * @return Number of lines in the chart.
-     */
-    public int getNumberOfLines() {
-        return mData.getSize();
-    }
-
-    /**
      * Getter for the minimum y-value.
      * @return minimum y-value.
      */
