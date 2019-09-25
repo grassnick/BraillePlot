@@ -8,6 +8,7 @@ import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.printerbackend.NotSupportedFileExtensionException;
 import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
+import de.tudresden.inf.mci.brailleplot.util.GeneralResource;
 import org.liblouis.DisplayException;
 import org.liblouis.DisplayTable;
 import org.liblouis.TranslationException;
@@ -18,6 +19,7 @@ import tec.units.ri.unit.MetricPrefix;
 
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
+import java.io.File;
 import java.util.Objects;
 
 import static tec.units.ri.unit.Units.METRE;
@@ -36,6 +38,9 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
     // constant
     private static final int THREE = 3;
 
+    // translator needs whole table directory, therefore it is exported one time at start (static resource).
+    private static File mLibLouisTableDirectory = GeneralResource.getOrExportResourceFile("mapping/liblouis/");
+
     /**
      * Constructor for liblouistextplotter.
      * @param printer Needed to get the semantictable according to the printer config.
@@ -49,7 +54,9 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
             throw new RuntimeException(e);
         }
         try {
-            mTranslator = new Translator("src\\main\\resources\\mapping\\liblouis\\de-g0.utb");
+            File tableFile = mLibLouisTableDirectory.toPath().resolve("de-g0.utb").toFile(); // reference to specific table file in exported directory
+            String tableFilePath = tableFile.getAbsolutePath();
+            mTranslator = new Translator(tableFilePath);
         } catch (Exception e) {
             throw new RuntimeException(e.getCause());
         }
@@ -89,7 +96,7 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
 
 
             for (int i = 0; i < 2; i++) {
-                for (int j = 0; i < THREE; i++) {
+                for (int j = 0; j < THREE; j++) {
                     if (braille[THREE * i + j].equals("1")) {
                         addPointByValues(startX + i * widthJump + k * cellJump, startY + j * heightJump);
                         last = startX + k * cellJump;

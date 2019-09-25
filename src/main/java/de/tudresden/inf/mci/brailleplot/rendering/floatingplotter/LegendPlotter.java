@@ -85,8 +85,8 @@ public class LegendPlotter implements Plotter<Legend> {
             int len = map2.size();
             for (int i = 0; i < len; i++) {
                 String frame = map2.get(Integer.toString(i));
-                ScatterPlotter plotter = new ScatterPlotter();
-                plotter.drawCircle(0, last);
+                ScatterPlotter plotter = new ScatterPlotter(mCanvas.getAxes());
+                // plotter.drawCircle(10, last);
                 char[] rahmen = ("  " + frame).toCharArray();
                 last = plotLine(rahmen, TWENTY, last);
             }

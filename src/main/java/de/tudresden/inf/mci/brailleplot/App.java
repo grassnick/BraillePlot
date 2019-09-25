@@ -175,11 +175,24 @@ public final class App {
 
             // Parse CLI parameters
             String[] axes = new String[5];
-            axes[0] = settingsReader.getSetting(SettingType.TITLE).get();
-            axes[1] = settingsReader.getSetting(SettingType.X_NAME).get();
-            axes[2] = settingsReader.getSetting(SettingType.X_UNIT).get();
-            axes[3] = settingsReader.getSetting(SettingType.Y_NAME).get();
-            axes[4] = settingsReader.getSetting(SettingType.Y_UNIT).get();
+            for (int i = 0; i < 5; i++) {
+                axes[i] = "dummy";
+            }
+            if (settingsReader.isPresent((SettingType.TITLE))) {
+                axes[0] = settingsReader.getSetting(SettingType.TITLE).get();
+            }
+            if (settingsReader.isPresent((SettingType.X_NAME))) {
+                axes[1] = settingsReader.getSetting(SettingType.X_NAME).get();
+            }
+            if (settingsReader.isPresent((SettingType.X_UNIT))) {
+                axes[2] = settingsReader.getSetting(SettingType.X_UNIT).get();
+            }
+            if (settingsReader.isPresent((SettingType.Y_NAME))) {
+                axes[3] = settingsReader.getSetting(SettingType.Y_NAME).get();
+            }
+            if (settingsReader.isPresent((SettingType.Y_UNIT))) {
+                axes[4] = settingsReader.getSetting(SettingType.Y_UNIT).get();
+            }
 
             // Parse csv data
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
@@ -195,7 +208,7 @@ public final class App {
             barChart.setYAxisName("Länge in m");
 
             // Render diagram
-            MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
+            MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format, axes);
             /*RasterCanvas canvas = renderer.rasterize(barChart);
             // SVG exporting
             SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
@@ -216,7 +229,7 @@ public final class App {
             mLogger.debug("Internal data representation:\n {}", container.toString());
 
             // FloatingPointData SVG exporting example
-            PlotCanvas floatCanvas = new PlotCanvas(indexV4Printer, a4Format);
+            PlotCanvas floatCanvas = new PlotCanvas(indexV4Printer, a4Format, axes);
             FloatingPointData<Boolean> points = floatCanvas.getNewPage();
 
             final int blockX = 230;
