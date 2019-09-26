@@ -17,8 +17,9 @@ public interface Plotter<T extends Renderable> {
      * Rasterizes a {@link Renderable} instance onto a {@link PlotCanvas}.
      * @param data The renderable representation.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the rasterizer output.
+     * @return Double needed in {@link LiblouisBrailleTextPlotter}. Indicates the last used y-coordinate.
      * @throws InsufficientRenderingAreaException If too few space is available on the {@link PlotCanvas} or
-     * if there are more data series than textures, frames or line styles.
+     * if there are more data series than frames, line styles or textures.
      */
     double plot(T data, PlotCanvas canvas) throws InsufficientRenderingAreaException;
 }

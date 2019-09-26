@@ -1,6 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 
 import de.tudresden.inf.mci.brailleplot.diagrams.Diagram;
+import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
@@ -12,6 +13,8 @@ import tec.units.ri.unit.MetricPrefix;
 
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
+
+import java.util.Objects;
 
 import static tec.units.ri.unit.Units.METRE;
 
@@ -61,6 +64,7 @@ abstract class AbstractPlotter<T extends Diagram> {
     int[] mScaleY;
 
     // constants
+    static final double ONE = 1.7;
     static final int THREE = 3;
     static final int FOUR = 4;
     static final int FIVE = 5;
@@ -73,6 +77,8 @@ abstract class AbstractPlotter<T extends Diagram> {
     static final int TWENTY = 20;
     static final int TWENTYONE = 21;
     static final int THIRTY = 30;
+    static final int THIRTYFIVE = 35;
+    static final int SIXTY = 60;
     static final double HMULT = 2;
     static final double TMULT = 2;
     static final double WMULT = 4;
@@ -394,9 +400,29 @@ abstract class AbstractPlotter<T extends Diagram> {
         }
     }
 
-    void plotLegend() {
+    /**
+     * Plots the legend.
+     * @throws InsufficientRenderingAreaException If there are more data series than frames, lines styles or textures.
+     */
+    void plotLegend() throws InsufficientRenderingAreaException {
         LegendPlotter plotter = new LegendPlotter();
+        plotter.setPlotter(this);
         plotter.plot(mLegend, mCanvas);
+    }
+
+    /**
+     * Sets mCanvas.
+     * @param canvas PlotCanvas to be set.
+     */
+    void setCanvas(final PlotCanvas canvas) {
+        mCanvas = Objects.requireNonNull(canvas);
+    }
+
+    /**
+     * Sets mData by getting the current page of mCanvas.
+     */
+    void setData() {
+        mData = mCanvas.getCurrentPage();
     }
 
     /**

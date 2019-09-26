@@ -63,6 +63,12 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
     }
 
 
+    /**
+     * Translates a text into Braille characters and plots it onto a {@link PlotCanvas}.
+     * @param data BrailleText with the text and the rectangle representing the plotting area.
+     * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
+     * @return Last y-coordinate.
+     */
     @Override
     public double plot(final BrailleText data, final PlotCanvas canvas) {
 
@@ -85,8 +91,10 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
 
         double startX = rect.getX();
         double startY = rect.getY();
-        double widthJump = canvas.getCellWidth() - canvas.getDotDiameter();
-        double heightJump = (canvas.getCellHeight() - canvas.getDotDiameter()) / 2;
+        double widthJump = canvas.getDotDistHor();
+        double heightJump = canvas.getDotDistVer();
+        // double widthJump = canvas.getCellWidth() - canvas.getDotDiameter();
+        // double heightJump = (canvas.getCellHeight() - canvas.getDotDiameter()) / 2;
         double cellJump = canvas.getCellWidth() + canvas.getCellDistHor();
         double last = startX;
         mData = canvas.getCurrentPage();
@@ -109,6 +117,11 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
 
     }
 
+    /**
+     * Adds a point by its absolute x- and y-value to the floating point data.
+     * @param x Absolute x-value.
+     * @param y Absolute y-value.
+     */
     private void addPointByValues(final double x, final double y) {
         mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true));
     }

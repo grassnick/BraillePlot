@@ -26,7 +26,6 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     double mMinDist;
     double mMinWidth;
     double[] mGridHelp;
-    private String[] mNamesY;
     char[] mSymbolsY;
 
     // constants
@@ -40,9 +39,9 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     void prereq(final CategoricalBarChart diagram, final PlotCanvas canvas) {
 
         mAxes = diagram.getAxes();
-        mCanvas = Objects.requireNonNull(canvas);
+        setCanvas(canvas);
         mCanvas.readConfig();
-        mData = mCanvas.getCurrentPage();
+        setData();
         mDiagram = Objects.requireNonNull(diagram);
         mAxes = mDiagram.getAxes();
         mLegend = new Legend(mAxes);
@@ -61,7 +60,8 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
         calculateRanges();
         drawAxes();
         mScaleX = scaleAxis("z");
-        mNamesY = new String[mCatList.getSize()];
+        String[] mNamesY = new String[mCatList.getSize()];
+        mLegend.setDesc(mNamesY);
         mCanvas.setXScaleFactor(mScaleX[mScaleX.length - 1]);
         mLegend.setType(THREE);
         nameXAxis();
@@ -72,6 +72,10 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
             if (catListIt.hasNext()) {
                 mNamesY[i] = catListIt.next().getName();
             }
+        }
+
+        for (int i = 0; i < mCatList.getNumberOfCategories(); i++) {
+            mLegend.addSymbolExplanation("textures", Integer.toString(i), mCatList.getCategory(i));
         }
     }
 
@@ -151,107 +155,227 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
 
     /**
      * Plots the rectangle and chooses a texture. Add new textures in if statement.
-     * @param startY Absolute starting y-coordinate.
+     * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
      * @param endX Absolute ending x-coordinate.
      * @param j Corresponds to the category and the texture.
+     * @param legend True if texture is for the legend, false if texture is for the diagram.
+     * @return Boolean is true, if a new page was set on the Canvas.
      * @throws InsufficientRenderingAreaException If there are more data series than textures.
      */
-    void plotAndFillRectangle(final double startY, final double endX, final int j) throws InsufficientRenderingAreaException {
+    boolean plotAndFillRectangle(final double startY, final double endX, final int j, final boolean legend) throws InsufficientRenderingAreaException {
+        boolean newPage = false;
+        double starterY = startY;
+
         // plot rectangle
-        for (double i = mLeftMargin; i <= endX; i += mStepSize) {
-            addPoint(i, startY);
-        }
-        for (double i = startY - mStepSize; i >= startY - mBarWidth; i -= mStepSize) {
-            addPoint(endX, i);
-        }
-        for (double i = mLeftMargin; i <= endX; i += mStepSize) {
-            addPoint(i, startY - mBarWidth);
+        if (legend) {
+            if (starterY > mCanvas.getPageHeight() - (mCanvas.getCellHeight() + ONE * mCanvas.getCellDistVer())) {
+                mCanvas.getNewPage();
+                setData();
+                starterY = THIRTYFIVE;
+                newPage = true;
+            }
+
+            for (int i = 0; i < 2; i++) {
+                for (double k = starterY - mStepSize; k > starterY - THIRTY; k -= mStepSize) {
+                    addPoint(FIVE + i * (endX - FIVE), k);
+                }
+            }
+            for (int i = 0; i < 2; i++) {
+                for (double k = endX - SIXTY; k <= endX; k += mStepSize) {
+                    addPoint(k, starterY - i * THIRTY);
+                }
+            }
+
+        } else {
+            for (double i = mLeftMargin; i <= endX; i += mStepSize) {
+                addPoint(i, starterY);
+            }
+            for (double i = starterY - mStepSize; i >= starterY - mBarWidth; i -= mStepSize) {
+                addPoint(endX, i);
+            }
+            for (double i = mLeftMargin; i <= endX; i += mStepSize) {
+                addPoint(i, starterY - mBarWidth);
+            }
         }
 
         // choose texture; new textures are added here
         if (j == 0) {
-            fillFullPattern(startY, endX);
+            fillFullPattern(starterY, endX, legend);
         } else if (j == 1) {
-            fillVerticalLine(startY, endX);
+            fillVerticalLine(starterY, endX, legend);
         } else if (j == 2) {
-            fillDiagonalRight(startY, endX);
+            fillDiagonalRight(starterY, endX, legend);
         } else if (j == THREE) {
-            fillGridPattern(startY, endX);
+            fillGridPattern(starterY, endX, legend);
         } else if (j == FOUR) {
-            fillDottedPattern(startY, endX);
+            fillDottedPattern(starterY, endX, legend);
         } else if (j == FIVE) {
-            fillStairPattern(startY, endX);
+            if (legend) {
+                fillStairPatternL(starterY, endX);
+            } else {
+                fillStairPatternD(starterY, endX);
+            }
         } else if (j == SIX) {
-            fillDiagonalLeft(startY, endX);
+            fillDiagonalLeft(starterY, endX, legend);
         } else {
             throw new InsufficientRenderingAreaException("There are more data series than textures.");
         }
+
+        return newPage;
     }
 
     /**
      * Fills a rectangle with the texture full_pattern.
-     * @param startY Absolute starting y-coordinate.
-     * @param endX Absolute starting y-coordinate.
+     * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
+     * @param endX Absolute ending x-coordinate.
+     * @param legend True if texture is for the legend, false if texture is for the diagram.
      */
-    private void fillFullPattern(final double startY, final double endX) {
-        for (double i = mLeftMargin + mStepSize; i < endX - mStepSize / 2; i += mStepSize) {
-            for (double j = startY - mStepSize; j > startY - mBarWidth; j -= mStepSize) {
-                addPoint(i, j);
+    private void fillFullPattern(final double startY, final double endX, final boolean legend) {
+
+        if (legend) {
+            for (double i = FIVE + mStepSize; i < endX; i += mStepSize) {
+                for (double j = startY - mStepSize; j > startY - THIRTY; j -= mStepSize) {
+                    addPoint(i, j);
+                }
+            }
+        } else {
+            for (double i = mLeftMargin + mStepSize; i < endX - mStepSize / 2; i += mStepSize) {
+                for (double j = startY - mStepSize; j > startY - mBarWidth; j -= mStepSize) {
+                    addPoint(i, j);
+                }
+            }
+        }
+    }
+
+    /**
+     * Fills a rectangle with the texture diagonal_right.
+     * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
+     * @param endX Absolute ending x-coordinate.
+     * @param legend True if texture is for the legend, false if texture is for the diagram.
+     */
+    private void fillDiagonalRight(final double startY, final double endX, final boolean legend) {
+
+        if (legend) {
+            for (double j = startY - THIRTY + mStepSize; j < startY; j += SIX * mStepSize) {
+                double y = j;
+                for (double i = FIVE + mStepSize; y < startY && i < endX; i += mStepSize) {
+                    addPoint(i, y);
+                    y += mStepSize;
+                }
+            }
+
+            for (double i = FIVE + SEVEN * mStepSize; i < endX; i += SIX * mStepSize) {
+                double y = startY - THIRTY + mStepSize;
+                for (double k = i; y < startY && k < endX; k += mStepSize) {
+                    addPoint(k, y);
+                    y += mStepSize;
+                }
+            }
+        } else {
+            for (double j = startY - mBarWidth + mStepSize; j < startY; j += SIX * mStepSize) {
+                double y = j;
+                for (double i = mLastXValue + mStepSize; y < startY && i < endX; i += mStepSize) {
+                    addPoint(i, y);
+                    y += mStepSize;
+                }
+            }
+
+            for (double i = mLastXValue + SEVEN * mStepSize; i < endX; i += SIX * mStepSize) {
+                double y = startY - mBarWidth + mStepSize;
+                for (double k = i; y < startY && k < endX; k += mStepSize) {
+                    addPoint(k, y);
+                    y += mStepSize;
+                }
             }
         }
     }
 
     /**
      * Fills a rectangle with the texture vertical_line.
-     * @param startY Absolute starting y-coordinate.
-     * @param endX Absolute starting y-coordinate.
+     * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
+     * @param endX Absolute ending x-coordinate.
+     * @param legend True if texture is for the legend, false if texture is for the diagram.
      */
-    private void fillVerticalLine(final double startY, final double endX) {
-        for (double i = mLastXValue + FIVE * mStepSize; i < endX - mStepSize; i += FIVE * mStepSize) {
-            for (double j = startY - THREE * mStepSize; j > startY - mBarWidth + THREE * mStepSize; j -= mStepSize) {
-                addPoint(i, j);
+    private void fillVerticalLine(final double startY, final double endX, final boolean legend) {
+
+        if (legend) {
+            for (double i = FIVE + FIVE * mStepSize; i < endX - mStepSize; i += FIVE * mStepSize) {
+                for (double j = startY - THREE * mStepSize; j > startY - THIRTY + THREE * mStepSize; j -= mStepSize) {
+                    addPoint(i, j);
+                }
+            }
+        } else {
+            for (double i = mLastXValue + FIVE * mStepSize; i < endX - mStepSize; i += FIVE * mStepSize) {
+                for (double j = startY - THREE * mStepSize; j > startY - mBarWidth + THREE * mStepSize; j -= mStepSize) {
+                    addPoint(i, j);
+                }
             }
         }
     }
 
     /**
      * Fills a rectangle with the texture grid_pattern.
-     * @param startY Absolute starting y-coordinate.
-     * @param endX Absolute starting y-coordinate.
+     * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
+     * @param endX Absolute ending x-coordinate.
+     * @param legend True if texture is for the legend, false if texture is for the diagram.
      */
-    private void fillGridPattern(final double startY, final double endX) {
-        for (double i = mLastXValue + FIVE * mStepSize; i < endX - 2 * mStepSize; i += FIVE * mStepSize) {
-            for (double j = startY - mStepSize; j > startY - mBarWidth; j -= mStepSize) {
-                addPoint(i, j);
-            }
-        }
+    private void fillGridPattern(final double startY, final double endX, final boolean legend) {
 
-        for (double j = startY - FIVE * mStepSize; j > startY - mBarWidth + mStepSize; j -= FIVE * mStepSize) {
-            for (double i = mLastXValue + mStepSize; i < endX; i += mStepSize) {
-                addPoint(i, j);
+        if (legend) {
+            for (double i = FIVE + FIVE * mStepSize; i < endX - 2 * mStepSize; i += FIVE * mStepSize) {
+                for (double j = startY - mStepSize; j > startY - THIRTY; j -= mStepSize) {
+                    addPoint(i, j);
+                }
+            }
+
+            for (double j = startY - FIVE * mStepSize; j > startY - THIRTY + mStepSize; j -= FIVE * mStepSize) {
+                for (double i = FIVE + mStepSize; i < endX; i += mStepSize) {
+                    addPoint(i, j);
+                }
+            }
+        } else {
+            for (double i = mLastXValue + FIVE * mStepSize; i < endX - 2 * mStepSize; i += FIVE * mStepSize) {
+                for (double j = startY - mStepSize; j > startY - mBarWidth; j -= mStepSize) {
+                    addPoint(i, j);
+                }
+            }
+
+            for (double j = startY - FIVE * mStepSize; j > startY - mBarWidth + mStepSize; j -= FIVE * mStepSize) {
+                for (double i = mLastXValue + mStepSize; i < endX; i += mStepSize) {
+                    addPoint(i, j);
+                }
             }
         }
     }
 
     /**
      * Fills a rectangle with the texture dotted_pattern.
-     * @param startY Absolute starting y-coordinate.
-     * @param endX Absolute starting y-coordinate.
+     * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
+     * @param endX Absolute ending x-coordinate.
+     * @param legend True if texture is for the legend, false if texture is for the diagram.
      */
-    private void fillDottedPattern(final double startY, final double endX) {
-        for (double i = mLastXValue + FOUR * mStepSize; i < endX - mStepSize; i += FOUR * mStepSize) {
-            for (double j = startY - FOUR * mStepSize; j > startY - mBarWidth + mStepSize; j -= FOUR * mStepSize) {
-                addPoint(i, j);
+    private void fillDottedPattern(final double startY, final double endX, final boolean legend) {
+        if (legend) {
+            for (double i = FIVE + FOUR * mStepSize; i < endX - mStepSize; i += FOUR * mStepSize) {
+                for (double j = startY - FOUR * mStepSize; j > startY - THIRTY + mStepSize; j -= FOUR * mStepSize) {
+                    addPoint(i, j);
+                }
+            }
+        } else {
+            for (double i = mLastXValue + FOUR * mStepSize; i < endX - mStepSize; i += FOUR * mStepSize) {
+                for (double j = startY - FOUR * mStepSize; j > startY - mBarWidth + mStepSize; j -= FOUR * mStepSize) {
+                    addPoint(i, j);
+                }
             }
         }
     }
 
     /**
-     * Fills a rectangle with the texture stair_pattern.
-     * @param startY Absolute starting y-coordinate.
-     * @param endX Absolute starting y-coordinate.
+     * Fills a rectangle with the texture stair_pattern on the diagram.
+     * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
+     * @param endX Absolute ending x-coordinate.
      */
-    private void fillStairPattern(final double startY, final double endX) {
+    private void fillStairPatternD(final double startY, final double endX) {
         double last = 0;
         outerloop:
         for (double j = startY - STAIRDIST; j > startY - mBarWidth; j -= 2 * STAIRDIST) {
@@ -266,7 +390,6 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
             }
             lastX = last;
-
             for (double k = j - mStepSize; k >= j - FOUR * mStepSize; k -= mStepSize) {
                 if (k > startY - mBarWidth) {
                     addPoint(lastX, k);
@@ -275,9 +398,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     continue outerloop;
                 }
             }
-
             lastY = last;
-
             while (true) {
                 for (double i = lastX + mStepSize; i <= lastX + FOUR * mStepSize; i += mStepSize) {
                     if (i < endX) {
@@ -287,9 +408,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                         continue outerloop;
                     }
                 }
-
                 lastX = last;
-
                 for (double k = lastY - mStepSize; k >= lastY - FOUR * mStepSize; k -= mStepSize) {
                     if (k > startY - mBarWidth) {
                         addPoint(lastX, k);
@@ -298,12 +417,9 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                         continue outerloop;
                     }
                 }
-
                 lastY = last;
             }
-
         }
-
         anotherloop:
         for (double i = mLastXValue + 2 * STAIRDIST; i < endX; i += 2 * STAIRDIST) {
             double lastX;
@@ -316,9 +432,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     continue anotherloop;
                 }
             }
-
             lastY = last;
-
             for (double k = i + mStepSize; k <= i + FOUR * mStepSize; k += mStepSize) {
                 if (k < endX) {
                     addPoint(k, lastY);
@@ -327,9 +441,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     continue anotherloop;
                 }
             }
-
             lastX = last;
-
             while (true) {
                 for (double j = lastY - mStepSize; j >= lastY - FOUR * mStepSize; j -= mStepSize) {
                     if (j > startY - mBarWidth) {
@@ -340,7 +452,6 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
                 lastY = last;
-
                 for (double k = lastX + mStepSize; k <= lastX + FOUR * mStepSize; k += mStepSize) {
                     if (k < endX) {
                         addPoint(k, lastY);
@@ -349,7 +460,102 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                         continue anotherloop;
                     }
                 }
+                lastX = last;
+            }
+        }
 
+    }
+
+    /**
+     * Fills a rectangle with the texture stair_pattern on the legend.
+     * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
+     * @param endX Absolute ending x-coordinate.
+     */
+    private void fillStairPatternL(final double startY, final double endX) {
+        double last = 0;
+        outerloop:
+        for (double j = startY - STAIRDIST; j > startY - THIRTY; j -= 2 * STAIRDIST) {
+            double lastX;
+            double lastY;
+            for (double i = FIVE + mStepSize; i <= FIVE + FOUR * mStepSize; i += mStepSize) {
+                if (i < endX) {
+                    addPoint(i, j);
+                    last = i;
+                } else {
+                    continue outerloop;
+                }
+            }
+            lastX = last;
+            for (double k = j - mStepSize; k >= j - FOUR * mStepSize; k -= mStepSize) {
+                if (k > startY - THIRTY) {
+                    addPoint(lastX, k);
+                    last = k;
+                } else {
+                    continue outerloop;
+                }
+            }
+            lastY = last;
+            while (true) {
+                for (double i = lastX + mStepSize; i <= lastX + FOUR * mStepSize; i += mStepSize) {
+                    if (i < endX) {
+                        addPoint(i, lastY);
+                        last = i;
+                    } else {
+                        continue outerloop;
+                    }
+                }
+                lastX = last;
+                for (double k = lastY - mStepSize; k >= lastY - FOUR * mStepSize; k -= mStepSize) {
+                    if (k > startY - THIRTY) {
+                        addPoint(lastX, k);
+                        last = k;
+                    } else {
+                        continue outerloop;
+                    }
+                }
+                lastY = last;
+            }
+        }
+        anotherloop:
+        for (double i = FIVE + 2 * STAIRDIST; i < endX; i += 2 * STAIRDIST) {
+            double lastX;
+            double lastY;
+            for (double j = startY - mStepSize; j >= startY - FOUR * mStepSize; j -= mStepSize) {
+                if (j > startY - THIRTY) {
+                    addPoint(i, j);
+                    last = j;
+                } else {
+                    continue anotherloop;
+                }
+            }
+            lastY = last;
+            for (double k = i + mStepSize; k <= i + FOUR * mStepSize; k += mStepSize) {
+                if (k < endX) {
+                    addPoint(k, lastY);
+                    last = k;
+                } else {
+                    continue anotherloop;
+                }
+            }
+            lastX = last;
+            while (true) {
+                for (double j = lastY - mStepSize; j >= lastY - FOUR * mStepSize; j -= mStepSize) {
+                    if (j > startY - THIRTY) {
+                        addPoint(lastX, j);
+                        last = j;
+                    } else {
+                        continue anotherloop;
+                    }
+                }
+                lastY = last;
+                for (double k = lastX + mStepSize; k <= lastX + FOUR * mStepSize; k += mStepSize) {
+                    if (k < endX) {
+                        addPoint(k, lastY);
+                        last = k;
+                    } else {
+                        continue anotherloop;
+                    }
+                }
                 lastX = last;
             }
         }
@@ -357,46 +563,43 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
 
     /**
      * Fills a rectangle with the texture diagonal_left.
-     * @param startY Absolute starting y-coordinate.
-     * @param endX Absolute starting y-coordinate.
+     * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
+     * @param endX Absolute ending x-coordinate.
+     * @param legend True if texture is for the legend, false if texture is for the diagram.
      */
-    private void fillDiagonalLeft(final double startY, final double endX) {
-        for (double j = startY - mStepSize; j > startY - mBarWidth; j -= SIX * mStepSize) {
-            double y = j;
-            for (double i = mLastXValue + mStepSize; y > startY - mBarWidth && i < endX; i += mStepSize) {
-                addPoint(i, y);
-                y -= mStepSize;
-            }
-        }
+    private void fillDiagonalLeft(final double startY, final double endX, final boolean legend) {
 
-        for (double i = mLastXValue + SEVEN * mStepSize; i < endX; i += SIX * mStepSize) {
-            double y = startY - mStepSize;
-            for (double k = i; y > startY - mBarWidth && k < endX; k += mStepSize) {
-                addPoint(k, y);
-                y -= mStepSize;
+        if (legend) {
+            for (double j = startY - mStepSize; j > startY - THIRTY; j -= SIX * mStepSize) {
+                double y = j;
+                for (double i = FIVE + mStepSize; y > startY - THIRTY && i < endX; i += mStepSize) {
+                    addPoint(i, y);
+                    y -= mStepSize;
+                }
             }
-        }
-    }
 
-    /**
-     * Fills a rectangle with the texture diagonal_right.
-     * @param startY Absolute starting y-coordinate.
-     * @param endX Absolute starting y-coordinate.
-     */
-    private void fillDiagonalRight(final double startY, final double endX) {
-        for (double j = startY - mBarWidth + mStepSize; j < startY; j += SIX * mStepSize) {
-            double y = j;
-            for (double i = mLastXValue + mStepSize; y < startY && i < endX; i += mStepSize) {
-                addPoint(i, y);
-                y += mStepSize;
+            for (double i = FIVE + SEVEN * mStepSize; i < endX; i += SIX * mStepSize) {
+                double y = startY - mStepSize;
+                for (double k = i; y > startY - THIRTY && k < endX; k += mStepSize) {
+                    addPoint(k, y);
+                    y -= mStepSize;
+                }
             }
-        }
+        } else {
+            for (double j = startY - mStepSize; j > startY - mBarWidth; j -= SIX * mStepSize) {
+                double y = j;
+                for (double i = mLastXValue + mStepSize; y > startY - mBarWidth && i < endX; i += mStepSize) {
+                    addPoint(i, y);
+                    y -= mStepSize;
+                }
+            }
 
-        for (double i = mLastXValue + SEVEN * mStepSize; i < endX; i += SIX * mStepSize) {
-            double y = startY - mBarWidth + mStepSize;
-            for (double k = i; y < startY && k < endX; k += mStepSize) {
-                addPoint(k, y);
-                y += mStepSize;
+            for (double i = mLastXValue + SEVEN * mStepSize; i < endX; i += SIX * mStepSize) {
+                double y = startY - mStepSize;
+                for (double k = i; y > startY - mBarWidth && k < endX; k += mStepSize) {
+                    addPoint(k, y);
+                    y -= mStepSize;
+                }
             }
         }
     }

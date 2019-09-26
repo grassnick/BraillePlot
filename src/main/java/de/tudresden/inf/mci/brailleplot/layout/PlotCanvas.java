@@ -24,6 +24,8 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
     // dimensions for Braille characters (e.g. axes, title)
     private double mCellHeight;
     private double mCellWidth;
+    private double mDotDistHor;
+    private double mDotDistVer;
 
     // bar dimensions
     private double mMaxBarWidth;
@@ -76,6 +78,8 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         mCellHeight = 2 * mPrinter.getProperty("raster.dotDistance.vertical").toDouble() + THREE * mPrinter.getProperty("raster.dotDiameter").toDouble();
         mCellDistHor = mPrinter.getProperty("raster.cellDistance.horizontal").toDouble();
         mCellDistVer = mPrinter.getProperty("raster.cellDistance.vertical").toDouble();
+        mDotDistHor = mPrinter.getProperty("raster.cellDistance.horizontal").toDouble();
+        mDotDistVer = mPrinter.getProperty("raster.cellDistance.vertical").toDouble();
         mMinBarWidth = mFormat.getProperty("floatingDot.minBarWidth").toDouble();
         mMaxBarWidth = mFormat.getProperty("floatingDot.maxBarWidth").toDouble();
         mMinBarDist = mFormat.getProperty("floatingDot.minBarDist").toDouble();
@@ -102,6 +106,14 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
 
     public final double getCellDistVer() {
         return mCellDistVer;
+    }
+
+    public final double getDotDistHor() {
+        return mDotDistHor;
+    }
+
+    public final double getDotDistVer() {
+        return mDotDistVer;
     }
 
     public final double getMinBarWidth() {

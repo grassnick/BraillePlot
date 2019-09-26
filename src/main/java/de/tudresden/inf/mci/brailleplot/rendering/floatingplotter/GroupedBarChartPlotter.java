@@ -85,7 +85,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
     void drawRectangle(final int i, final int j, final double xValue) throws InsufficientRenderingAreaException {
         double startY = mBottomMargin - mBarDist - i * (mBarGroupWidth + mBarDist) - j * mBarWidth;
         double endX = calculateXValue(xValue);
-        plotAndFillRectangle(startY, endX, j);
+        plotAndFillRectangle(startY, endX, j, false);
         int k = mCatList.getNumberOfCategories() * i + j;
         if (mGridHelp[k] < endX) {
             mGridHelp[k] = endX;

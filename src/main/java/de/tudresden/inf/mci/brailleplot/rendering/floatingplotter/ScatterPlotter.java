@@ -27,9 +27,9 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
     @Override
     public double plot(final ScatterPlot diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
-        mCanvas = Objects.requireNonNull(canvas);
+        setCanvas(canvas);
         mCanvas.readConfig();
-        mData = mCanvas.getCurrentPage();
+        setData();
         mDiagram = Objects.requireNonNull(diagram);
         mAxes = mDiagram.getAxes();
         mLegend = new Legend(mAxes);

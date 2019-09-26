@@ -24,12 +24,9 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
 
     boolean mFrames = true;
     private boolean mRightAxis;
-    static final double CIRCLEDIA = 12;
-    static final double CIRCLESCALE = 1.45;
+    private static final double CIRCLEDIA = 12;
+    private static final double CIRCLESCALE = 1.45;
 
-    /**
-     * Draws x- and y-axis.
-     */
     @Override
     void drawAxes() {
 
@@ -144,9 +141,6 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         }
     }
 
-    /**
-     * Draw a grid with twice as many lines as ticks per axis.
-     */
     @Override
     void drawGrid() {
         FloatingPointData<Boolean> grid = mCanvas.getNewPage();
@@ -214,7 +208,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         // new frames are added here
         if (mFrames) {
             if (i == 0) {
-                drawPoint(xValue, yValue);
+                drawDot(xValue, yValue);
             } else if (i == 1) {
                 drawX(xValue, yValue);
             } else if (i == 2) {
@@ -230,7 +224,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
      * @param xValue Absolute x-value of center.
      * @param yValue Absolute y-value of center.
      */
-    private void drawPoint(final double xValue, final double yValue) {
+    void drawDot(final double xValue, final double yValue) {
         addPoint(xValue + mCanvas.getDotDiameter(), yValue);
         addPoint(xValue - mCanvas.getDotDiameter(), yValue);
         addPoint(xValue, yValue + mCanvas.getDotDiameter());
@@ -246,7 +240,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
      * @param xValue Absolute x-value of center.
      * @param yValue Absolute y-value of center.
      */
-    private void drawX(final double xValue, final double yValue) {
+    void drawX(final double xValue, final double yValue) {
         addPoint(xValue + mStepSize, yValue + mStepSize);
         addPoint(xValue + 2 * mStepSize, yValue + 2 * mStepSize);
         addPoint(xValue + THREE * mStepSize, yValue + THREE * mStepSize);

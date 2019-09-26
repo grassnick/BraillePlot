@@ -93,7 +93,7 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
         } else {
             endX = calculateXValue(xValue) + mLastXValue - mLeftMargin;
         }
-        plotAndFillRectangle(startY, endX, j);
+        plotAndFillRectangle(startY, endX, j, false);
         if (mGridHelp[i] < endX) {
             mGridHelp[i] = endX;
         }

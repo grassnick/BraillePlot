@@ -27,9 +27,9 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
     @Override
     public double plot(final LinePlot diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
-        mCanvas = Objects.requireNonNull(canvas);
+        setCanvas(canvas);
         mCanvas.readConfig();
-        mData = mCanvas.getCurrentPage();
+        setData();
         mDiagram = Objects.requireNonNull(diagram);
         mAxes = mDiagram.getAxes();
         mLegend = new Legend(mAxes);
@@ -63,6 +63,10 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
             if (bigListIt.hasNext()) {
                 PointList smallList = bigListIt.next();
                 Iterator<Point2DDouble> smallListIt = smallList.iterator();
+                if (mFrames) {
+                    mLegend.addSymbolExplanation("frames", Integer.toString(i), smallList.getName());
+                }
+                mLegend.addSymbolExplanation("lines", Integer.toString(i), smallList.getName());
                 for (int j = 0; j < smallList.getSize(); j++) {
                     if (smallListIt.hasNext()) {
                         Point2DDouble point = smallListIt.next();
@@ -99,45 +103,10 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
                             }
                         }
 
-                        // drawing
                         nextY = smallList.getCorrespondingYValue(nextX);
-                        double slope = (calculateYValue(nextY) - calculateYValue(currentY)) / (calculateXValue(nextX) - calculateXValue(currentX));
-                        double n = calculateYValue(currentY) - calculateXValue(currentX) * slope;
-                        double steps;
-                        if (Math.abs(slope) <= 1) {
-                            steps = mStepSize;
-                        } else if (Math.abs(slope) <= 2) {
-                            steps = mStepSize / 2;
-                        } else if (Math.abs(slope) <= THREE) {
-                            steps = mStepSize / THREE;
-                        } else if (Math.abs(slope) <= FOUR) {
-                            steps = mStepSize / FOUR;
-                        } else {
-                            steps = mStepSize / FIVE;
-                        }
 
-                        // new line styles are added here
-                        if (i == 0) {
-                            for (double j = calculateXValue(currentX) + steps; j < calculateXValue(nextX); j += steps) {
-                                addPoint(j, j * slope + n);
-                            }
-                        } else if (i == 1) {
-                            for (double j = calculateXValue(currentX) + steps; j < calculateXValue(nextX); j += FOUR * steps) {
-                                addPoint(j, j * slope + n);
-                            }
-                        } else if (i == 2) {
-                            for (double j = calculateXValue(currentX) + steps; j < calculateXValue(nextX) - THREE * steps; j += THREE * steps) {
-                                addPoint(j, j * slope + n);
-                                j += steps;
-                                addPoint(j, j * slope + n);
-                                j += steps;
-                                addPoint(j, j * slope + n);
-                                j += steps;
-                                addPoint(j, j * slope + n);
-                            }
-                        } else {
-                            throw new InsufficientRenderingAreaException("There are more data series than line types.");
-                        }
+                        //drawing
+                        drawLines(calculateXValue(currentX), calculateXValue(nextX), calculateYValue(currentY), calculateYValue(nextY), i);
 
                         currentX = nextX;
                         currentY = nextY;
@@ -155,4 +124,92 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
         return 0;
 
     }
+
+    /**
+     * Calculates line parameters and chooses the line style according to i.
+     * @param currentX Absolue x-coordinate of the starting point.
+     * @param nextX Absolute x-coordinate of the end point.
+     * @param currentY Absolute y-coordinate of the starting point.
+     * @param nextY Absolute y-coordinate of the end point.
+     * @param i Corresponds to the line style.
+     * @throws InsufficientRenderingAreaException If there are more data series than line styles.
+     */
+    void drawLines(final double currentX, final double nextX, final double currentY, final double nextY, final int i) throws InsufficientRenderingAreaException {
+
+        double slope = (nextY - currentY) / (nextX - currentX);
+        double n = currentY - currentX * slope;
+        double steps;
+        if (Math.abs(slope) <= 1) {
+            steps = mStepSize;
+        } else if (Math.abs(slope) <= 2) {
+            steps = mStepSize / 2;
+        } else if (Math.abs(slope) <= THREE) {
+            steps = mStepSize / THREE;
+        } else if (Math.abs(slope) <= FOUR) {
+            steps = mStepSize / FOUR;
+        } else {
+            steps = mStepSize / FIVE;
+        }
+
+        // new line styles are added here
+        if (i == 0) {
+            drawFullLine(currentX, nextX, steps, slope, n);
+        } else if (i == 1) {
+            drawDottedLine(currentX, nextX, steps, slope, n);
+        } else if (i == 2) {
+            drawDashedLine(currentX, nextX, steps, slope, n);
+        } else {
+            throw new InsufficientRenderingAreaException("There are more data series than line types.");
+        }
+
+    }
+
+    /**
+     * Draws a full line.
+     * @param currentX Absolute x-coordinate of the starting point.
+     * @param nextX Absolute x-coordinate of the end point.
+     * @param steps Distance with which the x-coordinate is incremented.
+     * @param slope Slope of the line.
+     * @param n Y-intercept.
+     */
+    private void drawFullLine(final double currentX, final double nextX, final double steps, final double slope, final double n) {
+        for (double j = currentX + steps; j < nextX; j += steps) {
+            addPoint(j, j * slope + n);
+        }
+    }
+
+    /**
+     * Draws a dotted line.
+     * @param currentX Absolute x-coordinate of the starting point.
+     * @param nextX Absolute x-coordinate of the end point.
+     * @param steps Distance with which the x-coordinate is incremented.
+     * @param slope Slope of the line.
+     * @param n Y-intercept.
+     */
+    private void drawDottedLine(final double currentX, final double nextX, final double steps, final double slope, final double n) {
+        for (double j = currentX + steps; j < nextX; j += FOUR * steps) {
+            addPoint(j, j * slope + n);
+        }
+    }
+
+    /**
+     * Draws a line consisting of single dashes and spaces.
+     * @param currentX Absolute x-coordinate of the starting point.
+     * @param nextX Absolute x-coordinate of the end point.
+     * @param steps Distance with which the x-coordinate is incremented.
+     * @param slope Slope of the line.
+     * @param n Y-intercept.
+     */
+    private void drawDashedLine(final double currentX, final double nextX, final double steps, final double slope, final double n) {
+        for (double j = currentX + steps; j < nextX - THREE * steps; j += THREE * steps) {
+            addPoint(j, j * slope + n);
+            j += steps;
+            addPoint(j, j * slope + n);
+            j += steps;
+            addPoint(j, j * slope + n);
+            j += steps;
+            addPoint(j, j * slope + n);
+        }
+    }
+
 }
