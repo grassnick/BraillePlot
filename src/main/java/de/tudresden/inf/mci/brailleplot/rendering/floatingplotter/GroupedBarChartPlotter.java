@@ -52,7 +52,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
         if (mBarWidth > mMaxWidth) {
             mBarWidth = mMaxWidth;
         } else if (mBarWidth < mMinWidth) {
-            throw new InsufficientRenderingAreaException();
+            throw new InsufficientRenderingAreaException("There are too many data series for the size of paper.");
         }
 
         mBarGroupWidth = mDiagram.getNumberOfCategories() * mBarWidth;
@@ -73,8 +73,9 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
             }
         }
 
+        nameYAxis();
         drawGrid();
-        // plotLegend();
+        plotLegend();
 
         return 0;
 
@@ -151,7 +152,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
 
         double height = mCanvas.getCellHeight();
         double width = mCanvas.getCellWidth();
-        double startX = mLeftMargin - mCanvas.getCellDistHor() - width;
+        double startX = mLeftMargin - 2 * mCanvas.getCellDistHor() - width;
         double halfCell = (height - mCanvas.getDotDiameter()) / 2;
 
         LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());

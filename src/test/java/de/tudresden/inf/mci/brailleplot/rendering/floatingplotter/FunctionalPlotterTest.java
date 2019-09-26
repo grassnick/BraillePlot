@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Objects;
 
 /**
@@ -20,14 +21,13 @@ import java.util.Objects;
  */
 class FunctionalPlotterTest {
 
-    private static final String mDefaultConfig = getResource("config/plotter_test_default.properties").getAbsolutePath();
-    private static final String mBaseConfig = getResource("config/base_format.properties").getAbsolutePath();
+    private static final URL mDefaultConfig = getResource("config/plotter_test_default.properties");
+    private static final URL mBaseConfig = getResource("config/base_format.properties");
     private static Printer mPrinter;
     private static Format mFormat;
 
-    static File getResource(String fileName) {
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        return new File(Objects.requireNonNull(classLoader.getResource(fileName)).getFile());
+    static URL getResource(final String location) {
+        return ClassLoader.getSystemClassLoader().getResource(location);
     }
 
     @BeforeAll

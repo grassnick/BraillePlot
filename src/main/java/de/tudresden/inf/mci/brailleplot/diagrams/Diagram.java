@@ -93,6 +93,7 @@ public abstract class Diagram implements Renderable {
 
     public final void setAxes(final String[] axes) {
         mData.setAxes(axes);
+
     }
 
 }

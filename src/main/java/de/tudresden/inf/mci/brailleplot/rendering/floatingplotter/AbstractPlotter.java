@@ -42,8 +42,8 @@ abstract class AbstractPlotter<T extends Diagram> {
     double mPageWidth;
     double mResolution;
     double mStepSize;
-    double mTickDistance;
     double mTitleMargin;
+    double mXTickDistance;
     double mXTickStep;
     double mYRange;
     double mYTickStep;
@@ -75,12 +75,13 @@ abstract class AbstractPlotter<T extends Diagram> {
     static final int THIRTY = 30;
     static final double HMULT = 2;
     static final double TMULT = 2;
-    static final double WMULT = 3;
+    static final double WMULT = 4;
     static final double MARGIN = 15;
     static final double TICK1 = 1.5;
     static final double TICK2 = 3;
     static final double TICK3 = 4.5;
     static final double TICK4 = 6;
+    static final double YTICKDISTANCE = 30;
 
     /**
      * Checks if mStepSize is smaller than mResolution. In that case, mStepSize is set to mResolution.
@@ -345,7 +346,7 @@ abstract class AbstractPlotter<T extends Diagram> {
      */
     void nameXAxis() {
 
-        double startY = mBottomMargin + mCanvas.getCellDistVer();
+        double startY = mBottomMargin + mCanvas.getCellDistVer() + FOUR * mStepSize;
         double height = mCanvas.getCellHeight();
         double width = mCanvas.getCellWidth();
         double halfCell = (width - mCanvas.getDotDiameter()) / 2;
@@ -353,7 +354,12 @@ abstract class AbstractPlotter<T extends Diagram> {
         LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
 
         for (int i = 0; i < mNumberXTicks; i++) {
-            Rectangle rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - halfCell, startY, width, height);
+            Rectangle rect;
+            if (mScaleX[i] < TEN) {
+                rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - width - mCanvas.getCellDistHor() / 2, startY, width, height);
+            } else {
+                rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - width - mCanvas.getCellDistHor() - width / 2, startY, width, height);
+            }
             BrailleText text = new BrailleText(Integer.toString(mScaleX[i]), rect);
             tplotter.plot(text, mCanvas);
         }

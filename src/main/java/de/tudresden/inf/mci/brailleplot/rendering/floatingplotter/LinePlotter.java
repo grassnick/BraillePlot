@@ -6,6 +6,7 @@ import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
+import de.tudresden.inf.mci.brailleplot.rendering.Legend;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -30,6 +31,8 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
         mCanvas.readConfig();
         mData = mCanvas.getCurrentPage();
         mDiagram = Objects.requireNonNull(diagram);
+        mAxes = mDiagram.getAxes();
+        mLegend = new Legend(mAxes);
         mFrames = mCanvas.getFrames();
         mPageHeight = mCanvas.getPrintableHeight();
         mPageWidth = mCanvas.getPrintableWidth();
@@ -44,9 +47,9 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
         mCanvas.setXScaleFactor(mScaleX[mScaleX.length - 1]);
         mCanvas.setYScaleFactor(mScaleY[mScaleY.length - 1]);
         if (mFrames) {
-            //mCanvas.setType(2);
+            mLegend.setType(2);
         } else {
-            //mCanvas.setType(1);
+            mLegend.setType(1);
         }
         nameXAxis();
         nameYAxis();

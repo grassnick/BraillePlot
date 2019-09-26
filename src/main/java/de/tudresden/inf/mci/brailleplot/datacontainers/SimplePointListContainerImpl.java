@@ -25,5 +25,6 @@ public class SimplePointListContainerImpl extends AbstractPointContainer<PointLi
         Objects.requireNonNull(pointListContainer);
         mElements = new LinkedList<>(pointListContainer.stream().collect(Collectors.toList()));
         calculateExtrema();
+        mAxes = pointListContainer.getAxes();
     }
 }

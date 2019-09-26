@@ -24,7 +24,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
 
     boolean mFrames = true;
     private boolean mRightAxis;
-    static final double CIRCLEDIA = 15;
+    static final double CIRCLEDIA = 12;
     static final double CIRCLESCALE = 1.45;
 
     /**
@@ -34,15 +34,15 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
     void drawAxes() {
 
         // margin left of y-axis
-        mLeftMargin = (WMULT + 1) * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
+        mLeftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
         // margin from bottom to x-axis
         mBottomMargin = mPageHeight - (HMULT * mCanvas.getCellHeight() + HMULT * mCanvas.getCellDistVer());
         // margin from top for title
         mTitleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
 
-        mTickDistance = mLeftMargin;
-        if (mTickDistance < THIRTY) {
-            mTickDistance = THIRTY;
+        mXTickDistance = mLeftMargin + mCanvas.getCellWidth() / 2;
+        if (mXTickDistance < THIRTY) {
+            mXTickDistance = THIRTY;
         }
 
         mRightAxis = mCanvas.getSecondAxis();
@@ -59,7 +59,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             lastValueX = i;
         }
         mLengthX = lastValueX - mLeftMargin;
-        mNumberXTicks = (int) Math.floor(mLengthX / mTickDistance);
+        mNumberXTicks = (int) Math.floor(mLengthX / mXTickDistance);
         if (mNumberXTicks < 2) {
             mNumberXTicks = 2;
         } else if (mNumberXTicks <= SIX) {
@@ -95,7 +95,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             lastValueY = i;
         }
         mLengthY = mBottomMargin - lastValueY;
-        mNumberYTicks = (int) Math.floor(mLengthY / mTickDistance);
+        mNumberYTicks = (int) Math.floor(mLengthY / YTICKDISTANCE);
         if (mNumberYTicks < 2) {
             mNumberYTicks = 2;
         } else if (mNumberYTicks <= SIX) {
@@ -182,13 +182,20 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
 
         double height = mCanvas.getCellHeight();
         double width = mCanvas.getCellWidth();
-        double startX = mLeftMargin - mCanvas.getCellDistHor() - width;
+        double startX = mLeftMargin - mCanvas.getCellDistHor() - THREE * width;
         double halfCell = (height - mCanvas.getDotDiameter()) / 2;
 
         LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
 
         for (int i = 0; i < mNumberYTicks; i++) {
-            Rectangle rect = new Rectangle(startX, mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
+            //Rectangle rect = new Rectangle(startX, mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
+
+            Rectangle rect;
+            if (mScaleY[i] < TEN) {
+                rect = new Rectangle(startX - width - mCanvas.getCellDistHor() / 2, mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
+            } else {
+                rect = new Rectangle(startX - width - mCanvas.getCellDistHor() - width / 2, mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
+            }
             BrailleText text = new BrailleText(Integer.toString(mScaleY[i]), rect);
             tplotter.plot(text, mCanvas);
         }
@@ -207,11 +214,11 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         // new frames are added here
         if (mFrames) {
             if (i == 0) {
-                drawCircle(xValue, yValue);
+                drawPoint(xValue, yValue);
             } else if (i == 1) {
                 drawX(xValue, yValue);
             } else if (i == 2) {
-                drawCross(xValue, yValue);
+                drawCircle(xValue, yValue);
             } else {
                 throw new InsufficientRenderingAreaException("There are more data series than frames.");
             }
@@ -219,26 +226,19 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
     }
 
     /**
-     * Draws a circle frame with absolute xValue and yValue as center.
+     * Draws a cross with absolute xValue and yValue as center.
      * @param xValue Absolute x-value of center.
      * @param yValue Absolute y-value of center.
      */
-    void drawCircle(final double xValue, final double yValue) {
-        double lastX = 0;
-
-        for (double x = xValue - CIRCLEDIA / 2; x <= xValue + CIRCLEDIA / 2; x += mStepSize) {
-            double root = Math.sqrt(Math.pow(CIRCLEDIA / 2, 2) - Math.pow(x - xValue, 2));
-            double y1 = yValue + root;
-            double y2 = yValue - root;
-            addPoint(x, y1);
-            addPoint(x, y2);
-            lastX = x;
-        }
-
-        addPoint(lastX - mStepSize / THREE, yValue + CIRCLESCALE * mStepSize);
-        addPoint(lastX - mStepSize / THREE, yValue - CIRCLESCALE * mStepSize);
-        addPoint(xValue - CIRCLEDIA / 2 + mStepSize / THREE, yValue + CIRCLESCALE * mStepSize);
-        addPoint(xValue - CIRCLEDIA / 2 + mStepSize / THREE, yValue - CIRCLESCALE * mStepSize);
+    private void drawPoint(final double xValue, final double yValue) {
+        addPoint(xValue + mCanvas.getDotDiameter(), yValue);
+        addPoint(xValue - mCanvas.getDotDiameter(), yValue);
+        addPoint(xValue, yValue + mCanvas.getDotDiameter());
+        addPoint(xValue, yValue - mCanvas.getDotDiameter());
+        addPoint(xValue + mCanvas.getDotDiameter(), yValue + mCanvas.getDotDiameter());
+        addPoint(xValue + mCanvas.getDotDiameter(), yValue - mCanvas.getDotDiameter());
+        addPoint(xValue - mCanvas.getDotDiameter(), yValue + mCanvas.getDotDiameter());
+        addPoint(xValue - mCanvas.getDotDiameter(), yValue - mCanvas.getDotDiameter());
     }
 
     /**
@@ -265,26 +265,26 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
     }
 
     /**
-     * Draws a cross with absolute xValue and yValue as center.
+     * Draws a circle frame with absolute xValue and yValue as center.
      * @param xValue Absolute x-value of center.
      * @param yValue Absolute y-value of center.
      */
-    private void drawCross(final double xValue, final double yValue) {
-        addPoint(xValue, yValue + mStepSize);
-        addPoint(xValue, yValue + 2 * mStepSize);
-        addPoint(xValue, yValue + THREE * mStepSize);
+    void drawCircle(final double xValue, final double yValue) {
+        double lastX = 0;
 
-        addPoint(xValue, yValue - mStepSize);
-        addPoint(xValue, yValue - 2 * mStepSize);
-        addPoint(xValue, yValue - THREE * mStepSize);
+        for (double x = xValue - CIRCLEDIA / 2; x <= xValue + CIRCLEDIA / 2; x += mStepSize) {
+            double root = Math.sqrt(Math.pow(CIRCLEDIA / 2, 2) - Math.pow(x - xValue, 2));
+            double y1 = yValue + root;
+            double y2 = yValue - root;
+            addPoint(x, y1);
+            addPoint(x, y2);
+            lastX = x;
+        }
 
-        addPoint(xValue + mStepSize, yValue);
-        addPoint(xValue + 2 * mStepSize, yValue);
-        addPoint(xValue + THREE * mStepSize, yValue);
-
-        addPoint(xValue - mStepSize, yValue);
-        addPoint(xValue - 2 * mStepSize, yValue);
-        addPoint(xValue - THREE * mStepSize, yValue);
+        addPoint(lastX - mStepSize / THREE, yValue + CIRCLESCALE * mStepSize);
+        addPoint(lastX - mStepSize / THREE, yValue - CIRCLESCALE * mStepSize);
+        addPoint(xValue - CIRCLEDIA / 2 + mStepSize / THREE, yValue + CIRCLESCALE * mStepSize);
+        addPoint(xValue - CIRCLEDIA / 2 + mStepSize / THREE, yValue - CIRCLESCALE * mStepSize);
     }
 
 }

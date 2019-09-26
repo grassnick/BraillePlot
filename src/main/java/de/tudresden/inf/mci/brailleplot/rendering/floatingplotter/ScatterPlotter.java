@@ -31,8 +31,8 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
         mCanvas.readConfig();
         mData = mCanvas.getCurrentPage();
         mDiagram = Objects.requireNonNull(diagram);
-        String title = "";
-        mLegend = new Legend(title);
+        mAxes = mDiagram.getAxes();
+        mLegend = new Legend(mAxes);
         mPageHeight = mCanvas.getPrintableHeight();
         mPageWidth = mCanvas.getPrintableWidth();
         mResolution = mCanvas.getResolution();
@@ -45,7 +45,7 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
         mScaleY = scaleAxis("y");
         mCanvas.setXScaleFactor(mScaleX[mScaleX.length - 1]);
         mCanvas.setYScaleFactor(mScaleY[mScaleY.length - 1]);
-        //mCanvas.setType(0);
+        mLegend.setType(0);
         nameXAxis();
         nameYAxis();
         nameTitle();

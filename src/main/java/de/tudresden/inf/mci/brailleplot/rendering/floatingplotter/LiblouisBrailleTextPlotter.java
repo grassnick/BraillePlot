@@ -84,7 +84,7 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
         String[] resultAsArray = result.getBraille().split("");
 
         double startX = rect.getX();
-        double startY = rect.getX();
+        double startY = rect.getY();
         double widthJump = canvas.getCellWidth() - canvas.getDotDiameter();
         double heightJump = (canvas.getCellHeight() - canvas.getDotDiameter()) / 2;
         double cellJump = canvas.getCellWidth() + canvas.getCellDistHor();
@@ -113,24 +113,4 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
         mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true));
     }
 
-    /**
-     * Method for getting the braillelength for a given string.
-     * @param text String to analyze.
-     * @return Length of the braille.
-     */
-    public int getBrailleStringLength(final String text) {
-
-        Objects.requireNonNull(text, "The given string for getBrailleStringLength was null!");
-        if (text.equals("")) {
-            return 0;
-        }
-        TranslationResult result = null;
-        try {
-            result = mTranslator.translate(text, null, null, null, DisplayTable.StandardDisplayTables.DEFAULT);
-        } catch (TranslationException | DisplayException e) {
-            e.printStackTrace();
-        }
-        assert result != null;
-        return result.getBraille().length();
-    }
 }

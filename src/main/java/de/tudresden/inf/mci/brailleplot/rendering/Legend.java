@@ -26,6 +26,10 @@ public class Legend implements Renderable {
     // diagram type
     int mType;
 
+    // constants
+    private static final int THREE = 3;
+    private static final int FOUR = 4;
+
     /**
      * Constructor. Creates a legend.
      * @param title The title of the legend.
@@ -65,8 +69,8 @@ public class Legend implements Renderable {
         mTitle = mAxes[0];
         mXName = mAxes[1];
         mXUnit = mAxes[2];
-        mYName = mAxes[3];
-        mYUnit = mAxes[4];
+        mYName = mAxes[THREE];
+        mYUnit = mAxes[FOUR];
     }
 
     /**

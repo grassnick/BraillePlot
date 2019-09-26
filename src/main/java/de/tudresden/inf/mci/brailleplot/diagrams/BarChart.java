@@ -5,7 +5,6 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 
-
 import java.util.Iterator;
 
 /**

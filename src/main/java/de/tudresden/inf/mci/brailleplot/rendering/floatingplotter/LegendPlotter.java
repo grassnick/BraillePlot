@@ -103,7 +103,7 @@ public class LegendPlotter implements Plotter<Legend> {
             // TODO
             int i;
 
-        } else {
+        } else if (legend.getType() == THREE) {
 
             // bar chart
             // TODO

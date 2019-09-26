@@ -5,6 +5,7 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
+import de.tudresden.inf.mci.brailleplot.rendering.Legend;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -43,7 +44,8 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
         mCanvas.readConfig();
         mData = mCanvas.getCurrentPage();
         mDiagram = Objects.requireNonNull(diagram);
-        System.out.print(mDiagram.getDataSet());
+        mAxes = mDiagram.getAxes();
+        mLegend = new Legend(mAxes);
         mCatList = (CategoricalPointListContainer<PointList>) mDiagram.getDataSet();
         mMaxWidth = mCanvas.getMaxBarWidth();
         mMinDist = mCanvas.getMinBarDist();
@@ -61,10 +63,9 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
         mScaleX = scaleAxis("z");
         mNamesY = new String[mCatList.getSize()];
         mCanvas.setXScaleFactor(mScaleX[mScaleX.length - 1]);
-        // mCanvas.setType(THREE);
-        // nameXAxis();
-        // nameYAxis();
-        // nameTitle();
+        mLegend.setType(THREE);
+        nameXAxis();
+        nameTitle();
 
         Iterator<PointList> catListIt = mCatList.iterator();
         for (int i = 0; i < mNamesY.length; i++) {
@@ -80,15 +81,15 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     @Override
     void drawAxes() {
         // margin left of y-axis
-        mLeftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
+        mLeftMargin = 2 * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
         // margin from bottom to x-axis
         mBottomMargin = mPageHeight - (HMULT * mCanvas.getCellHeight() + HMULT * mCanvas.getCellDistVer());
         // margin from top for title
         mTitleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
 
-        mTickDistance = mLeftMargin;
-        if (mTickDistance < THIRTY) {
-            mTickDistance = THIRTY;
+        mXTickDistance = mLeftMargin + 2 * mCanvas.getCellWidth();
+        if (mXTickDistance < THIRTY) {
+            mXTickDistance = THIRTY;
         }
 
         // x-axis
@@ -98,7 +99,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
             lastValueX = i;
         }
         mLengthX = lastValueX - mLeftMargin;
-        mNumberXTicks = (int) Math.floor(mLengthX / mTickDistance);
+        mNumberXTicks = (int) Math.floor(mLengthX / mXTickDistance);
         if (mNumberXTicks < 2) {
             mNumberXTicks = 2;
         } else if (mNumberXTicks <= FIVE) {
