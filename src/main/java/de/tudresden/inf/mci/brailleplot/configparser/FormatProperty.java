@@ -15,7 +15,7 @@ public final class FormatProperty extends ValidProperty {
      * @param name The name of the property.
      * @param value The value of the property.
      */
-    FormatProperty(final String format, final String name, final String value) {
+    public FormatProperty(final String format, final String name, final String value) {
         super(name, value);
         mFormat = format;
     }

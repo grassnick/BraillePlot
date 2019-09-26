@@ -1,10 +1,11 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
 
+import de.tudresden.inf.mci.brailleplot.util.GeneralResource;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
@@ -14,7 +15,7 @@ import java.util.regex.Pattern;
 /**
  * Concrete validator for properties parsed from configuration files in Java Property File format.
  * @author Leonard Kupper, Andrey Ruzhanskiy
- * @version 2019.07.30
+ * @version 2019-09-13
  */
 public final class JavaPropertiesConfigurationValidator implements ConfigurationValidator {
 
@@ -28,6 +29,9 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
     private final ArrayList<String> mRequiredPrinterProperties = new ArrayList<>();
     private final ArrayList<String> mRequiredRepresentationProperties = new ArrayList<>();
     private final ArrayList<String> mRequiredFormatProperties = new ArrayList<>();
+    private String mSearchPath;
+
+    Logger mLogger = LoggerFactory.getLogger(this.getClass());
 
     public JavaPropertiesConfigurationValidator() {
 
@@ -39,13 +43,12 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         Predicate<String> requireDouble = JavaPropertiesConfigurationValidator::checkIfDouble;
         Predicate<String> requireBoolean = JavaPropertiesConfigurationValidator::checkIfBoolean;
         Predicate<String> requirePositive = JavaPropertiesConfigurationValidator::checkIfPositive;
-        Predicate<String> requireFileExists = JavaPropertiesConfigurationValidator::checkIfFileExists;
 
         // Definition of valid printer properties
         definePrinterProperty("name", requireNotEmpty);
         definePrinterProperty("mode", requireNotEmpty);
-        definePrinterProperty("brailletable", requireFileExists);
-        definePrinterProperty("semantictable", requireFileExists);
+        definePrinterProperty("brailletable", requireNotEmpty, false);  // checked in interpretation
+        definePrinterProperty("semantictable", requireNotEmpty, false); // before predicate validation
         definePrinterProperty("floatingDot.support", requireBoolean);
         definePrinterProperty("floatingDot.resolution", requireDouble.and(requirePositive), false);
         definePrinterProperty("constraint.top", requireDouble.and(requirePositive));
@@ -80,6 +83,39 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         defineRepresentationProperty("rasterize.barChart.padding.caption", requireInteger);
         defineRepresentationProperty("rasterize.barChart.padding.groups", requireInteger);
         defineRepresentationProperty("rasterize.barChart.padding.bars", requireInteger);
+    }
+
+    /**
+     * This method is called before validation for every property being read. It is used to interpret special properties
+     * like relative file locations, do value conversions, ...
+     * @param propertyName Key of the property
+     * @param value Raw value read from file
+     * @return Interpreted property value
+     */
+    private String interpretProperty(final String propertyName, final String value) throws ConfigurationValidationException {
+        try {
+            switch (propertyName) {
+                case "brailletable":
+                case "semantictable":
+                    return new GeneralResource(value, mSearchPath).getResourcePath();
+                default: return value;
+            }
+        } catch (Exception e) {
+            throw new ConfigurationValidationException("Problem while interpreting property: " + propertyName + "=" + value, e);
+        }
+    }
+
+    @Override
+    public void setSearchPath(final String searchPath) {
+        /*
+        File path = new File(searchPath);
+        if (!path.isDirectory()) {
+            throw new IOException("Not a directory.");
+        }
+        mSearchPath = path.getAbsolutePath();
+         */
+        mSearchPath = searchPath;
+        mLogger.info("search path for file references was updated: " + searchPath);
     }
 
     /**
@@ -174,8 +210,9 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
             if (keyParts.length > 2) {
                 propertyName = propertyName + "." + keyParts[2];
             }
-            validationLookup(mValidPrinterProperties, propertyName, value);
-            return new PrinterProperty(propertyName, value);
+            String interpretedValue = interpretProperty(propertyName, value);
+            validationLookup(mValidPrinterProperties, propertyName, interpretedValue);
+            return new PrinterProperty(propertyName, interpretedValue);
         } else if (prefix.equals(mRepresentationPrefix)) {
             if (keyParts.length <= 1) {
                 throw new ConfigurationValidationException("Invalid representation property key: " + key);
@@ -184,17 +221,18 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
             if (keyParts.length > 2) {
                 propertyName = propertyName + "." + keyParts[2];
             }
-            validationLookup(mValidRepresentationProperties, propertyName, value);
-            return new RepresentationProperty(propertyName, value);
+            String interpretedValue = interpretProperty(propertyName, value);
+            validationLookup(mValidRepresentationProperties, propertyName, interpretedValue);
+            return new RepresentationProperty(propertyName, interpretedValue);
         } else if (prefix.equals(mFormatPrefix)) {
             if (keyParts.length <= 2) {
                 throw new ConfigurationValidationException("Invalid format property key: " + key);
             }
             String formatName = keyParts[1];
-            String namespace = mFormatPrefix + "." + formatName;
             String propertyName = keyParts[2];
-            validationLookup(mValidFormatProperties, propertyName, value);
-            return new FormatProperty(formatName, propertyName, value);
+            String interpretedValue = interpretProperty(propertyName, value);
+            validationLookup(mValidFormatProperties, propertyName, interpretedValue);
+            return new FormatProperty(formatName, propertyName, interpretedValue);
         } else {
             throw new ConfigurationValidationException("Invalid property prefix: " + prefix);
         }
@@ -288,17 +326,6 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
             return false;
         }
     }
-
-    private static boolean checkIfFileExists(final String filePath) {
-        try {
-            FileInputStream stream = new FileInputStream(filePath);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        return true;
-    }
-
-
 
     private static boolean checkIfEnum(final String name) {
         for (PrinterCapability p : PrinterCapability.values()) {

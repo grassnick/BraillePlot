@@ -8,20 +8,19 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.net.URL;
 
 
 public class FunctionalRasterizerTest {
 
-    public static final String mDefaultConfig = getResource("config/rasterizer_test_default.properties").getAbsolutePath();
-    public static final String mBaseConfig = getResource("config/base_format.properties").getAbsolutePath();
+    public static final URL mDefaultConfig = getResource("config/rasterizer_test_default.properties");
+    public static final URL mBaseConfig = getResource("config/base_format.properties");
     public static Printer mPrinter;
     public static Representation mRepresentation;
     public static Format mFormat;
 
-    public static File getResource(String fileName) {
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        File resourceFile = new File(classLoader.getResource(fileName).getFile());
-        return resourceFile;
+    public static URL getResource(final String location) {
+        return ClassLoader.getSystemClassLoader().getResource(location);
     }
 
     @BeforeAll

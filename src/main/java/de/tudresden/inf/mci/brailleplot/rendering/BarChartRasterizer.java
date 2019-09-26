@@ -137,18 +137,16 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
 
             // PHASE 1 - LAYOUT: The following calculations will divide the canvas area to create the basic chart layout.
             // Diagram Title
-            String title = "Arbeitslosenzahl in Deutschland"; // TODO: get title from diagram
+            String title = diagram.getTitle();
             int titleLength = mTextRasterizer.getBrailleStringLength(title);
             int titleHeight = (int) Math.ceil(titleLength / referenceCellArea.getWidth());
             if (titleHeight > mMaximumTitleHeightCells) {
                 throw new InsufficientRenderingAreaException("Title is too long. (Exceeds maximum height)");
             }
-            Rectangle titleDotArea = canvas.toDotRectangle(referenceCellArea.removeFromTop(titleHeight)); // TODO: BrailleTextRasterizer will take cell rectangle later
-            // Y-Axis Name
+            Rectangle titleDotArea = canvas.toDotRectangle(referenceCellArea.removeFromTop(titleHeight));
             referenceCellArea.removeFromTop(mTitlePaddingCells);
-            Rectangle yAxisNameDotArea = canvas.toDotRectangle(referenceCellArea.removeFromTop(1));
-            // X-Axis Name
-            Rectangle xAxisNameDotArea = canvas.toDotRectangle(referenceCellArea.removeFromBottom(1));
+            Rectangle yAxisNameDotArea = canvas.toDotRectangle(referenceCellArea.removeFromTop(1)); // Y-Axis Name
+            Rectangle xAxisNameDotArea = canvas.toDotRectangle(referenceCellArea.removeFromBottom(1)); // X-Axis Name
             // X-Axis Area & Origin Y Coordinate
             Rectangle xAxisDotArea = canvas.toDotRectangle(referenceCellArea.removeFromBottom(mXAxisHeightCells));
             int originYDotCoordinate = xAxisDotArea.intWrapper().getY(); // top edge below chart area
@@ -182,35 +180,37 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
             // Bar Groups (Categories)
             int amountOfGroups = diagram.getDataSet().getSize(); // Count the total amount of groups
             int amountOfBars = countTotalBarAmount(diagram); // and bars
-            if (amountOfGroups == amountOfBars) {       // If each group only contains a single bar
-                mGroupPaddingCells = mBarPaddingCells;  // this is done because there are no 'real' groups.
+            if (amountOfBars >= 1) {
+                if (amountOfGroups == amountOfBars) {       // If each group only contains a single bar
+                    mGroupPaddingCells = mBarPaddingCells;  // this is done because there are no 'real' groups.
+                }
+                int availableSizeCells = mFullChartCellArea.intWrapper().getHeight();
+                int baseSizeCells = baseSize(amountOfGroups, mGroupPaddingCells, amountOfBars, mBarPaddingCells);
+                mBarThickness = Math.min((int) floor((availableSizeCells - baseSizeCells) / amountOfBars), mMaxBarThicknessCells);
+                if (mBarThickness < mMinBarThicknessCells) {
+                    throw new InsufficientRenderingAreaException("Not enough space to rasterize all bar groups.");
+                }
+                // Remove space from top which is not needed
+                int requiredSizeCells = baseSizeCells + amountOfBars * mBarThickness;
+                mFullChartCellArea.removeFromTop(mFullChartCellArea.intWrapper().getHeight() - requiredSizeCells);
             }
-            int availableSizeCells = mFullChartCellArea.intWrapper().getHeight();
-            int baseSizeCells = baseSize(amountOfGroups, mGroupPaddingCells, amountOfBars, mBarPaddingCells);
-            mBarThickness = Math.min((int) floor((availableSizeCells - baseSizeCells) / amountOfBars), mMaxBarThicknessCells);
-            if (mBarThickness < mMinBarThicknessCells) {
-                throw new InsufficientRenderingAreaException("Not enough space to rasterize all bar groups.");
-            }
-            // Remove space from top which is not needed
-            int requiredSizeCells = baseSizeCells + amountOfBars * mBarThickness;
-            mFullChartCellArea.removeFromTop(mFullChartCellArea.intWrapper().getHeight() - requiredSizeCells);
 
             // PHASE 2 - RASTERIZING: Now, every element of the chart will be drawn onto the according area.
             // Diagram Title
-            mTextRasterizer.rasterize(new BrailleText(title, titleDotArea), canvas); // TODO: use title variable
+            mTextRasterizer.rasterize(new BrailleText(title, titleDotArea), canvas);
             // Y-Axis: no units, no tickmarks
             Axis yAxis = new Axis(Axis.Type.Y_AXIS, originXDotCoordinate, originYDotCoordinate, 1, 0);
             yAxis.setBoundary(yAxisDotArea);
             mAxisRasterizer.rasterize(yAxis, canvas);
             // Y-Axis name
-            mTextRasterizer.rasterize(new BrailleText("Y-Achse Beschriftung", yAxisNameDotArea), canvas); // TODO: use axis name variable
+            mTextRasterizer.rasterize(new BrailleText(diagram.getYAxisName(), yAxisNameDotArea), canvas);
             // X-Axis: units and labels
             Axis xAxis = new Axis(Axis.Type.X_AXIS, originXDotCoordinate, originYDotCoordinate, X_AXIS_UNIT_SIZE_DOTS, X_AXIS_TICK_SIZE_DOTS);
             xAxis.setBoundary(xAxisDotArea);
             xAxis.setLabels(generateNumericAxisLabels(xAxisScaling, xAxisScalingMagnitude, negativeAvailableUnits, positiveAvailableUnits));
             mAxisRasterizer.rasterize(xAxis, canvas);
             // X-Axis name
-            mTextRasterizer.rasterize(new BrailleText("Ich bin die X-Achse", xAxisNameDotArea), canvas); // TODO: use axis name variable
+            mTextRasterizer.rasterize(new BrailleText(diagram.getXAxisName(), xAxisNameDotArea), canvas);
             // The actual groups and bars:
             // This is done by iterating through the diagram data set and drawing borders with the respective padding based on whether switched
             // from one bar to another or a group to another. In between, the bars are rasterized as textured areas, with a line on the bars top.
@@ -382,9 +382,7 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
             amountOfBars += barsInGroup;
         }
          */
-        if (amountOfBars < 1) {
-            throw new IllegalArgumentException("The given diagram does not contain any data.");
-        }
+
         return amountOfBars;
     }
 

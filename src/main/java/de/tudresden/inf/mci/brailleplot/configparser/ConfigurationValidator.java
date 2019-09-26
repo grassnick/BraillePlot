@@ -36,4 +36,6 @@ public interface ConfigurationValidator {
      * @param formatConfig The {@link Format} configuration instance to be checked.
      */
     void checkFormatConfigComplete(Format formatConfig);
+
+    void setSearchPath(String searchPath);
 }
