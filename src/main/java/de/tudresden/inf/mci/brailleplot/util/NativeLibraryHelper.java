@@ -98,7 +98,7 @@ public final class NativeLibraryHelper {
             case "linux":
                 return ".so";
             case "osx":
-                return ".dynlib";
+                return ".dylib";
             default:
                 throw new IllegalStateException("If this exception was thrown, something is wrong with your code");
         }
