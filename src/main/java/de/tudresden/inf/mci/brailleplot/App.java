@@ -171,14 +171,12 @@ public final class App {
             // Config Parsing
             URL configPath;
             if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument, until then use default location for test runs
-                //configPath = getClass().getResource("/config/index_everest_d_v4.properties");
-                //mLogger.warn("ATTENTION! Using default specific config from resources. Please remove default config behavior before packaging the jar.");
-                throw new RuntimeException("Please pass -p in run configuration.");
+                configPath = getClass().getResource("/config/index_everest_d_v4.properties");
+                mLogger.warn("ATTENTION! Using default specific config from resources. Please remove default config behavior before packaging the jar.");
+            } else {
+                File configFile = new File(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
+                configPath = configFile.toURL();
             }
-            //else {
-            File configFile = new File(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
-            configPath = configFile.toURL();
-            //}
 
             JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath, getClass().getClassLoader().getResource("config/default.properties"));
             Printer indexV4Printer = configParser.getPrinter();

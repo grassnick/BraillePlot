@@ -150,12 +150,8 @@ public abstract class ConfigurationParser {
      * This method should be called inside the concrete parsers constructor.
      *
      * @param defaultPrinter A {@link Printer} object containing the default properties or null for no default to be set.
-<<<<<<< HEAD
      * @param defaultRepresentation A {@link Representation} object containing the default properties or null for no default to be set.
      * @param defaultFormat A {@link Format} object containing the default properties or null for no default to be set.
-=======
-     * @param defaultFormat  A {@link Format} object containing the default properties or null for no default to be set.
->>>>>>> origin/master
      */
     protected final void setDefaults(final Printer defaultPrinter, final Representation defaultRepresentation, final Format defaultFormat) {
         mDefaultPrinter = defaultPrinter;
