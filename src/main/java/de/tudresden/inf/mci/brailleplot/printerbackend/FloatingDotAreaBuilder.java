@@ -40,12 +40,17 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<SimpleFloatingPointD
             // Here goes Origo, Width and Height
 
             // End of Origo etc.
-            stream.write(mColon);
+            stream.write(mSemicolon);
             stream.write(mNewLine);
             // Start iteration over values
             while (iter.hasNext()) {
                 Point2DValued<Quantity<Length>, Boolean> current = iter.next();
-                //current.getX().to(n;
+                Number x = current.getX().getValue();
+                Number y = current.getY().getValue();
+
+                //stream.write(x.floatValue());
+                stream.write(mColon);
+                //stream.write(y.floatValue());
                 stream.write(mNewLine);
             }
             // End with ;
@@ -55,7 +60,7 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<SimpleFloatingPointD
         }
 
 
-        return null;
+        return stream.toByteArray();
     }
 
 
