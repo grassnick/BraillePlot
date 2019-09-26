@@ -7,6 +7,8 @@ import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaExceptio
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printerbackend.NotSupportedFileExtensionException;
+import de.tudresden.inf.mci.brailleplot.util.NativeLibraryHelper;
+import de.tudresden.inf.mci.brailleplot.util.NoSuchNativeLibraryException;
 import org.liblouis.DisplayException;
 import org.liblouis.DisplayTable;
 import org.liblouis.TranslationException;
@@ -42,6 +44,13 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
      * @param printer Needed to get the semantictable according to the printer config.
      */
     public LiblouisBrailleTextRasterizer(final Printer printer) {
+
+        try {
+            NativeLibraryHelper.loadNativeLibrary("liblouis");
+        } catch (NoSuchNativeLibraryException e) {
+          // Even if the library is not distributed within the jar file, it might be installed on the system.
+        }
+
         Objects.requireNonNull(printer, "The given printer for the LiblouisBrailleTextRasterizer was null!");
         try {
             mParser = AbstractBrailleTableParser.getParser(printer, "semantictable");
