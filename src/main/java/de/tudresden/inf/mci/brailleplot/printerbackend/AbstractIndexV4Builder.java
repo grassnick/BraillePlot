@@ -24,7 +24,7 @@ abstract class AbstractIndexV4Builder<T extends PrintableData> extends AbstractD
 
     final byte[] mStartTemporaryDoc = new byte[] {0x1B, 0x44};
 
-    final byte[] mStartFloatingMode = new byte[] {0x1B, 0xF};
+    final byte[] mStartFloatingMode = new byte[] {0x1B, 0x46};
 
     final byte[] mNewLine = new byte[] {0x0A};
 

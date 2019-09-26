@@ -10,6 +10,7 @@ import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
+import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 
@@ -204,10 +205,10 @@ public final class App {
             PlotCanvas floatCanvas = new PlotCanvas(indexV4Printer, a4Format);
             FloatingPointData<Boolean> points = floatCanvas.getNewPage();
 
-            final int blockX = 230;
-            final int blockY = 400;
-            for (int y = 0; y < blockY; y += 2) {
-                for (int x = 0; x < blockX; x += 2) {
+            final int blockX = 210;
+            final int blockY = 297;
+            for (double y = 0; y < blockY; y += 1.5) {
+                for (double x = 0; x < blockX; x += 1.5) {
                     Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true);
                     points.addPoint(point);
                 }
@@ -243,8 +244,9 @@ public final class App {
             // Last Step: Printing
             @SuppressWarnings("checkstyle:MagicNumber")
             String printerConfigUpperCase = indexV4Printer.getProperty("mode").toString().toUpperCase();
-            PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), indexV4Printer);
-            printD.print(mat);
+            //PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), indexV4Printer);
+            PrintDirector printF = new PrintDirector(PrinterCapability.INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER, indexV4Printer);
+            printF.print(points);
 
         } catch (final Exception e) {
             terminateWithException(e);

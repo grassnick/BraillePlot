@@ -3,13 +3,19 @@ package de.tudresden.inf.mci.brailleplot.printerbackend;
 
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleFloatingPointDataImpl;
+import tec.units.ri.unit.MetricPrefix;
+import tec.units.ri.unit.Units;
 
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Objects;
+
+import static tec.units.ri.unit.Units.METRE;
 
 /**
  * Class representing the FloatingDotArea protocol for the braille Index Everest V4 for printing
@@ -31,10 +37,22 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<SimpleFloatingPointD
      * @return Exception.
      */
     @Override
-    byte[] assemble(final SimpleFloatingPointDataImpl data) {
+    byte[] assemble(final SimpleFloatingPointDataImpl data){
         mData = Objects.requireNonNull(data);
         Iterator<Point2DValued<Quantity<Length>, Boolean>> iter = mData.getIterator();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        //FileOutputStream stream = null;
+
+        /*
+        try {
+            stream = new FileOutputStream("PlsWork");
+        } catch (FileNotFoundException e) {
+            e.getCause();
+        }
+
+         */
+
+
         try {
             stream.write(mStartFloatingMode);
             // Here goes Origo, Width and Height
@@ -45,22 +63,27 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<SimpleFloatingPointD
             // Start iteration over values
             while (iter.hasNext()) {
                 Point2DValued<Quantity<Length>, Boolean> current = iter.next();
-                Number x = current.getX().getValue();
-                Number y = current.getY().getValue();
-
-                //stream.write(x.floatValue());
+                Quantity<Length> x = current.getX().to(MetricPrefix.MILLI(METRE));
+                Quantity<Length> y = current.getY().to(MetricPrefix.MILLI(METRE));
+                String xString = String.format("%.2f", x.getValue().doubleValue()).replace(',','.');
+                String yString = String.format("%.2f", y.getValue().doubleValue()).replace(',','.');
+                stream.write(xString.getBytes());
                 stream.write(mColon);
+                stream.write(yString.getBytes());
                 //stream.write(y.floatValue());
-                stream.write(mNewLine);
+                if (iter.hasNext()) {
+                    stream.write(mNewLine);
+                }
             }
             // End with ;
-            stream.write(mColon);
+            stream.write(mSemicolon);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
 
         return stream.toByteArray();
+        //return null;
     }
 
 
