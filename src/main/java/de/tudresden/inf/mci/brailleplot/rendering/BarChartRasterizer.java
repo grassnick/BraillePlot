@@ -140,7 +140,6 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
             // Diagram Title
             String title = diagram.getTitle();
             int titleLength = mTextRasterizer.getBrailleStringLength(title);
-            int lel = mTextRasterizer.getBrailleStringLength(title, BrailleLanguage.Language.DE_KURZSCHRIFT);
             int titleHeight = (int) Math.ceil(titleLength / referenceCellArea.getWidth());
             if (titleHeight > mMaximumTitleHeightCells) {
                 throw new InsufficientRenderingAreaException("Title is too long. (Exceeds maximum height)");
