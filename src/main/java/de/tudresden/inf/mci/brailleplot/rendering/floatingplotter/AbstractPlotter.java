@@ -361,9 +361,14 @@ abstract class AbstractPlotter<T extends Diagram> {
 
         for (int i = 0; i < mNumberXTicks; i++) {
             Rectangle rect;
-            if (mScaleX[i] < TEN) {
+            if (mScaleX[i] < TEN /*&& someBool*/) {
+                // one digit
+                rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - mCanvas.getCellDistHor() / 2, startY, width, height);
+            } else if (true /*someBool || mScaleX[i] < TEN && !someBool*/) {
+                // two digits
                 rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - width - mCanvas.getCellDistHor() / 2, startY, width, height);
             } else {
+                // three digits
                 rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - width - mCanvas.getCellDistHor() - width / 2, startY, width, height);
             }
             BrailleText text = new BrailleText(Integer.toString(mScaleX[i]), rect);
@@ -381,7 +386,7 @@ abstract class AbstractPlotter<T extends Diagram> {
         double width = mCanvas.getCellWidth();
         double stepHor = width + mCanvas.getCellDistHor();
         double stepVer = height + mCanvas.getCellDistVer();
-        String[] title = "Hallo".split("");
+        char[] title = mAxes[0].toCharArray();
 
         LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
 
@@ -390,7 +395,7 @@ abstract class AbstractPlotter<T extends Diagram> {
             for (double j = mCanvas.getCellDistHor() + mCanvas.getDotDiameter() / 2; j < mCanvas.getPageWidth() - width - mCanvas.getCellDistHor(); j += stepHor) {
                 if (k < title.length) {
                     Rectangle rect = new Rectangle(j, mCanvas.getCellDistVer() + i * stepVer, width, height);
-                    BrailleText text = new BrailleText(title[k], rect);
+                    BrailleText text = new BrailleText(Character.toString(title[k]), rect);
                     k++;
                     j = tplotter.plot(text, mCanvas);
                 } else {
