@@ -1,5 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
+import de.tudresden.inf.mci.brailleplot.util.UrlHelper;
+
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -88,7 +90,7 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
             String value = properties.getProperty(key);
             // check for special property key: 'include'
             if (key.equalsIgnoreCase("include")) {
-                includeResource(value, path);
+                includeResources(value, path);
             } else if (key.equalsIgnoreCase("include-file")) {
                 includeFiles(value, path);
             } else {
@@ -128,7 +130,7 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
             } catch (URISyntaxException e) {
                 throw new ConfigurationParsingException("Could not generate URI", e);
             }
-            Path newPath = parentPath.getParent().resolve(s.trim() + INCLUDE_FILE_EXTENSION);
+            Path newPath = parentPath.resolve(s.trim() + INCLUDE_FILE_EXTENSION);
             String newPathString = newPath.toAbsolutePath().toString();
 
             mLogger.debug("Prepare recursive parsing of properties file in the file system for file \"{}\"", newPathString);
@@ -148,12 +150,12 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
      * @throws ConfigurationParsingException If errors occurred while reading from a resource.
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
-    private void includeResource(final String fileList, final URL parentUrl) throws ConfigurationParsingException, ConfigurationValidationException {
+    private void includeResources(final String fileList, final URL parentUrl) throws ConfigurationParsingException, ConfigurationValidationException {
         for (String s : fileList.split(",")) {
 
             URL newUrl = null;
             try {
-                newUrl = new URL(parentUrl + "/" + s.trim() + INCLUDE_FILE_EXTENSION);
+                newUrl = new URL(parentUrl.getProtocol(), parentUrl.getHost(), UrlHelper.getPathString(parentUrl) + "/" + s.trim() + INCLUDE_FILE_EXTENSION);
             } catch (MalformedURLException e) {
                 throw new ConfigurationParsingException("Could not generate URI", e);
             }

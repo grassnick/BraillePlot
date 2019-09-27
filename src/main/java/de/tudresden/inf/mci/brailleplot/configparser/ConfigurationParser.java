@@ -192,7 +192,7 @@ public abstract class ConfigurationParser {
         mLogger.debug("Starting parsing properties file from file system: \"{}\"", filePath);
 
         try {
-            parseConfigFile(new FileInputStream(filePath.toFile()), filePath.toFile().toURI().toURL(), assertCompleteness);
+            parseConfigFile(new FileInputStream(filePath.toFile()), UrlHelper.getParentUrl(filePath.toFile().toURI().toURL()), assertCompleteness);
         } catch (FileNotFoundException | MalformedURLException e) {
             throw new ConfigurationParsingException("Configuration file could not be read at \"" + filePath.toString() + "\"");
         }
