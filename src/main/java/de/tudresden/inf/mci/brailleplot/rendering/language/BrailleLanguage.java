@@ -1,5 +1,10 @@
 package de.tudresden.inf.mci.brailleplot.rendering.language;
 
+/**
+ * Helper class for braillelanguage
+ * @author Andrey Ruzhanskiy
+ * @version 27.09.2019
+ */
 public class BrailleLanguage {
 
     public static String getCorrectLanguage(Language language){
@@ -14,7 +19,7 @@ public class BrailleLanguage {
             case DE_KURZSCHRIFT:
                 return "de-g2.ctb";
         }
-        throw new RuntimeException("Unsupported language given as braillelanguage!  " + language.toString());
+        throw new RuntimeException("Unsupported language given as braillelanguage!  \"" + language.toString() + "\"");
     }
 
 
