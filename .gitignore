@@ -25,5 +25,5 @@ src/main/resources/mapping/liblouis
 
 # Native libraries
 *.so
-*.dynlib
+*.dylib
 *.dll
