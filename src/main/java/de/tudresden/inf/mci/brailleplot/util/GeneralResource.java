@@ -190,7 +190,7 @@ public final class GeneralResource {
                 throw new IllegalStateException("Not running from jar.");
             }
             URL jarUrl = getClassRef().getProtectionDomain().getCodeSource().getLocation();
-            String jarPath = URLDecoder.decode(jarUrl.getPath(), "UTF-8");
+            String jarPath = UrlHelper.getPathString(jarUrl);
             File jarFile = new File(jarPath);
             return new JarFile(jarFile);
         } catch (Exception e) {

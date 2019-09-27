@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
+import de.tudresden.inf.mci.brailleplot.util.UrlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -265,11 +266,7 @@ public abstract class ConfigurationParser {
      * @return The String representation of the path of a URL where the leading {@literal "}file:{@literal "} prefix is stripped.
      */
     private static String getPath(final URL url) throws ConfigurationParsingException {
-        try {
-            String urlString = URLDecoder.decode(url.getPath(), "UTF-8");
-            return urlString.replaceAll("^file:", "");
-        } catch (UnsupportedEncodingException e) {
-            throw new ConfigurationParsingException("Could not decode URL", e);
-        }
+        String urlString = UrlHelper.getPathString(url);
+        return urlString.replaceAll("^file:", "");
     }
 }
