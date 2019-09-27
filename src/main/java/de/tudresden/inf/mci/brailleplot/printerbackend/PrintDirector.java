@@ -62,14 +62,13 @@ public class PrintDirector {
     /**
      * Public method for printing the given document with the given data.
      * @param data {@link de.tudresden.inf.mci.brailleplot.printabledata.MatrixData} to be printed.
-     * @param <T> The type of {@link MatrixData}.
      */
 
 
     // Needed if someone tries to use a normal builder with something that is not a boolean.
 
     @SuppressWarnings("unchecked")
-    public <T> void print(final PrintableData data)  {
+    public void print(final PrintableData data)  {
         Objects.requireNonNull(data);
         setUpDoc();
         setUpService();
