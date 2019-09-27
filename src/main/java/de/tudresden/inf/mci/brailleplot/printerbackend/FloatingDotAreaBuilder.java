@@ -4,7 +4,6 @@ package de.tudresden.inf.mci.brailleplot.printerbackend;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleFloatingPointDataImpl;
 import tec.units.ri.unit.MetricPrefix;
-import tec.units.ri.unit.Units;
 
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
@@ -37,7 +36,7 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<SimpleFloatingPointD
      * @return Exception.
      */
     @Override
-    byte[] assemble(final SimpleFloatingPointDataImpl data){
+    byte[] assemble(final SimpleFloatingPointDataImpl<Boolean> data){
         mData = Objects.requireNonNull(data);
         Iterator<Point2DValued<Quantity<Length>, Boolean>> iter = mData.getIterator();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -80,11 +79,7 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<SimpleFloatingPointD
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
         return stream.toByteArray();
         //return null;
     }
-
-
 }
