@@ -78,7 +78,7 @@ public class PrintDirector {
         } catch (ClassCastException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
-        //print(result);
+        print(result);
     }
 
     /**
