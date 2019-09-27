@@ -142,7 +142,7 @@ public final class GeneralResource {
      * @param path Absolute classpath pointing to jar resource. Omit the leading "/". If this point to a resource directory the directory and all contents are exported.
      * @return A File instance representing the resource on the file system.
      */
-    public static File getOrExportResourceFile(final String path) {
+    public static synchronized File getOrExportResourceFile(final String path) {
         if (isRunFromCompiledJar()) {
             try {
                 JarFile jar = openJarFile();
@@ -179,7 +179,7 @@ public final class GeneralResource {
         } else {
             Class cl = getClassRef();
             URL resource = cl.getResource("/" + path); // preceding slash for absolute classpath reference
-            String directoryPath = resource.getPath();
+            String directoryPath = UrlHelper.getPathString(resource);
             return new File(directoryPath);
         }
     }
