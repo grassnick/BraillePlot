@@ -88,6 +88,11 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
 
     }
 
+    @Override
+    public final double getDotDiameter() {
+        return mDotDiameter + 1;
+    }
+
     public final double getResolution() {
         return mResolution;
     }

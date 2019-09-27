@@ -89,16 +89,6 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
         assert result != null;
         String[] resultAsArray = result.getBraille().split("");
 
-        String[] resultAsArrayCut;
-        if (resultAsArray[0].equals("#") /*&& someBool*/) {
-            resultAsArrayCut = new String[resultAsArray.length - 1];
-            for (int i = 1; i < resultAsArray.length; i++) {
-                resultAsArrayCut[i - 1] = resultAsArray[i];
-            }
-        } else {
-            resultAsArrayCut = resultAsArray;
-        }
-
         double startX = rect.getX();
         double startY = rect.getY();
         double widthJump = canvas.getDotDistHor();
@@ -109,8 +99,8 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
         double last = startX;
         mData = canvas.getCurrentPage();
 
-        for (int k = 0; k < resultAsArrayCut.length; k++) {
-            String[] braille = mParser.getCharToBraille(resultAsArrayCut[k]).split("");
+        for (int k = 0; k < resultAsArray.length; k++) {
+            String[] braille = mParser.getCharToBraille(resultAsArray[k]).split("");
 
             for (int i = 0; i < 2; i++) {
                 for (int j = 0; j < THREE; j++) {

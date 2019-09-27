@@ -305,9 +305,10 @@ public final class App {
             String printerConfigUpperCase = indexV4Printer.getProperty("mode").toString().toUpperCase();
             PrintDirector printD = new PrintDirector(PrinterCapability.INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER, indexV4Printer);
             ListIterator<FloatingPointData<Boolean>> canvasIt = floatCanvas.getPageIterator();
-            for (int i = 0; i < floatCanvas.getPageCount(); i++) {
+            for (int i = 0; i < floatCanvas.getPageCount() - 1; i++) {
+                int j = floatCanvas.getPageCount();
                 if (canvasIt.hasNext()) {
-                    //printD.print(canvasIt.next());
+                    printD.print(canvasIt.next());
                 }
             }
 

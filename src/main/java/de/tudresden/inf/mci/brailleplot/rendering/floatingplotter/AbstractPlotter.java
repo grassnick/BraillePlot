@@ -360,17 +360,7 @@ abstract class AbstractPlotter<T extends Diagram> {
         LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
 
         for (int i = 0; i < mNumberXTicks; i++) {
-            Rectangle rect;
-            if (mScaleX[i] < TEN /*&& someBool*/) {
-                // one digit
-                rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - mCanvas.getCellDistHor() / 2, startY, width, height);
-            } else if (true /*someBool || mScaleX[i] < TEN && !someBool*/) {
-                // two digits
-                rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - width - mCanvas.getCellDistHor() / 2, startY, width, height);
-            } else {
-                // three digits
-                rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - width - mCanvas.getCellDistHor() - width / 2, startY, width, height);
-            }
+            Rectangle rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - mCanvas.getCellDistHor() / 2, startY, width, height);
             BrailleText text = new BrailleText(Integer.toString(mScaleX[i]), rect);
             tplotter.plot(text, mCanvas);
         }

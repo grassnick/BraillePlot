@@ -25,7 +25,7 @@ public abstract class AbstractCanvas<T extends PrintableData> {
 
     Rectangle mPrintableArea;
 
-    private double mDotDiameter;
+    double mDotDiameter;
     private double mConstraintLeft;
     private double mConstraintTop;
 
@@ -140,7 +140,7 @@ public abstract class AbstractCanvas<T extends PrintableData> {
      * Get the diameter of a dot in mm.
      * @return The diameter of a dot in mm.
      */
-    public final double getDotDiameter() {
+    public double getDotDiameter() {
         return mDotDiameter;
     }
 
