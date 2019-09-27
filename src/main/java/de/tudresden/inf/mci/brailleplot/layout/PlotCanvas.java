@@ -2,6 +2,7 @@ package de.tudresden.inf.mci.brailleplot.layout;
 
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleFloatingPointDataImpl;
 
@@ -13,8 +14,8 @@ import de.tudresden.inf.mci.brailleplot.printabledata.SimpleFloatingPointDataImp
  */
 public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
 
-    public PlotCanvas(final Printer printer, final Format format) throws InsufficientRenderingAreaException {
-        super(printer, format);
+    public PlotCanvas(final Printer printer, final Representation representation, final Format format) throws InsufficientRenderingAreaException {
+        super(printer, representation, format);
     }
 
     public final FloatingPointData<Boolean> getNewPage() {

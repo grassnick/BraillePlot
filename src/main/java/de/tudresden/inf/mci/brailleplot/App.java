@@ -4,6 +4,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
+import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
@@ -42,6 +43,7 @@ import tec.units.ri.unit.MetricPrefix;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -172,12 +174,14 @@ public final class App {
                 configPath = getClass().getResource("/config/index_everest_d_v4.properties");
                 mLogger.warn("ATTENTION! Using default specific config from resources. Please remove default config behavior before packaging the jar.");
             } else {
-                configPath = new URL(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
+                File configFile = new File(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
+                configPath = configFile.toURL();
             }
 
             JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath, getClass().getClassLoader().getResource("config/default.properties"));
             Printer indexV4Printer = configParser.getPrinter();
             Format a4Format = configParser.getFormat("A4");
+            Representation representationParameters = configParser.getRepresentation();
 
             // Parse csv data
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
@@ -193,7 +197,7 @@ public final class App {
             barChart.setYAxisName("Länge in m");
 
             // Render diagram
-            MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
+            MasterRenderer renderer = new MasterRenderer(indexV4Printer, representationParameters, a4Format);
             RasterCanvas canvas = renderer.rasterize(barChart);
             // SVG exporting
             SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
@@ -201,7 +205,7 @@ public final class App {
             svgExporter.dump("boolMat");
 
             // FloatingPointData SVG exporting example
-            PlotCanvas floatCanvas = new PlotCanvas(indexV4Printer, a4Format);
+            PlotCanvas floatCanvas = new PlotCanvas(indexV4Printer, representationParameters, a4Format);
             FloatingPointData<Boolean> points = floatCanvas.getNewPage();
 
             final int blockX = 230;

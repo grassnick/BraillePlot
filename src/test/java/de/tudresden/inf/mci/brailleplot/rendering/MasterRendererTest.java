@@ -1,9 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
-import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
-import de.tudresden.inf.mci.brailleplot.configparser.Format;
-import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
-import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.configparser.*;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import org.junit.jupiter.api.Assertions;
@@ -18,6 +15,7 @@ public class MasterRendererTest {
     public static final URL mDefaultConfig = getResource("config/rasterizer_test_default.properties");
     public static final URL mBaseConfig = getResource("config/base_format.properties");
     public static Printer mPrinter;
+    public static Representation mRepresentation;
     public static Format mFormat;
 
     public static URL getResource(final String location) {
@@ -30,6 +28,7 @@ public class MasterRendererTest {
                 () -> {
                     ConfigurationParser parser = new JavaPropertiesConfigurationParser(mBaseConfig, mDefaultConfig);
                     mPrinter = parser.getPrinter();
+                    mRepresentation = parser.getRepresentation();
                     mFormat = parser.getFormat("test");
                 }
         );
@@ -60,7 +59,7 @@ public class MasterRendererTest {
                     renderingBase.registerRasterizer(rasterizerRef2);
 
                     // create renderer from rendering base
-                    MasterRenderer renderer = new MasterRenderer(mPrinter, mFormat, renderingBase);
+                    MasterRenderer renderer = new MasterRenderer(mPrinter, mRepresentation, mFormat, renderingBase);
 
                     // Test rasterizer selection
                     RasterCanvas result;
@@ -91,7 +90,7 @@ public class MasterRendererTest {
     @Test
     public void testRasterizerNotAvailable() {
         // Create MasterRenderer with empty rendering base.
-        MasterRenderer empty = new MasterRenderer(mPrinter, mFormat, new FunctionalRenderingBase());
+        MasterRenderer empty = new MasterRenderer(mPrinter, mRepresentation, mFormat, new FunctionalRenderingBase());
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> empty.rasterize(new Image(getResource("examples/img/dummy.bmp"))));
     }

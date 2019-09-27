@@ -1,9 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
-import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
-import de.tudresden.inf.mci.brailleplot.configparser.Format;
-import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
-import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.configparser.*;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.SixDotBrailleRasterCanvas;
 import org.junit.jupiter.api.Assertions;
@@ -19,6 +16,7 @@ public class FunctionalRasterizerTest {
     public static final URL mDefaultConfig = getResource("config/rasterizer_test_default.properties");
     public static final URL mBaseConfig = getResource("config/base_format.properties");
     public static Printer mPrinter;
+    public static Representation mRepresentation;
     public static Format mFormat;
 
     public static URL getResource(final String location) {
@@ -31,6 +29,7 @@ public class FunctionalRasterizerTest {
                 () -> {
                     ConfigurationParser parser = new JavaPropertiesConfigurationParser(mBaseConfig, mDefaultConfig);
                     mPrinter = parser.getPrinter();
+                    mRepresentation = parser.getRepresentation();
                     mFormat = parser.getFormat("test");
                 }
         );
@@ -49,7 +48,7 @@ public class FunctionalRasterizerTest {
         // which decides which rasterizer to use based on the Renderable type.
         // Directly passing the wrong Renderable type must cause exception:
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            RasterCanvas testCanvas = new SixDotBrailleRasterCanvas(mPrinter, mFormat);
+            RasterCanvas testCanvas = new SixDotBrailleRasterCanvas(mPrinter, mRepresentation, mFormat);
             // Pass Image to BrailleText rasterizer.
             textRasterizer.rasterize(new Image(getResource("examples/img/dummy.bmp")), testCanvas);
         });
