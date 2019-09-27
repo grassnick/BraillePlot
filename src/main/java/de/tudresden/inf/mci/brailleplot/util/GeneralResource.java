@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -188,7 +189,9 @@ public final class GeneralResource {
             if (!isRunFromCompiledJar()) {
                 throw new IllegalStateException("Not running from jar.");
             }
-            File jarFile = new File(getClassRef().getProtectionDomain().getCodeSource().getLocation().getPath());
+            URL jarUrl = getClassRef().getProtectionDomain().getCodeSource().getLocation();
+            String jarPath = URLDecoder.decode(jarUrl.getPath(), "UTF-8");
+            File jarFile = new File(jarPath);
             return new JarFile(jarFile);
         } catch (Exception e) {
             throw new RuntimeException("Error while retrieving JarFile reference.", e);
