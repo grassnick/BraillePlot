@@ -136,7 +136,7 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
             mLogger.debug("Prepare recursive parsing of properties file in the file system for file \"{}\"", newPathString);
 
             try (InputStream is = new BufferedInputStream(new FileInputStream(newPathString))) {
-                parse(is, newPath.toUri().toURL());
+                parse(is, UrlHelper.getParentUrl(newPath.toUri().toURL()));
             } catch (IOException e) {
                 throw new ConfigurationParsingException("Could not open include file", e);
             }
@@ -163,7 +163,7 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
             mLogger.debug("Prepare recursive parsing of properties file in the java resources at \"{}\"", newUrl);
 
             try (InputStream is = newUrl.openStream()) {
-                parse(is, newUrl);
+                parse(is, UrlHelper.getParentUrl(newUrl));
             } catch (IOException e) {
                 throw new ConfigurationParsingException("Could not open include resource", e);
             }
