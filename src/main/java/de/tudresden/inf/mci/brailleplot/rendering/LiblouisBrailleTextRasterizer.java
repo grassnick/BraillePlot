@@ -21,9 +21,8 @@ import static java.lang.Math.ceil;
 
 /**
  * Class representing a brailletextrasterizing approach using the liblouis library.
- *
  * @author Andrey Ruzhanskiy
- * @version 30.08.2019
+ * @version 27.09.2019
  */
 
 public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
