@@ -392,7 +392,7 @@ abstract class AbstractPlotter<T extends Diagram> {
 
         loop:
         for (int i = 0; i < 2; i++) {
-            for (double j = mCanvas.getCellDistHor() + mCanvas.getDotDiameter() / 2; j < mCanvas.getPageWidth() - width - mCanvas.getCellDistHor(); j += stepHor) {
+            for (double j = mCanvas.getCellDistHor() + mCanvas.getDotDiameter() / 2; j < mCanvas.getPageWidth() - THREE * (width + mCanvas.getCellDistHor()) + mCanvas.getCellDistHor(); j += stepHor) {
                 if (k < title.length) {
                     Rectangle rect = new Rectangle(j, mCanvas.getCellDistVer() + i * stepVer, width, height);
                     BrailleText text = new BrailleText(Character.toString(title[k]), rect);

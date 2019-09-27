@@ -215,7 +215,7 @@ public class LegendPlotter implements Plotter<Legend> {
 
         loop:
         for (int i = 0; i < THREE; i++) {
-            for (double j = mCanvas.getCellDistHor() + mCanvas.getDotDiameter() / 2 + startX; j < mCanvas.getPageWidth() - mWidth - mCanvas.getCellDistHor(); j += mStepHor) {
+            for (double j = mCanvas.getCellDistHor() + mCanvas.getDotDiameter() / 2 + startX; j < mCanvas.getPageWidth() - THREE * (mCanvas.getCellWidth() + mCanvas.getCellDistHor()) + mCanvas.getCellDistHor(); j += mStepHor) {
                 if (k < title.length) {
                     last = mCanvas.getCellDistVer() + i * mStepVer + starterY;
 

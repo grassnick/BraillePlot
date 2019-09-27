@@ -256,11 +256,11 @@ public final class App {
 
             LinePlot lineplot = new LinePlot(container2);
             LinePlotter plotter2 = new LinePlotter();
-            // plotter2.plot(lineplot, floatCanvas);
+            plotter2.plot(lineplot, floatCanvas);
 
             CategoricalBarChart bar = new CategoricalBarChart(container3);
             StackedBarChartPlotter plotter3 = new StackedBarChartPlotter();
-            plotter3.plot(bar, floatCanvas);
+            // plotter3.plot(bar, floatCanvas);
 
             GroupedBarChartPlotter plotter4 = new GroupedBarChartPlotter();
             // plotter4.plot(bar, floatCanvas);

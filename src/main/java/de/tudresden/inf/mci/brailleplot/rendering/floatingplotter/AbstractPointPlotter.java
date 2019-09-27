@@ -185,9 +185,14 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             //Rectangle rect = new Rectangle(startX, mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
 
             Rectangle rect;
-            if (mScaleY[i] < TEN) {
+            if (mScaleY[i] < TEN /*&& someBool*/) {
+                // one digit
+                rect = new Rectangle(startX, mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
+            } else if (true /*someBool || mScaleY[i] < TEN && !someBool*/){
+                // two digits
                 rect = new Rectangle(startX - width - mCanvas.getCellDistHor() / 2, mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
             } else {
+                // three digits
                 rect = new Rectangle(startX - width - mCanvas.getCellDistHor() - width / 2, mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
             }
             BrailleText text = new BrailleText(Integer.toString(mScaleY[i]), rect);
