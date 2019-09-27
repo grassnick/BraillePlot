@@ -195,9 +195,9 @@ public final class App {
             mLogger.debug("Internal data representation:\n {}", container.toString());
 
             LineChart lineChart = new LineChart(container);
-            lineChart.setTitle("I am a line chart");
-            lineChart.setXAxisName("Units per Memes");
-            lineChart.setYAxisName("Pepes per Wojacks");
+            lineChart.setTitle("Liniendiagramm");
+            lineChart.setXAxisName("X-Achsen Einheit");
+            lineChart.setYAxisName("Y-Achsen Einheit");
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
             RasterCanvas canvas = renderer.rasterize(lineChart);
             Iterator<MatrixData<Boolean>> iter = canvas.getPageIterator();
@@ -246,7 +246,12 @@ public final class App {
             // Last Step: Printing
             @SuppressWarnings("checkstyle:MagicNumber")
             PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(indexV4Printer.getProperty("mode").toString().toUpperCase()), indexV4Printer);
-            printD.print(mat);
+            Iterator<MatrixData<Boolean>> itera = canvas.getPageIterator();
+            itera.next();
+            while(itera.hasNext()) {
+                MatrixData<Boolean> page = itera.next();
+                printD.print(page);
+            }
 
         } catch (final Exception e) {
             terminateWithException(e);
