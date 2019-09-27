@@ -7,8 +7,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -262,8 +264,12 @@ public abstract class ConfigurationParser {
      * @param url The URL that needs to be stripped
      * @return The String representation of the path of a URL where the leading {@literal "}file:{@literal "} prefix is stripped.
      */
-    private static String getPath(final URL url) {
-        String urlString = url.getPath();
-        return urlString.replaceAll("^file:", "");
+    private static String getPath(final URL url) throws ConfigurationParsingException {
+        try {
+            String urlString = URLDecoder.decode(url.getPath(), "UTF-8");
+            return urlString.replaceAll("^file:", "");
+        } catch (UnsupportedEncodingException e) {
+            throw new ConfigurationParsingException("Could not decode URL", e);
+        }
     }
 }
