@@ -29,6 +29,7 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<SimpleFloatingPointD
      * Constructor. Does not have any functionality. Should only be used in  {@link PrintDirector}
      */
     FloatingDotAreaBuilder() { }
+    private  int l;
 
     /**
      * Currently not implemented.
@@ -39,17 +40,17 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<SimpleFloatingPointD
     byte[] assemble(final SimpleFloatingPointDataImpl<Boolean> data){
         mData = Objects.requireNonNull(data);
         Iterator<Point2DValued<Quantity<Length>, Boolean>> iter = mData.getIterator();
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        //FileOutputStream stream = null;
+        //ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        FileOutputStream stream = null;
 
-        /*
+
         try {
-            stream = new FileOutputStream("PlsWork");
+            stream = new FileOutputStream(String.valueOf(l));
         } catch (FileNotFoundException e) {
             e.getCause();
         }
+        l++;
 
-         */
 
 
         try {
@@ -79,7 +80,7 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<SimpleFloatingPointD
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return stream.toByteArray();
-        //return null;
+        //return stream.toByteArray();
+        return null;
     }
 }
