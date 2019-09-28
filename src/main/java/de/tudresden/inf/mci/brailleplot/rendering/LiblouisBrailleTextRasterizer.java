@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 import de.tudresden.inf.mci.brailleplot.util.GeneralResource;
 import de.tudresden.inf.mci.brailleplot.brailleparser.AbstractBrailleTableParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
@@ -17,10 +18,11 @@ import java.io.File;
 import java.util.Objects;
 
 import static java.lang.Math.ceil;
+
 /**
  * Class representing a brailletextrasterizing approach using the liblouis library.
  * @author Andrey Ruzhanskiy
- * @version 30.08.2019
+ * @version 27.09.2019
  */
 
 public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
@@ -39,6 +41,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
 
     /**
      * Constructor for liblouistextrasterizer.
+     *
      * @param printer Needed to get the semantictable according to the printer config.
      */
     public LiblouisBrailleTextRasterizer(final Printer printer) {
@@ -53,7 +56,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             String tableFilePath = tableFile.getAbsolutePath();
             mTranslator = new Translator(tableFilePath);
         } catch (Exception e) {
-            throw new RuntimeException("Error while creating liblouis translator:", e);
+            throw new RuntimeException("Error while creating liblouis translator", e);
         }
     }
 
@@ -65,6 +68,13 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
         if (data.getText() == "") {
             return;
         }
+        try {
+            File tableFile = mLibLouisTableDirectory.toPath().resolve(data.getLanguage()).toFile(); // reference to specific table file in exported directory
+            String tableFilePath = tableFile.getAbsolutePath();
+            mTranslator = new Translator(tableFilePath);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while creating liblouis translator", e);
+        }
         Rectangle rect = data.getArea().intersectedWith(canvas.getDotRectangle());
         mCanvas = canvas;
         TranslationResult result = null;
@@ -73,8 +83,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
         } catch (TranslationException | DisplayException e) {
             e.printStackTrace();
         }
-        String[]resultAsArray = result.getBraille().split("");
-
+        String[] resultAsArray = result.getBraille().split("");
 
 
         // We need to know where to start
@@ -127,14 +136,13 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
 
     /**
      * Calculates the required height for the text.
-     * @param text Text to be analyzed.
-     * @param xPos X position where to start.
-     * @param yPos Y position where to start.
-     * @param maxWidth the maximum width of the area where the text has to be
-     * @param canvas Canvas on which the text should later appear
+     *
+     * @param text     Text to be analyzed.
+     * @param maxWidth the maximum width of the area where the text has to be. In dots.
+     * @param canvas   Canvas on which the text should later appear
      * @return Height in braillecells.
      */
-    public int calculateRequiredHeight(final String text, final int xPos, final int yPos, final int maxWidth,
+    public int calculateRequiredHeight(final String text, final int maxWidth,
                                        final RasterCanvas canvas) {
         Objects.requireNonNull(text, "The given string for calculateRequiredHeight was null!");
         Objects.requireNonNull(canvas, "The given canvas for calculateRequiredHeight was null!");
@@ -161,6 +169,33 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
     }
 
     /**
+     * Calculates the required height for the text with the given language.
+     *
+     * @param text     Text to be analyzed.
+     * @param maxWidth the maximum width of the area where the text has to be. In dots.
+     * @param canvas   Canvas on which the text should later appear
+     * @param language {@link BrailleLanguage.Language} The language which is to be used.
+     * @return Height in braillecells.
+     */
+    public int calculateRequiredHeight(final String text, final int maxWidth,
+                                       final RasterCanvas canvas, final BrailleLanguage.Language language) {
+        Objects.requireNonNull(text, "The given string for calculateRequiredHeight was null!");
+        Objects.requireNonNull(canvas, "The given canvas for calculateRequiredHeight was null!");
+        Translator temp = mTranslator;
+        try {
+            File tableFile = mLibLouisTableDirectory.toPath().resolve(BrailleLanguage.getCorrectLanguage(language)).toFile(); // reference to specific table file in exported directory
+            String tableFilePath = tableFile.getAbsolutePath();
+            mTranslator = new Translator(tableFilePath);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while creating liblouis translator", e);
+        }
+        int length = calculateRequiredHeight(text, maxWidth, canvas);
+        mTranslator = temp;
+        return length;
+    }
+
+
+    /**
      * Method for getting the braillelength for a given string.
      * @param text String to analyze
      * @return length of the braille
@@ -179,5 +214,29 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             e.printStackTrace();
         }
         return result.getBraille().length();
+    }
+
+    /**
+     * Method for getting the braillelength for a given string with the given {@link BrailleLanguage.Language}.
+     * @param text String to analyze
+     * @param language {@link BrailleLanguage.Language} The language which is to be used.
+     * @return length of the braille
+     */
+    public int getBrailleStringLength(final String text, final BrailleLanguage.Language language) {
+        Objects.requireNonNull(text, "The given string for getBrailleStringLength was null!");
+        if (text == "") {
+            return 0;
+        }
+        Translator temp = mTranslator;
+        try {
+            File tableFile = mLibLouisTableDirectory.toPath().resolve(BrailleLanguage.getCorrectLanguage(language)).toFile(); // reference to specific table file in exported directory
+            String tableFilePath = tableFile.getAbsolutePath();
+            mTranslator = new Translator(tableFilePath);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while creating liblouis translator", e);
+        }
+        int length = getBrailleStringLength(text);
+        mTranslator = temp;
+        return length;
     }
 }

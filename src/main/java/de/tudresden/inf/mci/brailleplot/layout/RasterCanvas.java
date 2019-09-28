@@ -2,6 +2,7 @@ package de.tudresden.inf.mci.brailleplot.layout;
 
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.printabledata.BrailleCell6;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
@@ -60,16 +61,17 @@ public class RasterCanvas extends AbstractCanvas<MatrixData<Boolean>> {
      * The described grid is build from uniform 'cells' consisting of a variable amount of dots.
      * It is used as a target on which can be drawn by a {@link de.tudresden.inf.mci.brailleplot.rendering.Rasterizer}.
      * @param printer The {@link Printer} configuration to be used.
+     * @param representation The {@link Representation} configuration to be used.
      * @param format The {@link Format} configuration to be used.
      * @param cellWidth The horizontal count of dots in a cell.
      * @param cellHeight The vertical count of dots in a cell.
      * @throws InsufficientRenderingAreaException If the given configuration leads to an printable area of negative
      * size or zero size, e.g. if the sum of defined margins and constraints adds up to be greater than the original page size.
      */
-    RasterCanvas(final Printer printer, final Format format, final int cellWidth, final int cellHeight)
+    RasterCanvas(final Printer printer, final Representation representation, final Format format, final int cellWidth, final int cellHeight)
             throws InsufficientRenderingAreaException {
 
-        super(printer, format);
+        super(printer, representation, format);
 
         // Cell size in dots
         mCellWidth = cellWidth;

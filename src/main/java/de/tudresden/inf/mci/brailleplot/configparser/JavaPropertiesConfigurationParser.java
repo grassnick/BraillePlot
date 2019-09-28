@@ -29,31 +29,32 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
      * @throws ConfigurationParsingException On any error while accessing the configuration file or syntax.
      * @throws ConfigurationValidationException On any error while checking the parsed properties validity.
      */
+
     public JavaPropertiesConfigurationParser(final Path filePath, final URL defaultPath) throws ConfigurationParsingException, ConfigurationValidationException {
         setup();
         parseConfigFileFromResource(defaultPath, false);
-        setDefaults(getPrinter(), getFormat("default"));
+        setDefaults(getPrinter(), getRepresentation(), getFormat("default"));
         parseConfigFileFromFileSystem(filePath, true);
     }
 
     public JavaPropertiesConfigurationParser(final Path filePath, final Path defaultPath) throws ConfigurationParsingException, ConfigurationValidationException {
         setup();
         parseConfigFileFromFileSystem(defaultPath, false);
-        setDefaults(getPrinter(), getFormat("default"));
+        setDefaults(getPrinter(), getRepresentation(), getFormat("default"));
         parseConfigFileFromFileSystem(filePath, true);
     }
 
     public JavaPropertiesConfigurationParser(final URL filePath, final Path defaultPath) throws ConfigurationParsingException, ConfigurationValidationException {
         setup();
         parseConfigFileFromFileSystem(defaultPath, false);
-        setDefaults(getPrinter(), getFormat("default"));
+        setDefaults(getPrinter(), getRepresentation(), getFormat("default"));
         parseConfigFileFromResource(filePath, true);
     }
 
     public JavaPropertiesConfigurationParser(final URL filePath, final URL defaultPath) throws ConfigurationParsingException, ConfigurationValidationException {
         setup();
         parseConfigFileFromResource(defaultPath, false);
-        setDefaults(getPrinter(), getFormat("default"));
+        setDefaults(getPrinter(), getRepresentation(), getFormat("default"));
         parseConfigFileFromResource(filePath, true);
     }
 
@@ -104,6 +105,9 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
         }
         if (property instanceof PrinterProperty) {
             addProperty((PrinterProperty) property);
+        }
+        if (property instanceof RepresentationProperty) {
+            addProperty((RepresentationProperty) property);
         }
     }
 

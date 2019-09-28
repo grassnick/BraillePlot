@@ -56,8 +56,9 @@ public final class CsvParser {
     /**
      * Chooses the right parsing algorithm.
      * Casting in this method is not guaranteed to be safe, use at your own risk.
-     * @param csvType CsvType
-     * @param csvOrientation CsvOrientation
+     * @param csvType CsvType The type of the data set contained by the CSV file.
+     * @param csvOrientation CsvOrientation Indicates the orientation of the CSV file (either {@link CsvOrientation#HORIZONTAL} or {@link CsvOrientation#VERTICAL})
+     * @param <T> The type of the generated {@link PointListContainer}
      * @return PointListList
      */
     @SuppressWarnings("unchecked")
