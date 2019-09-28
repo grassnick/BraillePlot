@@ -2,6 +2,7 @@ package de.tudresden.inf.mci.brailleplot.layout;
 
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ public abstract class AbstractCanvas<T extends PrintableData> {
     private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
 
     Printer mPrinter;
+    Representation mRepresentation;
     Format mFormat;
 
     Rectangle mPrintableArea;
@@ -31,11 +33,12 @@ public abstract class AbstractCanvas<T extends PrintableData> {
 
     List<T> mPageContainer;
 
-    AbstractCanvas(final Printer printer, final Format format) throws InsufficientRenderingAreaException {
+    AbstractCanvas(final Printer printer, final Representation representation, final Format format) throws InsufficientRenderingAreaException {
 
         mLogger.trace("Creating new canvas");
 
         mPrinter = printer;
+        mRepresentation = representation;
         mFormat = format;
         mPageContainer = new ArrayList<>();
 
@@ -178,6 +181,22 @@ public abstract class AbstractCanvas<T extends PrintableData> {
      */
     public Printer getPrinter() {
         return mPrinter;
+    }
+
+    /**
+     * Get the Representation Configuration.
+     * @return A {@link Representation}.
+     */
+    public Representation getRepresentation() {
+        return mRepresentation;
+    }
+
+    /**
+     * Get the Format Configuration.
+     * @return A {@link Format}.
+     */
+    public Format getFormat() {
+        return mFormat;
     }
 
 
