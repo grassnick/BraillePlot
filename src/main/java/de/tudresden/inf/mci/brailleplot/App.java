@@ -253,7 +253,7 @@ public final class App {
             PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(indexV4Printer.getProperty("mode").toString().toUpperCase()), indexV4Printer);
             Iterator<MatrixData<Boolean>> itera = canvas.getPageIterator();
             itera.next();
-            while(itera.hasNext()) {
+            while (itera.hasNext()) {
                 MatrixData<Boolean> page = itera.next();
                 printD.print(page);
             }

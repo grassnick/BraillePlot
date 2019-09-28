@@ -42,7 +42,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     private double mDpiX;
     private double mDpiY;
     @SuppressWarnings("magicnumber")
-    private int offset = 3;
+    private int mOffset = 3;
     private Rectangle mCellLineArea;
     private boolean printOnSamePaper = false; // If you want to print on the same paper, change this variable to true.
 
@@ -272,14 +272,14 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
      *                         For example: 2.5 -> a, 3.0 -> b and so on.
      * @return A map containing the correct number of labels which will be needed to address all datapoints in {@link LineChart}.
      */
-    @SuppressWarnings("finalparameters")
+    @SuppressWarnings({"finalparameters", "magicnumber"})
     private Map<Integer, String> setCorrectLabelsforY(final double rangeOfYValues, final int numberOfTicks, double dpi, Map<String, String> yLabelsForLegend) {
         Objects.requireNonNull(yLabelsForLegend, "The given map for setting the correct labels for the y-axis was null!");
         double min = mDiagram.getData().getMinY();
         Map<Integer, String> result = new HashMap<>();
         double tmpDpi = dpi;
 
-        // According to a not representative study the y axis should start with a on the highest value, to the lowest.
+        // According to a not representative study the y axis should start with 'a' on the highest value, not the lowest.
         // So we need to calculate an offset and decrement the letter
         // Works currently only with letters represented in ASCII
         int datapoints = (int) ceil(rangeOfYValues / dpi);
@@ -472,8 +472,8 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     private Rectangle calculateXAxis() throws InsufficientRenderingAreaException {
         Objects.requireNonNull(mCellLineArea, "The given Rectangle for the x axis to be removed from was null!");
         try {
-            Rectangle result = mCellLineArea.removeFromBottom(offset);
-            result.removeFromLeft(offset);
+            Rectangle result = mCellLineArea.removeFromBottom(mOffset);
+            result.removeFromLeft(mOffset);
             return result;
         } catch (Rectangle.OutOfSpaceException e) {
             throw new InsufficientRenderingAreaException("Not enough space to build the X-Axis for the line chart!");
@@ -489,7 +489,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     private Rectangle calculateYAxis() throws InsufficientRenderingAreaException {
         Objects.requireNonNull(mCellLineArea, "The given Rectangle for the y axis to be removed from was null!");
         try {
-            return mCellLineArea.removeFromLeft(offset);
+            return mCellLineArea.removeFromLeft(mOffset);
         } catch (Rectangle.OutOfSpaceException e) {
             throw new InsufficientRenderingAreaException("Not enough space to build the Y-Axis for the line chart!");
         }
