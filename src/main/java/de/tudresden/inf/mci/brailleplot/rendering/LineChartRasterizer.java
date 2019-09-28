@@ -454,7 +454,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
             throw new IllegalArgumentException("The title in LineChartRasterizer was empty!");
         }
         int widthOfCompleteArea = mCellLineArea.intWrapper().getWidth();
-        int titleBarHeight = mTextRasterizer.calculateRequiredHeight(mDiagram.getTitle(), 0, 0, widthOfCompleteArea, mCanvas);
+        int titleBarHeight = mTextRasterizer.calculateRequiredHeight(mDiagram.getTitle(), widthOfCompleteArea, mCanvas);
         try {
             return  mCellLineArea.removeFromTop(mCanvas.getCellYFromDotY(titleBarHeight) + 1);
         } catch (Rectangle.OutOfSpaceException e) {
