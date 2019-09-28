@@ -56,7 +56,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             String tableFilePath = tableFile.getAbsolutePath();
             mTranslator = new Translator(tableFilePath);
         } catch (Exception e) {
-            throw new RuntimeException("Error while creating liblouis translator:", e);
+            throw new RuntimeException("Error while creating liblouis translator", e);
         }
     }
 
@@ -73,7 +73,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             String tableFilePath = tableFile.getAbsolutePath();
             mTranslator = new Translator(tableFilePath);
         } catch (Exception e) {
-            throw new RuntimeException("Error while creating liblouis translator:", e);
+            throw new RuntimeException("Error while creating liblouis translator", e);
         }
         Rectangle rect = data.getArea().intersectedWith(canvas.getDotRectangle());
         mCanvas = canvas;
@@ -189,7 +189,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             String tableFilePath = tableFile.getAbsolutePath();
             mTranslator = new Translator(tableFilePath);
         } catch (Exception e) {
-            throw new RuntimeException("Error while creating liblouis translator:", e);
+            throw new RuntimeException("Error while creating liblouis translator", e);
         }
         int length = calculateRequiredHeight(text, maxWidth, canvas);
         mTranslator = temp;
@@ -235,7 +235,7 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             String tableFilePath = tableFile.getAbsolutePath();
             mTranslator = new Translator(tableFilePath);
         } catch (Exception e) {
-            throw new RuntimeException("Error while creating liblouis translator:", e);
+            throw new RuntimeException("Error while creating liblouis translator", e);
         }
         int length = getBrailleStringLength(text);
         mTranslator = temp;
