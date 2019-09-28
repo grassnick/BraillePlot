@@ -1,6 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.printerbackend;
+
 import de.tudresden.inf.mci.brailleplot.brailleparser.AbstractBrailleTableParser;
-import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
 
 /**

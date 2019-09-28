@@ -21,7 +21,6 @@ import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
-import de.tudresden.inf.mci.brailleplot.printabledata.SimpleFloatingPointDataImpl;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
@@ -44,7 +43,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -253,7 +251,7 @@ public final class App {
             for (double y = 0; y < blockY; y += 1.5) {
                 for (double x = 0; x < blockX; x += 1.5) {
                     Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true);
-                    points.addPoint(point);
+                    points.addPointIfNotExisting(point);
                 }
             }*/
 

@@ -2,10 +2,10 @@ package de.tudresden.inf.mci.brailleplot.datacontainers;
 
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
@@ -54,16 +54,20 @@ public class SimplePointListImpl extends AbstractPointContainer<Point2DDouble> i
     }
 
     @Override
-    public double getCorrespondingYValue(final double xValue) {
-        Iterator<Point2DDouble> iterator = mElements.iterator();
+    /**
+     * This function is to find the next point in the csv data for line plotting in order to calculate the slope.
+     * @param xValue Given x-value.
+     * @return double y-value.
+     * @throws NoSuchElementException If no corresponding y-value was found.
+     */
+    public double getCorrespondingYValue(final double xValue) throws NoSuchElementException {
 
-        while (iterator.hasNext()) {
-            Point2DDouble newPoint = iterator.next();
+        for (Point2DDouble newPoint : mElements) {
             if (newPoint.getX().equals(xValue)) {
                 return newPoint.getY();
             }
         }
 
-        return 0;
+        throw new NoSuchElementException();
     }
 }

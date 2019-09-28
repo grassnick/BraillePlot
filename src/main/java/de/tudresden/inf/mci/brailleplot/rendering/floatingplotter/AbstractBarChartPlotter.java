@@ -26,7 +26,6 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     double mMinDist;
     double mMinWidth;
     double[] mGridHelp;
-    char[] mSymbolsY;
 
     // constants
     private static final double STAIRDIST = 6;
@@ -54,23 +53,19 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
         mResolution = mCanvas.getResolution();
         mStepSize = mCanvas.getDotDiameter();
 
-        mSymbolsY = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-
         checkResolution();
         calculateRanges();
         drawAxes();
         mScaleX = scaleAxis("z");
-        String[] mNamesY = new String[mCatList.getSize()];
-        mLegend.setDesc(mNamesY);
         mCanvas.setXScaleFactor(mScaleX[mScaleX.length - 1]);
         mLegend.setType(THREE);
         nameXAxis();
         nameTitle();
 
         Iterator<PointList> catListIt = mCatList.iterator();
-        for (int i = 0; i < mNamesY.length; i++) {
+        for (int i = 0; i < mCatList.getSize(); i++) {
             if (catListIt.hasNext()) {
-                mNamesY[i] = catListIt.next().getName();
+                mLegend.addSymbolExplanation("y-axis", Integer.toString(i), catListIt.next().getName());
             }
         }
 
@@ -156,13 +151,14 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     /**
      * Plots the rectangle and chooses a texture. Add new textures in if statement.
      * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
+     * @param startX Absolute starting x-coordinate. X-coordinate must be increasing.
      * @param endX Absolute ending x-coordinate.
      * @param j Corresponds to the category and the texture.
      * @param legend True if texture is for the legend, false if texture is for the diagram.
      * @return Boolean is true, if a new page was set on the Canvas.
      * @throws InsufficientRenderingAreaException If there are more data series than textures.
      */
-    boolean plotAndFillRectangle(final double startY, final double endX, final int j, final boolean legend) throws InsufficientRenderingAreaException {
+    boolean plotAndFillRectangle(final double startY, final double startX, final double endX, final int j, final boolean legend) throws InsufficientRenderingAreaException {
         boolean newPage = false;
         double starterY = startY;
 
@@ -177,7 +173,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
 
             for (int i = 0; i < 2; i++) {
                 for (double k = starterY - mStepSize; k > starterY - THIRTY; k -= mStepSize) {
-                    addPoint(FIVE + i * (endX - FIVE), k);
+                    addPoint(startX + i * (endX - startX), k);
                 }
             }
             for (int i = 0; i < 2; i++) {
@@ -187,13 +183,13 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
             }
 
         } else {
-            for (double i = mLeftMargin; i <= endX; i += mStepSize) {
+            for (double i = startX; i <= endX; i += mStepSize) {
                 addPoint(i, starterY);
             }
             for (double i = starterY - mStepSize; i >= starterY - mBarWidth; i -= mStepSize) {
                 addPoint(endX, i);
             }
-            for (double i = mLeftMargin; i <= endX; i += mStepSize) {
+            for (double i = startX; i <= endX; i += mStepSize) {
                 addPoint(i, starterY - mBarWidth);
             }
         }
@@ -227,7 +223,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     /**
      * Fills a rectangle with the texture full_pattern.
      * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
-     * @param endX Absolute ending x-coordinate.
+     * @param endX Absolute ending x-coordinate. X-coordinate must be increasing.
      * @param legend True if texture is for the legend, false if texture is for the diagram.
      */
     private void fillFullPattern(final double startY, final double endX, final boolean legend) {
@@ -247,16 +243,40 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
         }
     }
 
+
+    /**
+     * Fills a rectangle with the texture vertical_line.
+     * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
+     * @param endX Absolute ending x-coordinate. X-coordinate must be increasing.
+     * @param legend True if texture is for the legend, false if texture is for the diagram.
+     */
+    private void fillVerticalLine(final double startY, final double endX, final boolean legend) {
+
+        if (legend) {
+            for (double i = FIVE + THREE * mStepSize; i < endX - mStepSize; i += THREE * mStepSize) {
+                for (double j = startY - THREE * mStepSize; j > startY - THIRTY + THREE * mStepSize; j -= mStepSize) {
+                    addPoint(i, j);
+                }
+            }
+        } else {
+            for (double i = mLastXValue + THREE * mStepSize; i < endX - mStepSize; i += THREE * mStepSize) {
+                for (double j = startY - THREE * mStepSize; j > startY - mBarWidth + THREE * mStepSize; j -= mStepSize) {
+                    addPoint(i, j);
+                }
+            }
+        }
+    }
+
     /**
      * Fills a rectangle with the texture diagonal_right.
      * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
-     * @param endX Absolute ending x-coordinate.
+     * @param endX Absolute ending x-coordinate. X-coordinate must be increasing.
      * @param legend True if texture is for the legend, false if texture is for the diagram.
      */
     private void fillDiagonalRight(final double startY, final double endX, final boolean legend) {
 
         if (legend) {
-            for (double j = startY - THIRTY + mStepSize; j < startY; j += SIX * mStepSize) {
+            for (double j = startY - THIRTY + mStepSize; j < startY; j += FIVE * mStepSize) {
                 double y = j;
                 for (double i = FIVE + mStepSize; y < startY && i < endX; i += mStepSize) {
                     addPoint(i, y);
@@ -264,7 +284,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
             }
 
-            for (double i = FIVE + SEVEN * mStepSize; i < endX; i += SIX * mStepSize) {
+            for (double i = FIVE + SIX * mStepSize; i < endX; i += FIVE * mStepSize) {
                 double y = startY - THIRTY + mStepSize;
                 for (double k = i; y < startY && k < endX; k += mStepSize) {
                     addPoint(k, y);
@@ -272,7 +292,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
             }
         } else {
-            for (double j = startY - mBarWidth + mStepSize; j < startY; j += SIX * mStepSize) {
+            for (double j = startY - mBarWidth + mStepSize; j < startY; j += FIVE * mStepSize) {
                 double y = j;
                 for (double i = mLastXValue + mStepSize; y < startY && i < endX; i += mStepSize) {
                     addPoint(i, y);
@@ -280,7 +300,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
             }
 
-            for (double i = mLastXValue + SEVEN * mStepSize; i < endX; i += SIX * mStepSize) {
+            for (double i = mLastXValue + SIX * mStepSize; i < endX; i += FIVE * mStepSize) {
                 double y = startY - mBarWidth + mStepSize;
                 for (double k = i; y < startY && k < endX; k += mStepSize) {
                     addPoint(k, y);
@@ -291,56 +311,33 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     }
 
     /**
-     * Fills a rectangle with the texture vertical_line.
-     * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
-     * @param endX Absolute ending x-coordinate.
-     * @param legend True if texture is for the legend, false if texture is for the diagram.
-     */
-    private void fillVerticalLine(final double startY, final double endX, final boolean legend) {
-
-        if (legend) {
-            for (double i = FIVE + FIVE * mStepSize; i < endX - mStepSize; i += FIVE * mStepSize) {
-                for (double j = startY - THREE * mStepSize; j > startY - THIRTY + THREE * mStepSize; j -= mStepSize) {
-                    addPoint(i, j);
-                }
-            }
-        } else {
-            for (double i = mLastXValue + FIVE * mStepSize; i < endX - mStepSize; i += FIVE * mStepSize) {
-                for (double j = startY - THREE * mStepSize; j > startY - mBarWidth + THREE * mStepSize; j -= mStepSize) {
-                    addPoint(i, j);
-                }
-            }
-        }
-    }
-
-    /**
      * Fills a rectangle with the texture grid_pattern.
      * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
-     * @param endX Absolute ending x-coordinate.
+     * @param endX Absolute ending x-coordinate. X-coordinate must be increasing.
      * @param legend True if texture is for the legend, false if texture is for the diagram.
      */
     private void fillGridPattern(final double startY, final double endX, final boolean legend) {
 
         if (legend) {
-            for (double i = FIVE + FIVE * mStepSize; i < endX - 2 * mStepSize; i += FIVE * mStepSize) {
+            for (double i = FIVE + THREE * mStepSize; i < endX - 2 * mStepSize; i += THREE * mStepSize) {
                 for (double j = startY - mStepSize; j > startY - THIRTY; j -= mStepSize) {
                     addPoint(i, j);
                 }
             }
 
-            for (double j = startY - FIVE * mStepSize; j > startY - THIRTY + mStepSize; j -= FIVE * mStepSize) {
+            for (double j = startY - THREE * mStepSize; j > startY - THIRTY + mStepSize; j -= THREE * mStepSize) {
                 for (double i = FIVE + mStepSize; i < endX; i += mStepSize) {
                     addPoint(i, j);
                 }
             }
         } else {
-            for (double i = mLastXValue + FIVE * mStepSize; i < endX - 2 * mStepSize; i += FIVE * mStepSize) {
+            for (double i = mLastXValue + THREE * mStepSize; i < endX - 2 * mStepSize; i += THREE * mStepSize) {
                 for (double j = startY - mStepSize; j > startY - mBarWidth; j -= mStepSize) {
                     addPoint(i, j);
                 }
             }
 
-            for (double j = startY - FIVE * mStepSize; j > startY - mBarWidth + mStepSize; j -= FIVE * mStepSize) {
+            for (double j = startY - THREE * mStepSize; j > startY - mBarWidth + mStepSize; j -= THREE * mStepSize) {
                 for (double i = mLastXValue + mStepSize; i < endX; i += mStepSize) {
                     addPoint(i, j);
                 }
@@ -351,19 +348,19 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     /**
      * Fills a rectangle with the texture dotted_pattern.
      * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
-     * @param endX Absolute ending x-coordinate.
+     * @param endX Absolute ending x-coordinate. X-coordinate must be increasing.
      * @param legend True if texture is for the legend, false if texture is for the diagram.
      */
     private void fillDottedPattern(final double startY, final double endX, final boolean legend) {
         if (legend) {
-            for (double i = FIVE + FOUR * mStepSize; i < endX - mStepSize; i += FOUR * mStepSize) {
-                for (double j = startY - FOUR * mStepSize; j > startY - THIRTY + mStepSize; j -= FOUR * mStepSize) {
+            for (double i = FIVE + THREE * mStepSize; i < endX - mStepSize; i += THREE * mStepSize) {
+                for (double j = startY - THREE * mStepSize; j > startY - THIRTY + mStepSize; j -= THREE * mStepSize) {
                     addPoint(i, j);
                 }
             }
         } else {
-            for (double i = mLastXValue + FOUR * mStepSize; i < endX - mStepSize; i += FOUR * mStepSize) {
-                for (double j = startY - FOUR * mStepSize; j > startY - mBarWidth + mStepSize; j -= FOUR * mStepSize) {
+            for (double i = mLastXValue + THREE * mStepSize; i < endX - mStepSize; i += THREE * mStepSize) {
+                for (double j = startY - THREE * mStepSize; j > startY - mBarWidth + mStepSize; j -= THREE * mStepSize) {
                     addPoint(i, j);
                 }
             }
@@ -373,15 +370,15 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     /**
      * Fills a rectangle with the texture stair_pattern on the diagram.
      * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
-     * @param endX Absolute ending x-coordinate.
+     * @param endX Absolute ending x-coordinate. X-coordinate must be increasing.
      */
     private void fillStairPatternD(final double startY, final double endX) {
         double last = 0;
         outerloop:
-        for (double j = startY - STAIRDIST; j > startY - mBarWidth; j -= 2 * STAIRDIST) {
+        for (double j = startY - STAIRDIST; j > startY - mBarWidth; j -= TWOFIVE * STAIRDIST) {
             double lastX;
             double lastY;
-            for (double i = mLastXValue + mStepSize; i <= mLastXValue + FOUR * mStepSize; i += mStepSize) {
+            for (double i = mLastXValue + mStepSize; i <= mLastXValue + THREE * mStepSize; i += mStepSize) {
                 if (i < endX) {
                     addPoint(i, j);
                     last = i;
@@ -390,7 +387,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
             }
             lastX = last;
-            for (double k = j - mStepSize; k >= j - FOUR * mStepSize; k -= mStepSize) {
+            for (double k = j - mStepSize; k >= j - THREE * mStepSize; k -= mStepSize) {
                 if (k > startY - mBarWidth) {
                     addPoint(lastX, k);
                     last = k;
@@ -400,7 +397,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
             }
             lastY = last;
             while (true) {
-                for (double i = lastX + mStepSize; i <= lastX + FOUR * mStepSize; i += mStepSize) {
+                for (double i = lastX + mStepSize; i <= lastX + THREE * mStepSize; i += mStepSize) {
                     if (i < endX) {
                         addPoint(i, lastY);
                         last = i;
@@ -409,7 +406,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
                 lastX = last;
-                for (double k = lastY - mStepSize; k >= lastY - FOUR * mStepSize; k -= mStepSize) {
+                for (double k = lastY - mStepSize; k >= lastY - THREE * mStepSize; k -= mStepSize) {
                     if (k > startY - mBarWidth) {
                         addPoint(lastX, k);
                         last = k;
@@ -421,10 +418,10 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
             }
         }
         anotherloop:
-        for (double i = mLastXValue + 2 * STAIRDIST; i < endX; i += 2 * STAIRDIST) {
+        for (double i = mLastXValue + 2 + 2 * STAIRDIST; i < endX; i += TWOFIVE * STAIRDIST) {
             double lastX;
             double lastY;
-            for (double j = startY - mStepSize; j >= startY - FOUR * mStepSize; j -= mStepSize) {
+            for (double j = startY - mStepSize; j >= startY - 2 * mStepSize; j -= mStepSize) {
                 if (j > startY - mBarWidth) {
                     addPoint(i, j);
                     last = j;
@@ -433,7 +430,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
             }
             lastY = last;
-            for (double k = i + mStepSize; k <= i + FOUR * mStepSize; k += mStepSize) {
+            for (double k = i + mStepSize; k <= i + THREE * mStepSize; k += mStepSize) {
                 if (k < endX) {
                     addPoint(k, lastY);
                     last = k;
@@ -443,7 +440,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
             }
             lastX = last;
             while (true) {
-                for (double j = lastY - mStepSize; j >= lastY - FOUR * mStepSize; j -= mStepSize) {
+                for (double j = lastY - mStepSize; j >= lastY - THREE * mStepSize; j -= mStepSize) {
                     if (j > startY - mBarWidth) {
                         addPoint(lastX, j);
                         last = j;
@@ -452,7 +449,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
                 lastY = last;
-                for (double k = lastX + mStepSize; k <= lastX + FOUR * mStepSize; k += mStepSize) {
+                for (double k = lastX + mStepSize; k <= lastX + THREE * mStepSize; k += mStepSize) {
                     if (k < endX) {
                         addPoint(k, lastY);
                         last = k;
@@ -469,15 +466,15 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     /**
      * Fills a rectangle with the texture stair_pattern on the legend.
      * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
-     * @param endX Absolute ending x-coordinate.
+     * @param endX Absolute ending x-coordinate. X-coordinate must be increasing.
      */
     private void fillStairPatternL(final double startY, final double endX) {
         double last = 0;
         outerloop:
-        for (double j = startY - STAIRDIST; j > startY - THIRTY; j -= 2 * STAIRDIST) {
+        for (double j = startY - STAIRDIST; j > startY - THIRTY; j -= TWOFIVE * STAIRDIST) {
             double lastX;
             double lastY;
-            for (double i = FIVE + mStepSize; i <= FIVE + FOUR * mStepSize; i += mStepSize) {
+            for (double i = FIVE + mStepSize; i <= FIVE + THREE * mStepSize; i += mStepSize) {
                 if (i < endX) {
                     addPoint(i, j);
                     last = i;
@@ -486,7 +483,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
             }
             lastX = last;
-            for (double k = j - mStepSize; k >= j - FOUR * mStepSize; k -= mStepSize) {
+            for (double k = j - mStepSize; k >= j - THREE * mStepSize; k -= mStepSize) {
                 if (k > startY - THIRTY) {
                     addPoint(lastX, k);
                     last = k;
@@ -496,7 +493,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
             }
             lastY = last;
             while (true) {
-                for (double i = lastX + mStepSize; i <= lastX + FOUR * mStepSize; i += mStepSize) {
+                for (double i = lastX + mStepSize; i <= lastX + THREE * mStepSize; i += mStepSize) {
                     if (i < endX) {
                         addPoint(i, lastY);
                         last = i;
@@ -505,7 +502,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
                 lastX = last;
-                for (double k = lastY - mStepSize; k >= lastY - FOUR * mStepSize; k -= mStepSize) {
+                for (double k = lastY - mStepSize; k >= lastY - THREE * mStepSize; k -= mStepSize) {
                     if (k > startY - THIRTY) {
                         addPoint(lastX, k);
                         last = k;
@@ -517,10 +514,10 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
             }
         }
         anotherloop:
-        for (double i = FIVE + 2 * STAIRDIST; i < endX; i += 2 * STAIRDIST) {
+        for (double i = SEVEN + 2 * STAIRDIST; i < endX; i += TWOFIVE * STAIRDIST) {
             double lastX;
             double lastY;
-            for (double j = startY - mStepSize; j >= startY - FOUR * mStepSize; j -= mStepSize) {
+            for (double j = startY - mStepSize; j >= startY - 2 * mStepSize; j -= mStepSize) {
                 if (j > startY - THIRTY) {
                     addPoint(i, j);
                     last = j;
@@ -529,7 +526,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
             }
             lastY = last;
-            for (double k = i + mStepSize; k <= i + FOUR * mStepSize; k += mStepSize) {
+            for (double k = i + mStepSize; k <= i + THREE * mStepSize; k += mStepSize) {
                 if (k < endX) {
                     addPoint(k, lastY);
                     last = k;
@@ -539,7 +536,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
             }
             lastX = last;
             while (true) {
-                for (double j = lastY - mStepSize; j >= lastY - FOUR * mStepSize; j -= mStepSize) {
+                for (double j = lastY - mStepSize; j >= lastY - THREE * mStepSize; j -= mStepSize) {
                     if (j > startY - THIRTY) {
                         addPoint(lastX, j);
                         last = j;
@@ -548,7 +545,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
                 lastY = last;
-                for (double k = lastX + mStepSize; k <= lastX + FOUR * mStepSize; k += mStepSize) {
+                for (double k = lastX + mStepSize; k <= lastX + THREE * mStepSize; k += mStepSize) {
                     if (k < endX) {
                         addPoint(k, lastY);
                         last = k;
@@ -564,13 +561,13 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     /**
      * Fills a rectangle with the texture diagonal_left.
      * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
-     * @param endX Absolute ending x-coordinate.
+     * @param endX Absolute ending x-coordinate. X-coordinate must be increasing.
      * @param legend True if texture is for the legend, false if texture is for the diagram.
      */
     private void fillDiagonalLeft(final double startY, final double endX, final boolean legend) {
 
         if (legend) {
-            for (double j = startY - mStepSize; j > startY - THIRTY; j -= SIX * mStepSize) {
+            for (double j = startY - mStepSize; j > startY - THIRTY; j -= FIVE * mStepSize) {
                 double y = j;
                 for (double i = FIVE + mStepSize; y > startY - THIRTY && i < endX; i += mStepSize) {
                     addPoint(i, y);
@@ -578,7 +575,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
             }
 
-            for (double i = FIVE + SEVEN * mStepSize; i < endX; i += SIX * mStepSize) {
+            for (double i = FIVE + SIX * mStepSize; i < endX; i += FIVE * mStepSize) {
                 double y = startY - mStepSize;
                 for (double k = i; y > startY - THIRTY && k < endX; k += mStepSize) {
                     addPoint(k, y);
@@ -586,7 +583,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
             }
         } else {
-            for (double j = startY - mStepSize; j > startY - mBarWidth; j -= SIX * mStepSize) {
+            for (double j = startY - mStepSize; j > startY - mBarWidth; j -= FIVE * mStepSize) {
                 double y = j;
                 for (double i = mLastXValue + mStepSize; y > startY - mBarWidth && i < endX; i += mStepSize) {
                     addPoint(i, y);
@@ -594,7 +591,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
             }
 
-            for (double i = mLastXValue + SEVEN * mStepSize; i < endX; i += SIX * mStepSize) {
+            for (double i = mLastXValue + SIX * mStepSize; i < endX; i += FIVE * mStepSize) {
                 double y = startY - mStepSize;
                 for (double k = i; y > startY - mBarWidth && k < endX; k += mStepSize) {
                     addPoint(k, y);

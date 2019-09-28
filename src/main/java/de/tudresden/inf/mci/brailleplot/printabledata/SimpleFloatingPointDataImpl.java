@@ -22,6 +22,8 @@ public class SimpleFloatingPointDataImpl<T> extends AbstractPrintableData implem
 
     private LinkedList<Point2DValued<Quantity<Length>, T>> mPoints;
 
+    private static final double RANGE = 1.5;
+
     public SimpleFloatingPointDataImpl(final Printer printer, final Format format) {
         super(printer, format);
         mPoints = new LinkedList<>();
@@ -33,30 +35,34 @@ public class SimpleFloatingPointDataImpl<T> extends AbstractPrintableData implem
     }
 
     @Override
-    public void addPoint(final Point2DValued<Quantity<Length>, T> point) {
+    public void addPointIfNotExisting(final Point2DValued<Quantity<Length>, T> point) {
         Objects.requireNonNull(point);
 
-        if (!checkPoint(point)) {
+        if (!pointExists(point)) {
             mPoints.addLast(point);
         }
     }
 
     @Override
-    public boolean checkPoint(final Point2DValued<Quantity<Length>, T> point) {
-        boolean present = false;
-        Quantity<Length> x = point.getX();
-        Quantity<Length> y = point.getY();
+    public boolean pointExists(final Point2DValued<Quantity<Length>, T> newPoint) {
+        double newX = newPoint.getX().getValue().doubleValue();
+        double newY = newPoint.getY().getValue().doubleValue();
 
-        Iterator<Point2DValued<Quantity<Length>, T>> iterator = mPoints.iterator();
+        for (Point2DValued<Quantity<Length>, T> point : mPoints) {
+            double oldX = point.getX().getValue().doubleValue();
+            double oldY = point.getY().getValue().doubleValue();
 
-        while (iterator.hasNext()) {
-            Point2DValued<Quantity<Length>, T> newPoint = iterator.next();
-            if (newPoint.getX().equals(x) && newPoint.getY().equals(y)) {
-                present = true;
+            if (point.equals(newPoint)) {
+                return true;
+            }
+            if (newX >= oldX - RANGE && newX <= oldX + RANGE && newY >= oldY - RANGE && newY <= oldY + RANGE) {
+                return true;
             }
         }
 
-        return present;
+        return false;
     }
+
+
 
 }

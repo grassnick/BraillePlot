@@ -77,6 +77,7 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         defineFormatProperty("floatingDot.minBarDist", requireDouble.and(requirePositive), false);
         defineFormatProperty("floatingDot.secondAxis", requireBoolean, false);
         defineFormatProperty("floatingDot.frames", requireBoolean, false);
+        defineFormatProperty("floatingDot.derivation", requireBoolean, false);
 
     }
 

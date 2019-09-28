@@ -22,16 +22,37 @@ import static tec.units.ri.unit.Units.METRE;
  */
 abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T> {
 
+    private double mSecondAxis;
     boolean mFrames = true;
     private boolean mRightAxis;
     private static final double CIRCLEDIA = 12;
-    private static final double CIRCLESCALE = 1.45;
+    private static final double CIRCLESCALE = 1.5;
 
     @Override
     void drawAxes() {
 
+        mAxesDerivation = mCanvas.getAxesDerivation();
+        mRightAxis = mCanvas.getSecondAxis();
+
         // margin left of y-axis
-        mLeftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
+        if (!mRightAxis) {
+            mSecondAxis = 0;
+
+            if (mAxesDerivation) {
+                mLeftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
+            } else {
+                mLeftMargin = (WMULT + 2) * mCanvas.getCellWidth() + (WMULT + 2) * mCanvas.getCellDistHor();
+            }
+        } else {
+            if (mAxesDerivation) {
+                mLeftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
+                mSecondAxis = mLeftMargin;
+            } else {
+                mLeftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
+                mSecondAxis = (WMULT + 1) * mCanvas.getCellWidth() + (WMULT + 1) * mCanvas.getCellDistHor();
+            }
+        }
+
         // margin from bottom to x-axis
         mBottomMargin = mPageHeight - (HMULT * mCanvas.getCellHeight() + HMULT * mCanvas.getCellDistVer());
         // margin from top for title
@@ -42,16 +63,9 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             mXTickDistance = THIRTY;
         }
 
-        mRightAxis = mCanvas.getSecondAxis();
-
-        double secondAxis = 0;
-        if (mRightAxis) {
-            secondAxis = mLeftMargin;
-        }
-
         // x-axis
         double lastValueX = mLeftMargin;
-        for (double i = mLeftMargin; i <= mPageWidth - secondAxis; i += mStepSize) {
+        for (double i = mLeftMargin; i <= mPageWidth - mSecondAxis; i += mStepSize) {
             addPoint(i, mBottomMargin);
             lastValueX = i;
         }
@@ -154,8 +168,8 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         for (double i = 1; i <= 2 * mNumberXTicks; i++) {
             for (double j = mBottomMargin - mStepSize; j > mTitleMargin; j -= mStepSize) {
                 Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
-                if (!mData.checkPoint(point)) {
-                    grid.addPoint(point);
+                if (!mData.pointExists(point)) {
+                    grid.addPointIfNotExisting(point);
                 }
             }
         }
@@ -164,8 +178,8 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         for (double i = 1; i <= 2 * mNumberYTicks; i++) {
             for (double j = mLeftMargin + mStepSize; j <= mPageWidth - secondAxis; j += mStepSize) {
                 Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(mBottomMargin - (i / 2) * mYTickStep, MetricPrefix.MILLI(METRE)), true);
-                if (!mData.checkPoint(point)) {
-                    grid.addPoint(point);
+                if (!mData.pointExists(point)) {
+                    grid.addPointIfNotExisting(point);
                 }
             }
         }
@@ -176,15 +190,53 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
 
         double height = mCanvas.getCellHeight();
         double width = mCanvas.getCellWidth();
-        double startX = mLeftMargin - mCanvas.getCellDistHor() - THREE * width;
-        double halfCell = (height - mCanvas.getDotDiameter()) / 2;
+        double startX = mLeftMargin - mCanvas.getCellDistHor() - width - FIVE * mStepSize;
+        double secondX = mPageWidth - mSecondAxis + SIX * mStepSize;
+        double halfCell = height / 2;
 
         LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
 
-        for (int i = 0; i < mNumberYTicks; i++) {
-            Rectangle rect = new Rectangle(startX, mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
-            BrailleText text = new BrailleText(Integer.toString(mScaleY[i]), rect);
-            tplotter.plot(text, mCanvas);
+        if (!mRightAxis) {
+            if (mAxesDerivation) {
+                for (int i = 0; i < mNumberYTicks; i++) {
+                    Rectangle rect = new Rectangle(startX, mBottomMargin - mNumberYTicks * mYTickStep - halfCell + i * mYTickStep, width, height);
+                    BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect);
+                    tplotter.plot(text, mCanvas);
+                }
+            } else {
+                for (int i = 0; i < mNumberYTicks; i++) {
+                    Rectangle rect;
+
+                    if (mScaleY[i] < TEN) {
+                        // two digits
+                        rect = new Rectangle(startX - 2 * mCanvas.getCellDistHor(), mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
+                    } else {
+                        // three digits
+                        rect = new Rectangle(startX - width - THREE * mCanvas.getCellDistHor(), mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
+                    }
+                    BrailleText text = new BrailleText(Integer.toString(mScaleY[i]), rect);
+                    tplotter.plot(text, mCanvas);
+
+                }
+            }
+        } else {
+            if (mAxesDerivation) {
+                for (int i = 0; i < mNumberYTicks; i++) {
+                    Rectangle rect = new Rectangle(startX, mBottomMargin - mNumberYTicks * mYTickStep - halfCell + i * mYTickStep, width, height);
+                    BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect);
+                    tplotter.plot(text, mCanvas);
+
+                    rect = new Rectangle(secondX, mBottomMargin - mNumberYTicks * mYTickStep - halfCell + i * mYTickStep, width, height);
+                    text = new BrailleText(Character.toString(mSymbols[i]), rect);
+                    tplotter.plot(text, mCanvas);
+                }
+            } else {
+                for (int i = 0; i < mNumberYTicks; i++) {
+                    Rectangle rect = new Rectangle(secondX, mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
+                    BrailleText text = new BrailleText(Integer.toString(mScaleY[i]), rect);
+                    tplotter.plot(text, mCanvas);
+                }
+            }
         }
     }
 
@@ -268,10 +320,19 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             lastX = x;
         }
 
-        addPoint(lastX - mStepSize / THREE, yValue + CIRCLESCALE * mStepSize);
-        addPoint(lastX - mStepSize / THREE, yValue - CIRCLESCALE * mStepSize);
-        addPoint(xValue - CIRCLEDIA / 2 + mStepSize / THREE, yValue + CIRCLESCALE * mStepSize);
-        addPoint(xValue - CIRCLEDIA / 2 + mStepSize / THREE, yValue - CIRCLESCALE * mStepSize);
+        if (lastX < xValue + CIRCLEDIA / 2) {
+            double x = xValue + CIRCLEDIA / 2;
+            double root = Math.sqrt(Math.pow(CIRCLEDIA / 2, 2) - Math.pow(x - xValue, 2));
+            double y1 = yValue + root;
+            double y2 = yValue - root;
+            addPoint(x, y1);
+            addPoint(x, y2);
+        }
+
+        addPoint(lastX + CIRCLESCALE * mStepSize / THREE, yValue + mStepSize);
+        addPoint(lastX + CIRCLESCALE * mStepSize / THREE, yValue - mStepSize);
+        addPoint(xValue - CIRCLEDIA / 2 + mStepSize / THREE, yValue + mStepSize);
+        addPoint(xValue - CIRCLEDIA / 2 + mStepSize / THREE, yValue - mStepSize);
     }
 
 }

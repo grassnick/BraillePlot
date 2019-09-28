@@ -45,6 +45,9 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
     private int mXScaleFactor;
     private int mYScaleFactor;
 
+    // axis derivation with letters
+    private boolean mAxesDerivation;
+
     // constants
     private static final int THREE = 3;
 
@@ -74,17 +77,18 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         mLogger.trace("Reading plot specific configuration");
 
         mResolution = mPrinter.getProperty("floatingDot.resolution").toDouble();
-        mCellWidth = mPrinter.getProperty("raster.dotDistance.horizontal").toDouble() + 2 * mPrinter.getProperty("raster.dotDiameter").toDouble();
-        mCellHeight = 2 * mPrinter.getProperty("raster.dotDistance.vertical").toDouble() + THREE * mPrinter.getProperty("raster.dotDiameter").toDouble();
+        mCellWidth = mPrinter.getProperty("raster.dotDistance.horizontal").toDouble();
+        mCellHeight = 2 * mPrinter.getProperty("raster.dotDistance.vertical").toDouble();
         mCellDistHor = mPrinter.getProperty("raster.cellDistance.horizontal").toDouble();
         mCellDistVer = mPrinter.getProperty("raster.cellDistance.vertical").toDouble();
-        mDotDistHor = mPrinter.getProperty("raster.cellDistance.horizontal").toDouble();
-        mDotDistVer = mPrinter.getProperty("raster.cellDistance.vertical").toDouble();
+        mDotDistHor = mPrinter.getProperty("raster.dotDistance.horizontal").toDouble();
+        mDotDistVer = mPrinter.getProperty("raster.dotDistance.vertical").toDouble();
         mMinBarWidth = mFormat.getProperty("floatingDot.minBarWidth").toDouble();
         mMaxBarWidth = mFormat.getProperty("floatingDot.maxBarWidth").toDouble();
         mMinBarDist = mFormat.getProperty("floatingDot.minBarDist").toDouble();
         mSecondAxis = mFormat.getProperty("floatingDot.secondAxis").toBool();
         mFrames = mFormat.getProperty("floatingDot.frames").toBool();
+        mAxesDerivation = mFormat.getProperty("floatingDot.derivation").toBool();
 
     }
 
@@ -139,6 +143,10 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
 
     public final boolean getFrames() {
         return mFrames;
+    }
+
+    public final boolean getAxesDerivation() {
+        return mAxesDerivation;
     }
 
     public final void setXScaleFactor(final int factor) {

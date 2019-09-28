@@ -9,6 +9,7 @@ import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 import de.tudresden.inf.mci.brailleplot.rendering.Legend;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
@@ -23,9 +24,10 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
      * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas} or
      * if there are more data series than frames or line styles.
+     * @throws NoSuchElementException If the data is corrupt.
      */
     @Override
-    public double plot(final LinePlot diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
+    public double plot(final LinePlot diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException, NoSuchElementException {
 
         setCanvas(canvas);
         mCanvas.readConfig();
@@ -79,6 +81,7 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
                 // draw lines
                 double currentX = smallList.getMinX();
                 double currentY = smallList.getCorrespondingYValue(currentX);
+                smallList.removeFirstOccurrence(new Point2DDouble(currentX, currentY));
                 double nextX;
                 double nextY;
                 boolean done = false;
@@ -147,8 +150,18 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
             steps = mStepSize / THREE;
         } else if (Math.abs(slope) <= FOUR) {
             steps = mStepSize / FOUR;
-        } else {
+        } else if (Math.abs(slope) <= FIVE) {
             steps = mStepSize / FIVE;
+        } else if (Math.abs(slope) <= SIX) {
+            steps = mStepSize / SIX;
+        } else if (Math.abs(slope) <= SEVEN) {
+            steps = mStepSize / SEVEN;
+        } else if (Math.abs(slope) <= EIGHT) {
+            steps = mStepSize / EIGHT;
+        } else if (Math.abs(slope) <= NINE) {
+            steps = mStepSize / NINE;
+        } else {
+            steps = mStepSize / TEN;
         }
 
         // new line styles are added here
@@ -165,7 +178,7 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
     }
 
     /**
-     * Draws a full line.
+     * Draws a full line. The starting and end points are not included.
      * @param currentX Absolute x-coordinate of the starting point.
      * @param nextX Absolute x-coordinate of the end point.
      * @param steps Distance with which the x-coordinate is incremented.
@@ -179,7 +192,7 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
     }
 
     /**
-     * Draws a dotted line.
+     * Draws a dotted line. The starting and end points are not included.
      * @param currentX Absolute x-coordinate of the starting point.
      * @param nextX Absolute x-coordinate of the end point.
      * @param steps Distance with which the x-coordinate is incremented.
@@ -193,7 +206,7 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
     }
 
     /**
-     * Draws a line consisting of single dashes and spaces.
+     * Draws a line consisting of single dashes and spaces. The starting and end points are not included.
      * @param currentX Absolute x-coordinate of the starting point.
      * @param nextX Absolute x-coordinate of the end point.
      * @param steps Distance with which the x-coordinate is incremented.

@@ -85,7 +85,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
     void drawRectangle(final int i, final int j, final double xValue) throws InsufficientRenderingAreaException {
         double startY = mBottomMargin - mBarDist - i * (mBarGroupWidth + mBarDist) - j * mBarWidth;
         double endX = calculateXValue(xValue);
-        plotAndFillRectangle(startY, endX, j, false);
+        plotAndFillRectangle(startY, mLeftMargin, endX, j, false);
         int k = mCatList.getNumberOfCategories() * i + j;
         if (mGridHelp[k] < endX) {
             mGridHelp[k] = endX;
@@ -108,8 +108,8 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
                     // check if j is between bars
                     if (j < mBottomMargin - k * (mBarDist + mBarGroupWidth) && j > mBottomMargin - mBarDist - k * (mBarDist + mBarGroupWidth)) {
                         Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
-                        if (!mData.checkPoint(point)) {
-                            grid.addPoint(point);
+                        if (!mData.pointExists(point)) {
+                            grid.addPointIfNotExisting(point);
                         }
                         continue loop;
                     }
@@ -117,8 +117,8 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
                     // check if j is above highest bar
                     if (j < mBottomMargin - mNumBarGroup * (mBarDist + mBarGroupWidth) && j > mTitleMargin) {
                         Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
-                        if (!mData.checkPoint(point)) {
-                            grid.addPoint(point);
+                        if (!mData.pointExists(point)) {
+                            grid.addPointIfNotExisting(point);
                         }
                         continue loop;
                     }
@@ -134,8 +134,8 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
                                 int n = mCatList.getNumberOfCategories() * l + m;
                                 if ((mLeftMargin + (i / 2) * mXTickStep) > mGridHelp[n]) {
                                     Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
-                                    if (!mData.checkPoint(point)) {
-                                        grid.addPoint(point);
+                                    if (!mData.pointExists(point)) {
+                                        grid.addPointIfNotExisting(point);
                                     }
                                 }
                             }
@@ -153,13 +153,13 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
         double height = mCanvas.getCellHeight();
         double width = mCanvas.getCellWidth();
         double startX = mLeftMargin - 2 * mCanvas.getCellDistHor() - width;
-        double halfCell = (height - mCanvas.getDotDiameter()) / 2;
+        double halfCell = height / 2;
 
         LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
 
         for (int i = 0; i < mNumBarGroup; i++) {
-            Rectangle rect = new Rectangle(startX, mBottomMargin - mBarDist - mBarGroupWidth / 2 - halfCell - i * (mBarDist + mBarGroupWidth), width, height);
-            BrailleText text = new BrailleText(Character.toString(mSymbolsY[i]), rect);
+            Rectangle rect = new Rectangle(startX, mBottomMargin - mNumBarGroup * (mBarDist + mBarGroupWidth) + mBarGroupWidth / 2 - halfCell + i * (mBarDist + mBarGroupWidth), width, height);
+            BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect);
             tplotter.plot(text, mCanvas);
         }
     }

@@ -12,7 +12,6 @@ import java.util.Objects;
 public class Legend implements Renderable {
 
     private String[] mAxes;
-    private String[] mDesc;
     private String mTitle;
     private String mXName;
     private String mXUnit;
@@ -65,21 +64,6 @@ public class Legend implements Renderable {
         return mAxes;
     }
 
-    /**
-     * Sets a new mDesc.
-     * @param desc The string array with the names for the y-axis.
-     */
-    public void setDesc(final String[] desc) {
-        mDesc = Objects.requireNonNull(desc);
-    }
-
-    /**
-     * Gets the current mDesc of the legend.
-     * @return The string array with the names for the y-axis.
-     */
-    public String[] getDesc() {
-        return mDesc;
-    }
 
     /**
      * Extraxts mAxes to class variables.

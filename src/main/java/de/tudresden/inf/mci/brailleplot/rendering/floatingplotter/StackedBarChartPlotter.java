@@ -88,12 +88,15 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
     void drawRectangle(final int i, final int j, final double xValue) throws InsufficientRenderingAreaException {
         double startY = mBottomMargin - (mBarDist + i * (mBarWidth + mBarDist));
         double endX;
+        double starterX;
         if (j == 0) {
             endX = calculateXValue(xValue);
+            starterX = mLeftMargin;
         } else {
             endX = calculateXValue(xValue) + mLastXValue - mLeftMargin;
+            starterX = mLastXValue;
         }
-        plotAndFillRectangle(startY, endX, j, false);
+        plotAndFillRectangle(startY, starterX, endX, j, false);
         if (mGridHelp[i] < endX) {
             mGridHelp[i] = endX;
         }
@@ -115,8 +118,8 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
                     // check if j is between bars
                     if (j < mBottomMargin - k * (mBarDist + mBarWidth) && j > mBottomMargin - mBarDist - k * (mBarDist + mBarWidth)) {
                         Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
-                        if (!mData.checkPoint(point)) {
-                            grid.addPoint(point);
+                        if (!mData.pointExists(point)) {
+                            grid.addPointIfNotExisting(point);
                         }
                         continue loop;
                     }
@@ -124,8 +127,8 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
                     // check if j is above highest bar
                     if (j < mBottomMargin - mNumBar * (mBarDist + mBarWidth) && j > mTitleMargin) {
                         Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
-                        if (!mData.checkPoint(point)) {
-                            grid.addPoint(point);
+                        if (!mData.pointExists(point)) {
+                            grid.addPointIfNotExisting(point);
                         }
                         continue loop;
                     }
@@ -135,8 +138,8 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
                     if (j < mBottomMargin - k * barStep && j > mBottomMargin - (k + 1) * barStep) {
                         if ((mLeftMargin + (i / 2) * mXTickStep) > mGridHelp[k]) {
                             Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
-                            if (!mData.checkPoint(point)) {
-                                grid.addPoint(point);
+                            if (!mData.pointExists(point)) {
+                                grid.addPointIfNotExisting(point);
                             }
                             continue loop;
                         }
@@ -158,8 +161,8 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
         LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
 
         for (int i = 0; i < mNumBar; i++) {
-            Rectangle rect = new Rectangle(startX, mBottomMargin - mBarDist - mBarWidth / 2 - halfCell - i * (mBarDist + mBarWidth), width, height);
-            BrailleText text = new BrailleText(Character.toString(mSymbolsY[i]), rect);
+            Rectangle rect = new Rectangle(startX, mBottomMargin - mNumBar * (mBarDist + mBarWidth) + mBarWidth / 2 - halfCell + i * (mBarDist + mBarWidth), width, height);
+            BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect);
             tplotter.plot(text, mCanvas);
         }
     }

@@ -93,9 +93,7 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
         double startY = rect.getY();
         double widthJump = canvas.getDotDistHor();
         double heightJump = canvas.getDotDistVer();
-        // double widthJump = canvas.getCellWidth() - canvas.getDotDiameter();
-        // double heightJump = (canvas.getCellHeight() - canvas.getDotDiameter()) / 2;
-        double cellJump = canvas.getCellWidth() + canvas.getCellDistHor();
+        double cellJump = widthJump + canvas.getCellDistHor();
         double last = startX;
         mData = canvas.getCurrentPage();
 
@@ -122,7 +120,7 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
      * @param y Absolute y-value.
      */
     private void addPointByValues(final double x, final double y) {
-        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true));
+        mData.addPointIfNotExisting(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true));
     }
 
 }

@@ -30,6 +30,7 @@ abstract class AbstractPlotter<T extends Diagram> {
     FloatingPointData<Boolean> mData;
     T mDiagram;
     Legend mLegend;
+    char[] mSymbols;
 
     // 0: title; 1: x_name; 2: x_unit; 3: y_name; 4: y_unit
     String[] mAxes;
@@ -57,6 +58,7 @@ abstract class AbstractPlotter<T extends Diagram> {
     private double mXRange;
     private boolean singleDigit;
     private boolean startOrigin;
+    boolean mAxesDerivation;
     private int[] digits;
 
     // arrays with int for axis ticks starting at the origin; last field contains scale factor as power of 10
@@ -65,11 +67,14 @@ abstract class AbstractPlotter<T extends Diagram> {
 
     // constants
     static final double ONE = 1.7;
+    static final double TWOFIVE = 2.5;
     static final int THREE = 3;
     static final int FOUR = 4;
     static final int FIVE = 5;
     static final int SIX = 6;
     static final int SEVEN = 7;
+    static final int EIGHT = 8;
+    static final int NINE = 9;
     static final int TEN = 10;
     static final int ELEVEN = 11;
     static final int FIFTEEN = 15;
@@ -79,14 +84,14 @@ abstract class AbstractPlotter<T extends Diagram> {
     static final int THIRTY = 30;
     static final int THIRTYFIVE = 35;
     static final int SIXTY = 60;
-    static final double HMULT = 2;
+    static final double HMULT = 3;
     static final double TMULT = 2;
     static final double WMULT = 4;
     static final double MARGIN = 15;
-    static final double TICK1 = 1.5;
-    static final double TICK2 = 3;
-    static final double TICK3 = 4.5;
-    static final double TICK4 = 6;
+    static final double TICK1 = 2.5;
+    static final double TICK2 = 5;
+    static final double TICK3 = 7.5;
+    static final double TICK4 = 10;
     static final double YTICKDISTANCE = 30;
 
     /**
@@ -113,7 +118,7 @@ abstract class AbstractPlotter<T extends Diagram> {
      * @param y Absolute y-value.
      */
     void addPoint(final double x, final double y) {
-        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true));
+        mData.addPointIfNotExisting(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true));
     }
 
     /**
@@ -126,6 +131,7 @@ abstract class AbstractPlotter<T extends Diagram> {
 
         double calcRange;
         double minimum;
+        String name;
 
         switch (type) {
             case "x":
@@ -133,18 +139,21 @@ abstract class AbstractPlotter<T extends Diagram> {
                 numberTicks = mNumberXTicks;
                 minimum = mDiagram.getMinX();
                 startOrigin = false;
+                name = "x-axis";
                 break;
             case "y":
                 calcRange = mYRange;
                 numberTicks = mNumberYTicks;
                 minimum = mDiagram.getMinY();
                 startOrigin = false;
+                name = "y-axis";
                 break;
             case "z":
                 calcRange = mYRange;
                 numberTicks = mNumberXTicks;
                 minimum = mDiagram.getMinY();
                 startOrigin = true;
+                name = "x-axis";
                 break;
             default:
                 throw new IllegalArgumentException("The argument must be either 'x', 'y' or 'z'.");
@@ -234,6 +243,10 @@ abstract class AbstractPlotter<T extends Diagram> {
             array[numberTicks] = len - THREE;
         } else {
             array[numberTicks] = len - 2;
+        }
+
+        for (int i = 0; i < array.length; i++) {
+            mLegend.addSymbolExplanation(name, Integer.toString(i), Integer.toString(array[i]));
         }
 
         return array;
@@ -352,17 +365,33 @@ abstract class AbstractPlotter<T extends Diagram> {
      */
     void nameXAxis() {
 
-        double startY = mBottomMargin + mCanvas.getCellDistVer() + FOUR * mStepSize;
+        mSymbols = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+        double startY = mBottomMargin + mCanvas.getCellDistVer() + FIVE * mStepSize;
         double height = mCanvas.getCellHeight();
         double width = mCanvas.getCellWidth();
-        double halfCell = (width - mCanvas.getDotDiameter()) / 2;
 
         LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
 
-        for (int i = 0; i < mNumberXTicks; i++) {
-            Rectangle rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - mCanvas.getCellDistHor() / 2, startY, width, height);
-            BrailleText text = new BrailleText(Integer.toString(mScaleX[i]), rect);
-            tplotter.plot(text, mCanvas);
+        if (mAxesDerivation) {
+            for (int i = 0; i < mNumberXTicks; i++) {
+                Rectangle rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - mCanvas.getCellDistHor() / 2, startY, width, height);
+                BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect);
+                tplotter.plot(text, mCanvas);
+            }
+        } else {
+            for (int i = 0; i < mNumberXTicks; i++) {
+                Rectangle rect;
+                if (mScaleX[i] < TEN) {
+                    // two digits
+                    rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - width - mCanvas.getCellDistHor() / 2, startY, width, height);
+                } else {
+                    // three digits
+                    rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - width - mCanvas.getCellDistHor() - width / 2, startY, width, height);
+
+                }
+                BrailleText text = new BrailleText(Integer.toString(mScaleX[i]), rect);
+                tplotter.plot(text, mCanvas);
+            }
         }
     }
 
@@ -382,9 +411,9 @@ abstract class AbstractPlotter<T extends Diagram> {
 
         loop:
         for (int i = 0; i < 2; i++) {
-            for (double j = mCanvas.getCellDistHor() + mCanvas.getDotDiameter() / 2; j < mCanvas.getPageWidth() - THREE * (width + mCanvas.getCellDistHor()) + mCanvas.getCellDistHor(); j += stepHor) {
+            for (double j = mCanvas.getCellDistHor(); j < mCanvas.getPageWidth() - THREE * (width + mCanvas.getCellDistHor()) + mCanvas.getCellDistHor(); j += stepHor) {
                 if (k < title.length) {
-                    Rectangle rect = new Rectangle(j, mCanvas.getCellDistVer() + i * stepVer, width, height);
+                    Rectangle rect = new Rectangle(j, mCanvas.getDotDistVer() + i * stepVer, width, height);
                     BrailleText text = new BrailleText(Character.toString(title[k]), rect);
                     k++;
                     j = tplotter.plot(text, mCanvas);
