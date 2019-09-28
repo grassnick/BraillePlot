@@ -43,7 +43,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     @SuppressWarnings("magicnumber")
     private int offset = 3;
     private Rectangle mCellLineArea;
-    private boolean printOnSamePaper = false;
+    private boolean printOnSamePaper = false; // If you want to print on the same paper, change this variable to true.
 
 
 
@@ -277,8 +277,18 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         double min = mDiagram.getData().getMinY();
         Map<Integer, String> result = new HashMap<>();
         double tmpDpi = dpi;
-        char letter = 'a';
+
+        // According to a not representative study the y axis should start with a on the highest value, to the lowest.
+        // So we need to calculate an offset and decrement the letter
+        // Works currently only with letters represented in ASCII
         int datapoints = (int) ceil(rangeOfYValues / dpi);
+        int range = 25; // Number of letters in the ASCII alphabet
+        int offset = range - datapoints;
+        byte z = 0x7A;
+        byte letterAsByte = (byte) (z - offset);
+        char letter = (char) letterAsByte;
+
+
         for (int i = 0; i < numberOfTicks; i++) {
             result.put(i, String.valueOf(letter));
             if (i == 0) {
@@ -287,7 +297,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
                 yLabelsForLegend.put(String.valueOf(letter), String.valueOf((dpi + min)));
                 dpi = dpi + tmpDpi;
             }
-            letter++;
+            letter--;
             if (i >= datapoints) {
                 break;
             }
