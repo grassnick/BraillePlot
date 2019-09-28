@@ -35,7 +35,7 @@ public class PrintDirector {
     private PrintService mService;
     private String mPrinterName;
     private DocFlavor mDocflavor;
-    private final Logger mLogger = LoggerFactory.getLogger(CsvParser.class);
+    private final Logger mLogger = LoggerFactory.getLogger(PrintDirector.class);
     private DocPrintJob mPrintJob;
 
 
