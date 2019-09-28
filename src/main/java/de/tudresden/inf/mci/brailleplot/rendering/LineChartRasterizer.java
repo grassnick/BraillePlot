@@ -7,6 +7,7 @@ import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaExceptio
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
+import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -132,8 +133,8 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
             rasterizeTitle(data.getTitle(), titleArea);
             rasterizeXAxis(originY, originX, mXStepWidth, xAxisBound, labels);
             rasterizeYAxis(yOriginY, yOriginX, mYStepWidth, yAxisBound, yLabels);
-            mTextRasterizer.rasterize(new BrailleText(data.getYAxisName(), yAxisText), mCanvas);
-            mTextRasterizer.rasterize(new BrailleText(data.getXAxisName(), xAxisText), mCanvas);
+            mTextRasterizer.rasterize(new BrailleText(data.getYAxisName(), yAxisText, BrailleLanguage.Language.DE_KURZSCHRIFT), mCanvas);
+            mTextRasterizer.rasterize(new BrailleText(data.getXAxisName(), xAxisText, BrailleLanguage.Language.DE_KURZSCHRIFT), mCanvas);
             rasterizeData(mDiagram.getMinX(), mDiagram.getMinY(), iter.next());
             if (iter.hasNext() && !printOnSamePaper) {
                 mCanvas.getNewPage();
@@ -454,7 +455,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
             throw new IllegalArgumentException("The title in LineChartRasterizer was empty!");
         }
         int widthOfCompleteArea = mCellLineArea.intWrapper().getWidth();
-        int titleBarHeight = mTextRasterizer.calculateRequiredHeight(mDiagram.getTitle(), widthOfCompleteArea, mCanvas);
+        int titleBarHeight = mTextRasterizer.calculateRequiredHeight(mDiagram.getTitle(), widthOfCompleteArea, mCanvas, BrailleLanguage.Language.DE_KURZSCHRIFT);
         try {
             return  mCellLineArea.removeFromTop(mCanvas.getCellYFromDotY(titleBarHeight) + 1);
         } catch (Rectangle.OutOfSpaceException e) {
