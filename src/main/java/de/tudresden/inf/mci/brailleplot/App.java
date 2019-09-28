@@ -184,27 +184,6 @@ public final class App {
             Format a4Format = configParser.getFormat("A4");
             Representation representationParameters = configParser.getRepresentation();
 
-            // Parse CLI parameters
-            String[] axes = new String[FIVE];
-            for (int i = 0; i < FIVE; i++) {
-                axes[i] = "dummy";
-            }
-            if (settingsReader.isPresent((SettingType.TITLE))) {
-                axes[0] = settingsReader.getSetting(SettingType.TITLE).get();
-            }
-            if (settingsReader.isPresent((SettingType.X_NAME))) {
-                axes[1] = settingsReader.getSetting(SettingType.X_NAME).get();
-            }
-            if (settingsReader.isPresent((SettingType.X_UNIT))) {
-                axes[2] = settingsReader.getSetting(SettingType.X_UNIT).get();
-            }
-            if (settingsReader.isPresent((SettingType.Y_NAME))) {
-                axes[THREE] = settingsReader.getSetting(SettingType.Y_NAME).get();
-            }
-            if (settingsReader.isPresent((SettingType.Y_UNIT))) {
-                axes[FOUR] = settingsReader.getSetting(SettingType.Y_UNIT).get();
-            }
-
             // Parse csv data
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
             InputStream csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_vertical.csv");
@@ -212,7 +191,6 @@ public final class App {
 
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
             CategoricalPointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
-            container.setAxes(axes);
             mLogger.debug("Internal data representation:\n {}", container.toString());
             CategoricalBarChart barChart = new CategoricalBarChart(container);
             barChart.setTitle("Beispieldiagramm");
@@ -236,10 +214,8 @@ public final class App {
 
             csvParser = new CsvParser(csvReader, ',', '\"');
             PointListContainer<PointList> container2 = csvParser.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
-            container2.setAxes(axes);
             CsvParser csvParser2 = new CsvParser(csvReader2, ',', '\"');
             SimpleCategoricalPointListContainerImpl container3 = csvParser2.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
-            container3.setAxes(axes);
             mLogger.debug("Internal data representation:\n {}", container.toString());
 
             // FloatingPointData SVG exporting example

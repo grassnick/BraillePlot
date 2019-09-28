@@ -24,13 +24,7 @@ public class CommandLineParser {
         mOptions.addOption("h", SettingType.DISPLAY_HELP.toString(), false, "Print help and exit")
                 .addOption("c", SettingType.CSV_LOCATION.toString(), true, "Path to CSV")
                 .addOption("s", SettingType.SEMANTIC_MAPPING.toString(), true, "Literal for semantic mapping")
-                .addOption("p", SettingType.PRINTER_CONFIG_PATH.toString(), true, "Path to printer configuration file")
-                .addOption("t", SettingType.TITLE.toString(), true, "Title of the diagram")
-                .addOption("xn", SettingType.X_NAME.toString(), true, "Name of the x-axis")
-                .addOption("xu", SettingType.X_UNIT.toString(), true, "Unit of the x-axis")
-                .addOption("yn", SettingType.Y_NAME.toString(), true, "Name of the y-axis")
-                .addOption("yu", SettingType.Y_UNIT.toString(), true, "Unit of the y-axis");
-
+                .addOption("p", SettingType.PRINTER_CONFIG_PATH.toString(), true, "Path to printer configuration file");
     }
 
     /**

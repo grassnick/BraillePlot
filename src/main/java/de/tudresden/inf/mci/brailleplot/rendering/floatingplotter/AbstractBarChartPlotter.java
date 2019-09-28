@@ -37,13 +37,11 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
      */
     void prereq(final CategoricalBarChart diagram, final PlotCanvas canvas) {
 
-        mAxes = diagram.getAxes();
         setCanvas(canvas);
         mCanvas.readConfig();
         setData();
         mDiagram = Objects.requireNonNull(diagram);
-        mAxes = mDiagram.getAxes();
-        mLegend = new Legend(mAxes);
+        mLegend = new Legend();
         mCatList = (CategoricalPointListContainer<PointList>) mDiagram.getDataSet();
         mMaxWidth = mCanvas.getMaxBarWidth();
         mMinDist = mCanvas.getMinBarDist();

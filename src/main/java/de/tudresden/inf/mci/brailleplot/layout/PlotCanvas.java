@@ -49,9 +49,6 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
     // axis derivation with letters
     private boolean mAxesDerivation;
 
-    // constants
-    private static final int THREE = 3;
-
 
     public PlotCanvas(final Printer printer, final Representation representation, final Format format) throws InsufficientRenderingAreaException {
         super(printer, representation, format);

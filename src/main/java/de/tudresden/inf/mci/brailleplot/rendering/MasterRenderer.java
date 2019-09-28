@@ -80,7 +80,7 @@ public final class MasterRenderer {
     public PlotCanvas plot(final Renderable data) throws InsufficientRenderingAreaException {
         mLogger.info("Preparing a new {} plotting on RenderingBase {}",
                 data.getClass().getSimpleName(), mRenderingBase);
-        PlotCanvas canvas = new PlotCanvas(mPrinter, mFormat);
+        PlotCanvas canvas = new PlotCanvas(mPrinter, mRepresentation, mFormat);
         mRenderingBase.setPlotCanvas(canvas);
         mRenderingBase.plot(data);
         mLogger.info("Plotting of {} on RenderingBase {} has finished, result containing {} pages",

@@ -65,16 +65,16 @@ public class LegendPlotter implements Plotter<Legend> {
         double last = plotLine(legende, mCanvas.getCellDistHor(), 0);
         char[] titel = "Titel:".toCharArray();
         last = plotLine(titel, mCanvas.getCellDistHor(), last + mStepVer + mSpace);
-        char[] titelName = legend.getTitle().toCharArray();
+        char[] titelName = ("dummy").toCharArray();
         last = plotLine(titelName, mCanvas.getCellDistHor(), last + mStepVer);
         char[] xAxis = "X-Achse:".toCharArray();
         last = plotLine(xAxis, mCanvas.getCellDistHor(), last + mStepVer + mSpace);
 
         char[] xAxisDesc;
         if (mCanvas.getXScaleFactor() == 1) {
-            xAxisDesc = (legend.getXName() + " in " + legend.getXUnit()).toCharArray();
+            xAxisDesc = ("dummy" + " in " + "dummy").toCharArray();
         } else {
-            xAxisDesc = (legend.getXName() + " in " + legend.getXUnit() + ", mal 10 hoch " + mCanvas.getXScaleFactor()).toCharArray();
+            xAxisDesc = ("dummy" + " in " + "dummy" + ", mal 10 hoch " + mCanvas.getXScaleFactor()).toCharArray();
         }
         last = plotLine(xAxisDesc, mCanvas.getCellDistHor(), last + mStepVer);
 
@@ -96,9 +96,9 @@ public class LegendPlotter implements Plotter<Legend> {
 
         char[] yAxisDesc;
         if (mCanvas.getYScaleFactor() == 1) {
-            yAxisDesc = (legend.getYName() + " in " + legend.getYUnit()).toCharArray();
+            yAxisDesc = ("dummy" + " in " + "dummy").toCharArray();
         } else {
-            yAxisDesc = (legend.getYName() + " in " + legend.getYUnit() + ", mal 10 hoch " + mCanvas.getYScaleFactor()).toCharArray();
+            yAxisDesc = ("dummy" + " in " + "dummy" + ", mal 10 hoch " + mCanvas.getYScaleFactor()).toCharArray();
         }
         last = plotLine(yAxisDesc, mCanvas.getCellDistHor(), last + mStepVer);
 

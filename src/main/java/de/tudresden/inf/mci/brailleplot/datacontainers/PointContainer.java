@@ -36,15 +36,4 @@ public interface PointContainer<T> extends Iterable<T>, MinMaxPos2D<Double> {
 
     Stream<T> stream();
 
-    /**
-     * Sets the axes array with CLI parameters.
-     * @param axes The string array with the CLI parameters.
-     */
-    void setAxes(String[] axes);
-
-    /**
-     * Gets the axes array with CLI parameters.
-     * @return The string array with the CLI parameters.
-     */
-    String[] getAxes();
 }

@@ -33,8 +33,7 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
         mCanvas.readConfig();
         setData();
         mDiagram = Objects.requireNonNull(diagram);
-        mAxes = mDiagram.getAxes();
-        mLegend = new Legend(mAxes);
+        mLegend = new Legend();
         mFrames = mCanvas.getFrames();
         mPageHeight = mCanvas.getPrintableHeight();
         mPageWidth = mCanvas.getPrintableWidth();

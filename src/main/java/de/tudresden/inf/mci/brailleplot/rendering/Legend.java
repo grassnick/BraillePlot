@@ -11,12 +11,7 @@ import java.util.Objects;
  */
 public class Legend implements Renderable {
 
-    private String[] mAxes;
     private String mTitle;
-    private String mXName;
-    private String mXUnit;
-    private String mYName;
-    private String mYUnit;
     private Map<String, Map<String, String>> mStringExplanationLists = new LinkedHashMap<>();
     private Map<String, Map<Texture<Boolean>, String>> mTextureExplanationLists = new LinkedHashMap<>();
 
@@ -24,7 +19,7 @@ public class Legend implements Renderable {
     private int mTextureExampleHeightCells = 1;
 
     // diagram type
-    int mType;
+    private int mType;
 
     // constants
     private static final int THREE = 3;
@@ -32,49 +27,17 @@ public class Legend implements Renderable {
 
     /**
      * Constructor. Creates a legend.
+     */
+    public Legend() {
+
+    }
+
+    /**
+     * Constructor. Creates a legend.
      * @param title The title of the legend.
      */
     public Legend(final String title) {
         setTitle(title);
-    }
-
-
-    /**
-     * Constructor. Creates a legend.
-     * @param axes The string array with the CLI parameters.
-     */
-    public Legend(final String[] axes) {
-        setAxes(axes);
-        extractAxes();
-    }
-
-    /**
-     * Sets a new mAxes.
-     * @param axes The string array with the CLI parameters.
-     */
-    public void setAxes(final String[] axes) {
-        mAxes = Objects.requireNonNull(axes);
-    }
-
-    /**
-     * Gets the current mAxes of the legend.
-     * @return The string array with the CLI parameters.
-     */
-    public String[] getAxes() {
-        return mAxes;
-    }
-
-
-    /**
-     * Extraxts mAxes to class variables.
-     */
-    private void extractAxes() {
-
-        mTitle = mAxes[0];
-        mXName = mAxes[1];
-        mXUnit = mAxes[2];
-        mYName = mAxes[THREE];
-        mYUnit = mAxes[FOUR];
     }
 
     /**
@@ -169,38 +132,6 @@ public class Legend implements Renderable {
 
     final int getTextureExampleHeightCells() {
         return mTextureExampleHeightCells;
-    }
-
-    public final void setXName(final String name) {
-        mXName = name;
-    }
-
-    public final String getXName() {
-        return mXName;
-    }
-
-    public final void setYName(final String name) {
-        mYName = name;
-    }
-
-    public final String getYName() {
-        return mYName;
-    }
-
-    public final void setXUnit(final String xUnit) {
-        mXUnit = xUnit;
-    }
-
-    public final String getXUnit() {
-        return mXUnit;
-    }
-
-    public final void setYUnit(final String yUnit) {
-        mYUnit = yUnit;
-    }
-
-    public final String getYUnit() {
-        return mYUnit;
     }
 
     public final void setType(final int type) {

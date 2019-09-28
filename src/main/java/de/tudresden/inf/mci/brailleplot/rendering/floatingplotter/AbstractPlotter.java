@@ -32,10 +32,6 @@ abstract class AbstractPlotter<T extends Diagram> {
     Legend mLegend;
     char[] mSymbols;
 
-    // 0: title; 1: x_name; 2: x_unit; 3: y_name; 4: y_unit
-    String[] mAxes;
-
-
     int mNumberXTicks;
     int mNumberYTicks;
     double mBottomMargin;
@@ -405,7 +401,7 @@ abstract class AbstractPlotter<T extends Diagram> {
         double width = mCanvas.getCellWidth();
         double stepHor = width + mCanvas.getCellDistHor();
         double stepVer = height + mCanvas.getCellDistVer();
-        char[] title = mAxes[0].toCharArray();
+        char[] title = "Dummy".toCharArray();
 
         LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
 
