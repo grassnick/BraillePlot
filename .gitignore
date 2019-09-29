@@ -6,6 +6,7 @@ out
 !integrationTest.gradle
 # Tables
 src/main/resources/mapping/liblouis
+src/integrationTest/resources/mapping/liblouis
 
 # IntelliJ
 .idea
