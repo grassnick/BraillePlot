@@ -1,10 +1,11 @@
 sourceSets {
     integrationTest {
         java.srcDir 'src/integrationTest'
-        resources.srcDir 'src/test/resources'
+        resources.srcDir 'src/integrationTest/resources'
         compileClasspath += sourceSets.main.output + configurations.testRuntimeClasspath
         runtimeClasspath += output + compileClasspath
     }
+
 }
 
 task integrationTest(type: Test) {
