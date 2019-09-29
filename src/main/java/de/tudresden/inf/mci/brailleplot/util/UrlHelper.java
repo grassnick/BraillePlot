@@ -37,7 +37,7 @@ public final class UrlHelper {
      * @throws RuntimeException if the generated URL is not a valid URL.
      */
     public static URL getParentUrl(final URL resourcePath) throws ConfigurationParsingException {
-        String fileString = getString(resourcePath);
+        String fileString = getPathString(resourcePath);
         String parentString = fileString.substring(0, fileString.lastIndexOf("/"));
         try {
             return new URL(resourcePath.getProtocol(), resourcePath.getHost(), parentString);

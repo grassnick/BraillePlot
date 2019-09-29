@@ -21,6 +21,7 @@ import java.util.Properties;
 public final class JavaPropertiesConfigurationParser extends ConfigurationParser {
 
     private static final String INCLUDE_FILE_EXTENSION = ".properties";
+    private static final String CONFIG_RESOURCE_ROOT = "config";
 
     /**
      * Constructor.
@@ -123,19 +124,29 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
      */
     private void includeFiles(final String fileList, final URL parentUrl) throws ConfigurationParsingException, ConfigurationValidationException {
         for (String s : fileList.split(",")) {
+            s = s.trim() + INCLUDE_FILE_EXTENSION;
 
-            Path parentPath = null;
-            try {
-                parentPath = Path.of(parentUrl.toURI());
-            } catch (URISyntaxException e) {
-                throw new ConfigurationParsingException("Could not generate URI", e);
+            Path p = Path.of(s);
+            String newPathString;
+            Path newPath;
+            if (p.isAbsolute()) {
+                newPath = p;
+                newPathString = newPath.toString();
+            } else {
+                Path parentPath = null;
+                try {
+                    parentPath = Path.of(parentUrl.toURI());
+                } catch (URISyntaxException e) {
+                    throw new ConfigurationParsingException("Could not generate path from URL", e);
+                }
+                newPath = parentPath.resolve(s);
+                newPathString = newPath.toAbsolutePath().toString();
             }
-            Path newPath = parentPath.resolve(s.trim() + INCLUDE_FILE_EXTENSION);
-            String newPathString = newPath.toAbsolutePath().toString();
 
             mLogger.debug("Prepare recursive parsing of properties file in the file system for file \"{}\"", newPathString);
 
             try (InputStream is = new BufferedInputStream(new FileInputStream(newPathString))) {
+                Objects.requireNonNull(is);
                 parse(is, UrlHelper.getParentUrl(newPath.toUri().toURL()));
             } catch (IOException e) {
                 throw new ConfigurationParsingException("Could not open include file", e);
@@ -152,17 +163,18 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
      */
     private void includeResources(final String fileList, final URL parentUrl) throws ConfigurationParsingException, ConfigurationValidationException {
         for (String s : fileList.split(",")) {
-            s = s.trim();
+            s = s.trim() + INCLUDE_FILE_EXTENSION;
             boolean isAbsolutePath = s.startsWith("/");
 
             URL newUrl = null;
             // If the value begins with a "/", treat path as absolute path in resources
             if (isAbsolutePath) {
-                newUrl = getClass().getClassLoader().getResource(s.substring(1) + INCLUDE_FILE_EXTENSION);
+                String urlString = CONFIG_RESOURCE_ROOT + s;
+                newUrl = getClass().getClassLoader().getResource(urlString);
                 // else treat relative
             } else {
                 try {
-                    newUrl = new URL(parentUrl.getProtocol(), parentUrl.getHost(), UrlHelper.getPathString(parentUrl) + "/" + s.trim() + INCLUDE_FILE_EXTENSION);
+                    newUrl = new URL(parentUrl.getProtocol(), parentUrl.getHost(), UrlHelper.getPathString(parentUrl) + "/" + s);
                 } catch (MalformedURLException e) {
                     throw new ConfigurationParsingException("Could not create URL to relative resource", e);
                 }
@@ -171,6 +183,7 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
             mLogger.debug("Prepare recursive parsing of properties file in the java resources at \"{}\"", UrlHelper.getString(newUrl));
 
             try (InputStream is = newUrl.openStream()) {
+                Objects.requireNonNull(is);
                 parse(is, UrlHelper.getParentUrl(newUrl));
             } catch (IOException e) {
                 throw new ConfigurationParsingException("Could not open include resource", e);
