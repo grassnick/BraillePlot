@@ -43,16 +43,28 @@ public final class NativeLibraryHelper {
      * @param path The path to add.
      */
     private static synchronized void registerNewSystemLibPath(final String path) {
-        // TODO Check if path is already included and abort, if so
         String currentLibPath = System.getProperty("jna.library.path");
         String newLibPath = null;
+        boolean pathExists = false;
+
         if (currentLibPath == null) {
             newLibPath = path;
         } else {
+            // Do not insert path if it already is included
+            String[] existingPaths = currentLibPath.split(File.pathSeparator);
+            for (String s : existingPaths) {
+                if (s.equals(path)) {
+                    pathExists = true;
+                    break;
+                }
+            }
             newLibPath = currentLibPath + File.pathSeparator + path;
         }
-        LOG.debug("Setting JNI library path property to \"" + newLibPath + "\"");
-        System.setProperty("jna.library.path", newLibPath);
+
+        if (!pathExists) {
+            LOG.debug("Setting JNI library path property to \"" + newLibPath + "\"");
+            System.setProperty("jna.library.path", newLibPath);
+        }
     }
 
     private static String calculateLibPath() {
