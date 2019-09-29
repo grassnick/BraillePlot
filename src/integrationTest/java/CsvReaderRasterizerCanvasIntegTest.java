@@ -4,6 +4,7 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
@@ -11,7 +12,10 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListConta
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
+import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
+import de.tudresden.inf.mci.brailleplot.rendering.BarChartRasterizer;
+import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,7 +45,8 @@ public class CsvReaderRasterizerCanvasIntegTest {
     private static Format format;
     private static MatrixData<Boolean> data;
     private static CategoricalPointListContainer<PointList> container;
-    private static BarChart barChart;
+    private static CategoricalBarChart catBarChart;
+    private static MasterRenderer renderer;
 
     @BeforeAll
     public static void setUp() {
@@ -56,50 +61,72 @@ public class CsvReaderRasterizerCanvasIntegTest {
             Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
             container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
-            barChart = new BarChart(container);
+            catBarChart = new CategoricalBarChart(container);
+            Representation representationParameters = configParser.getRepresentation();
+            renderer = new MasterRenderer(printer, representationParameters, format);
+            System.setProperty("jna.library.path", System.getProperty("user.dir") + "/third_party");
         });
     }
 
 
     @Test
-    public void testGettersSmokeTestBarChart() {
+    public void testGettersSmokeTestCatBarChart() {
         Assertions.assertDoesNotThrow(() -> {
             //BarChart tempBarchart = new BarChart(new PointListContainer<PointList>);
-            barChart.getCategoryNames();
-            barChart.getDataSet();
-            barChart.getMaxY();
-            barChart.getMinY();
-            barChart.getTitle();
-            barChart.getXAxisName();
-            barChart.getYAxisName();
+            catBarChart.getCategoryNames();
+            catBarChart.getDataSet();
+            catBarChart.getMaxY();
+            catBarChart.getMinY();
+            catBarChart.getTitle();
+            catBarChart.getXAxisName();
+            catBarChart.getYAxisName();
         });
     }
 
     @Test
-    public void testGettersOutputBarChart() {
-        /*Assertions.assertEquals(barChart.getMaxY());
-        Assertions.assertEquals(barChart.getMinY());
-        Assertions.assertEquals(barChart.getDataSet(), container);
-        Assertions.assertEquals(barChart.getXAxisName());
-        Assertions.assertEquals(barChart.getYAxisName());
+    public void testGettersOutputCatBarChart() {
+        Assertions.assertEquals(catBarChart.getMaxY(), 4.5);
+        Assertions.assertEquals(catBarChart.getMinY(), 1);
+        Assertions.assertEquals(catBarChart.getDataSet(), container);
+        Assertions.assertDoesNotThrow(() -> {
+            catBarChart.setTitle("Test");
+            catBarChart.setYAxisName("y");
+            catBarChart.setXAxisName("x");
+        });
+        Assertions.assertEquals(catBarChart.getXAxisName(),"x");
+        Assertions.assertEquals(catBarChart.getTitle(),"Test");
+        Assertions.assertEquals(catBarChart.getYAxisName(), "y");
 
-         */
+    }
+
+    /*
+        It would be better if a nullpointerException was thrown
+     */
+    @Test
+    public void testGettersNullCatBarChart() {
+        BarChart wrongBarChart = new BarChart(container);
+        Assertions.assertEquals(wrongBarChart.getTitle(), null);
+        Assertions.assertEquals(wrongBarChart.getXAxisName(), null);
+        Assertions.assertEquals(wrongBarChart.getYAxisName(), null);
     }
     @Test
-    public void testNullConstructorBarChart() {
+    public void testNullConstructorCatBarChart() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             BarChart wrongBar = new BarChart(null);
         });
     }
 
-
-
-
+    @Test
+    public void testNoRegisteredRasterizerBarChart() {
+        Assertions.assertThrows(IllegalArgumentException.class,() -> {
+            renderer.rasterize(new BarChart(container));
+        });
+    }
 
     @Test
-    public void testCorrecctRasterizingBarChart() {
+    public void testRasterizerDoesNotThrowCatBarChart() {
         Assertions.assertDoesNotThrow(() -> {
-
+            renderer.rasterize(catBarChart);
         });
     }
 }
