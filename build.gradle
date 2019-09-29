@@ -51,10 +51,14 @@ tasks.withType(Test) {
     useJUnitPlatform()
 }
 
-// Copy Braille tables from submodule to working dir
+// Copy Braille tables from submodule to working dir/integration test dir
 task copyBrailleTables(type: Copy) {
     from "$projectDir/third_party/liblouis/tables/"
     into "$rootDir/src/main/resources/mapping/liblouis"
+
+    from "$projectDir/third_party/liblouis/tables/"
+    into "$rootDir/src/integrationTest/resources/mapping/liblouis"
+
 }
 processResources.dependsOn copyBrailleTables
 // Abort if files are missing
@@ -66,6 +70,7 @@ gradle.taskGraph.afterTask { copyBrailleTables ->
 // Delete tables on "clean" task
 clean {
     delete "$rootDir/src/main/resources/mapping/liblouis"
+    delete "$rootDir/src/integrationTest/resources/mapping/liblouis"
 }
 
 // Define the main class for the application
