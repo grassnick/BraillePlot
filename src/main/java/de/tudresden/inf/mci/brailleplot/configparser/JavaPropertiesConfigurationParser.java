@@ -152,15 +152,23 @@ public final class JavaPropertiesConfigurationParser extends ConfigurationParser
      */
     private void includeResources(final String fileList, final URL parentUrl) throws ConfigurationParsingException, ConfigurationValidationException {
         for (String s : fileList.split(",")) {
+            s = s.trim();
+            boolean isAbsolutePath = s.startsWith("/");
 
             URL newUrl = null;
-            try {
-                newUrl = new URL(parentUrl.getProtocol(), parentUrl.getHost(), UrlHelper.getPathString(parentUrl) + "/" + s.trim() + INCLUDE_FILE_EXTENSION);
-            } catch (MalformedURLException e) {
-                throw new ConfigurationParsingException("Could not generate URI", e);
+            // If the value begins with a "/", treat path as absolute path in resources
+            if (isAbsolutePath) {
+                newUrl = getClass().getClassLoader().getResource(s.substring(1) + INCLUDE_FILE_EXTENSION);
+                // else treat relative
+            } else {
+                try {
+                    newUrl = new URL(parentUrl.getProtocol(), parentUrl.getHost(), UrlHelper.getPathString(parentUrl) + "/" + s.trim() + INCLUDE_FILE_EXTENSION);
+                } catch (MalformedURLException e) {
+                    throw new ConfigurationParsingException("Could not create URL to relative resource", e);
+                }
             }
 
-            mLogger.debug("Prepare recursive parsing of properties file in the java resources at \"{}\"", newUrl);
+            mLogger.debug("Prepare recursive parsing of properties file in the java resources at \"{}\"", UrlHelper.getString(newUrl));
 
             try (InputStream is = newUrl.openStream()) {
                 parse(is, UrlHelper.getParentUrl(newUrl));

@@ -26,6 +26,10 @@ public final class UrlHelper {
         return URLDecoder.decode(url.getPath(), StandardCharsets.UTF_8);
     }
 
+    public static String getString(final URL url) {
+        return URLDecoder.decode(url.toString(), StandardCharsets.UTF_8);
+    }
+
     /**
      * Returns the URL to the parent directory of a File / Resource.
      * @param resourcePath The URL to analyze.
@@ -33,7 +37,7 @@ public final class UrlHelper {
      * @throws RuntimeException if the generated URL is not a valid URL.
      */
     public static URL getParentUrl(final URL resourcePath) throws ConfigurationParsingException {
-        String fileString = getPathString(resourcePath);
+        String fileString = getString(resourcePath);
         String parentString = fileString.substring(0, fileString.lastIndexOf("/"));
         try {
             return new URL(resourcePath.getProtocol(), resourcePath.getHost(), parentString);
