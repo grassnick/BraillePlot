@@ -286,7 +286,7 @@ public final class App {
             for (int i = 0; i < floatCanvas.getPageCount() - 1; i++) {
                 int j = floatCanvas.getPageCount();
                 if (canvasIt.hasNext()) {
-                    printD.print(canvasIt.next());
+                    //printD.print(canvasIt.next());
                 }
             }
 

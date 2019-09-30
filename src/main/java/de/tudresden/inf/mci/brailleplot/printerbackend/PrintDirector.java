@@ -2,7 +2,6 @@ package de.tudresden.inf.mci.brailleplot.printerbackend;
 
 
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
-import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
 import org.slf4j.Logger;
@@ -16,12 +15,14 @@ import javax.print.PrintServiceLookup;
 import javax.print.Doc;
 
 import javax.print.SimpleDoc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.print.*;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.JobName;
 import javax.print.event.PrintJobEvent;
-import javax.print.event.PrintJobListener;
-import java.awt.*;
 import java.util.Objects;
 /**
  * Implements a variation of the GoF design pattern Builder. This class is used for setting the printer configuration and
