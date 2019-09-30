@@ -153,8 +153,6 @@ public final class App {
         try {
             // Logging example
             mLogger.info("Application started");
-            // Needed for Windows machines
-            System.setProperty("jna.library.path", System.getProperty("user.dir") + "/third_party");
             // Parse command line parameters
             CommandLineParser cliParser = new CommandLineParser();
             SettingsWriter settings = cliParser.parse(args);
@@ -198,6 +196,7 @@ public final class App {
             barChart.setYAxisName("Länge in m");
 
             // Render diagram
+            LiblouisBrailleTextRasterizer.initModule();
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, representationParameters, a4Format);
             RasterCanvas canvas = renderer.rasterize(barChart);
             // SVG exporting
