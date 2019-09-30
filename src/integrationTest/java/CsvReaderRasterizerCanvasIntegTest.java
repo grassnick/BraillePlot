@@ -16,6 +16,7 @@ import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.rendering.BarChartRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
+import de.tudresden.inf.mci.brailleplot.rendering.UniformTextureBarChartRasterizer;
 import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -129,4 +130,7 @@ public class CsvReaderRasterizerCanvasIntegTest {
             renderer.rasterize(catBarChart);
         });
     }
+
+
+    // Braille Text
 }
