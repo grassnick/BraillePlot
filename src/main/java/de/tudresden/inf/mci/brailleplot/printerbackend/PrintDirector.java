@@ -151,15 +151,15 @@ public class PrintDirector {
         asset.add(new JobName("Braille Printing", null));
         try {
             mLogger.trace("adding job to the PrintJobListener.");
-            //PrintJobListener listener = new PrintJobListener();
-           // job.addPrintJobListener(listener);
+            PrintJobListener listener = new PrintJobListener();
+            job.addPrintJobListener(listener);
             mLogger.trace("starting printing.");
             //PrinterIsAcceptingJobs set = mService.getAttribute(PrinterIsAcceptingJobs.class);
             //PrinterStateReasons reasons = mService.getAttribute(PrinterStateReasons.class);
             job.print(doc, asset);
             //set = mService.getAttribute(PrinterIsAcceptingJobs.class);
             //reasons = mService.getAttribute(PrinterStateReasons.class);
-            //listener.waitForDone();
+            listener.waitForDone();
             mPrintJob = job;
         } catch (PrintException pe) {
             throw new RuntimeException(pe);
@@ -178,14 +178,13 @@ public class PrintDirector {
         }
         return true;
     }
-/*
+
     private class PrintJobListener implements javax.print.event.PrintJobListener {
         boolean done = false;
 
         @Override
         public void printDataTransferCompleted(PrintJobEvent pje) {
             mLogger.info("data transfer to printer complete.");
-            PrintJobListener.this.notify();
         }
 
         @Override
@@ -240,5 +239,4 @@ public class PrintDirector {
         }
     }
 
- */
 }

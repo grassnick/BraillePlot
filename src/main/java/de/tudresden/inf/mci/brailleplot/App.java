@@ -284,7 +284,14 @@ public final class App {
             PrintDirector printD = new PrintDirector(PrinterCapability.INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER, indexV4Printer);
             ListIterator<FloatingPointData<Boolean>> canvasIt = floatCanvas.getPageIterator();
             while (canvasIt.hasNext()){
-                printD.print(canvasIt.next());
+                Thread thread = new Thread() {
+                  public void run() {
+                      System.out.println("Start thread");
+                      printD.print(canvasIt.next());
+                  }
+                };
+                thread.start();
+                Thread.sleep(1000);
             }
 
 
