@@ -242,6 +242,20 @@ public class LegendPlotter implements Plotter<Legend> {
                 if (k < title.length) {
                     last = i * mStepVer + starterY;
 
+                    int m = 0;
+
+                    for (int l = k; l < title.length; l++) {
+                        if (Character.toString(title[l]).equals(" ")) {
+                            break;
+                        }
+                        m++;
+                    }
+
+                    if (j > mCanvas.getPageWidth() - (m + 1) * (mCanvas.getCellWidth() + mCanvas.getCellDistHor())) {
+                        j = startX;
+                        last += mStepVer;
+                    }
+
                     if (last > mCanvas.getPageHeight() - mStepVer) {
                         mCanvas.getNewPage();
                         last = 0;
