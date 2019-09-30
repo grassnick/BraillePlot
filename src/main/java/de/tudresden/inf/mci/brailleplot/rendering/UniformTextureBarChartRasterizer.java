@@ -26,7 +26,7 @@ import static java.lang.StrictMath.ceil;
  * @author Leonard Kupper, Georg Graßnick
  * @version 2019.07.29
  */
-final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
+public final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
 
     BarChart mDiagram;
     RasterCanvas mCanvas;
@@ -52,7 +52,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
     /**
      * Constructor. Create a new rasterizer for instances of {@link BarChart}.
      */
-    UniformTextureBarChartRasterizer() {
+    public UniformTextureBarChartRasterizer() {
         mAxisRasterizer = new LinearMappingAxisRasterizer();
         //mLegendRasterizer = new LegendRasterizer();
     }
