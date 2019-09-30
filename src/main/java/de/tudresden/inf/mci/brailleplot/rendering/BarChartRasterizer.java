@@ -8,7 +8,6 @@ import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
-import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
