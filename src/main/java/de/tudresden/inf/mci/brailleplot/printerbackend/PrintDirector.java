@@ -2,33 +2,16 @@ package de.tudresden.inf.mci.brailleplot.printerbackend;
 
 
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
-import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.print.DocFlavor;
-import javax.print.DocPrintJob;
-import javax.print.PrintException;
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
-import javax.print.Doc;
-
-import javax.print.SimpleDoc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.print.*;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
-import javax.print.attribute.PrintServiceAttributeSet;
 import javax.print.attribute.standard.JobName;
-import javax.print.attribute.standard.PrinterIsAcceptingJobs;
 import javax.print.attribute.standard.PrinterState;
-import javax.print.attribute.standard.PrinterStateReasons;
 import javax.print.event.PrintJobEvent;
-import java.awt.event.ComponentListener;
-import java.awt.print.PrinterJob;
 import java.util.Objects;
 /**
  * Implements a variation of the GoF design pattern Builder. This class is used for setting the printer configuration and
@@ -91,18 +74,18 @@ public class PrintDirector {
     public void print(final PrintableData data)  {
         mLogger.info("starting with print process.");
         Objects.requireNonNull(data);
-        mLogger.trace("setting up docflavour and service.");
+        mLogger.info("setting up docflavour and service.");
         setUpDoc();
         setUpService();
         byte[] result;
-        mLogger.trace("finished setting up doc and service.");
+        mLogger.info("finished setting up doc and service.");
         try {
             mLogger.trace("assembling the data according to protocol: {}.", mBuilder.getClass().getCanonicalName());
             result = mBuilder.assemble(data);
         } catch (ClassCastException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
-        mLogger.trace("finished assembling data..");
+        mLogger.info("finished assembling data..");
         print(result);
     }
 
@@ -142,7 +125,7 @@ public class PrintDirector {
         Objects.requireNonNull(data);
         Objects.requireNonNull(mService);
         Objects.requireNonNull(mDocflavor);
-        mLogger.trace("setting up doc, asset and job.");
+        mLogger.info("setting up doc, asset and job.");
         Doc doc = new SimpleDoc(data, mDocflavor, null);
         PrintRequestAttributeSet asset = new HashPrintRequestAttributeSet();
         DocPrintJob job = mService.createPrintJob();
@@ -219,7 +202,6 @@ public class PrintDirector {
             mLogger.info("printjob has no more events.");
             synchronized (PrintJobListener.this) {
                 done = true;
-                PrintJobListener.this.notify();
             }
         }
 

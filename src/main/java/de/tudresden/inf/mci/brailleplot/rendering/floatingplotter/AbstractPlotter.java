@@ -271,7 +271,7 @@ abstract class AbstractPlotter<T extends Diagram> {
 
             // rounding
             if (len == 1) {
-                if (digits[0] <= SIX) {
+                if (digits[0] <= FIVE) {
                     newRange = FIVE;
                     singleDigit = true;
                 } else {
@@ -401,7 +401,7 @@ abstract class AbstractPlotter<T extends Diagram> {
         double width = mCanvas.getCellWidth();
         double stepHor = width + mCanvas.getCellDistHor();
         double stepVer = height + mCanvas.getCellDistVer();
-        char[] title = "Dummy".toCharArray();
+        char[] title = "Dummykasfjkasuhfksa sdfhsdfbsdhaf".toCharArray();
 
         LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
 
@@ -409,6 +409,8 @@ abstract class AbstractPlotter<T extends Diagram> {
         for (int i = 0; i < 2; i++) {
             for (double j = mCanvas.getCellDistHor(); j < mCanvas.getPageWidth() - THREE * (width + mCanvas.getCellDistHor()) + mCanvas.getCellDistHor(); j += stepHor) {
                 if (k < title.length) {
+
+                    // check if line break in necessary
                     int m = 0;
 
                     for (int l = k; l < title.length; l++) {
