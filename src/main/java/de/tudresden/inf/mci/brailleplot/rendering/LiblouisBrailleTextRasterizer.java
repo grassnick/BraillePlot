@@ -208,8 +208,11 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
         }
     }
 
+    /**
+     * Indicates, the native liblouis library was not found.
+     */
     public static class LibLouisLibraryMissingException extends NoSuchNativeLibraryException {
-        LibLouisLibraryMissingException(Throwable cause) {
+        LibLouisLibraryMissingException(final Throwable cause) {
             super(cause);
         }
     }
