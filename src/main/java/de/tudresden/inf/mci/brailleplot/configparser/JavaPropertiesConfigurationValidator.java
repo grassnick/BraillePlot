@@ -73,12 +73,6 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         defineFormatProperty("margin.right", requireInteger.and(requirePositive));
         defineFormatProperty("margin.bottom", requireInteger.and(requirePositive));
         defineFormatProperty("margin.left", requireInteger.and(requirePositive));
-        defineFormatProperty("floatingDot.minBarWidth", requireDouble.and(requirePositive), false);
-        defineFormatProperty("floatingDot.maxBarWidth", requireDouble.and(requirePositive), false);
-        defineFormatProperty("floatingDot.minBarDist", requireDouble.and(requirePositive), false);
-        defineFormatProperty("floatingDot.secondAxis", requireBoolean, false);
-        defineFormatProperty("floatingDot.frames", requireBoolean, false);
-        defineFormatProperty("floatingDot.derivation", requireBoolean, false);
 
         // Definition of valid representation properties
         defineRepresentationProperty("general.nonexistentDataText", requireNotEmpty);
@@ -89,6 +83,12 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         defineRepresentationProperty("rasterize.barChart.padding.caption", requireInteger);
         defineRepresentationProperty("rasterize.barChart.padding.groups", requireInteger);
         defineRepresentationProperty("rasterize.barChart.padding.bars", requireInteger);
+        defineRepresentationProperty("floatingDot.minBarWidth", requireDouble.and(requirePositive), false);
+        defineRepresentationProperty("floatingDot.maxBarWidth", requireDouble.and(requirePositive), false);
+        defineRepresentationProperty("floatingDot.minBarDist", requireDouble.and(requirePositive), false);
+        defineRepresentationProperty("floatingDot.secondAxis", requireBoolean, false);
+        defineRepresentationProperty("floatingDot.frames", requireBoolean, false);
+        defineRepresentationProperty("floatingDot.derivation", requireBoolean, false);
     }
 
     /**

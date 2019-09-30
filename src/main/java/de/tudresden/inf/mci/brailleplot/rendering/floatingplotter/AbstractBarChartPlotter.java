@@ -26,6 +26,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     double mMinDist;
     double mMinWidth;
     double[] mGridHelp;
+    boolean mNegative;
 
     // constants
     private static final double STAIRDIST = 6;
@@ -42,7 +43,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
         setData();
         mDiagram = Objects.requireNonNull(diagram);
         mLegend = new Legend();
-        mCatList = (CategoricalPointListContainer<PointList>) mDiagram.getDataSet();
+        mCatList = mDiagram.getDataSet();
         mMaxWidth = mCanvas.getMaxBarWidth();
         mMinDist = mCanvas.getMinBarDist();
         mMinWidth = mCanvas.getMinBarWidth();

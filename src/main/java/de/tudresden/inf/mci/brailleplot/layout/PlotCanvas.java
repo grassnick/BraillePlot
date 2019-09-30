@@ -82,12 +82,13 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         mCellDistVer = mPrinter.getProperty("raster.cellDistance.vertical").toDouble();
         mDotDistHor = mPrinter.getProperty("raster.dotDistance.horizontal").toDouble();
         mDotDistVer = mPrinter.getProperty("raster.dotDistance.vertical").toDouble();
-        mMinBarWidth = mFormat.getProperty("floatingDot.minBarWidth").toDouble();
-        mMaxBarWidth = mFormat.getProperty("floatingDot.maxBarWidth").toDouble();
-        mMinBarDist = mFormat.getProperty("floatingDot.minBarDist").toDouble();
-        mSecondAxis = mFormat.getProperty("floatingDot.secondAxis").toBool();
-        mFrames = mFormat.getProperty("floatingDot.frames").toBool();
-        mAxesDerivation = mFormat.getProperty("floatingDot.derivation").toBool();
+
+        mMinBarWidth = mRepresentation.getProperty("floatingDot.minBarWidth").toDouble();
+        mMaxBarWidth = mRepresentation.getProperty("floatingDot.maxBarWidth").toDouble();
+        mMinBarDist = mRepresentation.getProperty("floatingDot.minBarDist").toDouble();
+        mSecondAxis = mRepresentation.getProperty("floatingDot.secondAxis").toBool();
+        mFrames = mRepresentation.getProperty("floatingDot.frames").toBool();
+        mAxesDerivation = mRepresentation.getProperty("floatingDot.derivation").toBool();
 
     }
 
