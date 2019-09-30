@@ -191,9 +191,9 @@ public final class App {
             CategoricalPointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
             mLogger.debug("Internal data representation:\n {}", container.toString());
             CategoricalBarChart barChart = new CategoricalBarChart(container);
-            barChart.setTitle("Beispieldiagramm");
-            barChart.setXAxisName("Gewicht in kg");
-            barChart.setYAxisName("Länge in m");
+            barChart.setTitle(settingsReader.getSetting(SettingType.DIAGRAM_TITLE).orElse(""));
+            barChart.setXAxisName(settingsReader.getSetting(SettingType.X_AXIS_LABEL).orElse(""));
+            barChart.setYAxisName(settingsReader.getSetting(SettingType.Y_AXIS_LABEL).orElse(""));
 
             // Render diagram
             LiblouisBrailleTextRasterizer.initModule();
