@@ -293,7 +293,6 @@ public final class App {
 
             }
 
-
         } catch (final Exception e) {
             terminateWithException(e);
         }
