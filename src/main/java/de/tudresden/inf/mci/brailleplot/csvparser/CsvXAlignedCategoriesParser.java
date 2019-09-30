@@ -8,7 +8,6 @@ import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 
 import java.text.ParseException;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,6 +18,7 @@ import java.util.Objects;
  */
 public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm<CategoricalPointListContainer<PointList>> {
 
+    /*
     @Override
     public CategoricalPointListContainer<PointList> parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
         Objects.requireNonNull(csvData);
@@ -93,6 +93,16 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm<CategoricalPo
         container.calculateExtrema();
         return container;
     }
+    */
+
+    @Override
+    public CategoricalPointListContainer<PointList> parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
+        Objects.requireNonNull(csvData);
+
+        // The csv representation of horizontal datasets is essentially the transposition of vertical datasets.
+        List<? extends List<String>> transposedCsvData = transposeCSV(csvData);
+        return parseAsVerticalDataSets(transposedCsvData);
+    }
 
     @Override
     public CategoricalPointListContainer<PointList> parseAsVerticalDataSets(final List<? extends List<String>> csvData) {
@@ -109,7 +119,10 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm<CategoricalPo
             // Check if we are in the first line, were all the categories are defined ...
             if (rowNum == 1) {
                 while (lineIt.hasNext()) {
-                    container.pushBackCategory(lineIt.next());
+                    String catName = lineIt.next();
+                    if (!catName.isEmpty()) {
+                        container.pushBackCategory(catName);
+                    }
                 }
             // ... or if we are in a row, were the actual data sets are defined
             } else {

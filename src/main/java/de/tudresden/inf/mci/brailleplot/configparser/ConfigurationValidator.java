@@ -24,9 +24,18 @@ public interface ConfigurationValidator {
     void checkPrinterConfigComplete(Printer printerConfig);
 
     /**
+     * Check whether the given {@link Representation} configuration is complete, meaning that it contains all
+     * properties that were declared as 'required' for the representation namespace.
+     * @param representationConfig The {@link Representation} configuration instance to be checked.
+     */
+    void checkRepresentationConfigComplete(Representation representationConfig);
+
+    /**
      * Check whether the given {@link Format} configuration is complete, meaning that it contains all
      * properties that were declared as 'required' for the format namespace.
      * @param formatConfig The {@link Format} configuration instance to be checked.
      */
     void checkFormatConfigComplete(Format formatConfig);
+
+    void setSearchPath(String searchPath);
 }

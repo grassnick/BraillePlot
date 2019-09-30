@@ -1,6 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
 import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
+import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
@@ -25,10 +26,11 @@ public final class MasterRenderer {
     private final Logger mLogger = LoggerFactory.getLogger(this.getClass());
 
     Printer mPrinter;
+    Representation mRepresentation;
     Format mFormat;
     FunctionalRenderingBase mRenderingBase;
 
-    public MasterRenderer(final Printer printer, final Format format) {
+    public MasterRenderer(final Printer printer, final Representation representation, final Format format) {
 
         mLogger.info("Creating MasterRenderer with default context");
 
@@ -49,12 +51,12 @@ public final class MasterRenderer {
         renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, scatter));
         //...
 
-        setRenderingContext(printer, format, renderingBase);
+        setRenderingContext(printer, representation, format, renderingBase);
     }
 
-    public MasterRenderer(final Printer printer, final Format format, final FunctionalRenderingBase renderingBase) {
+    public MasterRenderer(final Printer printer, final Representation representation, final Format format, final FunctionalRenderingBase renderingBase) {
         mLogger.info("Creating MasterRenderer with custom context");
-        setRenderingContext(printer, format, renderingBase);
+        setRenderingContext(printer, representation, format, renderingBase);
     }
 
     public RasterCanvas rasterize(final Renderable data) throws InsufficientRenderingAreaException {
@@ -70,7 +72,7 @@ public final class MasterRenderer {
 
     private RasterCanvas createCompatibleRasterCanvas() throws InsufficientRenderingAreaException {
         mLogger.info("Creating compatible RasterCanvas for current rendering context");
-        return new SixDotBrailleRasterCanvas(mPrinter, mFormat);
+        return new SixDotBrailleRasterCanvas(mPrinter, mRepresentation, mFormat);
 
         /*
         TODO: support 6 and 8 dot layout#
@@ -85,8 +87,9 @@ public final class MasterRenderer {
 
     // Getter & Setter
 
-    public void setRenderingContext(final Printer printer, final Format format, final FunctionalRenderingBase renderingBase) {
+    public void setRenderingContext(final Printer printer, final Representation representation, final Format format, final FunctionalRenderingBase renderingBase) {
         setPrinter(printer);
+        setRepresentation(representation);
         setFormat(format);
         setRenderingBase(renderingBase);
     }
@@ -97,6 +100,14 @@ public final class MasterRenderer {
     }
     public Printer getPrinter() {
         return mPrinter;
+    }
+
+    public void setRepresentation(final Representation representation) {
+        mRepresentation = Objects.requireNonNull(representation);
+        mLogger.info("Rendering context: Representation was set to {}", mRepresentation);
+    }
+    public Representation getRepresentation() {
+        return mRepresentation;
     }
 
     public void setFormat(final Format format) {

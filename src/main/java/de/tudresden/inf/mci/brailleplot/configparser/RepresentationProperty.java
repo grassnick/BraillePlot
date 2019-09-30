@@ -1,11 +1,11 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
 /**
- * Representation of a property which is specific to a printer.
+ * A property describing a representational aspect or parameter of charts.
  * @author Leonard Kupper
- * @version 2019.06.04
+ * @version 2019.09.25
  */
-public final class PrinterProperty extends ValidProperty {
+public final class RepresentationProperty extends ValidProperty {
 
     /**
      * Constructor.
@@ -13,7 +13,7 @@ public final class PrinterProperty extends ValidProperty {
      * @param name The name of the property.
      * @param value The value of the property.
      */
-    public PrinterProperty(final String name, final String value) {
+    RepresentationProperty(final String name, final String value) {
         super(name, value);
     }
 

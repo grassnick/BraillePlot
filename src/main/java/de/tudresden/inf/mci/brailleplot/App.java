@@ -4,6 +4,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
+import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
@@ -47,6 +48,8 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -168,12 +171,20 @@ public final class App {
             }
 
             // Config Parsing
-            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(
-                    getClass().getClassLoader().getResource("config/index_everest_d_v4.properties").getFile(),
-                    getClass().getClassLoader().getResource("config/default.properties").getFile()
-            );
+            JavaPropertiesConfigurationParser configParser;
+            URL defaultConfig = getClass().getClassLoader().getResource("config/default.properties");
+            if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument, until then use default location for test runs
+                URL configUrl = getClass().getResource("/config/index_everest_d_v4.properties");
+                configParser = new JavaPropertiesConfigurationParser(configUrl, defaultConfig);
+                mLogger.warn("ATTENTION! Using default specific config from resources. Please remove default config behavior before packaging the jar.");
+            } else {
+                Path configPath = Path.of(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
+                configParser = new JavaPropertiesConfigurationParser(configPath, defaultConfig);
+            }
+
             Printer indexV4Printer = configParser.getPrinter();
             Format a4Format = configParser.getFormat("A4");
+            Representation representationParameters = configParser.getRepresentation();
 
             // Parse csv data
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
@@ -183,10 +194,14 @@ public final class App {
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
             PointListContainer<PointList> container = csvParser.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
             mLogger.debug("Internal data representation:\n {}", container.toString());
+
             ScatterPlot scatterPlot = new ScatterPlot(container);
+            scatterPlot.setTitle("Scatter Plot");
+            scatterPlot.setXAxisName("X-Achse foo");
+            scatterPlot.setYAxisName("Y-Achse bar");
 
             // Render diagram
-            MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
+            MasterRenderer renderer = new MasterRenderer(indexV4Printer, representationParameters, a4Format);
             RasterCanvas canvas = renderer.rasterize(scatterPlot);
             SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
             mLogger.debug("Render preview:\n" + mat.toBoolString());
@@ -197,7 +212,7 @@ public final class App {
             svgExporter.dump("boolMat");
 
             // FloatingPointData SVG exporting example
-            PlotCanvas floatCanvas = new PlotCanvas(indexV4Printer, a4Format);
+            PlotCanvas floatCanvas = new PlotCanvas(indexV4Printer, representationParameters, a4Format);
             FloatingPointData<Boolean> points = floatCanvas.getNewPage();
 
             final int blockX = 230;

@@ -1,6 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
+import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 
 import java.util.Objects;
 
@@ -14,6 +15,12 @@ public class BrailleText implements Renderable {
     private String mContent;
     private Rectangle mArea;
 
+    public String getLanguage() {
+        return mLanguage;
+    }
+
+    private String mLanguage;
+
     /**
      * Constructor. Creates a braille text field.
      * @param content The actual text of the text field.
@@ -22,7 +29,15 @@ public class BrailleText implements Renderable {
     public BrailleText(final String content, final Rectangle area) {
         setText(content);
         setArea(area);
+        mLanguage = "de-g0.utb";
     }
+
+    public BrailleText(final String content, final Rectangle area, BrailleLanguage.Language language) {
+        setText(content);
+        setArea(area);
+        mLanguage = BrailleLanguage.getCorrectLanguage(language);
+    }
+
 
     /**
      * Sets a new text content.
