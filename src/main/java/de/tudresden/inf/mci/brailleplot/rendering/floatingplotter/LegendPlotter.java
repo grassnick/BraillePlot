@@ -65,7 +65,7 @@ public class LegendPlotter implements Plotter<Legend> {
         double last = plotLine(legende, mCanvas.getCellDistHor(), 0);
         char[] titel = "Titel:".toCharArray();
         last = plotLine(titel, mCanvas.getCellDistHor(), last + mStepVer + mSpace);
-        char[] titelName = ("dummy").toCharArray();
+        char[] titelName = ("dummyjsdfnjkandgkjndf kjsdfnjkahhhhh").toCharArray();
         last = plotLine(titelName, mCanvas.getCellDistHor(), last + mStepVer);
         char[] xAxis = "X-Achse:".toCharArray();
         last = plotLine(xAxis, mCanvas.getCellDistHor(), last + mStepVer + mSpace);
@@ -238,10 +238,11 @@ public class LegendPlotter implements Plotter<Legend> {
         int i = 0;
         loop:
         while (true) {
+            last = i * mStepVer + starterY;
             for (double j = startX; j < mCanvas.getPageWidth() - THREE * (mCanvas.getCellWidth() + mCanvas.getCellDistHor()) + mCanvas.getCellDistHor(); j += mStepHor) {
                 if (k < title.length) {
-                    last = i * mStepVer + starterY;
 
+                    // check if line break in necessary
                     int m = 0;
 
                     for (int l = k; l < title.length; l++) {
@@ -256,6 +257,7 @@ public class LegendPlotter implements Plotter<Legend> {
                         last += mStepVer;
                     }
 
+                    // check if new page is necessary
                     if (last > mCanvas.getPageHeight() - mStepVer) {
                         mCanvas.getNewPage();
                         last = 0;

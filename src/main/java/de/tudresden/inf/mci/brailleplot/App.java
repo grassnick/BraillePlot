@@ -237,7 +237,7 @@ public final class App {
 
             ScatterPlot scatterplot = new ScatterPlot(container2);
             ScatterPlotter plotter = new ScatterPlotter();
-            // plotter.plot(scatterplot, floatCanvas);
+            plotter.plot(scatterplot, floatCanvas);
 
             LinePlot lineplot = new LinePlot(container2);
             LinePlotter plotter2 = new LinePlotter();
@@ -245,7 +245,7 @@ public final class App {
 
             CategoricalBarChart bar = new CategoricalBarChart(container3);
             StackedBarChartPlotter plotter3 = new StackedBarChartPlotter();
-            plotter3.plot(bar, floatCanvas);
+            // plotter3.plot(bar, floatCanvas);
 
             GroupedBarChartPlotter plotter4 = new GroupedBarChartPlotter();
             // plotter4.plot(bar, floatCanvas);
@@ -284,10 +284,13 @@ public final class App {
             String printerConfigUpperCase = indexV4Printer.getProperty("mode").toString().toUpperCase();
             PrintDirector printD = new PrintDirector(PrinterCapability.INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER, indexV4Printer);
             ListIterator<FloatingPointData<Boolean>> canvasIt = floatCanvas.getPageIterator();
-            for (int i = 0; i < floatCanvas.getPageCount() - 1; i++) {
-                int j = floatCanvas.getPageCount();
+            for (int i = 0; i < floatCanvas.getPageCount(); i++) {
+                if (i > 1) {
+                    canvasIt.next();
+                    continue;
+                }
                 if (canvasIt.hasNext()) {
-                    printD.print(canvasIt.next());
+                    //printD.print(canvasIt.next());
                 }
             }
 

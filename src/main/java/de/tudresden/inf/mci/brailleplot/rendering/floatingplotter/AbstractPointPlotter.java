@@ -321,12 +321,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         }
 
         if (lastX < xValue + CIRCLEDIA / 2) {
-            double x = xValue + CIRCLEDIA / 2;
-            double root = Math.sqrt(Math.pow(CIRCLEDIA / 2, 2) - Math.pow(x - xValue, 2));
-            double y1 = yValue + root;
-            double y2 = yValue - root;
-            addPoint(x, y1);
-            addPoint(x, y2);
+            addPoint(xValue + CIRCLEDIA / 2, yValue);
         }
 
         addPoint(lastX + CIRCLESCALE * mStepSize / THREE, yValue + mStepSize);
