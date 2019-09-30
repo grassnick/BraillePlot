@@ -273,7 +273,6 @@ public final class App {
             want to print.
             Please do not commit changes to this.
             */
-
             if (false) {
                 return EXIT_SUCCESS;
             }
@@ -286,7 +285,7 @@ public final class App {
             for (int i = 0; i < floatCanvas.getPageCount() - 1; i++) {
                 int j = floatCanvas.getPageCount();
                 if (canvasIt.hasNext()) {
-                    printD.print(canvasIt.next());
+                    //printD.print(canvasIt.next());
                 }
             }
 
