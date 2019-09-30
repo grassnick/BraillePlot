@@ -274,7 +274,6 @@ public final class App {
             Please do not commit changes to this.
             */
 
-
             if (false) {
                 return EXIT_SUCCESS;
             }
@@ -284,14 +283,8 @@ public final class App {
             String printerConfigUpperCase = indexV4Printer.getProperty("mode").toString().toUpperCase();
             PrintDirector printD = new PrintDirector(PrinterCapability.INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER, indexV4Printer);
             ListIterator<FloatingPointData<Boolean>> canvasIt = floatCanvas.getPageIterator();
-            for (int i = 0; i < floatCanvas.getPageCount(); i++) {
-                if (i > 1) {
-                    canvasIt.next();
-                    continue;
-                }
-                if (canvasIt.hasNext()) {
-                    //printD.print(canvasIt.next());
-                }
+            while (canvasIt.hasNext()){
+                //printD.print(canvasIt.next());
             }
 
 

@@ -2,28 +2,15 @@ package de.tudresden.inf.mci.brailleplot.printerbackend;
 
 
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
-import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
-import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
-
 import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.print.DocFlavor;
-import javax.print.DocPrintJob;
-import javax.print.PrintException;
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
-import javax.print.Doc;
-
-import javax.print.SimpleDoc;
+import javax.print.*;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.JobName;
-import javax.print.event.PrintJobEvent;
-import javax.print.event.PrintJobListener;
-import java.awt.*;
+import javax.print.attribute.standard.PrinterState;
 import java.util.Objects;
 /**
  * Implements a variation of the GoF design pattern Builder. This class is used for setting the printer configuration and
@@ -84,6 +71,7 @@ public class PrintDirector {
 
     @SuppressWarnings("unchecked")
     public void print(final PrintableData data)  {
+        mLogger.info("starting with print process.");
         Objects.requireNonNull(data);
         mLogger.info("setting up docflavour and service.");
         setUpDoc();
@@ -140,15 +128,20 @@ public class PrintDirector {
         Doc doc = new SimpleDoc(data, mDocflavor, null);
         PrintRequestAttributeSet asset = new HashPrintRequestAttributeSet();
         DocPrintJob job = mService.createPrintJob();
-        mLogger.info("finished setting up doc, asset and job.");
+        mLogger.trace("finished setting up doc, asset and job.");
+        PrinterState state;
         asset.add(new JobName("Braille Printing", null));
         try {
-            mLogger.info("adding job to the PrintJobListener.");
-            PrintJobListener listener = new PrintJobListener();
-            job.addPrintJobListener(listener);
-            mLogger.info("starting printing.");
+            mLogger.trace("adding job to the PrintJobListener.");
+            //PrintJobListener listener = new PrintJobListener();
+           // job.addPrintJobListener(listener);
+            mLogger.trace("starting printing.");
+            //PrinterIsAcceptingJobs set = mService.getAttribute(PrinterIsAcceptingJobs.class);
+            //PrinterStateReasons reasons = mService.getAttribute(PrinterStateReasons.class);
             job.print(doc, asset);
-            listener.waitForDone();
+            //set = mService.getAttribute(PrinterIsAcceptingJobs.class);
+            //reasons = mService.getAttribute(PrinterStateReasons.class);
+            //listener.waitForDone();
             mPrintJob = job;
         } catch (PrintException pe) {
             throw new RuntimeException(pe);
@@ -167,13 +160,14 @@ public class PrintDirector {
         }
         return true;
     }
-
+/*
     private class PrintJobListener implements javax.print.event.PrintJobListener {
         boolean done = false;
 
         @Override
         public void printDataTransferCompleted(PrintJobEvent pje) {
             mLogger.info("data transfer to printer complete.");
+            PrintJobListener.this.notify();
         }
 
         @Override
@@ -214,6 +208,7 @@ public class PrintDirector {
         @Override
         public void printJobRequiresAttention(PrintJobEvent pje) {
             mLogger.info("printjob requires attention.");
+            PrintJobListener.this.notify();
         }
         public synchronized void waitForDone() {
             try {
@@ -225,4 +220,6 @@ public class PrintDirector {
             }
         }
     }
+
+ */
 }
