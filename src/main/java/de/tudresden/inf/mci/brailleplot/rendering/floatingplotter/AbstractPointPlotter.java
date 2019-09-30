@@ -167,8 +167,12 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         // x-axis
         for (double i = 1; i <= 2 * mNumberXTicks; i++) {
             for (double j = mBottomMargin - mStepSize; j > mTitleMargin; j -= mStepSize) {
-                Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
-                if (!mData.pointExists(point)) {
+                double x = mLeftMargin + (i / 2) * mXTickStep;
+                // mirroring for grid on the other side of the paper
+                double newX = mCanvas.getPageWidth() / 2 - x + mCanvas.getPageWidth() / 2;
+                Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                if (!mData.pointExists(checkPoint)) {
                     grid.addPointIfNotExisting(point);
                 }
             }
@@ -177,8 +181,11 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         // y-axis
         for (double i = 1; i <= 2 * mNumberYTicks; i++) {
             for (double j = mLeftMargin + mStepSize; j <= mPageWidth - secondAxis; j += mStepSize) {
-                Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(mBottomMargin - (i / 2) * mYTickStep, MetricPrefix.MILLI(METRE)), true);
-                if (!mData.pointExists(point)) {
+                // mirroring for grid on the other side of the paper
+                double newX = mCanvas.getPageWidth() / 2 - j + mCanvas.getPageWidth() / 2;
+                Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(mBottomMargin - (i / 2) * mYTickStep, MetricPrefix.MILLI(METRE)), true);
+                Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(mBottomMargin - (i / 2) * mYTickStep, MetricPrefix.MILLI(METRE)), true);
+                if (!mData.pointExists(checkPoint)) {
                     grid.addPointIfNotExisting(point);
                 }
             }

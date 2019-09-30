@@ -107,8 +107,12 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
                 for (int k = 0; k < mNumBarGroup; k++) {
                     // check if j is between bars
                     if (j < mBottomMargin - k * (mBarDist + mBarGroupWidth) && j > mBottomMargin - mBarDist - k * (mBarDist + mBarGroupWidth)) {
-                        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
-                        if (!mData.pointExists(point)) {
+                        double x = mLeftMargin + (i / 2) * mXTickStep;
+                        // mirroring for grid on the other side of the paper
+                        double newX = mCanvas.getPageWidth() / 2 - x + mCanvas.getPageWidth() / 2;
+                        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                        Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                        if (!mData.pointExists(checkPoint)) {
                             grid.addPointIfNotExisting(point);
                         }
                         continue loop;
@@ -116,8 +120,12 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
 
                     // check if j is above highest bar
                     if (j < mBottomMargin - mNumBarGroup * (mBarDist + mBarGroupWidth) && j > mTitleMargin) {
-                        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
-                        if (!mData.pointExists(point)) {
+                        double x = mLeftMargin + (i / 2) * mXTickStep;
+                        // mirroring for grid on the other side of the paper
+                        double newX = mCanvas.getPageWidth() / 2 - x + mCanvas.getPageWidth() / 2;
+                        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                        Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                        if (!mData.pointExists(checkPoint)) {
                             grid.addPointIfNotExisting(point);
                         }
                         continue loop;
@@ -133,8 +141,12 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
                             if (j <= mBottomMargin - l * barGroupStep - mBarDist - m * mBarWidth && j >= mBottomMargin - l * barGroupStep - mBarDist - (m + 1) * mBarWidth) {
                                 int n = mCatList.getNumberOfCategories() * l + m;
                                 if ((mLeftMargin + (i / 2) * mXTickStep) > mGridHelp[n]) {
-                                    Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
-                                    if (!mData.pointExists(point)) {
+                                    double x = mLeftMargin + (i / 2) * mXTickStep;
+                                    // mirroring for grid on the other side of the paper
+                                    double newX = mCanvas.getPageWidth() / 2 - x + mCanvas.getPageWidth() / 2;
+                                    Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                                    Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                                    if (!mData.pointExists(checkPoint)) {
                                         grid.addPointIfNotExisting(point);
                                     }
                                 }
