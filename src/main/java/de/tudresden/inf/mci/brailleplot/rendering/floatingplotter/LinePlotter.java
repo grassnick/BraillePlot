@@ -79,7 +79,7 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
 
                 // draw lines
                 double currentX = smallList.getMinX();
-                double currentY = smallList.getCorrespondingYValue(currentX);
+                double currentY = smallList.getFirstXOccurence(currentX).getY();
                 smallList.removeFirstOccurrence(new Point2DDouble(currentX, currentY));
                 double nextX;
                 double nextY;
@@ -105,7 +105,7 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
                             }
                         }
 
-                        nextY = smallList.getCorrespondingYValue(nextX);
+                        nextY = smallList.getFirstXOccurence(nextX).getY();
 
                         //drawing
                         drawLines(calculateXValue(currentX), calculateXValue(nextX), calculateYValue(currentY), calculateYValue(nextY), i);

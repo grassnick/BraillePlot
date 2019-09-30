@@ -237,11 +237,11 @@ public final class App {
 
             ScatterPlot scatterplot = new ScatterPlot(container2);
             ScatterPlotter plotter = new ScatterPlotter();
-            plotter.plot(scatterplot, floatCanvas);
+            // plotter.plot(scatterplot, floatCanvas);
 
             LinePlot lineplot = new LinePlot(container2);
             LinePlotter plotter2 = new LinePlotter();
-            // plotter2.plot(lineplot, floatCanvas);
+            plotter2.plot(lineplot, floatCanvas);
 
             CategoricalBarChart bar = new CategoricalBarChart(container3);
             StackedBarChartPlotter plotter3 = new StackedBarChartPlotter();

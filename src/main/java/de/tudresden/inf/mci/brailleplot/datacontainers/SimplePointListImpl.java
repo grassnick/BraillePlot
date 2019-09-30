@@ -54,17 +54,11 @@ public class SimplePointListImpl extends AbstractPointContainer<Point2DDouble> i
     }
 
     @Override
-    /**
-     * This function is to find the next point in the csv data for line plotting in order to calculate the slope.
-     * @param xValue Given x-value.
-     * @return double y-value.
-     * @throws NoSuchElementException If no corresponding y-value was found.
-     */
-    public double getCorrespondingYValue(final double xValue) throws NoSuchElementException {
+    public Point2DDouble getFirstXOccurence(final double xValue) throws NoSuchElementException {
 
         for (Point2DDouble newPoint : mElements) {
             if (newPoint.getX().equals(xValue)) {
-                return newPoint.getY();
+                return newPoint;
             }
         }
 

@@ -3,6 +3,7 @@ package de.tudresden.inf.mci.brailleplot.datacontainers;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 /**
  * Interface for a list-like data structure that holds a set of {@link Point2DDouble}.
@@ -20,10 +21,11 @@ public interface PointList extends PointContainer<Point2DDouble>, Named {
     ListIterator<Point2DDouble> getListIterator();
 
     /**
-     * Gives the corresponding y-value to a given x-value.
-     * @param xValue Given x-value.
-     * @return double y-value.
+     * This function is to find the next point in the csv data for line plotting in order to calculate the slope.
+     * @param xValue Given x-value of the next point.
+     * @return The next point.
+     * @throws NoSuchElementException If no corresponding y-value was found.
      */
-    double getCorrespondingYValue(double xValue);
+    Point2DDouble getFirstXOccurence(final double xValue);
 
 }
