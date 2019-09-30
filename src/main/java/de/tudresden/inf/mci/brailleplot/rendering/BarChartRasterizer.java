@@ -8,6 +8,7 @@ import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
+import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -197,20 +198,20 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
 
             // PHASE 2 - RASTERIZING: Now, every element of the chart will be drawn onto the according area.
             // Diagram Title
-            mTextRasterizer.rasterize(new BrailleText(title, titleDotArea), canvas);
+            mTextRasterizer.rasterize(new BrailleText(title, titleDotArea, BrailleLanguage.Language.DE_KURZSCHRIFT), canvas);
             // Y-Axis: no units, no tickmarks
             Axis yAxis = new Axis(Axis.Type.Y_AXIS, originXDotCoordinate, originYDotCoordinate, 1, 0);
             yAxis.setBoundary(yAxisDotArea);
             mAxisRasterizer.rasterize(yAxis, canvas);
             // Y-Axis name
-            mTextRasterizer.rasterize(new BrailleText(diagram.getYAxisName(), yAxisNameDotArea), canvas);
+            mTextRasterizer.rasterize(new BrailleText(diagram.getYAxisName(), yAxisNameDotArea, BrailleLanguage.Language.DE_KURZSCHRIFT), canvas);
             // X-Axis: units and labels
             Axis xAxis = new Axis(Axis.Type.X_AXIS, originXDotCoordinate, originYDotCoordinate, X_AXIS_UNIT_SIZE_DOTS, X_AXIS_TICK_SIZE_DOTS);
             xAxis.setBoundary(xAxisDotArea);
             xAxis.setLabels(generateNumericAxisLabels(xAxisScaling, xAxisScalingMagnitude, negativeAvailableUnits, positiveAvailableUnits));
             mAxisRasterizer.rasterize(xAxis, canvas);
             // X-Axis name
-            mTextRasterizer.rasterize(new BrailleText(diagram.getXAxisName(), xAxisNameDotArea), canvas);
+            mTextRasterizer.rasterize(new BrailleText(diagram.getXAxisName(), xAxisNameDotArea, BrailleLanguage.Language.DE_KURZSCHRIFT), canvas);
             // The actual groups and bars:
             // This is done by iterating through the diagram data set and drawing borders with the respective padding based on whether switched
             // from one bar to another or a group to another. In between, the bars are rasterized as textured areas, with a line on the bars top.
@@ -269,7 +270,7 @@ public class BarChartRasterizer implements Rasterizer<CategoricalBarChart> {
             }
 
             // PHASE 3 - DIAGRAM LEGEND: Symbols and textures are explained in the legend which will be created by the LegendRasterizer
-            Legend diagramLegend = new Legend(title); // Create a legend container
+            Legend diagramLegend = new Legend(title, BrailleLanguage.Language.DE_KURZSCHRIFT); // Create a legend container
             diagramLegend.addSymbolExplanation("Achsenskalierung:", "X-Achse", "Faktor " + xAxisScalingMagnitude); // Explain axis scaling
             diagramLegend.addSymbolExplanationGroup("Kategorien:", groupNameExplanations); // Explain bar group single character captions
             if (textureExplanations.size() > 1) { // Explain textures (if multiple of them were used)
