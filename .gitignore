@@ -7,6 +7,8 @@ out
 # Tables
 src/main/resources/mapping/liblouis
 src/integrationTest/resources/mapping/liblouis
+src/test/resources/mapping/liblouis
+
 
 # IntelliJ
 .idea
