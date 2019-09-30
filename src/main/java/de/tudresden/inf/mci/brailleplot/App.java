@@ -4,6 +4,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
+import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
@@ -46,6 +47,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -165,17 +167,20 @@ public final class App {
             }
 
             // Config Parsing
-            URL configPath;
+            JavaPropertiesConfigurationParser configParser;
+            URL defaultConfig = getClass().getClassLoader().getResource("config/default.properties");
             if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument, until then use default location for test runs
-                configPath = getClass().getResource("/config/index_everest_d_v4.properties");
+                URL configUrl = getClass().getResource("/config/index_everest_d_v4.properties");
+                configParser = new JavaPropertiesConfigurationParser(configUrl, defaultConfig);
                 mLogger.warn("ATTENTION! Using default specific config from resources. Please remove default config behavior before packaging the jar.");
             } else {
-                configPath = new URL(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
+                Path configPath = Path.of(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
+                configParser = new JavaPropertiesConfigurationParser(configPath, defaultConfig);
             }
 
-            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath, getClass().getClassLoader().getResource("config/default.properties"));
             Printer indexV4Printer = configParser.getPrinter();
             Format a4Format = configParser.getFormat("A4");
+            Representation representationParameters = configParser.getRepresentation();
 
             // Parse csv data
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
@@ -192,7 +197,7 @@ public final class App {
 
             // Render diagram
             LiblouisBrailleTextRasterizer.initModule();
-            MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
+            MasterRenderer renderer = new MasterRenderer(indexV4Printer, representationParameters, a4Format);
             RasterCanvas canvas = renderer.rasterize(barChart);
             // SVG exporting
             SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
@@ -200,7 +205,7 @@ public final class App {
             svgExporter.dump("boolMat");
 
             // FloatingPointData SVG exporting example
-            PlotCanvas floatCanvas = new PlotCanvas(indexV4Printer, a4Format);
+            PlotCanvas floatCanvas = new PlotCanvas(indexV4Printer, representationParameters, a4Format);
             FloatingPointData<Boolean> points = floatCanvas.getNewPage();
 
             final int blockX = 230;

@@ -86,7 +86,7 @@ final class UniformTextureBarChartRasterizer implements Rasterizer<BarChart> {
 
         try {
             // 1. Reserve space for the diagram title on the top
-            titleBarHeight = mTextRasterizer.calculateRequiredHeight(strDiagramTitle, 0, 0,
+            titleBarHeight = mTextRasterizer.calculateRequiredHeight(strDiagramTitle,
                     barArea.intWrapper().getWidth() * mCanvas.getCellWidth(), mCanvas);
             titleArea = barArea.removeFromTop(mCanvas.getCellYFromDotY(titleBarHeight));
 
