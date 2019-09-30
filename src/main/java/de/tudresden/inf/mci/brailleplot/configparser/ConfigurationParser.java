@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
+import de.tudresden.inf.mci.brailleplot.util.UrlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,7 +173,7 @@ public abstract class ConfigurationParser {
         mLogger.debug("Starting parsing properties file from java resources: \"{}\"", resource);
 
         try {
-            parseConfigFile(resource.openStream(), getParentUrl(resource), assertCompleteness);
+            parseConfigFile(resource.openStream(), UrlHelper.getParentUrl(resource), assertCompleteness);
         } catch (IOException e) {
             throw new ConfigurationParsingException("Could not open resource at \"" + resource.toString() + "\"", e);
         }
@@ -191,7 +192,7 @@ public abstract class ConfigurationParser {
         mLogger.debug("Starting parsing properties file from file system: \"{}\"", filePath);
 
         try {
-            parseConfigFile(new FileInputStream(filePath.toFile()), filePath.toFile().toURI().toURL(), assertCompleteness);
+            parseConfigFile(new FileInputStream(filePath.toFile()), UrlHelper.getParentUrl(filePath.toFile().toURI().toURL()), assertCompleteness);
         } catch (FileNotFoundException | MalformedURLException e) {
             throw new ConfigurationParsingException("Configuration file could not be read at \"" + filePath.toString() + "\"");
         }
@@ -211,7 +212,7 @@ public abstract class ConfigurationParser {
         // reset internal property buffer
         mPrinterProperties.clear();
         mFormatProperties.clear();
-        mValidator.setSearchPath(getPath(path));
+        mValidator.setSearchPath(getPathNoFilePrefix(path));
         // load and parse file
         parse(config, path);
         // build printer object from added properties
@@ -241,29 +242,13 @@ public abstract class ConfigurationParser {
     }
 
     /**
-     * Returns the URL to the parent directory of a File / Resource.
-     * @param resourcePath The URL to analyze.
-     * @return The URL to the parent directory of the specified URL.
-     * @throws ConfigurationParsingException if the generated URL is not a valid URL.
-     */
-    private static URL getParentUrl(final URL resourcePath) throws ConfigurationParsingException {
-        String fileString = resourcePath.getPath();
-        String parentString = fileString.substring(0, fileString.lastIndexOf("/"));
-        try {
-            return new URL(resourcePath.getProtocol(), resourcePath.getHost(), parentString);
-        } catch (MalformedURLException e) {
-            throw new ConfigurationParsingException("Could not create URL to parent path", e);
-        }
-    }
-
-    /**
      * Return a String representation of the path of a {@link URL}.
      * Strips the {@literal "}file:{@literal "} prefix from an URL, if it exist.
      * @param url The URL that needs to be stripped
      * @return The String representation of the path of a URL where the leading {@literal "}file:{@literal "} prefix is stripped.
      */
-    private static String getPath(final URL url) {
-        String urlString = url.getPath();
+    private static String getPathNoFilePrefix(final URL url) throws ConfigurationParsingException {
+        String urlString = UrlHelper.getPathString(url);
         return urlString.replaceAll("^file:", "");
     }
 }

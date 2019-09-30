@@ -40,12 +40,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.util.ListIterator;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -170,16 +170,17 @@ public final class App {
             }
 
             // Config Parsing
-            URL configPath;
+            JavaPropertiesConfigurationParser configParser;
+            URL defaultConfig = getClass().getClassLoader().getResource("config/default.properties");
             if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument, until then use default location for test runs
-                configPath = getClass().getResource("/config/index_everest_d_v4.properties");
+                URL configUrl = getClass().getResource("/config/index_everest_d_v4.properties");
+                configParser = new JavaPropertiesConfigurationParser(configUrl, defaultConfig);
                 mLogger.warn("ATTENTION! Using default specific config from resources. Please remove default config behavior before packaging the jar.");
             } else {
-                File configFile = new File(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
-                configPath = configFile.toURL();
+                Path configPath = Path.of(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
+                configParser = new JavaPropertiesConfigurationParser(configPath, defaultConfig);
             }
 
-            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath, getClass().getClassLoader().getResource("config/default.properties"));
             Printer indexV4Printer = configParser.getPrinter();
             Format a4Format = configParser.getFormat("A4");
             Representation representationParameters = configParser.getRepresentation();

@@ -47,25 +47,26 @@ public final class GeneralResource {
      * @throws IOException If the given path neither determines a valid external file, nor a valid resource.
      */
     public GeneralResource(final String resourcePath, final String searchPath) throws IOException {
+        mLogger.debug("Requested GeneralResource for path \"" + resourcePath + "\" with search path \"" + searchPath + "\"");
         File checkFile = new File(resourcePath);
-        mLogger.debug("Checking referenced path: " + checkFile);
+        mLogger.trace("Checking referenced path: " + checkFile);
         if (checkFile.isFile()) {
-            mLogger.trace("Interpreting path as file: " + checkFile.getCanonicalPath());
+            mLogger.debug("Interpreting path as file: " + checkFile.getCanonicalPath());
             mResourcePath = checkFile.getCanonicalPath();
             mValidExternalFile = true;
         }
         checkFile = checkFile.getAbsoluteFile();
-        mLogger.debug("Checking referenced path as absolute path: " + checkFile);
+        mLogger.trace("Checking referenced path as absolute path: " + checkFile);
         if (checkFile.isFile()) {
-            mLogger.trace("Interpreting path as absolute file: " + checkFile.getCanonicalPath());
+            mLogger.debug("Interpreting path as absolute file: " + checkFile.getCanonicalPath());
             mResourcePath = checkFile.getCanonicalPath();
             mValidExternalFile = true;
         }
         if (Objects.nonNull(searchPath)) {
             checkFile = new File(searchPath + File.separator + resourcePath);
-            mLogger.debug("Looking for referenced path in search path: " + checkFile);
+            mLogger.trace("Looking for referenced path in search path: " + checkFile);
             if (checkFile.isFile()) {
-                mLogger.trace("Interpreting path as search path relative file: " + checkFile.getCanonicalPath());
+                mLogger.debug("Interpreting path as search path relative file: " + checkFile.getCanonicalPath());
                 mResourcePath = checkFile.getCanonicalPath();
                 mValidExternalFile = true;
             }
@@ -77,9 +78,9 @@ public final class GeneralResource {
         String resourceClassPath = stripJarPath(resourcePath);
         resourceClassPath = resourceClassPath.replace(File.separator, "/"); // class paths are always separated by forward slash
         InputStream checkStream = getClass().getClassLoader().getResourceAsStream(resourceClassPath);
-        mLogger.debug("Checking referenced path as resource: " + resourceClassPath);
+        mLogger.trace("Checking referenced path as resource: " + resourceClassPath);
         if (Objects.nonNull(checkStream)) {
-            mLogger.trace("Interpreting path as resource stream: " + resourceClassPath);
+            mLogger.debug("Interpreting path as resource stream: " + resourceClassPath);
             mResourcePath = resourceClassPath;
             mValidPackedResource = true;
         }
@@ -87,9 +88,9 @@ public final class GeneralResource {
             String relativeResourcePath = new File(resourceSearchPath + File.separator + resourceClassPath).toPath().normalize().toString();
             relativeResourcePath = relativeResourcePath.replace("\\", "/");
             checkStream = getClass().getClassLoader().getResourceAsStream(relativeResourcePath);
-            mLogger.debug("Checking referenced path as search path relative resource: " + relativeResourcePath);
+            mLogger.trace("Checking referenced path as search path relative resource: " + relativeResourcePath);
             if (Objects.nonNull(checkStream)) {
-                mLogger.trace("Interpreting path as resource stream: " + relativeResourcePath);
+                mLogger.debug("Interpreting path as resource stream: " + relativeResourcePath);
                 mResourcePath = relativeResourcePath;
                 mValidPackedResource = true;
             }
@@ -141,7 +142,7 @@ public final class GeneralResource {
      * @param path Absolute classpath pointing to jar resource. Omit the leading "/". If this point to a resource directory the directory and all contents are exported.
      * @return A File instance representing the resource on the file system.
      */
-    public static File getOrExportResourceFile(final String path) {
+    public static synchronized File getOrExportResourceFile(final String path) {
         if (isRunFromCompiledJar()) {
             try {
                 JarFile jar = openJarFile();
@@ -178,7 +179,7 @@ public final class GeneralResource {
         } else {
             Class cl = getClassRef();
             URL resource = cl.getResource("/" + path); // preceding slash for absolute classpath reference
-            String directoryPath = resource.getPath();
+            String directoryPath = UrlHelper.getPathString(resource);
             return new File(directoryPath);
         }
     }
@@ -188,7 +189,9 @@ public final class GeneralResource {
             if (!isRunFromCompiledJar()) {
                 throw new IllegalStateException("Not running from jar.");
             }
-            File jarFile = new File(getClassRef().getProtectionDomain().getCodeSource().getLocation().getPath());
+            URL jarUrl = getClassRef().getProtectionDomain().getCodeSource().getLocation();
+            String jarPath = UrlHelper.getPathString(jarUrl);
+            File jarFile = new File(jarPath);
             return new JarFile(jarFile);
         } catch (Exception e) {
             throw new RuntimeException("Error while retrieving JarFile reference.", e);
