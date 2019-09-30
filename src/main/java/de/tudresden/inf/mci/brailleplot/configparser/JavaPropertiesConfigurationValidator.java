@@ -76,6 +76,7 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
 
         // Definition of valid representation properties
         defineRepresentationProperty("general.nonexistentDataText", requireNotEmpty);
+        defineRepresentationProperty("general.legendKeyword", requireNotEmpty);
         defineRepresentationProperty("general.maxTitleHeight", requireInteger.and(requirePositive).and(requireNonZero));
         defineRepresentationProperty("rasterize.barChart.maxBarThickness", requireInteger.and(requirePositive));
         defineRepresentationProperty("rasterize.barChart.minBarThickness", requireInteger.and(requirePositive));
