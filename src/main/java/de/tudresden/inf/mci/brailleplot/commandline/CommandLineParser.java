@@ -9,7 +9,7 @@ import org.apache.commons.cli.ParseException;
 /**
  * Performs command line parsing and creates a {@link Settings} object.
  * @author Georg Graßnick
- * @version 2019.05.31
+ * @version 2019.09.30
  */
 public class CommandLineParser {
 
@@ -25,9 +25,12 @@ public class CommandLineParser {
                 .addOption("c", SettingType.CSV_LOCATION.toString(), true, "Path to CSV")
                 .addOption("s", SettingType.SEMANTIC_MAPPING.toString(), true, "Literal for semantic mapping")
                 .addOption("p", SettingType.PRINTER_CONFIG_PATH.toString(), true, "Path to printer configuration file")
-                .addOption("t", SettingType.DIAGRAM_TITLE.toString(), true, "Title of the diagram.")
-                .addOption("x", SettingType.X_AXIS_LABEL.toString(), true, "Label of X-axis including unit.")
-                .addOption("y", SettingType.Y_AXIS_LABEL.toString(), true, "Label of Y-axis including unit.");
+                .addOption("t", SettingType.DIAGRAM_TITLE.toString(), true, "Title of the diagram")
+                .addOption("x", SettingType.X_AXIS_LABEL.toString(), true, "Label of X-axis including unit")
+                .addOption("y", SettingType.Y_AXIS_LABEL.toString(), true, "Label of Y-axis including unit")
+                .addOption("d", SettingType.DIAGRAM_TYPE.toString(), true, "Type of the diagram. Possible Values: [ScatterPlot, LineChart, BarChart]")
+                .addOption("f", SettingType.FORMAT.toString(), true, "Name of predefined format from configuration")
+                .addOption("v", SettingType.VERTICAL.toString(), false, "Parse CSV in vertical instead of horizontal orientation (Only applicable for BarChart)");
     }
 
     /**

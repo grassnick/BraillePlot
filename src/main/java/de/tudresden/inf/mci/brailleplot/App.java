@@ -5,7 +5,10 @@ import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfiguration
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
 import de.tudresden.inf.mci.brailleplot.configparser.Representation;
+import de.tudresden.inf.mci.brailleplot.csvparser.MalformedCsvException;
+import de.tudresden.inf.mci.brailleplot.datacontainers.SimpleCategoricalPointListContainerImpl;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
+import de.tudresden.inf.mci.brailleplot.diagrams.Diagram;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
@@ -43,11 +46,13 @@ import tec.units.ri.unit.MetricPrefix;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -57,7 +62,7 @@ import static tec.units.ri.unit.Units.METRE;
  * Main class.
  * Set up the application and run it.
  * @author Georg Graßnick, Andrey Ruzhanskiy
- * @version 2019.08.26
+ * @version 2019.09.30
  */
 
 public final class App {
@@ -178,34 +183,68 @@ public final class App {
                 configParser = new JavaPropertiesConfigurationParser(configPath, defaultConfig);
             }
 
-            Printer indexV4Printer = configParser.getPrinter();
-            Format a4Format = configParser.getFormat("A4");
+            // Set up Printer, Representation & Format Configurables
+            Printer printer = configParser.getPrinter();
             Representation representationParameters = configParser.getRepresentation();
+            Format format;
+            if (!settingsReader.isPresent(SettingType.FORMAT)) {
+                format = configParser.getFormat("A4"); // Default behaviour is A4 portrait
+            } else {
+                format = configParser.getFormat(settingsReader.getSetting(SettingType.FORMAT).get());
+            }
 
-            // Parse csv data
-            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_vertical.csv");
-            Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
-
+            // Parse csv data and create diagram
+            InputStream csvStream;
+            if (!settingsReader.isPresent(SettingType.CSV_LOCATION)) {
+                ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+                csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical.csv");
+                mLogger.warn("ATTENTION! Using example csv. Please remove this behavior before packaging the jar.");
+            } else {
+                csvStream = new FileInputStream(settingsReader.getSetting(SettingType.CSV_LOCATION).get());
+            }
+            Reader csvReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(csvStream)));
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
-            CategoricalPointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
-            mLogger.debug("Internal data representation:\n {}", container.toString());
-            CategoricalBarChart barChart = new CategoricalBarChart(container);
-            barChart.setTitle(settingsReader.getSetting(SettingType.DIAGRAM_TITLE).orElse(""));
-            barChart.setXAxisName(settingsReader.getSetting(SettingType.X_AXIS_LABEL).orElse(""));
-            barChart.setYAxisName(settingsReader.getSetting(SettingType.Y_AXIS_LABEL).orElse(""));
+            Diagram diagram;
+            CategoricalPointListContainer<PointList> container;
+            CsvOrientation csvOrientation;
+            if (settingsReader.isTrue(SettingType.VERTICAL).orElse(false)) {
+                csvOrientation = CsvOrientation.VERTICAL;
+            } else {
+                csvOrientation = CsvOrientation.HORIZONTAL;
+            }
+            switch (settingsReader.getSetting(SettingType.DIAGRAM_TYPE).orElse("")) {
+                case "ScatterPlot":
+                    container = csvParser.parse(CsvType.DOTS, csvOrientation);
+                    throw new UnsupportedOperationException("Scatter Plots coming soon.");
+                case "LineChart":
+                    container = csvParser.parse(CsvType.DOTS, csvOrientation);
+                    throw new UnsupportedOperationException("Line Charts coming soon.");
+                case "BarChart":
+                    try { // first try to parse as regualar bar chart and convert to single category bar cart.
+                        container = new SimpleCategoricalPointListContainerImpl(csvParser.parse(CsvType.X_ALIGNED, csvOrientation));
+                    } catch (MalformedCsvException e) { // else parse as categorical bar chart
+                        container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, csvOrientation);
+                    }
+                    diagram = new CategoricalBarChart(container);
+                    break;
+                default: throw new IllegalStateException("Unknown diagram type: " + settingsReader.getSetting(SettingType.DIAGRAM_TYPE).orElse("<none>"));
+            }
+            diagram.setTitle(settingsReader.getSetting(SettingType.DIAGRAM_TITLE).orElse(""));
+            diagram.setXAxisName(settingsReader.getSetting(SettingType.X_AXIS_LABEL).orElse(""));
+            diagram.setYAxisName(settingsReader.getSetting(SettingType.Y_AXIS_LABEL).orElse(""));
 
             // Render diagram
             LiblouisBrailleTextRasterizer.initModule();
-            MasterRenderer renderer = new MasterRenderer(indexV4Printer, representationParameters, a4Format);
-            RasterCanvas canvas = renderer.rasterize(barChart);
+            MasterRenderer renderer = new MasterRenderer(printer, representationParameters, format);
+            RasterCanvas canvas = renderer.rasterize(diagram);
+
             // SVG exporting
             SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
             svgExporter.render();
             svgExporter.dump("boolMat");
 
             // FloatingPointData SVG exporting example
-            PlotCanvas floatCanvas = new PlotCanvas(indexV4Printer, representationParameters, a4Format);
+            PlotCanvas floatCanvas = new PlotCanvas(printer, representationParameters, format);
             FloatingPointData<Boolean> points = floatCanvas.getNewPage();
 
             final int blockX = 230;
@@ -220,7 +259,7 @@ public final class App {
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();
             floatSvgExporter.dump("floatingPointData");
-            LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(indexV4Printer);
+            LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(printer);
             renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BrailleText>(BrailleText.class, textRasterizer));
             RasterCanvas refCanvas = renderer.rasterize(new BrailleText(" ", new Rectangle(0, 0, 0, 0)));
            // RasterCanvas m2canvas = renderer.rasterize(new BrailleText(text2, textArea));
@@ -246,8 +285,8 @@ public final class App {
 
             // Last Step: Printing
             @SuppressWarnings("checkstyle:MagicNumber")
-            String printerConfigUpperCase = indexV4Printer.getProperty("mode").toString().toUpperCase();
-            PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), indexV4Printer);
+            String printerConfigUpperCase = printer.getProperty("mode").toString().toUpperCase();
+            PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), printer);
             printD.print(mat);
 
         } catch (final Exception e) {
