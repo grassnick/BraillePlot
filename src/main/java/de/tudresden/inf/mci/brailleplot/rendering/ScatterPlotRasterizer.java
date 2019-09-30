@@ -50,8 +50,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         // 1. Reserve space for diagram title
         try {
             printableArea.removeFromRight(2);
-            int titleBarHeight = textRasterizer.calculateRequiredHeight(title, 0, 0,
-                    printableArea.intWrapper().getWidth() * cellWidth, canvas) + cellHeight;
+            int titleBarHeight = textRasterizer.calculateRequiredHeight(title, printableArea.intWrapper().getWidth(), canvas) + cellHeight;
             titleArea = printableArea.removeFromTop(titleBarHeight);
             diagramTitle = new BrailleText(title, titleArea.scaledBy(cellWidth, cellHeight));
             // TODO check if space is exceeded

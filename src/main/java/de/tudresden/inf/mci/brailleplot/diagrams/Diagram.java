@@ -1,5 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.diagrams;
 
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.rendering.Renderable;
 
 import java.util.Objects;
@@ -11,11 +13,20 @@ import java.util.Objects;
  * @author Richard Schmidt, Leonard Kupper
  * @version 2019-09-12
  */
-public class Diagram implements Renderable {
+public abstract class Diagram implements Renderable {
 
     private String mTitle;
     private String mXAxisName;
     private String mYAxisName;
+    private PointListContainer<PointList> mData;
+
+    public Diagram(final PointListContainer data) {
+        mData = Objects.requireNonNull(data);
+    }
+
+    public PointListContainer<PointList> getDataSet() {
+        return mData;
+    }
 
     public final String getTitle() {
         return mTitle;
