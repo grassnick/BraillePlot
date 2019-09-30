@@ -21,8 +21,14 @@ import org.slf4j.LoggerFactory;
 import javax.print.*;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.PrintServiceAttributeSet;
 import javax.print.attribute.standard.JobName;
+import javax.print.attribute.standard.PrinterIsAcceptingJobs;
+import javax.print.attribute.standard.PrinterState;
+import javax.print.attribute.standard.PrinterStateReasons;
 import javax.print.event.PrintJobEvent;
+import java.awt.event.ComponentListener;
+import java.awt.print.PrinterJob;
 import java.util.Objects;
 /**
  * Implements a variation of the GoF design pattern Builder. This class is used for setting the printer configuration and
@@ -141,14 +147,19 @@ public class PrintDirector {
         PrintRequestAttributeSet asset = new HashPrintRequestAttributeSet();
         DocPrintJob job = mService.createPrintJob();
         mLogger.trace("finished setting up doc, asset and job.");
+        PrinterState state;
         asset.add(new JobName("Braille Printing", null));
         try {
             mLogger.trace("adding job to the PrintJobListener.");
-            PrintJobListener listener = new PrintJobListener();
-            job.addPrintJobListener(listener);
+            //PrintJobListener listener = new PrintJobListener();
+           // job.addPrintJobListener(listener);
             mLogger.trace("starting printing.");
+            //PrinterIsAcceptingJobs set = mService.getAttribute(PrinterIsAcceptingJobs.class);
+            //PrinterStateReasons reasons = mService.getAttribute(PrinterStateReasons.class);
             job.print(doc, asset);
-            listener.waitForDone();
+            //set = mService.getAttribute(PrinterIsAcceptingJobs.class);
+            //reasons = mService.getAttribute(PrinterStateReasons.class);
+            //listener.waitForDone();
             mPrintJob = job;
         } catch (PrintException pe) {
             throw new RuntimeException(pe);
@@ -167,13 +178,14 @@ public class PrintDirector {
         }
         return true;
     }
-
+/*
     private class PrintJobListener implements javax.print.event.PrintJobListener {
         boolean done = false;
 
         @Override
         public void printDataTransferCompleted(PrintJobEvent pje) {
             mLogger.info("data transfer to printer complete.");
+            PrintJobListener.this.notify();
         }
 
         @Override
@@ -215,6 +227,7 @@ public class PrintDirector {
         @Override
         public void printJobRequiresAttention(PrintJobEvent pje) {
             mLogger.info("printjob requires attention.");
+            PrintJobListener.this.notify();
         }
         public synchronized void waitForDone() {
             try {
@@ -226,4 +239,6 @@ public class PrintDirector {
             }
         }
     }
+
+ */
 }
