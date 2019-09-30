@@ -13,10 +13,23 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
+import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.SixDotBrailleRasterCanvas;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
+import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
+import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 import de.tudresden.inf.mci.brailleplot.rendering.BarChartRasterizer;
+import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
+import de.tudresden.inf.mci.brailleplot.rendering.Image;
+import de.tudresden.inf.mci.brailleplot.rendering.ImageRasterizer;
+import de.tudresden.inf.mci.brailleplot.rendering.LiblouisBrailleTextRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import de.tudresden.inf.mci.brailleplot.rendering.UniformTextureBarChartRasterizer;
+import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
+import de.tudresden.inf.mci.brailleplot.svgexporter.BoolFloatingPointDataSvgExporter;
+import de.tudresden.inf.mci.brailleplot.svgexporter.BoolMatrixDataSvgExporter;
+import de.tudresden.inf.mci.brailleplot.svgexporter.SvgExporter;
 import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestTemplate;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -48,6 +62,7 @@ public class CsvReaderRasterizerCanvasIntegTest {
     private static CategoricalPointListContainer<PointList> container;
     private static CategoricalBarChart catBarChart;
     private static MasterRenderer renderer;
+    private static Representation representationParameters;
 
     @BeforeAll
     public static void setUp() {
@@ -63,7 +78,7 @@ public class CsvReaderRasterizerCanvasIntegTest {
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
             container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
             catBarChart = new CategoricalBarChart(container);
-            Representation representationParameters = configParser.getRepresentation();
+            representationParameters = configParser.getRepresentation();
             renderer = new MasterRenderer(printer, representationParameters, format);
             System.setProperty("jna.library.path", System.getProperty("user.dir") + "/third_party");
         });
@@ -125,6 +140,26 @@ public class CsvReaderRasterizerCanvasIntegTest {
     }
 
     @Test
+    public void testRegisterUniformOnRenderingbase() {
+        BarChart barChart = new BarChart(container);
+        Assertions.assertDoesNotThrow(() -> {
+            renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BarChart>(BarChart.class, new UniformTextureBarChartRasterizer()));
+            renderer.rasterize(barChart);
+        });
+    }
+
+    @Test
+    public void printCatBarChart() {
+        Assertions.assertDoesNotThrow(() -> {
+            PrintDirector printerD = new PrintDirector(PrinterCapability.NORMALPRINTER, printer);
+            CategoricalBarChart catChart = new CategoricalBarChart(container);
+            catChart.setYAxisName("Y");
+            catChart.setXAxisName("X");
+            catChart.setTitle("Title");
+            printerD.print(renderer.rasterize(catChart).getCurrentPage());
+        });
+    }
+    @Test
     public void testRasterizerDoesNotThrowCatBarChart() {
         Assertions.assertDoesNotThrow(() -> {
             renderer.rasterize(catBarChart);
@@ -132,5 +167,50 @@ public class CsvReaderRasterizerCanvasIntegTest {
     }
 
 
-    // Braille Text
+    // SVG Exporter
+    @Test
+    public void testConstructorSvgExporterBoolMatrix() {
+        Assertions.assertDoesNotThrow(() -> {
+            CategoricalBarChart temp = new CategoricalBarChart(container);
+            temp.setTitle("test");
+            temp.setXAxisName("X");
+            temp.setYAxisName("Y");
+            SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(renderer.rasterize(temp));
+            svgExporter.render();
+        });
+    }
+
+    @Test
+    public void testConstructorScgExporterBoolFloat() {
+        Assertions.assertDoesNotThrow(() -> {
+            PlotCanvas floatCanvas = new PlotCanvas(printer, representationParameters, format);
+            SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
+            floatSvgExporter.render();
+            floatSvgExporter.dump("floatingPointData");
+        });
+    }
+
+    // LiblouisTextRasterizer Test
+
+    @Test
+    public void testLibLoisMethods() {
+        Assertions.assertDoesNotThrow(() -> {
+            LiblouisBrailleTextRasterizer rast = new LiblouisBrailleTextRasterizer(printer);
+            rast.calculateRequiredHeight("test",30, new SixDotBrailleRasterCanvas(printer, representationParameters, format),BrailleLanguage.Language.DE_KURZSCHRIFT);
+            rast.getBrailleStringLength("test", BrailleLanguage.Language.DE_BASISSCHRIFT);
+        });
+    }
+
+    // Image rasterizer test
+
+    @Test
+    public void testImageRasterizer() {
+        Assertions.assertDoesNotThrow(() -> {
+            Image image = new Image(getClass().getResource("/exampleimages/image.jpg"));
+            renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<Image>(Image.class, new ImageRasterizer(true,true,false, 80)));
+            renderer.rasterize(image);
+            renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<Image>(Image.class, new ImageRasterizer(true,true,true, 80)));
+            renderer.rasterize(image);
+        });
+    }
 }
