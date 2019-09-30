@@ -22,7 +22,7 @@ public class Legend implements Renderable {
     private int mTextureExampleHeightCells = 1;
 
     /**
-     * Constructor. Creates a legend.
+     * Constructor. Creates a legend with default language (DE_BASISSCHRIFT).
      * @param title The title of the legend.
      */
     public Legend(final String title) {
@@ -30,6 +30,11 @@ public class Legend implements Renderable {
         setLanguage(BrailleLanguage.Language.DE_BASISSCHRIFT);
     }
 
+    /**
+     * Constructor. Creates a legend with a defined language.
+     * @param title The title of the legend.
+     * @param language A {@link BrailleLanguage.Language}.
+     */
     public Legend(final String title, final BrailleLanguage.Language language) {
         setTitle(title);
         setLanguage(language);
