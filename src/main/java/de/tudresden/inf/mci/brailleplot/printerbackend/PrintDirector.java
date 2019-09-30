@@ -2,8 +2,11 @@ package de.tudresden.inf.mci.brailleplot.printerbackend;
 
 
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
@@ -16,6 +19,9 @@ import javax.print.SimpleDoc;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.JobName;
+import javax.print.event.PrintJobEvent;
+import javax.print.event.PrintJobListener;
+import java.awt.*;
 import java.util.Objects;
 /**
  * Implements a variation of the GoF design pattern Builder. This class is used for setting the printer configuration and
@@ -30,6 +36,7 @@ public class PrintDirector {
     private PrintService mService;
     private String mPrinterName;
     private DocFlavor mDocflavor;
+    private final Logger mLogger = LoggerFactory.getLogger(PrintDirector.class);
     private DocPrintJob mPrintJob;
 
 
@@ -45,14 +52,20 @@ public class PrintDirector {
         Objects.requireNonNull(printerConfig);
         this.mPrinter = printerCap;
         mPrinterName = printerConfig.getProperty("name").toString();
+        mLogger.trace("using following printercapability {}", printerCap.toString()," loaded.");
+        mLogger.info("using the following printer: {}.", mPrinterName);
         switch (mPrinter) {
             case NORMALPRINTER:
-                mBuilder = new NormalBuilder(); break;
+                mBuilder = new NormalBuilder();
+                mLogger.trace("using NormalBuilder as protocol.");
+                break;
             case INDEX_EVEREST_D_V4_GRAPHIC_PRINTER:
                 mBuilder = new GraphicPrintBuilder();
+                mLogger.trace("using Index Everest-D V4 graphic print as protocol.");
                 break;
             case INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER:
                 mBuilder = new FloatingDotAreaBuilder();
+                mLogger.trace("using Index Everest-D V4 floatingdot as protocol.");
                 break;
             default: throw new IllegalArgumentException();
         }
@@ -69,15 +82,20 @@ public class PrintDirector {
 
     @SuppressWarnings("unchecked")
     public void print(final PrintableData data)  {
+        mLogger.info("starting with print process.");
         Objects.requireNonNull(data);
+        mLogger.trace("setting up docflavour and service.");
         setUpDoc();
         setUpService();
         byte[] result;
+        mLogger.trace("finished setting up doc and service.");
         try {
+            mLogger.trace("assembling the data according to protocol: {}.", mBuilder.getClass().getCanonicalName());
             result = mBuilder.assemble(data);
         } catch (ClassCastException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
+        mLogger.trace("finished assembling data..");
         print(result);
     }
 
@@ -117,12 +135,19 @@ public class PrintDirector {
         Objects.requireNonNull(data);
         Objects.requireNonNull(mService);
         Objects.requireNonNull(mDocflavor);
+        mLogger.trace("setting up doc, asset and job.");
         Doc doc = new SimpleDoc(data, mDocflavor, null);
         PrintRequestAttributeSet asset = new HashPrintRequestAttributeSet();
         DocPrintJob job = mService.createPrintJob();
+        mLogger.trace("finished setting up doc, asset and job.");
         asset.add(new JobName("Braille Printing", null));
         try {
+            mLogger.trace("adding job to the PrintJobListener.");
+            PrintJobListener listener = new PrintJobListener();
+            job.addPrintJobListener(listener);
+            mLogger.trace("starting printing.");
             job.print(doc, asset);
+            listener.waitForDone();
             mPrintJob = job;
         } catch (PrintException pe) {
             throw new RuntimeException(pe);
@@ -140,5 +165,64 @@ public class PrintDirector {
             return false;
         }
         return true;
+    }
+
+    private class PrintJobListener implements javax.print.event.PrintJobListener {
+        boolean done = false;
+
+        @Override
+        public void printDataTransferCompleted(PrintJobEvent pje) {
+            mLogger.info("data transfer to printer complete.");
+        }
+
+        @Override
+        public void printJobCompleted(PrintJobEvent pje) {
+            mLogger.info("printjob completed.");
+            synchronized (PrintJobListener.this) {
+                done = true;
+                PrintJobListener.this.notify();
+            }
+        }
+
+        @Override
+        public void printJobFailed(PrintJobEvent pje) {
+            mLogger.info("printjob failed.");
+            synchronized (PrintJobListener.this) {
+                done = true;
+                PrintJobListener.this.notify();
+            }
+        }
+
+        @Override
+        public void printJobCanceled(PrintJobEvent pje) {
+            mLogger.info("printjob was canceled.");
+            synchronized (PrintJobListener.this) {
+                done = true;
+                PrintJobListener.this.notify();
+            }
+        }
+
+        @Override
+        public void printJobNoMoreEvents(PrintJobEvent pje) {
+            mLogger.info("printjob has no more events.");
+            synchronized (PrintJobListener.this) {
+                done = true;
+                PrintJobListener.this.notify();
+            }
+        }
+
+        @Override
+        public void printJobRequiresAttention(PrintJobEvent pje) {
+            mLogger.info("printjob requires attention.");
+        }
+        public synchronized void waitForDone() {
+            try {
+                while (!done) {
+                    wait();
+                }
+            } catch (InterruptedException e) {
+                return;
+            }
+        }
     }
 }
