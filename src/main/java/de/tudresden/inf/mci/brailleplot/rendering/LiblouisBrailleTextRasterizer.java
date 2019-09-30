@@ -11,6 +11,7 @@ import de.tudresden.inf.mci.brailleplot.util.NativeLibraryHelper;
 import de.tudresden.inf.mci.brailleplot.util.NoSuchNativeLibraryException;
 import org.liblouis.DisplayException;
 import org.liblouis.DisplayTable;
+import org.liblouis.Louis;
 import org.liblouis.TranslationException;
 import org.liblouis.TranslationResult;
 import org.liblouis.Translator;
@@ -26,6 +27,8 @@ import static java.lang.Math.ceil;
  */
 
 public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
+
+    private static boolean mNativeLibInitialized = false;
 
     private AbstractBrailleTableParser mParser;
     // Parameters for rasterizing
@@ -44,13 +47,6 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
      * @param printer Needed to get the semantictable according to the printer config.
      */
     public LiblouisBrailleTextRasterizer(final Printer printer) {
-
-        try {
-            NativeLibraryHelper.loadNativeLibrary("liblouis");
-        } catch (NoSuchNativeLibraryException e) {
-          // Even if the library is not distributed within the jar file, it might be installed on the system.
-        }
-
         Objects.requireNonNull(printer, "The given printer for the LiblouisBrailleTextRasterizer was null!");
         try {
             mParser = AbstractBrailleTableParser.getParser(printer, "semantictable");
@@ -190,5 +186,31 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
             e.printStackTrace();
         }
         return result.getBraille().length();
+    }
+
+    /**
+     * Initializes the Module.
+     * @throws LibLouisLibraryMissingException If liblouis could not be loaded from neither the jar or the default JNI include path.
+     */
+    public static void initModule() throws LibLouisLibraryMissingException {
+        if (!mNativeLibInitialized) {
+            try {
+                NativeLibraryHelper.loadNativeLibrary("liblouis");
+            } catch (NoSuchNativeLibraryException e) {
+                // Even if the library is not distributed within the jar file, it might be installed on the system.
+            }
+            try {
+                Louis.getVersion();
+            } catch (java.lang.UnsatisfiedLinkError e) {
+                throw new LibLouisLibraryMissingException(e);
+            }
+            mNativeLibInitialized = true;
+        }
+    }
+
+    public static class LibLouisLibraryMissingException extends NoSuchNativeLibraryException {
+        LibLouisLibraryMissingException(Throwable cause) {
+            super(cause);
+        }
     }
 }

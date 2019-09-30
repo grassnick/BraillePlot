@@ -191,6 +191,7 @@ public final class App {
             barChart.setYAxisName("Länge in m");
 
             // Render diagram
+            LiblouisBrailleTextRasterizer.initModule();
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
             RasterCanvas canvas = renderer.rasterize(barChart);
             // SVG exporting
