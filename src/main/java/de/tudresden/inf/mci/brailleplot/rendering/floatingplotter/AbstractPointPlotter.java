@@ -277,14 +277,14 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
      * @param yValue Absolute y-value of center.
      */
     void drawDot(final double xValue, final double yValue) {
-        addPoint(xValue + mCanvas.getDotDiameter(), yValue);
-        addPoint(xValue - mCanvas.getDotDiameter(), yValue);
-        addPoint(xValue, yValue + mCanvas.getDotDiameter());
+        addPoint(xValue + mCanvas.getDotDiameter() + 1, yValue);
+        addPoint(xValue - mCanvas.getDotDiameter() + 1, yValue);
+        addPoint(xValue, yValue + mCanvas.getDotDiameter() + 1);
         addPoint(xValue, yValue - mCanvas.getDotDiameter());
-        addPoint(xValue + mCanvas.getDotDiameter(), yValue + mCanvas.getDotDiameter());
-        addPoint(xValue + mCanvas.getDotDiameter(), yValue - mCanvas.getDotDiameter());
-        addPoint(xValue - mCanvas.getDotDiameter(), yValue + mCanvas.getDotDiameter());
-        addPoint(xValue - mCanvas.getDotDiameter(), yValue - mCanvas.getDotDiameter());
+        addPoint(xValue + mCanvas.getDotDiameter() + 1, yValue + mCanvas.getDotDiameter());
+        addPoint(xValue + mCanvas.getDotDiameter() + 1, yValue - mCanvas.getDotDiameter());
+        addPoint(xValue - mCanvas.getDotDiameter() + 1, yValue + mCanvas.getDotDiameter());
+        addPoint(xValue - mCanvas.getDotDiameter() + 1, yValue - mCanvas.getDotDiameter());
     }
 
     /**

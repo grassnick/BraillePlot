@@ -7,10 +7,13 @@ import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaExceptio
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 import de.tudresden.inf.mci.brailleplot.rendering.Legend;
+import tec.units.ri.unit.MetricPrefix;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+
+import static tec.units.ri.unit.Units.METRE;
 
 /**
  * Provides a plotting algorithm for line plot data.
@@ -38,7 +41,7 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
         mPageHeight = mCanvas.getPrintableHeight();
         mPageWidth = mCanvas.getPrintableWidth();
         mResolution = mCanvas.getResolution();
-        mStepSize = mCanvas.getDotDiameter();
+        mStepSize = mCanvas.getDotDiameter() + 1;
 
         checkResolution();
         calculateRanges();

@@ -48,7 +48,7 @@ public class CategoricalBarChart extends BarChart {
      * Getter for a list with x-y-Pairs: x is the index (always just counts from 0 up), y is the value.
      * @return PointList with the corresponding data set.
      */
-    public PointListContainer<PointList> getDataSet() {
+    public CategoricalPointListContainer<PointList> getDataSet() {
         return mData;
     }
 
@@ -65,7 +65,9 @@ public class CategoricalBarChart extends BarChart {
             current = 0;
             while (smallIt.hasNext()) {
                 Point2DDouble point = smallIt.next();
-                current += point.getY();
+                if (point.getY() >= 0) {
+                    current += point.getY();
+                }
             }
             if (current > maxY) {
                 maxY = current;

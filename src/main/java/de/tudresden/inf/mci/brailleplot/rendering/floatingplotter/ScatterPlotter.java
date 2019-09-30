@@ -35,7 +35,7 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
         mPageHeight = mCanvas.getPrintableHeight();
         mPageWidth = mCanvas.getPrintableWidth();
         mResolution = mCanvas.getResolution();
-        mStepSize = mCanvas.getDotDiameter();
+        mStepSize = mCanvas.getDotDiameter() + 1;
 
         checkResolution();
         calculateRanges();

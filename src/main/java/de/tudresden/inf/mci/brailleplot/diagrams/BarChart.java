@@ -14,24 +14,15 @@ import java.util.Iterator;
  */
 public class BarChart extends Diagram {
 
-    private PointListContainer<PointList> mData;
-
     public BarChart(final CategoricalPointListContainer<PointList> data) {
         super(data);
     }
 
     /**
-     * Getter for a list with x-y-Pairs: x is the index (always just counts from 0 up), y is the value.
-     * @return PointList with the corresponding data set.
-     */
-    public PointListContainer<PointList> getDataSet() {
-        return mData;
-    }
-
-    /**
-     * Adds all y-values of on data series.
+     * Adds all y-values of one data series.
      * @return double maximum y-value
      */
+    /*
     public double getCumulatedMaxY() {
         double current;
         double maxY = 0;
@@ -41,7 +32,9 @@ public class BarChart extends Diagram {
             current = 0;
             while (smallIt.hasNext()) {
                 Point2DDouble point = smallIt.next();
-                current += point.getY();
+                if (point.getY() >= 0) {
+                    current += point.getY();
+                }
             }
             if (current > maxY) {
                 maxY = current;
@@ -50,5 +43,6 @@ public class BarChart extends Diagram {
 
         return maxY;
     }
+    */
 
 }

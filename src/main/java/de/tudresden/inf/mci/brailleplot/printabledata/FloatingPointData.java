@@ -17,6 +17,8 @@ import java.util.Iterator;
  */
 public interface FloatingPointData<T> extends PrintableData {
 
+    double RANGE = 1.5;
+
     /**
      * Returns an iterator over all {@link Point2DValued}.
      * @return An iterator over all points.

@@ -49,7 +49,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
         mPageHeight = mCanvas.getPrintableHeight();
         mPageWidth = mCanvas.getPrintableWidth();
         mResolution = mCanvas.getResolution();
-        mStepSize = mCanvas.getDotDiameter();
+        mStepSize = mCanvas.getDotDiameter() + 1;
 
         checkResolution();
         calculateRanges();
