@@ -8,8 +8,11 @@ import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaExceptio
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printerbackend.NotSupportedFileExtensionException;
+import de.tudresden.inf.mci.brailleplot.util.NativeLibraryHelper;
+import de.tudresden.inf.mci.brailleplot.util.NoSuchNativeLibraryException;
 import org.liblouis.DisplayException;
 import org.liblouis.DisplayTable;
+import org.liblouis.Louis;
 import org.liblouis.TranslationException;
 import org.liblouis.TranslationResult;
 import org.liblouis.Translator;
@@ -26,6 +29,8 @@ import static java.lang.Math.ceil;
  */
 
 public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
+
+    private static boolean mNativeLibInitialized = false;
 
     private AbstractBrailleTableParser mParser;
     // Parameters for rasterizing
@@ -238,5 +243,34 @@ public class LiblouisBrailleTextRasterizer implements Rasterizer<BrailleText> {
         int length = getBrailleStringLength(text);
         mTranslator = temp;
         return length;
+    }
+
+    /**
+     * Initializes the Module.
+     * @throws LibLouisLibraryMissingException If liblouis could not be loaded from neither the jar or the default JNI include path.
+     */
+    public static void initModule() throws LibLouisLibraryMissingException {
+        if (!mNativeLibInitialized) {
+            try {
+                NativeLibraryHelper.loadNativeLibrary("liblouis");
+            } catch (NoSuchNativeLibraryException e) {
+                // Even if the library is not distributed within the jar file, it might be installed on the system.
+            }
+            try {
+                Louis.getVersion();
+            } catch (java.lang.UnsatisfiedLinkError e) {
+                throw new LibLouisLibraryMissingException(e);
+            }
+            mNativeLibInitialized = true;
+        }
+    }
+
+    /**
+     * Indicates, the native liblouis library was not found.
+     */
+    public static class LibLouisLibraryMissingException extends NoSuchNativeLibraryException {
+        LibLouisLibraryMissingException(final Throwable cause) {
+            super(cause);
+        }
     }
 }

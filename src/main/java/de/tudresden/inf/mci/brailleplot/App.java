@@ -12,6 +12,8 @@ import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
+import de.tudresden.inf.mci.brailleplot.datacontainers.SimpleCategoricalPointListContainerImpl;
+import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
 
 
@@ -35,6 +37,7 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 
+import de.tudresden.inf.mci.brailleplot.rendering.LiblouisBrailleTextRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolFloatingPointDataSvgExporter;
@@ -45,7 +48,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -53,7 +55,7 @@ import java.io.Reader;
 import java.util.Iterator;
 
 import java.net.URL;
-
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -158,8 +160,6 @@ public final class App {
         try {
             // Logging example
             mLogger.info("Application started");
-            // Needed for Windows machines
-            System.setProperty("jna.library.path", System.getProperty("user.dir") + "/third_party");
             // Parse command line parameters
             CommandLineParser cliParser = new CommandLineParser();
             SettingsWriter settings = cliParser.parse(args);
@@ -175,16 +175,17 @@ public final class App {
 
 
             // Config Parsing
-            URL configPath;
+            JavaPropertiesConfigurationParser configParser;
+            URL defaultConfig = getClass().getClassLoader().getResource("config/default.properties");
             if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument, until then use default location for test runs
-                configPath = getClass().getResource("/config/index_everest_d_v4.properties");
+                URL configUrl = getClass().getResource("/config/index_everest_d_v4.properties");
+                configParser = new JavaPropertiesConfigurationParser(configUrl, defaultConfig);
                 mLogger.warn("ATTENTION! Using default specific config from resources. Please remove default config behavior before packaging the jar.");
             } else {
-                File configFile = new File(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
-                configPath = configFile.toURL();
+                Path configPath = Path.of(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
+                configParser = new JavaPropertiesConfigurationParser(configPath, defaultConfig);
             }
 
-            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath, getClass().getClassLoader().getResource("config/default.properties"));
             Printer indexV4Printer = configParser.getPrinter();
             Format a4Format = configParser.getFormat("A4");
             Representation representationParameters = configParser.getRepresentation();
@@ -195,14 +196,24 @@ public final class App {
             InputStream csvStream = classloader.getResourceAsStream("examples/csv/2_line_plot.csv");
             Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
 
+
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
             PointListContainer<PointList> container = csvParser.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
             mLogger.debug("Internal data representation:\n {}", container.toString());
 
             LineChart lineChart = new LineChart(container);
-            lineChart.setTitle("Liniendiagramm");
-            lineChart.setXAxisName("X-Achsen Einheit");
-            lineChart.setYAxisName("Y-Achsen Einheit");
+            lineChart.setTitle(settingsReader.getSetting(SettingType.DIAGRAM_TITLE).orElse(""));
+            lineChart.setXAxisName(settingsReader.getSetting(SettingType.X_AXIS_LABEL).orElse(""));
+            lineChart.setYAxisName(settingsReader.getSetting(SettingType.Y_AXIS_LABEL).orElse(""));
+
+            /*
+            CategoricalBarChart barChart = new CategoricalBarChart(new SimpleCategoricalPointListContainerImpl(container));
+            barChart.setTitle(settingsReader.getSetting(SettingType.DIAGRAM_TITLE).orElse(""));
+            barChart.setXAxisName(settingsReader.getSetting(SettingType.X_AXIS_LABEL).orElse(""));
+            barChart.setYAxisName(settingsReader.getSetting(SettingType.Y_AXIS_LABEL).orElse(""));
+             */
+            LiblouisBrailleTextRasterizer.initModule();
+
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, representationParameters, a4Format);
             RasterCanvas canvas = renderer.rasterize(lineChart);
             Iterator<MatrixData<Boolean>> iter = canvas.getPageIterator();
