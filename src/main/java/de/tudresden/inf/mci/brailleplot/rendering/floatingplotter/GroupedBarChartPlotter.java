@@ -9,6 +9,7 @@ import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
+import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 import tec.units.ri.quantity.Quantities;
 import tec.units.ri.unit.MetricPrefix;
 
@@ -38,6 +39,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
     public double plot(final CategoricalBarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
         prereq(diagram, canvas);
+        drawYAxis();
 
         // bar drawing and filling
         mNumBar = mCatList.getSize() * mDiagram.getNumberOfCategories();
@@ -74,23 +76,111 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
         }
 
         nameYAxis();
-        drawGrid();
+        if (mGrid) {
+            drawGrid();
+        }
         plotLegend();
 
         return 0;
 
     }
 
+    /**
+     * Draws only the x-axis.
+     */
+    @Override
+    void drawAxes() {
+        // margin left of y-axis
+        mLeftMargin = 2 * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
+        // margin from bottom to x-axis
+        mBottomMargin = mPageHeight - (HMULT * mCanvas.getCellHeight() + HMULT * mCanvas.getCellDistVer());
+        // margin from top for title
+        mTitleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
+
+        mXTickDistance = mLeftMargin + 2 * mCanvas.getCellWidth();
+        if (mXTickDistance < MINXTICKDISTANCE) {
+            mXTickDistance = MINXTICKDISTANCE;
+        }
+
+        // x-axis
+        double lastValueX = mLeftMargin;
+        for (double i = mLeftMargin; i <= mPageWidth; i += mStepSize) {
+            addPoint(i, mBottomMargin);
+            lastValueX = i;
+        }
+        mLengthX = lastValueX - mLeftMargin;
+        mNumberXTicks = (int) Math.floor(mLengthX / mXTickDistance);
+        if (mNumberXTicks < 2) {
+            mNumberXTicks = 2;
+        } else if (mNumberXTicks <= XTICKS4) {
+            mNumberXTicks = XTICKS4;
+        } else if (mNumberXTicks <= XTICKS5) {
+            mNumberXTicks = XTICKS5;
+        } else if (mNumberXTicks <= XTICKS6) {
+            mNumberXTicks = XTICKS6;
+        } else {
+            mNumberXTicks = XTICKSEND2;
+        }
+
+        mScaleX = new double[mNumberXTicks + 1];
+
+
+        // tick marks on x-axis
+        mXTickStep = (lastValueX - MARGIN - mLeftMargin) / mNumberXTicks;
+        for (double i = 1; i <= 2 * mNumberXTicks; i++) {
+            if (i % 2 == 0) {
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK1);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK2);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK3);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK4);
+            } else {
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK1);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK2);
+            }
+        }
+
+    }
+
+    /**
+     * Draws y-axis without tick marks on the y-axis.
+     */
+    private void drawYAxis() {
+        for (int i = 0; i < mScaleX.length - 2; i++) {
+            if (mScaleX[i] == 0) {
+                mNegative = i + 1;
+                break;
+            } else if (mScaleX[i + 1] == 0) {
+                mNegative = i + 2;
+                break;
+            } else if (mScaleX[i] <= 0 && mScaleX[i + 1] >= 0) {
+                double before = mScaleX[i];
+                double after = mScaleX[i + 1];
+                mNegative = -before / (after - before) + (i + 1);
+                break;
+            } else {
+                mNegative = 0;
+            }
+        }
+
+        double lastValueY = mBottomMargin;
+        for (double i = mBottomMargin; i > mTitleMargin; i -= mStepSize) {
+            addPoint(mLeftMargin + mNegative * mXTickStep, i);
+            lastValueY = i;
+        }
+
+        mLengthY = mBottomMargin - lastValueY;
+    }
+
     @Override
     void drawRectangle(final int i, final int j, final double xValue) throws InsufficientRenderingAreaException {
+        mLastXValue = mLeftMargin;
         double startY = mBottomMargin - mBarDist - i * (mBarGroupWidth + mBarDist) - j * mBarWidth;
         double endX = calculateXValue(xValue);
-        plotAndFillRectangle(startY, mLeftMargin, endX, j, false);
+        plotAndFillRectangle(startY, mLeftMargin + mNegative * mXTickStep, endX, j, false);
         int k = mCatList.getNumberOfCategories() * i + j;
         if (mGridHelp[k] < endX) {
             mGridHelp[k] = endX;
         }
-        mLastXValue = mLeftMargin;
     }
 
     /**
@@ -160,7 +250,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
     }
 
     @Override
-    void nameYAxis() {
+    void nameYAxis() throws InsufficientRenderingAreaException {
 
         double height = mCanvas.getCellHeight();
         double width = mCanvas.getCellWidth();
@@ -171,7 +261,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
 
         for (int i = 0; i < mNumBarGroup; i++) {
             Rectangle rect = new Rectangle(startX, mBottomMargin - mNumBarGroup * (mBarDist + mBarGroupWidth) + mBarGroupWidth / 2 - halfCell + i * (mBarDist + mBarGroupWidth), width, height);
-            BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect);
+            BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
             tplotter.plot(text, mCanvas);
         }
     }

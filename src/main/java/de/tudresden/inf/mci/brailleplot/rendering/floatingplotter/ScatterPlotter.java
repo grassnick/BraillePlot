@@ -36,14 +36,15 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
         mPageWidth = mCanvas.getPrintableWidth();
         mResolution = mCanvas.getResolution();
         mStepSize = mCanvas.getDotDiameter() + 1;
+        mGrid = mCanvas.getGrid();
 
         checkResolution();
         calculateRanges();
         drawAxes();
         mScaleX = scaleAxis("x");
         mScaleY = scaleAxis("y");
-        mCanvas.setXScaleFactor(mScaleX[mScaleX.length - 1]);
-        mCanvas.setYScaleFactor(mScaleY[mScaleY.length - 1]);
+        mCanvas.setXScaleFactor((int) mScaleX[mScaleX.length - 1]);
+        mCanvas.setYScaleFactor((int) mScaleY[mScaleY.length - 1]);
         mLegend.setType(0);
         nameXAxis();
         nameYAxis();
@@ -69,7 +70,9 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
             }
         }
 
-        drawGrid();
+        if (mGrid) {
+            drawGrid();
+        }
         plotLegend();
 
         return 0;

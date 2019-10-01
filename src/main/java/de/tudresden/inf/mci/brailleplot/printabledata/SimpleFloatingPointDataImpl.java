@@ -45,6 +45,12 @@ public class SimpleFloatingPointDataImpl<T> extends AbstractPrintableData implem
     }
 
     @Override
+    public void addPoint(final Point2DValued<Quantity<Length>, T> point) {
+        Objects.requireNonNull(point);
+        mPoints.addLast(point);
+    }
+
+    @Override
     public boolean pointExists(final Point2DValued<Quantity<Length>, T> newPoint) {
         double newX = newPoint.getX().to(MetricPrefix.MILLI(METRE)).getValue().doubleValue();
         double newY = newPoint.getY().to(MetricPrefix.MILLI(METRE)).getValue().doubleValue();

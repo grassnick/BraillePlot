@@ -26,7 +26,7 @@ public interface FloatingPointData<T> extends PrintableData {
     Iterator<Point2DValued<Quantity<Length>, T>> getIterator();
 
     /**
-     * Add a point to the data structure if it is not already in there. This is necessary so that the printer
+     * Adds a point to the data structure if it is not already in there. This is necessary so that the printer
      * will not emboss the same coordinate twice.
      * @param point The point to be inserted.
      */
@@ -38,4 +38,10 @@ public interface FloatingPointData<T> extends PrintableData {
      * @return true, if the point is already in the data and false, if not.
      */
     boolean pointExists(Point2DValued<Quantity<Length>, T> point);
+
+    /**
+     * Adds a point to the data.
+     * @param point The point to be added.
+     */
+    void addPoint(Point2DValued<Quantity<Length>, T> point);
 }

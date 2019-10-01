@@ -9,6 +9,7 @@ import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
+import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 import tec.units.ri.quantity.Quantities;
 import tec.units.ri.unit.MetricPrefix;
 
@@ -24,18 +25,20 @@ import static tec.units.ri.unit.Units.METRE;
  */
 public final class StackedBarChartPlotter extends AbstractBarChartPlotter implements Plotter<CategoricalBarChart> {
 
-
     /**
      * Plots a stacked {@link de.tudresden.inf.mci.brailleplot.diagrams.BarChart} instance onto a {@link PlotCanvas}.
      * @param diagram An instance of {@link  de.tudresden.inf.mci.brailleplot.diagrams.BarChart} representing the bar chart.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
-     * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas} or
-     * if there are more data series than textures.
+     * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas},
+     * if there are more data series than textures or if there are negative values in the data.
      */
     @Override
     public double plot(final CategoricalBarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
         prereq(diagram, canvas);
+        if (mDiagram.getMinY() < 0) {
+            throw new InsufficientRenderingAreaException("Negative values are not supported for stacked bar charts.");
+        }
 
         // bar drawing and filling
         mNumBar = mCatList.getSize();
@@ -69,7 +72,9 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
         }
 
         nameYAxis();
-        drawGrid();
+        if (mGrid) {
+            drawGrid();
+        }
         plotLegend();
 
         return 0;
@@ -82,6 +87,71 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
     @Override
     void calculateRanges() {
         mYRange = Math.abs(mDiagram.getCumulatedMaxY() - mDiagram.getMinY());
+    }
+
+    /**
+     * Draws axes without tick marks on y-axis.
+     */
+    @Override
+    void drawAxes() {
+        // margin left of y-axis
+        mLeftMargin = 2 * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
+        // margin from bottom to x-axis
+        mBottomMargin = mPageHeight - (HMULT * mCanvas.getCellHeight() + HMULT * mCanvas.getCellDistVer());
+        // margin from top for title
+        mTitleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
+
+        mXTickDistance = mLeftMargin + 2 * mCanvas.getCellWidth();
+        if (mXTickDistance < MINXTICKDISTANCE) {
+            mXTickDistance = MINXTICKDISTANCE;
+        }
+
+        // x-axis
+        double lastValueX = mLeftMargin;
+        for (double i = mLeftMargin; i <= mPageWidth; i += mStepSize) {
+            addPoint(i, mBottomMargin);
+            lastValueX = i;
+        }
+        mLengthX = lastValueX - mLeftMargin;
+        mNumberXTicks = (int) Math.floor(mLengthX / mXTickDistance);
+        if (mNumberXTicks < 2) {
+            mNumberXTicks = 2;
+        } else if (mNumberXTicks <= XTICKS4) {
+            mNumberXTicks = XTICKS4;
+        } else if (mNumberYTicks <= XTICKS5) {
+            mNumberYTicks = XTICKS5;
+        } else if (mNumberYTicks <= XTICKS6) {
+            mNumberYTicks = XTICKS6;
+        } else {
+            mNumberYTicks = XTICKSEND2;
+        }
+
+        mScaleX = new double[mNumberXTicks + 1];
+
+
+        // tick marks on x-axis
+        mXTickStep = (lastValueX - MARGIN - mLeftMargin) / mNumberXTicks;
+        for (double i = 1; i <= 2 * mNumberXTicks; i++) {
+            if (i % 2 == 0) {
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK1);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK2);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK3);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK4);
+            } else {
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK1);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK2);
+            }
+        }
+
+        // y-axis
+        double lastValueY = mBottomMargin;
+        for (double i = mBottomMargin; i > mTitleMargin; i -= mStepSize) {
+            addPoint(mLeftMargin, i);
+            lastValueY = i;
+        }
+
+        mLengthY = mBottomMargin - lastValueY;
+
     }
 
     @Override
@@ -163,7 +233,7 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
     }
 
     @Override
-    void nameYAxis() {
+    void nameYAxis() throws InsufficientRenderingAreaException {
 
         double height = mCanvas.getCellHeight();
         double width = mCanvas.getCellWidth();
@@ -174,7 +244,7 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
 
         for (int i = 0; i < mNumBar; i++) {
             Rectangle rect = new Rectangle(startX, mBottomMargin - mNumBar * (mBarDist + mBarWidth) + mBarWidth / 2 - halfCell + i * (mBarDist + mBarWidth), width, height);
-            BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect);
+            BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
             tplotter.plot(text, mCanvas);
         }
     }

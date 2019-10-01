@@ -49,6 +49,9 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
     // axis derivation with letters
     private boolean mAxesDerivation;
 
+    // if grid is desired or not
+    private boolean mGrid;
+
 
     public PlotCanvas(final Printer printer, final Representation representation, final Format format) throws InsufficientRenderingAreaException {
         super(printer, representation, format);
@@ -89,6 +92,7 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         mSecondAxis = mRepresentation.getProperty("floatingDot.secondAxis").toBool();
         mFrames = mRepresentation.getProperty("floatingDot.frames").toBool();
         mAxesDerivation = mRepresentation.getProperty("floatingDot.derivation").toBool();
+        mGrid = mRepresentation.getProperty("floatingDot.grid").toBool();
 
     }
 
@@ -160,6 +164,8 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         return mYScaleFactor;
     }
 
-
+    public final boolean getGrid() {
+        return mGrid;
+    }
 
 }

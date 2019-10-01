@@ -11,12 +11,9 @@ public enum SettingType {
     CSV_LOCATION("csv-path"),
     PRINTER_CONFIG_PATH("printer-config-path"),
     SEMANTIC_MAPPING("semantic-mapping"),
-    TITLE("title"),
-    X_NAME("x-axis-name"),
-    X_UNIT("x-axis-unit"),
-    Y_NAME("y-axis-name"),
-    Y_UNIT("y-axis-unit");
-
+    DIAGRAM_TITLE("title"),
+    X_AXIS_LABEL("xLabel"),
+    Y_AXIS_LABEL("yLabel");
 
     private final String mName;
 
@@ -35,15 +32,11 @@ public enum SettingType {
             case "semantic-mapping":
                 return SEMANTIC_MAPPING;
             case "title":
-                return TITLE;
-            case "x-axis-name":
-                return X_NAME;
-            case "x-axis-unit":
-                return X_UNIT;
-            case "y-axis-name":
-                return Y_NAME;
-            case "y-axis-unit":
-                return Y_UNIT;
+                return DIAGRAM_TITLE;
+            case "xLabel":
+                return X_AXIS_LABEL;
+            case "yLabel":
+                return Y_AXIS_LABEL;
             default:
                 throw new IllegalArgumentException("Setting not available");
         }

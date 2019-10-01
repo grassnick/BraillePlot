@@ -5,6 +5,7 @@ import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
 import de.tudresden.inf.mci.brailleplot.rendering.Legend;
+import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 
 import java.util.Map;
 import java.util.Objects;
@@ -26,20 +27,24 @@ public class LegendPlotter implements Plotter<Legend> {
     private double mStepVer;
 
     // constants
-    private static final double TWOFIVE = 2.5;
-    private static final double FOURFIVE = 4.5;
-    private static final int THREE = 3;
-    private static final int FIVE = 5;
-    private static final int TEN = 10;
-    private static final int FIFTEEN = 15;
-    private static final int TWENTY = 20;
-    private static final int TWENTYFIVE = 25;
-    private static final int THIRTY = 30;
-    private static final int THIRTYFIVE = 35;
-    private static final int FIFTY = 50;
-    private static final int FIFTYFIVE = 55;
-    private static final int SIXTYFIVE = 65;
-    private static final int SEVENTYFIVE = 75;
+    private static final double SYMDESCSCALE = 2.5;
+    private static final double NEWPAGESCALE = 4.5;
+    private static final int SYMBOLSCALE = 3;
+    private static final int MARGINSCALE = 3;
+    private static final int COMPARE3 = 3;
+    private static final int STARTLINES = 5;
+    private static final int STARTNEWPAGE = 5;
+    private static final int STARTPOINT = 10;
+    private static final int STARTDOTDESC = 15;
+    private static final int CURRENTPAGESCALE = 15;
+    private static final int NEWPAGESCALE2 = 20;
+    private static final int STARTFRAMESLINES = 25;
+    private static final int STARTLINEDESC = 30;
+    private static final int ENDLINES = 35;
+    private static final int STARTLINESFRAMESDESC = 50;
+    private static final int ENDFRAMESLINES = 55;
+    private static final int ENDNEWPAGE = 65;
+    private static final int STARTTEXTUREDESC = 75;
 
     /**
      * Plots a {@link Legend} instance onto a {@link PlotCanvas}.
@@ -62,61 +67,66 @@ public class LegendPlotter implements Plotter<Legend> {
         char[] symbols = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
         char[] legende = "Legende:".toCharArray();
-        double last = plotLine(legende, mCanvas.getCellDistHor(), 0);
+        double last = plotLine(legende, mCanvas.getCellDistHor(), 0, false);
         char[] titel = "Titel:".toCharArray();
-        last = plotLine(titel, mCanvas.getCellDistHor(), last + mStepVer + mSpace);
-        char[] titelName = ("dummyjsdfnjkandgkjndf kjsdfnjkahhhhh").toCharArray();
-        last = plotLine(titelName, mCanvas.getCellDistHor(), last + mStepVer);
+        last = plotLine(titel, mCanvas.getCellDistHor(), last + mStepVer + mSpace, false);
+        char[] titelName = ("dummy").toCharArray();
+        // char[] titleName = mPlotter.mDiagram.getTitle().toCharArray();
+        last = plotLine(titelName, mCanvas.getCellDistHor(), last + mStepVer, false);
         char[] xAxis = "X-Achse:".toCharArray();
-        last = plotLine(xAxis, mCanvas.getCellDistHor(), last + mStepVer + mSpace);
+        last = plotLine(xAxis, mCanvas.getCellDistHor(), last + mStepVer + mSpace, false);
 
         char[] xAxisDesc;
         if (mCanvas.getXScaleFactor() == 1) {
             xAxisDesc = ("dummy" + " in " + "dummy").toCharArray();
+            // xAxisDesc = mPlotter.mDiagram.getXAxisName().toCharArray();
         } else {
             xAxisDesc = ("dummy" + " in " + "dummy" + ", mal 10 hoch " + mCanvas.getXScaleFactor()).toCharArray();
+            // xAxisDesc = (mPlotter.mDiagram.getXAxisName() + ", mal 10 hoch " + mCanvas.getXScaleFactor()).toCharArray();
         }
-        last = plotLine(xAxisDesc, mCanvas.getCellDistHor(), last + mStepVer);
+        last = plotLine(xAxisDesc, mCanvas.getCellDistHor(), last + mStepVer, false);
 
         if (mCanvas.getAxesDerivation()) {
             char[] xAxisNames = "X-Achsenbeschriftung:".toCharArray();
-            last = plotLine(xAxisNames, mCanvas.getCellDistHor(), last + mStepVer + mSpace);
+            last = plotLine(xAxisNames, mCanvas.getCellDistHor(), last + mStepVer + mSpace, false);
 
             Map<String, Map<String, String>> map = legend.getSymbolExplanationGroups();
             Map<String, String> map2 = map.get("x-axis");
 
             for (int i = 0; i < map2.size(); i++) {
                 char[] desc = (symbols[i] + ": " + map2.get(Integer.toString(i))).toCharArray();
-                last = plotLine(desc, mCanvas.getCellDistHor(), last + mStepVer);
+                last = plotLine(desc, mCanvas.getCellDistHor(), last + mStepVer, true);
             }
         }
 
         char[] yAxis = "Y-Achse:".toCharArray();
-        last = plotLine(yAxis, mCanvas.getCellDistHor(), last + mStepVer + mSpace);
+        last = plotLine(yAxis, mCanvas.getCellDistHor(), last + mStepVer + mSpace, false);
 
         char[] yAxisDesc;
         if (mCanvas.getYScaleFactor() == 1) {
             yAxisDesc = ("dummy" + " in " + "dummy").toCharArray();
+            // yAxisDesc = mPlotter.mDiagram.getYAxisName().toCharArray();
         } else {
             yAxisDesc = ("dummy" + " in " + "dummy" + ", mal 10 hoch " + mCanvas.getYScaleFactor()).toCharArray();
+            // yAxisDesc = (mPlotter.mDiagram.getYAxisName() + ", mal 10 hoch " + mCanvas.getYScaleFactor()).toCharArray();
         }
-        last = plotLine(yAxisDesc, mCanvas.getCellDistHor(), last + mStepVer);
+        last = plotLine(yAxisDesc, mCanvas.getCellDistHor(), last + mStepVer, false);
 
-        if (mCanvas.getAxesDerivation() || legend.getType() == THREE) {
+        if (mCanvas.getAxesDerivation() || legend.getType() == COMPARE3) {
             char[] yAxisNames = "Y-Achsenbeschriftung:".toCharArray();
-            last = plotLine(yAxisNames, mCanvas.getCellDistHor(), last + mStepVer + mSpace);
+            last = plotLine(yAxisNames, mCanvas.getCellDistHor(), last + mStepVer + mSpace, false);
 
             Map<String, Map<String, String>> map = legend.getSymbolExplanationGroups();
             Map<String, String> map2 = map.get("y-axis");
 
             for (int i = 0; i < map2.size(); i++) {
                 char[] desc = (symbols[i] + ": " + map2.get(Integer.toString(i))).toCharArray();
-                last = plotLine(desc, mCanvas.getCellDistHor(), last + mStepVer);
+                last = plotLine(desc, mCanvas.getCellDistHor(), last + mStepVer, true);
             }
         }
 
         char[] daten = "Messreihen:".toCharArray();
-        last = plotLine(daten, mCanvas.getCellDistHor(), last + mStepVer + mSpace);
+        last = plotLine(daten, mCanvas.getCellDistHor(), last + mStepVer + mSpace, false);
 
         if (legend.getType() == 0) {
             // scatter plot
@@ -129,17 +139,17 @@ public class LegendPlotter implements Plotter<Legend> {
                 splotter.setCanvas(mCanvas);
                 splotter.setData();
 
-                splotter.addPoint(TEN, last + mStepVer + THREE * mHeight);
+                splotter.addPoint(STARTPOINT, last + mStepVer + SYMBOLSCALE * mHeight);
                 if (i == 0) {
-                    splotter.drawDot(TEN, last + mStepVer + THREE * mHeight);
+                    splotter.drawDot(STARTPOINT, last + mStepVer + SYMBOLSCALE * mHeight);
                 } else if (i == 1) {
-                    splotter.drawX(TEN, last + mStepVer + THREE * mHeight);
+                    splotter.drawX(STARTPOINT, last + mStepVer + SYMBOLSCALE * mHeight);
                 } else if (i == 2) {
-                    splotter.drawCircle(TEN, last + mStepVer + THREE * mHeight);
+                    splotter.drawCircle(STARTPOINT, last + mStepVer + SYMBOLSCALE * mHeight);
                 }
 
                 char[] rahmen = ("  " + frame).toCharArray();
-                last = plotLine(rahmen, FIFTEEN, last + mStepVer + TWOFIVE * mHeight);
+                last = plotLine(rahmen, STARTDOTDESC, last + mStepVer + SYMDESCSCALE * mHeight, false);
             }
         } else if (legend.getType() == 1) {
             // line plot without frames
@@ -151,10 +161,10 @@ public class LegendPlotter implements Plotter<Legend> {
                 LinePlotter splotter = (LinePlotter) mPlotter;
                 splotter.setCanvas(mCanvas);
                 splotter.setData();
-                splotter.drawLines(FIVE, THIRTYFIVE, last + mStepVer + THREE * mHeight, last + mStepVer + THREE * mHeight, i);
+                splotter.drawLines(STARTLINES, ENDLINES, last + mStepVer + SYMBOLSCALE * mHeight, last + mStepVer + SYMBOLSCALE * mHeight, i);
 
                 char[] rahmen = ("  " + frame).toCharArray();
-                last = plotLine(rahmen, THIRTY, last + mStepVer + TWOFIVE * mHeight);
+                last = plotLine(rahmen, STARTLINEDESC, last + mStepVer + SYMDESCSCALE * mHeight, false);
             }
         } else if (legend.getType() == 2) {
             // line plot with frames
@@ -167,21 +177,21 @@ public class LegendPlotter implements Plotter<Legend> {
                 splotter.setCanvas(mCanvas);
                 splotter.setData();
 
-                splotter.addPoint(TEN, last + mStepVer + THREE * mHeight);
+                splotter.addPoint(STARTPOINT, last + mStepVer + SYMBOLSCALE * mHeight);
                 if (i == 0) {
-                    splotter.drawDot(TEN, last + mStepVer + THREE * mHeight);
+                    splotter.drawDot(STARTPOINT, last + mStepVer + SYMBOLSCALE * mHeight);
                 } else if (i == 1) {
-                    splotter.drawX(TEN, last + mStepVer + THREE * mHeight);
+                    splotter.drawX(STARTPOINT, last + mStepVer + SYMBOLSCALE * mHeight);
                 } else if (i == 2) {
-                    splotter.drawCircle(TEN, last + mStepVer + THREE * mHeight);
+                    splotter.drawCircle(STARTPOINT, last + mStepVer + SYMBOLSCALE * mHeight);
                 }
 
-                splotter.drawLines(TWENTYFIVE, FIFTYFIVE, last + mStepVer + THREE * mHeight, last + mStepVer + THREE * mHeight, i);
+                splotter.drawLines(STARTFRAMESLINES, ENDFRAMESLINES, last + mStepVer + SYMBOLSCALE * mHeight, last + mStepVer + SYMBOLSCALE * mHeight, i);
 
                 char[] rahmen = ("  " + frame).toCharArray();
-                last = plotLine(rahmen, FIFTY, last + mStepVer + TWOFIVE * mHeight);
+                last = plotLine(rahmen, STARTLINESFRAMESDESC, last + mStepVer + SYMDESCSCALE * mHeight, false);
             }
-        } else if (legend.getType() == THREE) {
+        } else if (legend.getType() == COMPARE3) {
             // bar chart
             Map<String, Map<String, String>> map = legend.getSymbolExplanationGroups();
             Map<String, String> map2 = map.get("textures");
@@ -192,7 +202,7 @@ public class LegendPlotter implements Plotter<Legend> {
                 splotter.setCanvas(mCanvas);
                 splotter.setData();
 
-                boolean newPage = splotter.plotAndFillRectangle(last + FOURFIVE * mStepVer, FIVE, SIXTYFIVE, i, true);
+                boolean newPage = splotter.plotAndFillRectangle(last + NEWPAGESCALE * mStepVer, STARTNEWPAGE, ENDNEWPAGE, i, true);
 
                 if (newPage) {
                     last = 0;
@@ -202,14 +212,14 @@ public class LegendPlotter implements Plotter<Legend> {
                 double current;
 
                 if (newPage) {
-                    current = last + TWENTY - mCanvas.getDotDistVer();
+                    current = last + NEWPAGESCALE2 - mCanvas.getDotDistVer();
                 } else {
-                    current = last + FOURFIVE * mStepVer - FIFTEEN - mCanvas.getDotDistVer();
+                    current = last + NEWPAGESCALE * mStepVer - CURRENTPAGESCALE - mCanvas.getDotDistVer();
                 }
 
-                last = plotLine(rahmen, SEVENTYFIVE, current);
-                if (last < current + FIFTEEN + mCanvas.getDotDistVer()) {
-                    last += FIFTEEN + mCanvas.getDotDistVer();
+                last = plotLine(rahmen, STARTTEXTUREDESC, current, false);
+                if (last < current + CURRENTPAGESCALE + mCanvas.getDotDistVer()) {
+                    last += CURRENTPAGESCALE + mCanvas.getDotDistVer();
                 }
             }
         }
@@ -221,9 +231,16 @@ public class LegendPlotter implements Plotter<Legend> {
      * @param title Title as String[].
      * @param startX Absolute x-coordinate of the starting point.
      * @param startY Absolute y-coordinate of the starting point.
+     * @param basicLang True for basic language.
      * @return Last y-coordinate.
+     * @throws InsufficientRenderingAreaException If a translation error occurs.
      */
-    private double plotLine(final char[] title, final double startX, final double startY) {
+    private double plotLine(final char[] title, final double startX, final double startY, final boolean basicLang) throws InsufficientRenderingAreaException {
+
+        BrailleLanguage.Language lang = BrailleLanguage.Language.DE_KURZSCHRIFT;
+        if (basicLang) {
+            lang = BrailleLanguage.Language.DE_BASISSCHRIFT;
+        }
 
         int k = 0;
         double starterY = startY;
@@ -239,7 +256,7 @@ public class LegendPlotter implements Plotter<Legend> {
         loop:
         while (true) {
             last = i * mStepVer + starterY;
-            for (double j = startX; j < mCanvas.getPageWidth() - THREE * (mCanvas.getCellWidth() + mCanvas.getCellDistHor()) + mCanvas.getCellDistHor(); j += mStepHor) {
+            for (double j = startX; j < mCanvas.getPageWidth() - MARGINSCALE * (mCanvas.getCellWidth() + mCanvas.getCellDistHor()) + mCanvas.getCellDistHor(); j += mStepHor) {
                 if (k < title.length) {
 
                     // check if line break in necessary
@@ -265,7 +282,7 @@ public class LegendPlotter implements Plotter<Legend> {
                     }
 
                     Rectangle rect = new Rectangle(j, last, mWidth, mHeight);
-                    BrailleText text = new BrailleText(Character.toString(title[k]), rect);
+                    BrailleText text = new BrailleText(Character.toString(title[k]), rect, lang);
                     k++;
                     j = mTextPlotter.plot(text, mCanvas);
                 } else {

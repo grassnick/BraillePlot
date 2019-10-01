@@ -25,7 +25,7 @@ public class BoolFloatingPointDataSvgExporter extends AbstractSvgExporter<PlotCa
 
     @Override
     protected void renderPage(final FloatingPointData<Boolean> points, final int dataIndex) {
-        int dotDiameter = (int) ((mCanvas.getDotDiameter() - 1) * SCALE_FACTOR);
+        int dotDiameter = (int) (mCanvas.getDotDiameter() * SCALE_FACTOR);
         Iterator<Point2DValued<Quantity<Length>, Boolean>> it = points.getIterator();
         SVGGraphics2D svg = mSvgs.get(dataIndex);
         while (it.hasNext()) {

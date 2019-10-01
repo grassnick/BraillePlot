@@ -8,6 +8,7 @@ import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
 import de.tudresden.inf.mci.brailleplot.rendering.Legend;
+import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 import tec.units.ri.quantity.Quantities;
 import tec.units.ri.unit.MetricPrefix;
 
@@ -47,39 +48,73 @@ abstract class AbstractPlotter<T extends Diagram> {
     double mXTickStep;
     double mYRange;
     double mYTickStep;
-    private int decimalPlaces;
-    private int len;
-    private int newRange;
-    private int numberTicks;
+    private int mDecimalPlaces;
+    private int mLen;
+    private int mNewRange;
+    private int mNumberTicks;
     private double mXRange;
-    private boolean singleDigit;
-    private boolean startOrigin;
+    private boolean mSingleDigit;
+    private boolean mStartOrigin;
+    boolean mGrid;
     boolean mAxesDerivation;
-    private int[] digits;
+    private int[] mDigits;
 
     // arrays with int for axis ticks starting at the origin; last field contains scale factor as power of 10
-    int[] mScaleX;
-    int[] mScaleY;
+    double[] mScaleX;
+    double[] mScaleY;
 
     // constants
-    static final double ONE = 1.7;
-    static final double TWOFIVE = 2.5;
+    static final double COMPARE3 = 3;
+    static final double COMPARE4 = 4;
+    static final double COMPARE5 = 5;
+    static final double COMPARE6 = 6;
+    static final double SLOPE3 = 3;
+    static final double SLOPE4 = 4;
+    static final double SLOPE5 = 5;
+    static final double SLOPE6 = 6;
+    static final double SLOPE7 = 7;
+    static final double SLOPE8 = 8;
+    static final double SLOPE9 = 9;
+    static final double SLOPE10 = 10;
+    static final double RECTSCALE = 1.7;
+    static final double STAIRSCALE2 = 2.5;
     static final int THREE = 3;
-    static final int FOUR = 4;
-    static final int FIVE = 5;
-    static final int SIX = 6;
-    static final int SEVEN = 7;
-    static final int EIGHT = 8;
-    static final int NINE = 9;
+    static final int DISTYAXISNAMES2 = 3;
+    static final int CIRCLESCALE2 = 3;
+    static final int DASHEDLINESCALE = 3;
+    static final int DOTTEDLINESCALE = 4;
+    static final int UPPEREND = 5;
+    static final int DISTXAXISNAMES = 5;
+    static final int DISTYAXISNAMES = 5;
+    static final int FULLSCALE = 5;
+    static final int VERTSCALE = 5;
+    static final int VERTSCALE2 = 3;
+    static final int DIAGSCALE = 5;
+    static final int GRIDSCALE = 5;
+    static final int GRIDSCALE2 = 3;
+    static final int DOTSCALE = 5;
+    static final int DOTSCALE2 = 3;
+    static final int STAIRSCALE = 5;
+    static final int STAIRSCALE3 = 3;
+    static final int XTICKS1 = 6;
+    static final int DISTSECAXIS = 6;
+    static final int DISTDIAGONALS = 6;
+    static final int SCALESTAIRS = 7;
     static final int TEN = 10;
-    static final int ELEVEN = 11;
+    static final int XTICKS2 = 11;
     static final int FIFTEEN = 15;
-    static final int SIXTEEN = 16;
-    static final int TWENTY = 20;
-    static final int TWENTYONE = 21;
-    static final int THIRTY = 30;
-    static final int THIRTYFIVE = 35;
-    static final int SIXTY = 60;
+    static final int XTICKS3 = 16;
+    static final int XTICKSEND = 21;
+    static final int XTICKS4 = 5;
+    static final int XTICKS5 = 10;
+    static final int XTICKS6 = 15;
+    static final int XTICKSEND2 = 20;
+    // bar thickness on legend
+    static final int BAR = 30;
+    // min tick distance for x-axis
+    static final int MINXTICKDISTANCE = 30;
+    static final int SCALE2 = 35;
+    static final int SCALE1 = 60;
     static final double HMULT = 3;
     static final double TMULT = 2;
     static final double WMULT = 4;
@@ -88,6 +123,7 @@ abstract class AbstractPlotter<T extends Diagram> {
     static final double TICK2 = 5;
     static final double TICK3 = 7.5;
     static final double TICK4 = 10;
+    // tick distance for y-axis
     static final double YTICKDISTANCE = 30;
 
     /**
@@ -107,6 +143,15 @@ abstract class AbstractPlotter<T extends Diagram> {
         mYRange = Math.abs(mDiagram.getMaxY() - mDiagram.getMinY());
     }
 
+    /**
+     * Calculates the absolute x-value on the paper.
+     * @param x Value as in data.
+     * @return Calculated x-value.
+     */
+    double calculateXValue(final double x) {
+        double ratio = mXTickStep / (mScaleX[1] - mScaleX[0]);
+        return Math.abs(x / Math.pow(TEN, mScaleX[mScaleX.length - 1]) - mScaleX[0]) * ratio + mLeftMargin + mXTickStep;
+    }
 
     /**
      * Adds a point by its absolute x- and y-value to the floating point data.
@@ -123,7 +168,7 @@ abstract class AbstractPlotter<T extends Diagram> {
      * @return Integer array with an Integer for a tick in each field. Last field contains scale factor as power of 10.
      * @throws IllegalArgumentException If argument is neither "x", "y" nor "z".
      */
-    int[] scaleAxis(final String type) throws IllegalArgumentException {
+    double[] scaleAxis(final String type) throws IllegalArgumentException {
 
         double calcRange;
         double minimum;
@@ -132,23 +177,23 @@ abstract class AbstractPlotter<T extends Diagram> {
         switch (type) {
             case "x":
                 calcRange = mXRange;
-                numberTicks = mNumberXTicks;
+                mNumberTicks = mNumberXTicks;
                 minimum = mDiagram.getMinX();
-                startOrigin = false;
+                mStartOrigin = false;
                 name = "x-axis";
                 break;
             case "y":
                 calcRange = mYRange;
-                numberTicks = mNumberYTicks;
+                mNumberTicks = mNumberYTicks;
                 minimum = mDiagram.getMinY();
-                startOrigin = false;
+                mStartOrigin = false;
                 name = "y-axis";
                 break;
             case "z":
                 calcRange = mYRange;
-                numberTicks = mNumberXTicks;
+                mNumberTicks = mNumberXTicks;
                 minimum = mDiagram.getMinY();
-                startOrigin = true;
+                mStartOrigin = true;
                 name = "x-axis";
                 break;
             default:
@@ -156,71 +201,74 @@ abstract class AbstractPlotter<T extends Diagram> {
         }
 
         int range;
-        decimalPlaces = 0;
+        mDecimalPlaces = 0;
         double distance;
         boolean scaled = false;
-        singleDigit = false;
+        boolean negative = false;
+        mSingleDigit = false;
 
         if (calcRange > 1) {
             range = (int) Math.ceil(calcRange);
         } else {
-            decimalPlaces = (int) Math.floor(Math.log10(calcRange));
-            range = (int) (calcRange * Math.pow(TEN, -decimalPlaces));
+            mDecimalPlaces = (int) Math.floor(Math.log10(calcRange));
+            range = (int) (calcRange * Math.pow(TEN, -mDecimalPlaces));
             scaled = true;
         }
 
-        int[] array = new int[numberTicks + 1];
+        double[] array = new double[mNumberTicks + 1];
 
         double newMinimum = minimum;
-        if (minimum > 0 && startOrigin) {
+        if (minimum > 0 && mStartOrigin) {
             range += minimum;
             newMinimum = 0;
+        } else if (minimum < 0 && mStartOrigin) {
+            negative = true;
         }
 
 
         // converting range into int array
         String number = String.valueOf(range);
         String[] dummy = number.split("");
-        digits = new int[dummy.length];
+        mDigits = new int[dummy.length];
         for (int i = 0; i < dummy.length; i++) {
-            digits[i] = Integer.parseInt(dummy[i]);
+            mDigits[i] = Integer.parseInt(dummy[i]);
         }
 
-        len = digits.length;
+        mLen = mDigits.length;
         roundRange();
 
         // filling the array
-        if (startOrigin) {
-            distance = (double) newRange / (numberTicks);
-            for (int i = 0; i < numberTicks; i++) {
-                if (singleDigit) {
+        if (mStartOrigin && !negative) {
+            distance = (double) mNewRange / (mNumberTicks);
+            for (int i = 0; i < mNumberTicks; i++) {
+                if (mSingleDigit) {
                     if (distance != Math.round(distance)) {
-                        array[i] = (int) (((i + 1) * distance) / Math.pow(TEN, -1));
+                        array[i] = (((i + 1) * distance) / Math.pow(TEN, -1));
                     } else {
-                        array[i] = (int) ((i + 1) * distance);
+                        array[i] = ((i + 1) * distance);
                     }
                 } else {
                     if (distance != Math.round(distance)) {
-                        array[i] = (int) (((i + 1) * distance) / Math.pow(TEN, len - THREE));
+                        array[i] = (((i + 1) * distance) / Math.pow(TEN, mLen - THREE));
                     } else {
-                        array[i] = (int) (((i + 1) * distance) / Math.pow(TEN, len - 2));
+                        array[i] = (((i + 1) * distance) / Math.pow(TEN, mLen - 2));
                     }
                 }
             }
         } else {
-            distance = (double) newRange / (numberTicks - 1);
-            for (int i = 0; i < numberTicks; i++) {
-                if (singleDigit) {
+            distance = (double) mNewRange / (mNumberTicks - 1);
+            for (int i = 0; i < mNumberTicks; i++) {
+                if (mSingleDigit) {
                     if (distance != Math.round(distance)) {
-                        array[i] = (int) (((i * distance) + newMinimum * Math.pow(TEN, -decimalPlaces)) / Math.pow(TEN, -1));
+                        array[i] = (((i * distance) + newMinimum * Math.pow(TEN, -mDecimalPlaces)) / Math.pow(TEN, -1));
                     } else {
-                        array[i] = (int) ((i * distance) + newMinimum * Math.pow(TEN, -decimalPlaces));
+                        array[i] = ((i * distance) + newMinimum * Math.pow(TEN, -mDecimalPlaces));
                     }
                 } else {
                     if (distance != Math.round(distance)) {
-                        array[i] = (int) (((i * distance) + newMinimum * Math.pow(TEN, -decimalPlaces)) / Math.pow(TEN, len - THREE));
+                        array[i] = (((i * distance) + newMinimum * Math.pow(TEN, -mDecimalPlaces)) / Math.pow(TEN, mLen - THREE));
                     } else {
-                        array[i] = (int) (((i * distance) + newMinimum * Math.pow(TEN, -decimalPlaces)) / Math.pow(TEN, len - 2));
+                        array[i] = (((i * distance) + newMinimum * Math.pow(TEN, -mDecimalPlaces)) / Math.pow(TEN, mLen - 2));
                     }
                 }
             }
@@ -228,21 +276,21 @@ abstract class AbstractPlotter<T extends Diagram> {
 
         // power of 10 which is used to scale; for legend
         if (scaled) {
-            array[numberTicks] = decimalPlaces;
-        } else if (singleDigit) {
+            array[mNumberTicks] = mDecimalPlaces;
+        } else if (mSingleDigit) {
             if (distance != Math.round(distance)) {
-                array[numberTicks] = -1;
+                array[mNumberTicks] = -1;
             } else {
-                array[numberTicks] = decimalPlaces;
+                array[mNumberTicks] = mDecimalPlaces;
             }
         } else if (distance != Math.round(distance)) {
-            array[numberTicks] = len - THREE;
+            array[mNumberTicks] = mLen - THREE;
         } else {
-            array[numberTicks] = len - 2;
+            array[mNumberTicks] = mLen - 2;
         }
 
         for (int i = 0; i < array.length; i++) {
-            mLegend.addSymbolExplanation(name, Integer.toString(i), Integer.toString(array[i]));
+            mLegend.addSymbolExplanation(name, Integer.toString(i), Integer.toString((int) array[i]));
         }
 
         return array;
@@ -253,81 +301,61 @@ abstract class AbstractPlotter<T extends Diagram> {
      * Rounds the range so that the second digit is either 0 or 5 and all following digits are 0.
      */
     private void roundRange() {
-        if ((startOrigin && numberTicks == FIFTEEN) || (!startOrigin && numberTicks == SIXTEEN)) {
-            if (len == 1) {
-                newRange = digits[0] * TEN;
-                singleDigit = true;
-                decimalPlaces--;
+        if ((mStartOrigin && mNumberTicks == FIFTEEN) || (!mStartOrigin && mNumberTicks == XTICKS3)) {
+            if (mLen == 1) {
+                mNewRange = mDigits[0] * TEN;
+                mSingleDigit = true;
+                mDecimalPlaces--;
             } else {
-                newRange = digits[0] * TEN + digits[1];
+                mNewRange = mDigits[0] * TEN + mDigits[1];
             }
-            newRange = closestNumber(newRange, FIFTEEN);
-            if (len > 2) {
-                for (int i = 2; i < len; i++) {
-                    newRange = newRange * TEN;
+            mNewRange = closestNumber(mNewRange, FIFTEEN);
+            if (mLen > 2) {
+                for (int i = 2; i < mLen; i++) {
+                    mNewRange = mNewRange * TEN;
                 }
             }
         } else {
 
             // rounding
-            if (len == 1) {
-                if (digits[0] <= FIVE) {
-                    newRange = FIVE;
-                    singleDigit = true;
+            if (mLen == 1) {
+                if (mDigits[0] <= UPPEREND) {
+                    mNewRange = UPPEREND;
+                    mSingleDigit = true;
                 } else {
-                    newRange = TEN;
-                    len = 2;
+                    mNewRange = TEN;
+                    mLen = 2;
                 }
             } else {
-                if (digits[1] < 2) {
-                    digits[1] = 0;
-                    if (len > 2) {
-                        for (int i = 2; i < len; i++) {
-                            digits[i] = 0;
+                if (mDigits[1] < 2) {
+                    mDigits[1] = 0;
+                    if (mLen > 2) {
+                        for (int i = 2; i < mLen; i++) {
+                            mDigits[i] = 0;
                         }
                     }
-                } else if (digits[1] < FIVE) {
-                    digits[1] = FIVE;
-                    if (len > 2) {
-                        for (int i = 2; i < len; i++) {
-                            digits[i] = 0;
+                } else if (mDigits[1] < UPPEREND) {
+                    mDigits[1] = UPPEREND;
+                    if (mLen > 2) {
+                        for (int i = 2; i < mLen; i++) {
+                            mDigits[i] = 0;
                         }
                     }
                 } else {
-                    digits[0]++;
-                    for (int i = 1; i < len; i++) {
-                        digits[i] = 0;
+                    mDigits[0]++;
+                    for (int i = 1; i < mLen; i++) {
+                        mDigits[i] = 0;
                     }
                 }
 
                 // converting back to number value
-                newRange = 0;
-                for (int i = 0; i < len; i++) {
-                    newRange = (int) (newRange + digits[i] * Math.pow(TEN, len - i - 1));
+                mNewRange = 0;
+                for (int i = 0; i < mLen; i++) {
+                    mNewRange = (int) (mNewRange + mDigits[i] * Math.pow(TEN, mLen - i - 1));
                 }
 
             }
         }
-    }
-
-    /**
-     * Calculates the absolute x-value on the paper.
-     * @param x Value as in data.
-     * @return Calculated x-value.
-     */
-    double calculateXValue(final double x) {
-        double ratio = mXTickStep / (mScaleX[1] - mScaleX[0]);
-        return (x / Math.pow(TEN, mScaleX[mScaleX.length - 1]) - mScaleX[0]) * ratio + mLeftMargin + mXTickStep;
-    }
-
-    /**
-     * Calculates the absolute y-value on the paper.
-     * @param y Value as in data.
-     * @return Calculated y-value.
-     */
-    double calculateYValue(final double y) {
-        double ratio = mYTickStep / (mScaleY[1] - mScaleY[0]);
-        return mBottomMargin - mYTickStep - (y / Math.pow(TEN, mScaleY[mScaleY.length - 1]) - mScaleY[0]) * ratio;
     }
 
     /**
@@ -358,11 +386,12 @@ abstract class AbstractPlotter<T extends Diagram> {
 
     /**
      * Names the axis ticks on x-axis.
+     * @throws InsufficientRenderingAreaException If a translation error occurs.
      */
-    void nameXAxis() {
+    void nameXAxis() throws InsufficientRenderingAreaException {
 
         mSymbols = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-        double startY = mBottomMargin + mCanvas.getCellDistVer() + FIVE * mStepSize;
+        double startY = mBottomMargin + mCanvas.getCellDistVer() + DISTXAXISNAMES * mStepSize;
         double height = mCanvas.getCellHeight();
         double width = mCanvas.getCellWidth();
 
@@ -371,7 +400,7 @@ abstract class AbstractPlotter<T extends Diagram> {
         if (mAxesDerivation) {
             for (int i = 0; i < mNumberXTicks; i++) {
                 Rectangle rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - mCanvas.getCellDistHor() / 2, startY, width, height);
-                BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect);
+                BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                 tplotter.plot(text, mCanvas);
             }
         } else {
@@ -385,7 +414,7 @@ abstract class AbstractPlotter<T extends Diagram> {
                     rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - width - mCanvas.getCellDistHor() - width / 2, startY, width, height);
 
                 }
-                BrailleText text = new BrailleText(Integer.toString(mScaleX[i]), rect);
+                BrailleText text = new BrailleText(Integer.toString((int) mScaleX[i]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                 tplotter.plot(text, mCanvas);
             }
         }
@@ -393,15 +422,17 @@ abstract class AbstractPlotter<T extends Diagram> {
 
     /**
      * Puts the title above the diagram.
+     * @throws InsufficientRenderingAreaException If a translation error occurs.
      */
-    void nameTitle() {
+    void nameTitle() throws InsufficientRenderingAreaException {
 
         int k = 0;
         double height = mCanvas.getCellHeight();
         double width = mCanvas.getCellWidth();
         double stepHor = width + mCanvas.getCellDistHor();
         double stepVer = height + mCanvas.getCellDistVer();
-        char[] title = "Dummykasfjkasuhfksa sdfhsdfbsdhaf".toCharArray();
+        //char[] title = mDiagram.getTitle().toCharArray();
+        char[] title = "dummy".toCharArray();
 
         LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
 
@@ -425,7 +456,7 @@ abstract class AbstractPlotter<T extends Diagram> {
                     }
 
                     Rectangle rect = new Rectangle(j, mCanvas.getDotDistVer() + i * stepVer, width, height);
-                    BrailleText text = new BrailleText(Character.toString(title[k]), rect);
+                    BrailleText text = new BrailleText(Character.toString(title[k]), rect, BrailleLanguage.Language.DE_KURZSCHRIFT);
                     k++;
                     j = tplotter.plot(text, mCanvas);
                 } else {
@@ -472,7 +503,8 @@ abstract class AbstractPlotter<T extends Diagram> {
 
     /**
      * Names the y-axis.
+     * @throws InsufficientRenderingAreaException If a translation error occurs.
      */
-    abstract void nameYAxis();
+    abstract void nameYAxis() throws InsufficientRenderingAreaException;
 
 }

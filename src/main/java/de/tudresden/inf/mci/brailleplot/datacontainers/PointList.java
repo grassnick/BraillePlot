@@ -26,6 +26,6 @@ public interface PointList extends PointContainer<Point2DDouble>, Named {
      * @return The next point.
      * @throws NoSuchElementException If no corresponding y-value was found.
      */
-    Point2DDouble getFirstXOccurence(final double xValue);
+    Point2DDouble getFirstXOccurence(double xValue) throws NoSuchElementException;
 
 }

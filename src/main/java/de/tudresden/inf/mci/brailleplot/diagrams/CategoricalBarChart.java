@@ -2,7 +2,6 @@ package de.tudresden.inf.mci.brailleplot.diagrams;
 
 import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 
 import java.util.Iterator;
@@ -57,8 +56,7 @@ public class CategoricalBarChart extends BarChart {
      * @return double maximum y-value
      */
     public double getCumulatedMaxY() {
-        double current;
-        double maxY = 0;
+        double current = 0;
 
         for (PointList list : mData) {
             Iterator<Point2DDouble> smallIt = list.getListIterator();
@@ -69,11 +67,8 @@ public class CategoricalBarChart extends BarChart {
                     current += point.getY();
                 }
             }
-            if (current > maxY) {
-                maxY = current;
-            }
         }
 
-        return maxY;
+        return current;
     }
 }
