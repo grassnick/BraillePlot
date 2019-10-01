@@ -19,10 +19,10 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
     private static final int X_AXIS_WIDTH = 2; // Minimum width of the x axis [cells]
     private static final int Y_AXIS_WIDTH = 3; // Minimum width of the y axis [cells]
-    private static final int TOKEN_AXIS_OFFSET = 1; // Offset of actual plotting area to axis [dots]
-    private static final int X_AXIS_STEP_WIDTH = 4; // The distance between two tick marks on the x axis [dots]
-    private static final int Y_AXIS_STEP_WIDTH = 6; // The distance between two tick marks on the y axis [dots]
-    private static final int AXIS_TICK_SIZE = 1; // The size of the ticks on the axis
+    private static final int TOKEN_AXIS_OFFSET = 1; // Offset of actual plotting area to axis, increased to match cell size [dots]
+    private static final int X_AXIS_STEP_WIDTH = 2; // The distance between two tick marks on the x axis [cells]
+    private static final int Y_AXIS_STEP_WIDTH = 2; // The distance between two tick marks on the y axis [cells]
+    private static final int AXIS_TICK_SIZE = 1; // The length of the ticks on the axis [dots]
 
     private static final Logger mLogger = LoggerFactory.getLogger(ScatterPlotRasterizer.class);
 
@@ -38,6 +38,8 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         MatrixData<Boolean> mat = canvas.getCurrentPage();
         final int cellWidth = canvas.getCellWidth();
         final int cellHeight = canvas.getCellHeight();
+        final int xAxisStepWidth = cellWidth * X_AXIS_STEP_WIDTH;
+        final int yAxisStepWidth = cellHeight * Y_AXIS_STEP_WIDTH;
         final String title = "I am a Scatter plot beep beep.";
 
 
@@ -47,7 +49,6 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
         Rectangle titleArea;
         BrailleText diagramTitle;
-        BrailleText xAxisLabel, yAxisLabel;
 
         // 1.a Reserve space for diagram title
         LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(canvas.getPrinter());
@@ -70,8 +71,8 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         // 2.a Reserve space for axis
         Rectangle xAxisArea, yAxisArea;
         try {
-            int xAxisHeight = toWholeCells(X_AXIS_WIDTH * cellHeight, cellHeight);
-            int yAxisWidth = toWholeCells(Y_AXIS_WIDTH * cellWidth, cellWidth);
+            int xAxisHeight = X_AXIS_WIDTH * cellHeight;
+            int yAxisWidth = Y_AXIS_WIDTH * cellWidth;
             xAxisArea = printableArea.removeFromBottom(xAxisHeight);
             yAxisArea = printableArea.removeFromLeft(yAxisWidth);
             xAxisArea.removeFromLeft(yAxisWidth);
@@ -89,9 +90,8 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
         // 2.c Initialize axis+
         final Rectangle.IntWrapper printableAreaInt = printableArea.intWrapper();
-        //Axis xAxis = new Axis(Axis.Type.X_AXIS, printableAreaInt.getX(), xAxisArea.intWrapper().getY(), X_AXIS_STEP_WIDTH, toWholeCells(AXIS_TICK_SIZE, cellHeight) - 1);
-        Axis xAxis = new Axis(Axis.Type.X_AXIS, printableAreaInt.getX(), xAxisArea.intWrapper().getY(), X_AXIS_STEP_WIDTH, AXIS_TICK_SIZE);
-        Axis yAxis = new Axis(Axis.Type.Y_AXIS, yAxisArea.intWrapper().getRight(), printableAreaInt.getBottom(), Y_AXIS_STEP_WIDTH, -AXIS_TICK_SIZE);
+        Axis xAxis = new Axis(Axis.Type.X_AXIS, printableAreaInt.getX(), xAxisArea.intWrapper().getY(), xAxisStepWidth, AXIS_TICK_SIZE);
+        Axis yAxis = new Axis(Axis.Type.Y_AXIS, yAxisArea.intWrapper().getRight(), printableAreaInt.getBottom(), yAxisStepWidth, -AXIS_TICK_SIZE);
         xAxis.setBoundary(xAxisArea);
         yAxis.setBoundary(yAxisArea);
 
@@ -147,20 +147,20 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
         Map<Integer, String> xAxisLabels = new HashMap<>();
         xAxis.setLabels(xAxisLabels);
-        final int xAxisTickCount = xDots / X_AXIS_STEP_WIDTH;
+        final int xAxisTickCount = xDots / xAxisStepWidth;
         for (int x = 0; x < xAxisTickCount; x += 1) {
             xAxisLabels.put(x, String.valueOf(label));
-            double val = x * X_AXIS_STEP_WIDTH * xRatio;
+            double val = x * xAxisStepWidth * xRatio;
             legendSymbols.put(String.valueOf(label), String.valueOf(val));
             label++;
         }
 
         Map<Integer, String> yAxisLabels = new HashMap<>();
         yAxis.setLabels(yAxisLabels);
-        final int yAxisTickCount = yDots / Y_AXIS_STEP_WIDTH;
+        final int yAxisTickCount = yDots / yAxisStepWidth;
         for (int y = 0; y < yAxisTickCount; y += 1) {
             yAxisLabels.put(y, String.valueOf(label));
-            double val = y * Y_AXIS_STEP_WIDTH * yRatio;
+            double val = y * yAxisStepWidth * yRatio;
             legendSymbols.put(String.valueOf(label), String.valueOf(val));
             label++;
         }
