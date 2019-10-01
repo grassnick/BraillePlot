@@ -20,8 +20,8 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
     private static final int X_AXIS_WIDTH = 2; // Minimum width of the x axis [cells]
     private static final int Y_AXIS_WIDTH = 3; // Minimum width of the y axis [cells]
     private static final int TOKEN_AXIS_OFFSET = 1; // Offset of actual plotting area to axis, increased to match cell size [dots]
-    private static final int X_AXIS_STEP_WIDTH = 2; // The distance between two tick marks on the x axis [cells]
-    private static final int Y_AXIS_STEP_WIDTH = 2; // The distance between two tick marks on the y axis [cells]
+    private static final int X_AXIS_STEP_WIDTH = 3; // The distance between two tick marks on the x axis [cells]
+    private static final int Y_AXIS_STEP_WIDTH = 3; // The distance between two tick marks on the y axis [cells]
     private static final int AXIS_TICK_SIZE = 1; // The length of the ticks on the axis [dots]
 
     private static final Logger mLogger = LoggerFactory.getLogger(ScatterPlotRasterizer.class);
@@ -40,7 +40,11 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         final int cellHeight = canvas.getCellHeight();
         final int xAxisStepWidth = cellWidth * X_AXIS_STEP_WIDTH;
         final int yAxisStepWidth = cellHeight * Y_AXIS_STEP_WIDTH;
+
         final String title = "I am a Scatter plot beep beep.";
+        final String legendTitle = "Legende";
+        final String xAxisLegendGroupName = "x-Achse";
+        final String yAxisLegendGroupName = "y-Achse";
 
 
         Rectangle completeArea = canvas.getCellRectangle();
@@ -137,13 +141,13 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         }
 
         // 4. Add tick mark labels to axis and to legend
-        Legend legend = new Legend("Legend FooBar");
-
-        Map<String, String> legendSymbols = new HashMap<>();
-        legend.addSymbolExplanationGroup("Group FooBar", legendSymbols);
         LinearMappingAxisRasterizer axisRasterizer = new LinearMappingAxisRasterizer();
-
+        Legend legend = new Legend(legendTitle);
         char label = 'a';
+
+        // X axis
+        Map<String, String> xAxisLegendSymbols = new HashMap<>();
+        legend.addSymbolExplanationGroup(xAxisLegendGroupName, xAxisLegendSymbols);
 
         Map<Integer, String> xAxisLabels = new HashMap<>();
         xAxis.setLabels(xAxisLabels);
@@ -151,9 +155,13 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         for (int x = 0; x < xAxisTickCount; x += 1) {
             xAxisLabels.put(x, String.valueOf(label));
             double val = x * xAxisStepWidth * xRatio;
-            legendSymbols.put(String.valueOf(label), String.valueOf(val));
+            xAxisLegendSymbols.put(String.valueOf(label), String.valueOf(val));
             label++;
         }
+
+        // Y axis
+        Map<String, String> yAxisLegendSymbols = new HashMap<>();
+        legend.addSymbolExplanationGroup(yAxisLegendGroupName, yAxisLegendSymbols);
 
         Map<Integer, String> yAxisLabels = new HashMap<>();
         yAxis.setLabels(yAxisLabels);
@@ -161,7 +169,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         for (int y = 0; y < yAxisTickCount; y += 1) {
             yAxisLabels.put(y, String.valueOf(label));
             double val = y * yAxisStepWidth * yRatio;
-            legendSymbols.put(String.valueOf(label), String.valueOf(val));
+            yAxisLegendSymbols.put(String.valueOf(label), String.valueOf(val));
             label++;
         }
 
