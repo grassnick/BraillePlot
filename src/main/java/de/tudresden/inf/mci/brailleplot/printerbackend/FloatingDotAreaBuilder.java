@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Objects;
 
 import static tec.units.ri.unit.Units.METRE;
@@ -67,11 +68,11 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<SimpleFloatingPointD
                 Point2DValued<Quantity<Length>, Boolean> current = iter.next();
                 Quantity<Length> x = current.getX().to(MetricPrefix.MILLI(METRE));
                 Quantity<Length> y = current.getY().to(MetricPrefix.MILLI(METRE));
-                String xString = String.format("%.2f", x.getValue().doubleValue()).replace(',','.');
-                String yString = String.format("%.2f", y.getValue().doubleValue()).replace(',','.');
-                stream.write(xString.getBytes());
+                String xFormated = String.format(Locale.ENGLISH, "%.2f", x.getValue().doubleValue());
+                String yFormated = String.format(Locale.ENGLISH, "%.2f", x.getValue().doubleValue());
+                stream.write(xFormated.getBytes());
                 stream.write(mColon);
-                stream.write(yString.getBytes());
+                stream.write(yFormated.getBytes());
                 //stream.write(y.floatValue());
                 if (iter.hasNext()) {
                     stream.write(mNewLine);
