@@ -11,14 +11,18 @@ import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
-    private static final int AXIS_WIDTH = 2; // Minimum width of an axis, is automatically increased to match a multiple of cell size [cells]
+    private static final int X_AXIS_WIDTH = 2; // Minimum width of the x axis [cells]
+    private static final int Y_AXIS_WIDTH = 3; // Minimum width of the y axis [cells]
     private static final int TOKEN_AXIS_OFFSET = 1; // Offset of actual plotting area to axis [dots]
-    private static final double AXIS_STEP_WIDTH = 1.0;
-    private static final int AXIS_TICK_SIZE = 1; // The size of the ticks on the axis increased to match a multiple of cell size [dots]
+    private static final int X_AXIS_STEP_WIDTH = 4; // The distance between two tick marks on the x axis [dots]
+    private static final int Y_AXIS_STEP_WIDTH = 6; // The distance between two tick marks on the y axis [dots]
+    private static final int AXIS_TICK_SIZE = 1; // The size of the ticks on the axis
 
     private static final Logger mLogger = LoggerFactory.getLogger(ScatterPlotRasterizer.class);
 
@@ -65,13 +69,12 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
         // 2.a Reserve space for axis
         Rectangle xAxisArea, yAxisArea;
-        Rectangle xAxisBoundary, yAxisBoundary;
         try {
-            // Do not remove xAxis area immediately, so that both axis overlap in the bottom left corner
-            int xAxisHeight = toWholeCells(AXIS_WIDTH * cellHeight, cellHeight);
-            xAxisArea = printableArea.fromBottom(xAxisHeight);
-            yAxisArea = printableArea.removeFromLeft(toWholeCells(AXIS_WIDTH * cellWidth, cellWidth));
-            printableArea.removeFromBottom(xAxisHeight);
+            int xAxisHeight = toWholeCells(X_AXIS_WIDTH * cellHeight, cellHeight);
+            int yAxisWidth = toWholeCells(Y_AXIS_WIDTH * cellWidth, cellWidth);
+            xAxisArea = printableArea.removeFromBottom(xAxisHeight);
+            yAxisArea = printableArea.removeFromLeft(yAxisWidth);
+            xAxisArea.removeFromLeft(yAxisWidth);
         } catch (Exception e) {
             throw new InsufficientRenderingAreaException("Not enough space to construct axis layout", e);
         }
@@ -86,27 +89,13 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
         // 2.c Initialize axis+
         final Rectangle.IntWrapper printableAreaInt = printableArea.intWrapper();
-        Axis xAxis = new Axis(Axis.Type.X_AXIS, printableAreaInt.getX(), xAxisArea.intWrapper().getY(), AXIS_STEP_WIDTH, toWholeCells(AXIS_TICK_SIZE, cellHeight) - 1);
-        Axis yAxis = new Axis(Axis.Type.Y_AXIS, yAxisArea.intWrapper().getRight(), printableAreaInt.getBottom(), AXIS_STEP_WIDTH, -1 * (toWholeCells(AXIS_TICK_SIZE, cellWidth) - 1));
+        //Axis xAxis = new Axis(Axis.Type.X_AXIS, printableAreaInt.getX(), xAxisArea.intWrapper().getY(), X_AXIS_STEP_WIDTH, toWholeCells(AXIS_TICK_SIZE, cellHeight) - 1);
+        Axis xAxis = new Axis(Axis.Type.X_AXIS, printableAreaInt.getX(), xAxisArea.intWrapper().getY(), X_AXIS_STEP_WIDTH, AXIS_TICK_SIZE);
+        Axis yAxis = new Axis(Axis.Type.Y_AXIS, yAxisArea.intWrapper().getRight(), printableAreaInt.getBottom(), Y_AXIS_STEP_WIDTH, -AXIS_TICK_SIZE);
         xAxis.setBoundary(xAxisArea);
         yAxis.setBoundary(yAxisArea);
 
-        LinearMappingAxisRasterizer axisRasterizer = new LinearMappingAxisRasterizer();
-
-        // 3. Print layout if needed, else render title and axis
-        final boolean printLayout = false;
-        if (!printLayout) {
-            textRasterizer.rasterize(diagramTitle, canvas);
-            axisRasterizer.rasterize(xAxis, canvas);
-            axisRasterizer.rasterize(yAxis, canvas);
-        } else {
-            Rasterizer.rectangle(titleArea, mat, true);
-            Rasterizer.rectangle(xAxisArea, mat, true);
-            Rasterizer.rectangle(yAxisArea, mat, true);
-        }
-        Rasterizer.rectangle(printableArea, mat, true);
-
-        // 4. Actual scatter plot
+        // 3. Actual scatter plot
         Rectangle plotArea = printableArea;
 
         int xDots = plotArea.intWrapper().getWidth();
@@ -140,12 +129,58 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
                     throw new RuntimeException("Calculated position not in bounds: (" + x + "," + y + "), (" + xDots + "," + yDots + ")");
                 }
 
-                final int xGlobal = xOrigin + x;
-                final int yGlobal = yOrigin - y;
+                final int xGlobal = xOrigin + x - 1;
+                final int yGlobal = yOrigin - y + 1;
                 mLogger.debug("Placing token at local: ({},{}), global: ({},{}) for data point: ({},{})", x, y, xGlobal, yGlobal, p.getX(), p.getY());
                 mat.setValue(yGlobal, xGlobal, true);
             }
         }
+
+        // 4. Add tick mark labels to axis and to legend
+        Legend legend = new Legend("Legend FooBar");
+
+        Map<String, String> legendSymbols = new HashMap<>();
+        legend.addSymbolExplanationGroup("Group FooBar", legendSymbols);
+        LinearMappingAxisRasterizer axisRasterizer = new LinearMappingAxisRasterizer();
+
+        char label = 'a';
+
+        Map<Integer, String> xAxisLabels = new HashMap<>();
+        xAxis.setLabels(xAxisLabels);
+        final int xAxisTickCount = xDots / X_AXIS_STEP_WIDTH;
+        for (int x = 0; x < xAxisTickCount; x += 1) {
+            xAxisLabels.put(x, String.valueOf(label));
+            double val = x * X_AXIS_STEP_WIDTH * xRatio;
+            legendSymbols.put(String.valueOf(label), String.valueOf(val));
+            label++;
+        }
+
+        Map<Integer, String> yAxisLabels = new HashMap<>();
+        yAxis.setLabels(yAxisLabels);
+        final int yAxisTickCount = yDots / Y_AXIS_STEP_WIDTH;
+        for (int y = 0; y < yAxisTickCount; y += 1) {
+            yAxisLabels.put(y, String.valueOf(label));
+            double val = y * Y_AXIS_STEP_WIDTH * yRatio;
+            legendSymbols.put(String.valueOf(label), String.valueOf(val));
+            label++;
+        }
+
+        // 5. Print layout if needed, else render title and axis
+        final boolean printLayout = false;
+        if (!printLayout) {
+            textRasterizer.rasterize(diagramTitle, canvas);
+            axisRasterizer.rasterize(xAxis, canvas);
+            axisRasterizer.rasterize(yAxis, canvas);
+        } else {
+            Rasterizer.rectangle(titleArea, mat, true);
+            Rasterizer.rectangle(xAxisArea, mat, true);
+            Rasterizer.rectangle(yAxisArea, mat, true);
+            Rasterizer.rectangle(printableArea, mat, true);
+        }
+
+        // 6. Render the legend
+        LegendRasterizer legendRasterizer = new LegendRasterizer();
+        legendRasterizer.rasterize(legend, canvas);
     }
 
     private static int toWholeCells(final int dots, final int cellDots) {
