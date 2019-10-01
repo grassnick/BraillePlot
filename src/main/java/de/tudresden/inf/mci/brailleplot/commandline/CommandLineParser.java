@@ -6,6 +6,10 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
+
 /**
  * Performs command line parsing and creates a {@link Settings} object.
  * @author Georg Graßnick, Andrey Ruzhanskiy, Leonard Kupper

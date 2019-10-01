@@ -10,7 +10,6 @@ public enum SettingType {
     DISPLAY_HELP("help"),
     CSV_LOCATION("csv-path"),
     PRINTER_CONFIG_PATH("printer-config-path"),
-    SEMANTIC_MAPPING("semantic-mapping"),
     DIAGRAM_TITLE("title"),
     X_AXIS_LABEL("xLabel"),
     Y_AXIS_LABEL("yLabel"),
@@ -36,8 +35,6 @@ public enum SettingType {
                 return  CSV_LOCATION;
             case "printer-config-path":
                 return PRINTER_CONFIG_PATH;
-            case "semantic-mapping":
-                return SEMANTIC_MAPPING;
             case "title":
                 return DIAGRAM_TITLE;
             case "xLabel":

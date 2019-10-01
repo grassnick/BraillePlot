@@ -16,7 +16,7 @@ class CommandLineParserTest {
 
     @Test
     void testParseLegalArgs() {
-        String[] args = {"-h", "--csv-path", "foobar"};
+        String[] args = {"-h ", "--csv-path", "foobar", "-p", "test", "-t", "title", "-x", "x-axis", "-y", "y-axis", "-d", "BarChart"};
         Assertions.assertDoesNotThrow(() -> {commandLineParser.parse(args);});
     }
 
