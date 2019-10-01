@@ -16,7 +16,7 @@ public enum SettingType {
     Y_AXIS_LABEL("yLabel"),
     DIAGRAM_TYPE("diagram-type"),
     FORMAT("format"),
-    VERTICAL("vertical");
+    VERTICAL_CSV("vertical-csv");
 
     private final String mName;
 
@@ -44,8 +44,8 @@ public enum SettingType {
                 return DIAGRAM_TYPE;
             case "format":
                 return FORMAT;
-            case "vertical":
-                return VERTICAL;
+            case "vertical-csv":
+                return VERTICAL_CSV;
             default:
                 throw new IllegalArgumentException("Setting not available");
         }

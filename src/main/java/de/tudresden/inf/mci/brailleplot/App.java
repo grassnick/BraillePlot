@@ -207,7 +207,7 @@ public final class App {
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
             Diagram diagram;
             CsvOrientation csvOrientation;
-            if (settingsReader.isTrue(SettingType.VERTICAL).orElse(false)) {
+            if (settingsReader.isTrue(SettingType.VERTICAL_CSV).orElse(false)) {
                 csvOrientation = CsvOrientation.VERTICAL;
             } else {
                 csvOrientation = CsvOrientation.HORIZONTAL;

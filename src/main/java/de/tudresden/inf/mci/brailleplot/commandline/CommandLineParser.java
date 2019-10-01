@@ -30,7 +30,7 @@ public class CommandLineParser {
                 .addRequiredOption("y", SettingType.Y_AXIS_LABEL.toString(), true, "Label of Y-axis including unit")
                 .addRequiredOption("d", SettingType.DIAGRAM_TYPE.toString(), true, "Type of the diagram. Possible Values: [ScatterPlot, LineChart, BarChart]")
                 .addOption("f", SettingType.FORMAT.toString(), true, "Name of predefined format from configuration")
-                .addOption("v", SettingType.VERTICAL.toString(), false, "Parse CSV in vertical instead of horizontal orientation (Only applicable for BarChart)");
+                .addOption("v", SettingType.VERTICAL_CSV.toString(), false, "Parse CSV in vertical instead of horizontal orientation (Only applicable for BarChart)");
     }
 
     /**
