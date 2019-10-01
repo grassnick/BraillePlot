@@ -89,6 +89,19 @@ public class PrintDirector {
         print(result);
     }
 
+    @SuppressWarnings("unchecked")
+    public byte[] textDump(PrintableData data) {
+        mLogger.info("starting with textdump process.");
+        byte[] result;
+        try {
+            mLogger.trace("assembling the data according to protocol: {}.", mBuilder.getClass().getCanonicalName());
+            result = mBuilder.assemble(data);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+        mLogger.info("Finished with creating textdump.");
+        return result;
+    }
     /**
      * Method for setting up the DocFlavor for printing. Currently, not parameterised because the printer can
      * (hopefully) understand raw bytes with an octet stream.
