@@ -1,6 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.configparser;
 
 
+import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 import de.tudresden.inf.mci.brailleplot.util.GeneralResource;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 import org.slf4j.Logger;
@@ -76,6 +77,8 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
 
         // Definition of valid representation properties
         defineRepresentationProperty("general.nonexistentDataText", requireNotEmpty);
+        defineRepresentationProperty("general.brailleLanguage", requireNotEmpty);
+        defineRepresentationProperty("general.legendKeyword", requireNotEmpty);
         defineRepresentationProperty("general.maxTitleHeight", requireInteger.and(requirePositive).and(requireNonZero));
         defineRepresentationProperty("rasterize.barChart.maxBarThickness", requireInteger.and(requirePositive));
         defineRepresentationProperty("rasterize.barChart.minBarThickness", requireInteger.and(requirePositive));
@@ -105,6 +108,9 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
                 case "brailletable":
                 case "semantictable":
                     return new GeneralResource(value, mSearchPath).getResourcePath();
+                case "general.brailleLanguage":
+                    BrailleLanguage.Language language = BrailleLanguage.Language.valueOf(value.toUpperCase());
+                    return language.toString();
                 default: return value;
             }
         } catch (Exception e) {
