@@ -16,7 +16,11 @@ public enum SettingType {
     Y_AXIS_LABEL("yLabel"),
     DIAGRAM_TYPE("diagram-type"),
     FORMAT("format"),
-    VERTICAL_CSV("vertical-csv");
+    VERTICAL_CSV("vertical-csv"),
+    INHIBIT_PRINT("inhibit-print"),
+    SVG_EXPORT("svg-export"),
+    BYTE_DUMP("byte-dump");
+
 
     private final String mName;
 
@@ -46,6 +50,10 @@ public enum SettingType {
                 return FORMAT;
             case "vertical-csv":
                 return VERTICAL_CSV;
+            case "inhibit-print":
+                return INHIBIT_PRINT;
+            case "svg-export":
+                return SVG_EXPORT;
             default:
                 throw new IllegalArgumentException("Setting not available");
         }
