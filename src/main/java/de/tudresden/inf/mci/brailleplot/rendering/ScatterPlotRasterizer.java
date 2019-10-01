@@ -15,10 +15,11 @@ import java.util.Objects;
 
 public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
-    private static final int AXIS_WIDTH = 4; // Minimum width of an axis, is automatically increased to match a multiple of cell size [dots]
+    private static final int AXIS_WIDTH = 2; // Minimum width of an axis, is automatically increased to match a multiple of cell size [cells]
     private static final int TOKEN_AXIS_OFFSET = 1; // Offset of actual plotting area to axis [dots]
+    private static final double AXIS_STEP_WIDTH = 1.0;
+    private static final int AXIS_TICK_SIZE = 1; // The size of the ticks on the axis increased to match a multiple of cell size [dots]
 
-    //private PointListContainer<PointList> mContainer;
     private static final Logger mLogger = LoggerFactory.getLogger(ScatterPlotRasterizer.class);
 
     public ScatterPlotRasterizer() {
@@ -35,8 +36,6 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         final int cellHeight = canvas.getCellHeight();
         final String title = "I am a Scatter plot beep beep.";
 
-        LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(canvas.getPrinter());
-        LinearMappingAxisRasterizer axisRasterizer = new LinearMappingAxisRasterizer();
 
         Rectangle completeArea = canvas.getCellRectangle();
         completeArea = completeArea.scaledBy(cellWidth, cellHeight);
@@ -44,30 +43,40 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
         Rectangle titleArea;
         BrailleText diagramTitle;
-        Rectangle xAxisArea, yAxisArea;
         BrailleText xAxisLabel, yAxisLabel;
 
-        // 1. Reserve space for diagram title
+        // 1.a Reserve space for diagram title
+        LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(canvas.getPrinter());
+
         try {
-            printableArea.removeFromRight(2);
-            int titleBarHeight = textRasterizer.calculateRequiredHeight(title, printableArea.intWrapper().getWidth(), canvas) + cellHeight;
-            titleArea = printableArea.removeFromTop(titleBarHeight);
-            diagramTitle = new BrailleText(title, titleArea.scaledBy(cellWidth, cellHeight));
-            // TODO check if space is exceeded
+            //printableArea.removeFromRight(cellWidth);
+            int titleBarHeight = textRasterizer.calculateRequiredHeight(title, printableArea.intWrapper().getWidth(), canvas);
+            titleArea = printableArea.removeFromTop(titleBarHeight * cellHeight);
+
+            // Spacing
+            printableArea.removeFromTop(cellHeight);
         } catch (final Rectangle.OutOfSpaceException e) {
             throw new InsufficientRenderingAreaException("Not enough space to construct title layout", e);
         }
 
-        // 2. Reserve space for axis
+        // 1.b Initialize diagram title
+        diagramTitle = new BrailleText(title, titleArea.scaledBy(cellWidth, cellHeight));
+
+
+        // 2.a Reserve space for axis
+        Rectangle xAxisArea, yAxisArea;
+        Rectangle xAxisBoundary, yAxisBoundary;
         try {
-            xAxisArea = printableArea.removeFromBottom(toWholeCells(AXIS_WIDTH, cellHeight));
-            yAxisArea = printableArea.removeFromLeft(toWholeCells(AXIS_WIDTH, cellWidth));
-            xAxisArea.removeFromLeft(yAxisArea.getWidth());
+            // Do not remove xAxis area immediately, so that both axis overlap in the bottom left corner
+            int xAxisHeight = toWholeCells(AXIS_WIDTH * cellHeight, cellHeight);
+            xAxisArea = printableArea.fromBottom(xAxisHeight);
+            yAxisArea = printableArea.removeFromLeft(toWholeCells(AXIS_WIDTH * cellWidth, cellWidth));
+            printableArea.removeFromBottom(xAxisHeight);
         } catch (Exception e) {
-            throw new InsufficientRenderingAreaException("Not enough space to construct axis label layout", e);
+            throw new InsufficientRenderingAreaException("Not enough space to construct axis layout", e);
         }
 
-        // 3. Some spacing to distinguish tokens from axis, in whole cells
+        // 2.b Some spacing to distinguish tokens from axis, in whole cells
         try {
             printableArea.removeFromBottom(toWholeCells(TOKEN_AXIS_OFFSET, cellHeight));
             printableArea.removeFromLeft(toWholeCells(TOKEN_AXIS_OFFSET, cellWidth));
@@ -75,20 +84,29 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
             throw new InsufficientRenderingAreaException("Not enough space for plot and axis border space");
         }
 
-        // 4. Print layout if needed
-        final boolean printLayout = true;
+        // 2.c Initialize axis+
+        final Rectangle.IntWrapper printableAreaInt = printableArea.intWrapper();
+        Axis xAxis = new Axis(Axis.Type.X_AXIS, printableAreaInt.getX(), xAxisArea.intWrapper().getY(), AXIS_STEP_WIDTH, toWholeCells(AXIS_TICK_SIZE, cellHeight) - 1);
+        Axis yAxis = new Axis(Axis.Type.Y_AXIS, yAxisArea.intWrapper().getRight(), printableAreaInt.getBottom(), AXIS_STEP_WIDTH, -1 * (toWholeCells(AXIS_TICK_SIZE, cellWidth) - 1));
+        xAxis.setBoundary(xAxisArea);
+        yAxis.setBoundary(yAxisArea);
+
+        LinearMappingAxisRasterizer axisRasterizer = new LinearMappingAxisRasterizer();
+
+        // 3. Print layout if needed, else render title and axis
+        final boolean printLayout = false;
         if (!printLayout) {
-            Rasterizer.fill(xAxisArea.intWrapper().getX(), xAxisArea.intWrapper().getY(), xAxisArea.intWrapper().getWidth() + xAxisArea.intWrapper().getX(), xAxisArea.intWrapper().getY() , mat, true);
-            Rasterizer.fill(yAxisArea.intWrapper().getX() + yAxisArea.intWrapper().getWidth() - 1, yAxisArea.intWrapper().getY(), yAxisArea.intWrapper().getX() + yAxisArea.intWrapper().getWidth() - 1 , yAxisArea.intWrapper().getY() + yAxisArea.intWrapper().getHeight(), mat, true);
             textRasterizer.rasterize(diagramTitle, canvas);
+            axisRasterizer.rasterize(xAxis, canvas);
+            axisRasterizer.rasterize(yAxis, canvas);
         } else {
             Rasterizer.rectangle(titleArea, mat, true);
             Rasterizer.rectangle(xAxisArea, mat, true);
             Rasterizer.rectangle(yAxisArea, mat, true);
-            Rasterizer.rectangle(printableArea, mat, true);
         }
+        Rasterizer.rectangle(printableArea, mat, true);
 
-        // 5. Actual scatter plot
+        // 4. Actual scatter plot
         Rectangle plotArea = printableArea;
 
         int xDots = plotArea.intWrapper().getWidth();
