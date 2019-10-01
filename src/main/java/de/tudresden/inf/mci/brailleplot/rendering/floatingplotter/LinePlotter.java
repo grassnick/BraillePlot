@@ -42,14 +42,15 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
         mPageWidth = mCanvas.getPrintableWidth();
         mResolution = mCanvas.getResolution();
         mStepSize = mCanvas.getDotDiameter() + 1;
+        mGrid = mCanvas.getGrid();
 
         checkResolution();
         calculateRanges();
         drawAxes();
         mScaleX = scaleAxis("x");
         mScaleY = scaleAxis("y");
-        mCanvas.setXScaleFactor(mScaleX[mScaleX.length - 1]);
-        mCanvas.setYScaleFactor(mScaleY[mScaleY.length - 1]);
+        mCanvas.setXScaleFactor((int) mScaleX[mScaleX.length - 1]);
+        mCanvas.setYScaleFactor((int) mScaleY[mScaleY.length - 1]);
         if (mFrames) {
             mLegend.setType(2);
         } else {
@@ -123,7 +124,9 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
             }
         }
 
-        drawGrid();
+        if (mGrid) {
+            drawGrid();
+        }
         plotLegend();
 
         return 0;

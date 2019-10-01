@@ -89,6 +89,7 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         defineRepresentationProperty("floatingDot.secondAxis", requireBoolean, false);
         defineRepresentationProperty("floatingDot.frames", requireBoolean, false);
         defineRepresentationProperty("floatingDot.derivation", requireBoolean, false);
+        defineRepresentationProperty("floatingDot.grid", requireBoolean, false);
     }
 
     /**

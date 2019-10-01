@@ -201,6 +201,7 @@ public final class App {
             // Render diagram
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, representationParameters, a4Format);
             RasterCanvas canvas = renderer.rasterize(barChart);
+
             // SVG exporting
             SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
             svgExporter.render();
@@ -210,7 +211,7 @@ public final class App {
             classloader = Thread.currentThread().getContextClassLoader();
             csvStream = classloader.getResourceAsStream("examples/csv/1_scatter_plot.csv");
             csvReader = new BufferedReader(new InputStreamReader(csvStream));
-            InputStream csvStream2 = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_vertical.csv");
+            InputStream csvStream2 = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_grouped.csv");
             Reader csvReader2 = new BufferedReader(new InputStreamReader(csvStream2));
 
             csvParser = new CsvParser(csvReader, ',', '\"');
@@ -240,16 +241,17 @@ public final class App {
             ScatterPlotter plotter = new ScatterPlotter();
             // plotter.plot(scatterplot, floatCanvas);
 
+
             LinePlot lineplot = new LinePlot(container2);
             LinePlotter plotter2 = new LinePlotter();
             // plotter2.plot(lineplot, floatCanvas);
 
             CategoricalBarChart bar = new CategoricalBarChart(container3);
             StackedBarChartPlotter plotter3 = new StackedBarChartPlotter();
-            plotter3.plot(bar, floatCanvas);
+            // plotter3.plot(bar, floatCanvas);
 
             GroupedBarChartPlotter plotter4 = new GroupedBarChartPlotter();
-            // plotter4.plot(bar, floatCanvas);
+            plotter4.plot(bar, floatCanvas);
 
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();
@@ -284,14 +286,26 @@ public final class App {
             String printerConfigUpperCase = indexV4Printer.getProperty("mode").toString().toUpperCase();
             PrintDirector printD = new PrintDirector(PrinterCapability.INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER, indexV4Printer);
             ListIterator<FloatingPointData<Boolean>> canvasIt = floatCanvas.getPageIterator();
-            while (canvasIt.hasNext()){
+            /*while (canvasIt.hasNext()){
                 Thread thread = new Thread(() -> {
                     System.out.println("Start thread");
                     printD.print(canvasIt.next());
                 });
                 thread.start();
-                Thread.sleep(1000);
+                for (int i = 0; i < 20; i++) {
+                    Thread.sleep(100);
+                    i++;
+                }
 
+            }*/
+            for (int i = 0; i < floatCanvas.getPageCount(); i ++) {
+                if (i > 0) {
+                    canvasIt.next();
+                    continue;
+                }
+                if (canvasIt.hasNext()) {
+                    //printD.print(canvasIt.next());
+                }
             }
 
         } catch (final Exception e) {

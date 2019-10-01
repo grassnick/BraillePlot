@@ -28,6 +28,16 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
     private static final double CIRCLEDIA = 12;
     private static final double CIRCLESCALE = 1.5;
 
+    /**
+     * Calculates the absolute y-value on the paper.
+     * @param y Value as in data.
+     * @return Calculated y-value.
+     */
+    double calculateYValue(final double y) {
+        double ratio = mYTickStep / (mScaleY[1] - mScaleY[0]);
+        return mBottomMargin - mYTickStep - Math.abs(y / Math.pow(TEN, mScaleY[mScaleY.length - 1]) - mScaleY[0]) * ratio;
+    }
+
     @Override
     void drawAxes() {
 
@@ -83,7 +93,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             mNumberXTicks = TWENTYONE;
         }
 
-        mScaleX = new int[mNumberXTicks + 1];
+        mScaleX = new double[mNumberXTicks + 1];
 
         // tick marks on x-axis
         mXTickStep = (lastValueX - MARGIN - mLeftMargin) / mNumberXTicks;
@@ -119,7 +129,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             mNumberYTicks = TWENTYONE;
         }
 
-        mScaleY = new int[mNumberYTicks + 1];
+        mScaleY = new double[mNumberYTicks + 1];
 
         // y-axis on right side
         if (mRightAxis) {
@@ -221,7 +231,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
                         // three digits
                         rect = new Rectangle(startX - width - THREE * mCanvas.getCellDistHor(), mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
                     }
-                    BrailleText text = new BrailleText(Integer.toString(mScaleY[i]), rect);
+                    BrailleText text = new BrailleText(Integer.toString((int) mScaleY[i]), rect);
                     tplotter.plot(text, mCanvas);
 
                 }
@@ -240,7 +250,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             } else {
                 for (int i = 0; i < mNumberYTicks; i++) {
                     Rectangle rect = new Rectangle(secondX, mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
-                    BrailleText text = new BrailleText(Integer.toString(mScaleY[i]), rect);
+                    BrailleText text = new BrailleText(Integer.toString((int) mScaleY[i]), rect);
                     tplotter.plot(text, mCanvas);
                 }
             }
@@ -277,14 +287,14 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
      * @param yValue Absolute y-value of center.
      */
     void drawDot(final double xValue, final double yValue) {
-        addPoint(xValue + mCanvas.getDotDiameter() + 1, yValue);
-        addPoint(xValue - mCanvas.getDotDiameter() + 1, yValue);
-        addPoint(xValue, yValue + mCanvas.getDotDiameter() + 1);
-        addPoint(xValue, yValue - mCanvas.getDotDiameter());
-        addPoint(xValue + mCanvas.getDotDiameter() + 1, yValue + mCanvas.getDotDiameter());
-        addPoint(xValue + mCanvas.getDotDiameter() + 1, yValue - mCanvas.getDotDiameter());
-        addPoint(xValue - mCanvas.getDotDiameter() + 1, yValue + mCanvas.getDotDiameter());
-        addPoint(xValue - mCanvas.getDotDiameter() + 1, yValue - mCanvas.getDotDiameter());
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue + mCanvas.getDotDiameter() + 1, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue, MetricPrefix.MILLI(METRE)), true));
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue - mCanvas.getDotDiameter() - 1, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue, MetricPrefix.MILLI(METRE)), true));
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue - mCanvas.getDotDiameter() - 1, MetricPrefix.MILLI(METRE)), true));
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue + mCanvas.getDotDiameter() + 1, MetricPrefix.MILLI(METRE)), true));
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue + mCanvas.getDotDiameter() + 1, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue + mCanvas.getDotDiameter() + 1, MetricPrefix.MILLI(METRE)), true));
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue + mCanvas.getDotDiameter() + 1, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue - mCanvas.getDotDiameter() - 1, MetricPrefix.MILLI(METRE)), true));
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue - mCanvas.getDotDiameter() - 1, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue + mCanvas.getDotDiameter() + 1, MetricPrefix.MILLI(METRE)), true));
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue - mCanvas.getDotDiameter() - 1, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue - mCanvas.getDotDiameter() - 1, MetricPrefix.MILLI(METRE)), true));
     }
 
     /**
@@ -293,21 +303,21 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
      * @param yValue Absolute y-value of center.
      */
     void drawX(final double xValue, final double yValue) {
-        addPoint(xValue + mStepSize, yValue + mStepSize);
-        addPoint(xValue + 2 * mStepSize, yValue + 2 * mStepSize);
-        addPoint(xValue + THREE * mStepSize, yValue + THREE * mStepSize);
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue + mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue + mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), true));
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue + 2 * mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue + 2 * mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), true));
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue + THREE * mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue + THREE * mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), true));
 
-        addPoint(xValue - mStepSize, yValue - mStepSize);
-        addPoint(xValue - 2 * mStepSize, yValue - 2 * mStepSize);
-        addPoint(xValue - THREE * mStepSize, yValue - THREE * mStepSize);
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue - mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue - mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), true));
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue - 2 * mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue - 2 * mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), true));
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue - THREE * mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue - THREE * mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), true));
 
-        addPoint(xValue + mStepSize, yValue - mStepSize);
-        addPoint(xValue + 2 * mStepSize, yValue - 2 * mStepSize);
-        addPoint(xValue + THREE * mStepSize, yValue - THREE * mStepSize);
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue + mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue - mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), true));
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue + 2 * mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue - 2 * mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), true));
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue + THREE * mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue - THREE * mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), true));
 
-        addPoint(xValue - mStepSize, yValue + mStepSize);
-        addPoint(xValue - 2 * mStepSize, yValue + 2 * mStepSize);
-        addPoint(xValue - THREE * mStepSize, yValue + THREE * mStepSize);
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue - mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue + mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), true));
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue - 2 * mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue + 2 * mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), true));
+        mData.addPoint(new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(xValue - THREE * mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), Quantities.getQuantity(yValue + THREE * mCanvas.getDotDiameter(), MetricPrefix.MILLI(METRE)), true));
     }
 
     /**

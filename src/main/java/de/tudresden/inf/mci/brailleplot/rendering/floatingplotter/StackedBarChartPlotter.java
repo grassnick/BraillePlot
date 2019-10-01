@@ -69,7 +69,9 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
         }
 
         nameYAxis();
-        drawGrid();
+        if (mGrid) {
+            drawGrid();
+        }
         plotLegend();
 
         return 0;
@@ -82,6 +84,71 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
     @Override
     void calculateRanges() {
         mYRange = Math.abs(mDiagram.getCumulatedMaxY() - mDiagram.getMinY());
+    }
+
+    /**
+     * Draws axes without tick marks on y-axis.
+     */
+    @Override
+    void drawAxes() {
+        // margin left of y-axis
+        mLeftMargin = 2 * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
+        // margin from bottom to x-axis
+        mBottomMargin = mPageHeight - (HMULT * mCanvas.getCellHeight() + HMULT * mCanvas.getCellDistVer());
+        // margin from top for title
+        mTitleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
+
+        mXTickDistance = mLeftMargin + 2 * mCanvas.getCellWidth();
+        if (mXTickDistance < THIRTY) {
+            mXTickDistance = THIRTY;
+        }
+
+        // x-axis
+        double lastValueX = mLeftMargin;
+        for (double i = mLeftMargin; i <= mPageWidth; i += mStepSize) {
+            addPoint(i, mBottomMargin);
+            lastValueX = i;
+        }
+        mLengthX = lastValueX - mLeftMargin;
+        mNumberXTicks = (int) Math.floor(mLengthX / mXTickDistance);
+        if (mNumberXTicks < 2) {
+            mNumberXTicks = 2;
+        } else if (mNumberXTicks <= FIVE) {
+            mNumberXTicks = FIVE;
+        } else if (mNumberYTicks <= TEN) {
+            mNumberYTicks = TEN;
+        } else if (mNumberYTicks <= FIFTEEN) {
+            mNumberYTicks = FIFTEEN;
+        } else {
+            mNumberYTicks = TWENTY;
+        }
+
+        mScaleX = new double[mNumberXTicks + 1];
+
+
+        // tick marks on x-axis
+        mXTickStep = (lastValueX - MARGIN - mLeftMargin) / mNumberXTicks;
+        for (double i = 1; i <= 2 * mNumberXTicks; i++) {
+            if (i % 2 == 0) {
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK1);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK2);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK3);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK4);
+            } else {
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK1);
+                addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK2);
+            }
+        }
+
+        // y-axis
+        double lastValueY = mBottomMargin;
+        for (double i = mBottomMargin; i > mTitleMargin; i -= mStepSize) {
+            addPoint(mLeftMargin, i);
+            lastValueY = i;
+        }
+
+        mLengthY = mBottomMargin - lastValueY;
+
     }
 
     @Override
