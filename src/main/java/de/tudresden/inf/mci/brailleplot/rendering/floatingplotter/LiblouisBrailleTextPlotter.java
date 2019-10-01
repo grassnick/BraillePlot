@@ -2,6 +2,7 @@ package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 
 import de.tudresden.inf.mci.brailleplot.brailleparser.AbstractBrailleTableParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
@@ -68,22 +69,32 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
      * @param data BrailleText with the text and the rectangle representing the plotting area.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
      * @return Last y-coordinate.
+     * @throws InsufficientRenderingAreaException If the translator can't be constructed.
      */
     @Override
-    public double plot(final BrailleText data, final PlotCanvas canvas) {
+    public double plot(final BrailleText data, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
         Objects.requireNonNull(data, "The data given to the brailletextplotter was null!");
         Objects.requireNonNull(canvas, "The canvas given to the brailletextplotter was null!");
-        if (data.getText().equals("")) {
+        if (data.getText() == "") {
             return 0;
         }
-        Rectangle rect = data.getArea();
 
-        /* Parameters for plotting */
+        try {
+            File tableFile = mLibLouisTableDirectory.toPath().resolve(data.getLanguage()).toFile(); // reference to specific table file in exported directory
+            String tableFilePath = tableFile.getAbsolutePath();
+            mTranslator = new Translator(tableFilePath);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while creating liblouis translator", e);
+        }
+
+        Rectangle rect = data.getArea();
         TranslationResult result = null;
         try {
             result = mTranslator.translate(data.getText(), null, null, null, DisplayTable.StandardDisplayTables.DEFAULT);
-        } catch (TranslationException | DisplayException e) {
+        } catch (TranslationException e) {
+            e.printStackTrace();
+        } catch (DisplayException e) {
             e.printStackTrace();
         }
         assert result != null;

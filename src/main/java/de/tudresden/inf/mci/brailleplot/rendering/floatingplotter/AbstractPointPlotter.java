@@ -6,6 +6,7 @@ import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
+import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 import tec.units.ri.quantity.Quantities;
 import tec.units.ri.unit.MetricPrefix;
 
@@ -203,7 +204,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
     }
 
     @Override
-    void nameYAxis() {
+    void nameYAxis() throws InsufficientRenderingAreaException {
 
         double height = mCanvas.getCellHeight();
         double width = mCanvas.getCellWidth();
@@ -217,7 +218,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             if (mAxesDerivation) {
                 for (int i = 0; i < mNumberYTicks; i++) {
                     Rectangle rect = new Rectangle(startX, mBottomMargin - mNumberYTicks * mYTickStep - halfCell + i * mYTickStep, width, height);
-                    BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect);
+                    BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                     tplotter.plot(text, mCanvas);
                 }
             } else {
@@ -231,7 +232,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
                         // three digits
                         rect = new Rectangle(startX - width - DISTYAXISNAMES2 * mCanvas.getCellDistHor(), mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
                     }
-                    BrailleText text = new BrailleText(Integer.toString((int) mScaleY[i]), rect);
+                    BrailleText text = new BrailleText(Integer.toString((int) mScaleY[i]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                     tplotter.plot(text, mCanvas);
 
                 }
@@ -240,17 +241,17 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             if (mAxesDerivation) {
                 for (int i = 0; i < mNumberYTicks; i++) {
                     Rectangle rect = new Rectangle(startX, mBottomMargin - mNumberYTicks * mYTickStep - halfCell + i * mYTickStep, width, height);
-                    BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect);
+                    BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                     tplotter.plot(text, mCanvas);
 
                     rect = new Rectangle(secondX, mBottomMargin - mNumberYTicks * mYTickStep - halfCell + i * mYTickStep, width, height);
-                    text = new BrailleText(Character.toString(mSymbols[i]), rect);
+                    text = new BrailleText(Character.toString(mSymbols[i]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                     tplotter.plot(text, mCanvas);
                 }
             } else {
                 for (int i = 0; i < mNumberYTicks; i++) {
                     Rectangle rect = new Rectangle(secondX, mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
-                    BrailleText text = new BrailleText(Integer.toString((int) mScaleY[i]), rect);
+                    BrailleText text = new BrailleText(Integer.toString((int) mScaleY[i]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                     tplotter.plot(text, mCanvas);
                 }
             }

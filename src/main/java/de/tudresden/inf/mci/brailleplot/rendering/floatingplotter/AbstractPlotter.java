@@ -8,6 +8,7 @@ import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
 import de.tudresden.inf.mci.brailleplot.rendering.Legend;
+import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 import tec.units.ri.quantity.Quantities;
 import tec.units.ri.unit.MetricPrefix;
 
@@ -385,8 +386,9 @@ abstract class AbstractPlotter<T extends Diagram> {
 
     /**
      * Names the axis ticks on x-axis.
+     * @throws InsufficientRenderingAreaException If a translation error occurs.
      */
-    void nameXAxis() {
+    void nameXAxis() throws InsufficientRenderingAreaException {
 
         mSymbols = "abcdefghijklmnopqrstuvwxyz".toCharArray();
         double startY = mBottomMargin + mCanvas.getCellDistVer() + DISTXAXISNAMES * mStepSize;
@@ -398,7 +400,7 @@ abstract class AbstractPlotter<T extends Diagram> {
         if (mAxesDerivation) {
             for (int i = 0; i < mNumberXTicks; i++) {
                 Rectangle rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - mCanvas.getCellDistHor() / 2, startY, width, height);
-                BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect);
+                BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                 tplotter.plot(text, mCanvas);
             }
         } else {
@@ -412,7 +414,7 @@ abstract class AbstractPlotter<T extends Diagram> {
                     rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - width - mCanvas.getCellDistHor() - width / 2, startY, width, height);
 
                 }
-                BrailleText text = new BrailleText(Integer.toString((int) mScaleX[i]), rect);
+                BrailleText text = new BrailleText(Integer.toString((int) mScaleX[i]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                 tplotter.plot(text, mCanvas);
             }
         }
@@ -420,8 +422,9 @@ abstract class AbstractPlotter<T extends Diagram> {
 
     /**
      * Puts the title above the diagram.
+     * @throws InsufficientRenderingAreaException If a translation error occurs.
      */
-    void nameTitle() {
+    void nameTitle() throws InsufficientRenderingAreaException {
 
         int k = 0;
         double height = mCanvas.getCellHeight();
@@ -453,7 +456,7 @@ abstract class AbstractPlotter<T extends Diagram> {
                     }
 
                     Rectangle rect = new Rectangle(j, mCanvas.getDotDistVer() + i * stepVer, width, height);
-                    BrailleText text = new BrailleText(Character.toString(title[k]), rect);
+                    BrailleText text = new BrailleText(Character.toString(title[k]), rect, BrailleLanguage.Language.DE_KURZSCHRIFT);
                     k++;
                     j = tplotter.plot(text, mCanvas);
                 } else {
@@ -500,7 +503,8 @@ abstract class AbstractPlotter<T extends Diagram> {
 
     /**
      * Names the y-axis.
+     * @throws InsufficientRenderingAreaException If a translation error occurs.
      */
-    abstract void nameYAxis();
+    abstract void nameYAxis() throws InsufficientRenderingAreaException;
 
 }

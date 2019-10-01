@@ -9,6 +9,7 @@ import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
+import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 import tec.units.ri.quantity.Quantities;
 import tec.units.ri.unit.MetricPrefix;
 
@@ -249,7 +250,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
     }
 
     @Override
-    void nameYAxis() {
+    void nameYAxis() throws InsufficientRenderingAreaException {
 
         double height = mCanvas.getCellHeight();
         double width = mCanvas.getCellWidth();
@@ -260,7 +261,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
 
         for (int i = 0; i < mNumBarGroup; i++) {
             Rectangle rect = new Rectangle(startX, mBottomMargin - mNumBarGroup * (mBarDist + mBarGroupWidth) + mBarGroupWidth / 2 - halfCell + i * (mBarDist + mBarGroupWidth), width, height);
-            BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect);
+            BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
             tplotter.plot(text, mCanvas);
         }
     }

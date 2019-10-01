@@ -37,8 +37,9 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
      * Prepares bar chart plot using the defined methods.
      * @param diagram {@link de.tudresden.inf.mci.brailleplot.diagrams.BarChart} with the data.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
+     * @throws InsufficientRenderingAreaException If a translation error occurs.
      */
-    void prereq(final CategoricalBarChart diagram, final PlotCanvas canvas) {
+    void prereq(final CategoricalBarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
         setCanvas(canvas);
         mCanvas.readConfig();
