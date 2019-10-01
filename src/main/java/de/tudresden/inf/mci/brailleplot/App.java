@@ -6,6 +6,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
 import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.csvparser.MalformedCsvException;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimpleCategoricalPointListContainerImpl;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.Diagram;
@@ -205,7 +206,6 @@ public final class App {
             Reader csvReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(csvStream)));
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
             Diagram diagram;
-            CategoricalPointListContainer<PointList> container;
             CsvOrientation csvOrientation;
             if (settingsReader.isTrue(SettingType.VERTICAL).orElse(false)) {
                 csvOrientation = CsvOrientation.VERTICAL;
@@ -214,18 +214,19 @@ public final class App {
             }
             switch (settingsReader.getSetting(SettingType.DIAGRAM_TYPE).orElse("")) {
                 case "ScatterPlot":
-                    container = csvParser.parse(CsvType.DOTS, csvOrientation);
+                    PointListContainer<PointList> scatterPlotContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
                     throw new UnsupportedOperationException("Scatter Plots coming soon.");
                 case "LineChart":
-                    container = csvParser.parse(CsvType.DOTS, csvOrientation);
+                    PointListContainer<PointList> lineChartContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
                     throw new UnsupportedOperationException("Line Charts coming soon.");
                 case "BarChart":
-                    try { // first try to parse as regualar bar chart and convert to single category bar cart.
-                        container = new SimpleCategoricalPointListContainerImpl(csvParser.parse(CsvType.X_ALIGNED, csvOrientation));
+                    CategoricalPointListContainer<PointList> barChartContainer;
+                    try { // first try to parse as regular bar chart and convert to single category bar cart.
+                        barChartContainer = new SimpleCategoricalPointListContainerImpl(csvParser.parse(CsvType.X_ALIGNED, csvOrientation));
                     } catch (MalformedCsvException e) { // else parse as categorical bar chart
-                        container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, csvOrientation);
+                        barChartContainer = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, csvOrientation);
                     }
-                    diagram = new CategoricalBarChart(container);
+                    diagram = new CategoricalBarChart(barChartContainer);
                     break;
                 default: throw new IllegalStateException("Unknown diagram type: " + settingsReader.getSetting(SettingType.DIAGRAM_TYPE).orElse("<none>"));
             }
