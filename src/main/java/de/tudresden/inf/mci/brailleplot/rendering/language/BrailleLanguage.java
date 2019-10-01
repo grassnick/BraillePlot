@@ -6,8 +6,7 @@ package de.tudresden.inf.mci.brailleplot.rendering.language;
  * @version 27.09.2019
  */
 
-// If we want to use this class, it has to be public
-    @SuppressWarnings("HideUtilityClassConstructor")
+@SuppressWarnings("HideUtilityClassConstructor")
 public class BrailleLanguage {
 
     /**
@@ -26,10 +25,10 @@ public class BrailleLanguage {
             case GERMAN_KURZSCHRIFT:
             case DE_KURZSCHRIFT:
                 return "de-g2.ctb";
-            default: throw new RuntimeException("Unsupported language given as braillelanguage!  \"" + language.toString() + "\"");
+            default:
+                throw new RuntimeException("Unsupported language given as braillelanguage!  \"" + language.toString() + "\"");
         }
     }
-
 
     /**
      * Enum describing the current supported braille languages and grammars.
