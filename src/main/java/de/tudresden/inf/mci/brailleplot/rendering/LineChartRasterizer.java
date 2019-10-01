@@ -41,10 +41,10 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     private int mYStepWidth;
     private double mDpiX;
     private double mDpiY;
-    @SuppressWarnings("magicnumber")
-    private int mOffset = 3;
+    private final int  mPaddingBetweenAxisTextAndDiagram = 3;
+    private final int mPaddingXandYText = 1; 
     private Rectangle mCellLineArea;
-    private boolean printOnSamePaper = false; // If you want to print on the same paper, change this variable to true.
+    private boolean mPrintOnSamePaper = false; // If you want to print on the same paper, change this variable to true.
 
 
 
@@ -54,6 +54,8 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
 
     /**
      * Method for rasterizing a {@link LineChart}-diagram.
+     * This approach of an algorithm is minimaly adjustable by design, the algorithm for itself tries to find the best fitting
+     * for the given dataset.
      * @param data The renderable representation.
      * @param canvas An instance of {@link RasterCanvas} representing the target for the rasterizer output.
      * @throws InsufficientRenderingAreaException If the data can not be rasterized due to shortcomings of the algorithm
@@ -82,8 +84,8 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         Rectangle yAxisText;
         Rectangle xAxisText;
         try {
-            yAxisText = canvas.toDotRectangle(mCellLineArea.removeFromTop(1));
-            xAxisText = canvas.toDotRectangle(mCellLineArea.removeFromBottom(1));
+            yAxisText = canvas.toDotRectangle(mCellLineArea.removeFromTop(mPaddingXandYText));
+            xAxisText = canvas.toDotRectangle(mCellLineArea.removeFromBottom(mPaddingXandYText));
         } catch (Rectangle.OutOfSpaceException e) {
             throw new InsufficientRenderingAreaException("The axis text cant fit to the layout.", e);
         }
@@ -104,7 +106,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
 
         // Step four: Same thing for the y axis.
         Rectangle yAxisBound = yAxisArea.scaledBy(mCanvas.getCellWidth(), mCanvas.getCellHeight());
-        int yOriginY = originY - 1;
+        int yOriginY = originY - 1; // Drawing the diagram so that the y = 0 lies not on the x axis
         int yOriginX = yAxisBound.intWrapper().getRight();
         double rangeOfYValues = valueRangeOfYAxis();
         int yUnitsAvailable = calculateUnitsHeightInCells(yAxisArea);
@@ -115,7 +117,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         // Step five: Setting correct labels for x and y axis.
         Map<String, String> xLabelsForLegend = new TreeMap<>();
         Map<String, String> yLabelsForLegend = new TreeMap<>();
-        Map<Integer, String> labels = setCorrectLabelsforX(rangeOfXValues, xNumberOfTicks, mDpiX, xLabelsForLegend);
+        Map<Integer, String> xLabels = setCorrectLabelsforX(rangeOfXValues, xNumberOfTicks, mDpiX, xLabelsForLegend);
         Map<Integer, String> yLabels = setCorrectLabelsforY(rangeOfYValues, yNumberOfTicks, mDpiY, yLabelsForLegend);
 
         // Step six: Filling the legend.
@@ -131,12 +133,12 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         Iterator<PointList> iter  = mDiagram.getData().iterator();
         while (iter.hasNext()) {
             rasterizeTitle(data.getTitle(), titleArea);
-            rasterizeXAxis(originY, originX, mXStepWidth, xAxisBound, labels);
+            rasterizeXAxis(originY, originX, mXStepWidth, xAxisBound, xLabels);
             rasterizeYAxis(yOriginY, yOriginX, mYStepWidth, yAxisBound, yLabels);
             mTextRasterizer.rasterize(new BrailleText(data.getYAxisName(), yAxisText, BrailleLanguage.Language.DE_KURZSCHRIFT), mCanvas);
             mTextRasterizer.rasterize(new BrailleText(data.getXAxisName(), xAxisText, BrailleLanguage.Language.DE_KURZSCHRIFT), mCanvas);
             rasterizeData(mDiagram.getMinX(), mDiagram.getMinY(), iter.next());
-            if (iter.hasNext() && !printOnSamePaper) {
+            if (iter.hasNext() && !mPrintOnSamePaper) {
                 mCanvas.getNewPage();
             }
         }
@@ -368,7 +370,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
 
     /**
      * Method for the calculation of the stepwidth for the y-axis on the canvas.
-     * Important: Not meant in the datapoints, but on the canvas.
+     * Important: Not meant in the datapoints, but on the canvas. Currently returning 1.
      * @param rangeOfYValues The range of values along the y-axis.
      * @param yUnitsAvailable The number of available units along the y-axis, measured in braillecells.
      * @return Integer representing the number of braillecells between two tickmarks.
@@ -472,8 +474,8 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     private Rectangle calculateXAxis() throws InsufficientRenderingAreaException {
         Objects.requireNonNull(mCellLineArea, "The given Rectangle for the x axis to be removed from was null!");
         try {
-            Rectangle result = mCellLineArea.removeFromBottom(mOffset);
-            result.removeFromLeft(mOffset);
+            Rectangle result = mCellLineArea.removeFromBottom(mPaddingBetweenAxisTextAndDiagram);
+            result.removeFromLeft(mPaddingBetweenAxisTextAndDiagram);
             return result;
         } catch (Rectangle.OutOfSpaceException e) {
             throw new InsufficientRenderingAreaException("Not enough space to build the X-Axis for the line chart!");
@@ -489,7 +491,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     private Rectangle calculateYAxis() throws InsufficientRenderingAreaException {
         Objects.requireNonNull(mCellLineArea, "The given Rectangle for the y axis to be removed from was null!");
         try {
-            return mCellLineArea.removeFromLeft(mOffset);
+            return mCellLineArea.removeFromLeft(mPaddingBetweenAxisTextAndDiagram);
         } catch (Rectangle.OutOfSpaceException e) {
             throw new InsufficientRenderingAreaException("Not enough space to build the Y-Axis for the line chart!");
         }
@@ -504,7 +506,6 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         double minY = mDiagram.getMinY();
         double maxY = mDiagram.getMaxY();
         double valueRangeOfYAxis;
-        //Needs testing
         if (minY >= 0) {
             valueRangeOfYAxis = maxY - minY;
         } else {
@@ -524,22 +525,36 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         return (int) floor((rectangle.getWidth() - 1) / 2);
     }
 
+    /**
+     * Method for calculating the value range of the x axis.
+     * @return {@link Double} representing the value range.
+     */
     private double valueRangeOfXAxis() {
         Objects.requireNonNull(mDiagram, "The given linechart for the calculation of the value range of the x-axis was null!");
         double minX = mDiagram.getMinX();
         double maxX = mDiagram.getMaxX();
-        double valueRangeOfXAxis = maxX - minX;
-        return valueRangeOfXAxis;
+        return maxX - minX;
     }
 
-    private double getNumberOfTicks(final int xUnitsAvailable) {
-        if (xUnitsAvailable < 0) {
+    /**
+     * Returns the number of ticks. Currently, it adds one to the given parameter.
+     * @param unitsAvailable How many units are available on the x axis.
+     * @return {@link Double} representing ticks available.
+     */
+    private double getNumberOfTicks(final int unitsAvailable) {
+        if (unitsAvailable < 0) {
             throw new RuntimeException("The units available was less then zero!");
         }
-        return xUnitsAvailable + 1;
+        return unitsAvailable + 1;
     }
 
-    private double findXAxisStepWidth(final double rangeOfXValues, final int xUnitsAvailable) throws InsufficientRenderingAreaException {
+    /**
+     * Method for finding the x axis step width.
+     * @param rangeOfXValues Representing the range of values.
+     * @param xUnitsAvailable Representing the availabe units on the xAxis.
+     * @return Currently always 2;
+     */
+    private double findXAxisStepWidth(final double rangeOfXValues, final int xUnitsAvailable) {
         // Most simple approach: always take the minimum stepwidth, which the x-axis rasterizer can handle
         // The signature is not adjusted so that someone can change the calculation if he needs it
         return 2;
