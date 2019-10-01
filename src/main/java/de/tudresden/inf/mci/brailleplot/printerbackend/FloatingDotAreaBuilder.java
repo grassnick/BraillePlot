@@ -8,8 +8,6 @@ import tec.units.ri.unit.MetricPrefix;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Locale;
@@ -30,7 +28,6 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<SimpleFloatingPointD
      * Constructor. Does not have any functionality. Should only be used in  {@link PrintDirector}
      */
     FloatingDotAreaBuilder() { }
-    //private  int l;
 
     /**
      * Currently not implemented.
@@ -38,24 +35,10 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<SimpleFloatingPointD
      * @return Exception.
      */
     @Override
-    byte[] assemble(final SimpleFloatingPointDataImpl<Boolean> data){
+    byte[] assemble(final SimpleFloatingPointDataImpl<Boolean> data) {
         mData = Objects.requireNonNull(data);
         Iterator<Point2DValued<Quantity<Length>, Boolean>> iter = mData.getIterator();
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        //FileOutputStream stream = null;
-
-        /*
-        try {
-            stream = new FileOutputStream(String.valueOf(l));
-        } catch (FileNotFoundException e) {
-            e.getCause();
-        }
-
-         */
-        //l++;
-
-
-
         try {
             stream.write(mStartFloatingMode);
             // Here goes Origo, Width and Height
@@ -73,7 +56,6 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<SimpleFloatingPointD
                 stream.write(xFormated.getBytes());
                 stream.write(mColon);
                 stream.write(yFormated.getBytes());
-                //stream.write(y.floatValue());
                 if (iter.hasNext()) {
                     stream.write(mNewLine);
                 }

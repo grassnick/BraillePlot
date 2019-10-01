@@ -6,7 +6,14 @@ import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.print.*;
+
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintException;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.SimpleDoc;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.JobName;
@@ -42,7 +49,7 @@ public class PrintDirector {
         Objects.requireNonNull(printerConfig);
         this.mPrinter = printerCap;
         mPrinterName = printerConfig.getProperty("name").toString();
-        mLogger.trace("using following printercapability {}", printerCap.toString()," loaded.");
+        mLogger.trace("using following printercapability {}", printerCap.toString(), " loaded.");
         mLogger.info("using the following printer: {}.", mPrinterName);
         switch (mPrinter) {
             case NORMALPRINTER:
@@ -89,8 +96,13 @@ public class PrintDirector {
         print(result);
     }
 
+    /**
+     * Method for creating the byte array form the printing process.
+     * @param data Data to be later dumped.
+     * @return Byte array containing the sequence for the printer.
+     */
     @SuppressWarnings("unchecked")
-    public byte[] textDump(PrintableData data) {
+    public byte[] textDump(final PrintableData data) {
         mLogger.info("starting with textdump process.");
         byte[] result;
         try {
@@ -175,16 +187,20 @@ public class PrintDirector {
         return true;
     }
 
+    /**
+     * Eventlistener which receives updates regarding printing.
+     * Because of enormous shortcoming in the implementation of printing in java, some events are never received.
+     */
     private class PrintJobListener implements javax.print.event.PrintJobListener {
         boolean done = false;
 
         @Override
-        public void printDataTransferCompleted(PrintJobEvent pje) {
+        public void printDataTransferCompleted(final PrintJobEvent pje) {
             mLogger.info("data transfer to printer complete.");
         }
 
         @Override
-        public void printJobCompleted(PrintJobEvent pje) {
+        public void printJobCompleted(final PrintJobEvent pje) {
             mLogger.info("printjob completed.");
             synchronized (PrintJobListener.this) {
                 done = true;
@@ -193,7 +209,7 @@ public class PrintDirector {
         }
 
         @Override
-        public void printJobFailed(PrintJobEvent pje) {
+        public void printJobFailed(final PrintJobEvent pje) {
             mLogger.info("printjob failed.");
             synchronized (PrintJobListener.this) {
                 done = true;
@@ -202,7 +218,7 @@ public class PrintDirector {
         }
 
         @Override
-        public void printJobCanceled(PrintJobEvent pje) {
+        public void printJobCanceled(final PrintJobEvent pje) {
             mLogger.info("printjob was canceled.");
             synchronized (PrintJobListener.this) {
                 done = true;
@@ -211,7 +227,7 @@ public class PrintDirector {
         }
 
         @Override
-        public void printJobNoMoreEvents(PrintJobEvent pje) {
+        public void printJobNoMoreEvents(final PrintJobEvent pje) {
             mLogger.info("printjob has no more events.");
             synchronized (PrintJobListener.this) {
                 done = true;
@@ -219,12 +235,13 @@ public class PrintDirector {
         }
 
         @Override
-        public void printJobRequiresAttention(PrintJobEvent pje) {
+        public void printJobRequiresAttention(final PrintJobEvent pje) {
             mLogger.info("printjob requires attention.");
             PrintJobListener.this.notify();
         }
         public synchronized void waitForDone() {
             try {
+                // Not busy waiting, sleeping as long as not notified.
                 while (!done) {
                     wait();
                 }

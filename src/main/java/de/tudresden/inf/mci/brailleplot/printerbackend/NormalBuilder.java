@@ -33,7 +33,7 @@ class NormalBuilder extends AbstractDocumentBuilder<MatrixData<Boolean>> {
      * @return the final, printable document.
      */
     @Override
-    byte[] assemble(MatrixData<Boolean> data) {
+    byte[] assemble(final MatrixData<Boolean> data) {
 
 
         //Check if null object was given.
