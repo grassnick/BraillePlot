@@ -35,5 +35,4 @@ public interface PointContainer<T> extends Iterable<T>, MinMaxPos2D<Double> {
     boolean removeFirstOccurrence(T elementToRemove);
 
     Stream<T> stream();
-
 }

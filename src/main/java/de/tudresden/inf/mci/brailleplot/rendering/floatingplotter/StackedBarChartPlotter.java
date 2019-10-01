@@ -28,13 +28,16 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
      * Plots a stacked {@link de.tudresden.inf.mci.brailleplot.diagrams.BarChart} instance onto a {@link PlotCanvas}.
      * @param diagram An instance of {@link  de.tudresden.inf.mci.brailleplot.diagrams.BarChart} representing the bar chart.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
-     * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas} or
-     * if there are more data series than textures.
+     * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas},
+     * if there are more data series than textures or if there are negative values in the data.
      */
     @Override
     public double plot(final CategoricalBarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
         prereq(diagram, canvas);
+        if (mDiagram.getMinY() < 0) {
+            throw new InsufficientRenderingAreaException("Negative values are not supported for stacked bar charts.");
+        }
 
         // bar drawing and filling
         mNumBar = mCatList.getSize();

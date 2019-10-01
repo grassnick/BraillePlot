@@ -378,6 +378,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
      * @param startY Absolute starting y-coordinate. Y-coordinate must be decreasing.
      * @param endX Absolute ending x-coordinate.
      */
+    @SuppressWarnings("MethodLength")
     private void fillStairPatternD(final double startY, final double endX) {
         double last = mLeftMargin + mNegative * mXTickStep;
 

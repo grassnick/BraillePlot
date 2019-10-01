@@ -297,13 +297,13 @@ public final class App {
                 }
 
             }*/
-            for (int i = 0; i < floatCanvas.getPageCount(); i ++) {
+            for (int i = 0; i < floatCanvas.getPageCount(); i++) {
                 if (i > 0) {
                     canvasIt.next();
                     continue;
                 }
                 if (canvasIt.hasNext()) {
-                    //printD.print(canvasIt.next());
+                    // printD.print(canvasIt.next());
                 }
             }
 

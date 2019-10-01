@@ -154,7 +154,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
             } else if (mScaleX[i] <= 0 && mScaleX[i + 1] >= 0) {
                 double before = mScaleX[i];
                 double after = mScaleX[i + 1];
-                mNegative = - before / (after - before) + (i + 1);
+                mNegative = -before / (after - before) + (i + 1);
                 break;
             } else {
                 mNegative = 0;

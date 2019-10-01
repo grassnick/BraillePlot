@@ -17,8 +17,6 @@ public abstract class Diagram implements Renderable {
     private String mTitle;
     private String mXAxisName;
     private String mYAxisName;
-    private String mXAxisUnit;
-    private String mYAxisUnit;
 
     Diagram(final PointListContainer<PointList> data) {
         Objects.requireNonNull(data);
@@ -86,22 +84,6 @@ public abstract class Diagram implements Renderable {
 
     public final void setYAxisName(final String yAxisName) {
         this.mYAxisName = Objects.requireNonNull(yAxisName);
-    }
-
-    public final String getXAxisUnit() {
-        return mXAxisUnit;
-    }
-
-    public final void setXAxisUnit(final String xAxisUnit) {
-        this.mXAxisUnit = Objects.requireNonNull(xAxisUnit);
-    }
-
-    public final String getYAxisUnit() {
-        return mYAxisUnit;
-    }
-
-    public final void setYAxisUnit(final String yAxisUnit) {
-        this.mYAxisUnit = Objects.requireNonNull(yAxisUnit);
     }
 
 }

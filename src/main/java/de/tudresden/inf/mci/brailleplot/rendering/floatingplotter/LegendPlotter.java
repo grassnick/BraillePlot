@@ -78,10 +78,10 @@ public class LegendPlotter implements Plotter<Legend> {
         char[] xAxisDesc;
         if (mCanvas.getXScaleFactor() == 1) {
             xAxisDesc = ("dummy" + " in " + "dummy").toCharArray();
-            // xAxisDesc = (mPlotter.mDiagram.getXAxisName() + " in " + mPlotter.mDiagram.getXAxisUnit()).toCharArray();
+            // xAxisDesc = mPlotter.mDiagram.getXAxisName().toCharArray();
         } else {
             xAxisDesc = ("dummy" + " in " + "dummy" + ", mal 10 hoch " + mCanvas.getXScaleFactor()).toCharArray();
-            // xAxisDesc = (mPlotter.mDiagram.getXAxisName() + " in " + mPlotter.mDiagram.getXAxisUnit() + ", mal 10 hoch " + mCanvas.getXScaleFactor()).toCharArray();
+            // xAxisDesc = (mPlotter.mDiagram.getXAxisName() + ", mal 10 hoch " + mCanvas.getXScaleFactor()).toCharArray();
         }
         last = plotLine(xAxisDesc, mCanvas.getCellDistHor(), last + mStepVer);
 
@@ -104,10 +104,10 @@ public class LegendPlotter implements Plotter<Legend> {
         char[] yAxisDesc;
         if (mCanvas.getYScaleFactor() == 1) {
             yAxisDesc = ("dummy" + " in " + "dummy").toCharArray();
-            // yAxisDesc = (mPlotter.mDiagram.getYAxisName() + " in " + mPlotter.mDiagram.getYAxisUnit()).toCharArray();
+            // yAxisDesc = mPlotter.mDiagram.getYAxisName().toCharArray();
         } else {
             yAxisDesc = ("dummy" + " in " + "dummy" + ", mal 10 hoch " + mCanvas.getYScaleFactor()).toCharArray();
-            // yAxisDesc = (mPlotter.mDiagram.getYAxisName() + " in " + mPlotter.mDiagram.getYAxisUnit() + ", mal 10 hoch " + mCanvas.getYScaleFactor()).toCharArray();
+            // yAxisDesc = (mPlotter.mDiagram.getYAxisName() + ", mal 10 hoch " + mCanvas.getYScaleFactor()).toCharArray();
         }
         last = plotLine(yAxisDesc, mCanvas.getCellDistHor(), last + mStepVer);
 
