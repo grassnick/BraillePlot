@@ -1,6 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
 import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -16,7 +17,8 @@ public class Legend implements Renderable {
     private BrailleLanguage.Language mLanguage;
     private Map<String, Map<String, String>> mStringExplanationLists = new LinkedHashMap<>();
     private Map<String, Map<Texture<Boolean>, String>> mTextureExplanationLists = new LinkedHashMap<>();
-    private String mColumnViewTitle; //
+    private String mColumnViewTitle;
+
     private Map<String, Map<String, String>> mColumnView = new LinkedHashMap<>();
     private int mTextureExampleWidthCells = 1;
     private int mTextureExampleHeightCells = 1;
@@ -183,5 +185,4 @@ public class Legend implements Renderable {
     final int getTextureExampleHeightCells() {
         return mTextureExampleHeightCells;
     }
-
 }
