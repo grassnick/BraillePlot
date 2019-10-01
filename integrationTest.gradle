@@ -1,0 +1,17 @@
+sourceSets {
+    integrationTest {
+        java.srcDir 'src/integrationTest'
+        resources.srcDir 'src/test/resources'
+        compileClasspath += sourceSets.main.output + configurations.testRuntimeClasspath
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+task integrationTest(type: Test) {
+    group = 'verification'
+    description = 'Runs Integrationtests.'
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    mustRunAfter test
+    checkstyleIntegrationTest.enabled = false
+}

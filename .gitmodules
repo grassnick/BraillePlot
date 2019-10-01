@@ -1,0 +1,6 @@
+[submodule "third_party/liblouis"]
+	path = third_party/liblouis
+	url = https://github.com/liblouis/liblouis
+[submodule "third_party/liblouis_bin"]
+	path = third_party/liblouis_bin
+	url = ../../brailleplot/liblouis_bin.git

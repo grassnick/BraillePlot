@@ -1,5 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +107,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
 
     private void linearMapping(final BufferedImage imgBuf, final RasterCanvas canvas) {
 
-        mLogger.trace("Applying linear mapping algorithm.");
+        mLogger.trace("Applying linear mapping algorithm");
 
         // A canvas is basically a wrapper for multiple representations of printable data, each representing a page.
         // These representations can be acquired by either requesting the current page or creating a new page.
@@ -143,7 +145,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
         // This can lead to distortions because the original pixel raster is equidistant, but the output raster
         // does not have to be equidistant.
 
-        mLogger.trace("Scanning through image pixel values...");
+        mLogger.trace("Starting scanning through image pixel values...");
         // Scan through each pixel of the original image
         for (int x = 0; x < imgBuf.getWidth(); x++) {
             // Convert from original pixel x-position to braille dot x-position.
@@ -164,7 +166,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
 
     private void quantifiedPositionMapping(final BufferedImage imgBuf, final RasterCanvas canvas) {
 
-        mLogger.trace("Applying quantified position algorithm.");
+        mLogger.trace("Applying quantified position algorithm");
 
         MatrixData<Boolean> data = canvas.getNewPage();
 
@@ -193,7 +195,7 @@ public class ImageRasterizer implements Rasterizer<Image> {
         // In a second step, the calculated exact position is quantified to fit a dot position on the raster.
         // Distortions can still be introduced but are minimized.
 
-        mLogger.trace("Scanning through image pixel values...");
+        mLogger.trace("Staring scanning through image pixel values...");
         // Scan through all pixels of the original image
         for (int x = 0; x < imgBuf.getWidth(); x++) {
             // Convert from original pixel x-position to printed dot x-position in millimeters.

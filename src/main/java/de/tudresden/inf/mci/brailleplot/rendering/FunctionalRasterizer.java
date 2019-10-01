@@ -1,5 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
+import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +28,7 @@ public class FunctionalRasterizer<T extends Renderable> implements Rasterizer {
     public FunctionalRasterizer(
             final Class<T> supportedRenderableClass,
             final Rasterizer<T> rasterizer) {
-        mLogger.info("Creating new FunctionalRasterizer: Binding rasterizer reference (renderable type {}): {}.",
+        mLogger.info("Creating new FunctionalRasterizer: Binding rasterizer reference (renderable type {}): {}",
                 supportedRenderableClass.getSimpleName(), rasterizer);
         mSupportedRenderableClass = supportedRenderableClass;
         mRasterizingAlgorithm = rasterizer::rasterize;

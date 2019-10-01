@@ -38,10 +38,51 @@ dependencies {
     // Units
     compile group: 'javax.measure', name: 'unit-api', version: '2.0-PRD'
     compile group: 'tec.units', name: 'unit-ri', version: '1.0.3'
+
+    compile 'org.liblouis:liblouis-java:4.2.0'
+    // CSV parsing
+    compile "com.opencsv:opencsv:4.6"
+
+    // SVG
+    compile group: 'org.jfree', name: 'jfreesvg', version: '3.4'
 }
 
-test {
+tasks.withType(Test) {
     useJUnitPlatform()
+}
+
+// Copy Braille tables from submodule to working dir
+task copyBrailleTables(type: Copy) {
+    from "$projectDir/third_party/liblouis/tables/"
+    into "$rootDir/src/main/resources/mapping/liblouis"
+}
+processResources.dependsOn copyBrailleTables
+// Abort if files are missing
+gradle.taskGraph.afterTask { copyBrailleTables ->
+    if(copyBrailleTables.state.noSource){
+        throw new GradleException("Could not find liblouis Braille tables in \"$projectDir/third_party/liblouis/tables/\". Please make sure you updated all git submodules using \"git submodule update --init --recursive\" ")
+    }
+}
+// Delete tables on "clean" task
+clean {
+    delete "$rootDir/src/main/resources/mapping/liblouis"
+}
+
+// Copy native liblouis libraries for major platforms to the resource folder
+task copyLibLouisBinary(type: Copy) {
+    from "$projectDir/third_party/liblouis_bin/bin/"
+    into "$rootDir/src/main/resources/native/liblouis"
+}
+processResources.dependsOn copyLibLouisBinary
+// Abort if files are missing
+gradle.taskGraph.afterTask { copyLibLouisBinary ->
+    if(copyLibLouisBinary.state.noSource){
+        throw new GradleException("Could not find liblouis native libraries in \"$projectDir/third_party/liblouis_bin/bin/\". Please make sure you updated all git submodules using \"git submodule update --init --recursive\" ")
+    }
+}
+// Delete libraries on "clean" task
+clean {
+    delete "$rootDir/src/main/resources/native/liblouis"
 }
 
 // Define the main class for the application
@@ -57,7 +98,12 @@ jar {
     }
 }
 
-checkstyleTest{
+checkstyleTest {
     showViolations = true
     checkstyleTest.enabled = false
 }
+
+
+    // Needed for Integrationtests
+
+apply from: "$rootDir/integrationTest.gradle"

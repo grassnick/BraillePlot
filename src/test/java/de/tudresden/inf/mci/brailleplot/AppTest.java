@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot;
 
+import de.tudresden.inf.mci.brailleplot.App;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

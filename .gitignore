@@ -3,6 +3,9 @@ build
 out
 *gradle*
 !build.gradle
+!integrationTest.gradle
+# Tables
+src/main/resources/mapping/liblouis
 
 # IntelliJ
 .idea
@@ -16,3 +19,11 @@ out
 # Miscellaneous
 *.DS_Store
 *.db
+
+# Exported SVG files
+*.svg
+
+# Native libraries
+*.so
+*.dylib
+*.dll

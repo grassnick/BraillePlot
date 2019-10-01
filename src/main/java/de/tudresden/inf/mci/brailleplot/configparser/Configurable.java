@@ -62,8 +62,18 @@ abstract class Configurable {
      * Set the default/fallback {@link Configurable} that will be used if a property cannot be found.
      * @param fallback A {@link Configurable} object.
      */
-    protected final void setFallback(final Configurable fallback) {
+    public final void setFallback(final Configurable fallback) {
         mFallback = fallback;
+    }
+
+    public final void override(final ValidProperty overridingProperty) {
+        String propertyName = overridingProperty.getName();
+        for (int i = 0; i < mProperties.size(); i++) {
+            if (mProperties.get(i).getName().equals(propertyName)) {
+                mProperties.add(i, overridingProperty);
+                mProperties.remove(i + 1); // the old property
+            }
+        }
     }
 
 }

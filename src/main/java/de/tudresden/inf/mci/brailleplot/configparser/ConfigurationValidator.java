@@ -5,7 +5,7 @@ package de.tudresden.inf.mci.brailleplot.configparser;
  * @author Leonard Kupper
  * @version 2019.07.18
  */
-interface ConfigurationValidator {
+public interface ConfigurationValidator {
     /**
      * Check whether a given pair of key and value is valid as a property or not.
      * This method should check the key to be a legal property name and the corresponding type.
@@ -24,9 +24,18 @@ interface ConfigurationValidator {
     void checkPrinterConfigComplete(Printer printerConfig);
 
     /**
+     * Check whether the given {@link Representation} configuration is complete, meaning that it contains all
+     * properties that were declared as 'required' for the representation namespace.
+     * @param representationConfig The {@link Representation} configuration instance to be checked.
+     */
+    void checkRepresentationConfigComplete(Representation representationConfig);
+
+    /**
      * Check whether the given {@link Format} configuration is complete, meaning that it contains all
      * properties that were declared as 'required' for the format namespace.
      * @param formatConfig The {@link Format} configuration instance to be checked.
      */
     void checkFormatConfigComplete(Format formatConfig);
+
+    void setSearchPath(String searchPath);
 }

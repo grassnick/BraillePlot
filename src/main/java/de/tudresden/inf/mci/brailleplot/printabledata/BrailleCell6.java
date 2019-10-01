@@ -16,9 +16,9 @@ package de.tudresden.inf.mci.brailleplot.printabledata;
  */
 public final class BrailleCell6<T> {
 
-    static final int DOT_COUNT = 6;
-    static final int ROW_COUNT = 3;
-    static final int COLUMN_COUNT = 2;
+    public static final int DOT_COUNT = 6;
+    public static final int ROW_COUNT = 3;
+    public static final int COLUMN_COUNT = 2;
 
     private T[] mDots;
 
@@ -98,6 +98,22 @@ public final class BrailleCell6<T> {
                 sb.append(" ");
             }
             sb.append("\n");
+        }
+        return sb.toString();
+    }
+    /**
+     * Method for getting the Bit Representation of the Cell (110001). Should only be used if T is boolean.
+     * @return String containing the Bit Representation.
+     */
+    public String getBitRepresentationFromBool() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < mDots.length; i++) {
+            if (Boolean.parseBoolean(mDots[i].toString())) {
+                sb.append("1");
+            } else {
+                sb.append("0");
+            }
+
         }
         return sb.toString();
     }
