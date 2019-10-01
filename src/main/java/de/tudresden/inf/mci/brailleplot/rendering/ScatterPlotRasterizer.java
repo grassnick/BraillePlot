@@ -149,12 +149,15 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         Map<String, String> xAxisLegendSymbols = new HashMap<>();
         legend.addSymbolExplanationGroup(xAxisLegendGroupName, xAxisLegendSymbols);
 
+        // TODO Transfer to separate method
         Map<Integer, String> xAxisLabels = new HashMap<>();
         xAxis.setLabels(xAxisLabels);
         final int xAxisTickCount = xDots / xAxisStepWidth;
-        for (int x = 0; x < xAxisTickCount; x += 1) {
+        for (int x = 0; x < xAxisTickCount; x++) {
             xAxisLabels.put(x, String.valueOf(label));
-            double val = x * xAxisStepWidth * xRatio;
+            int tickPos = x * xAxisStepWidth;
+            double val = tickPos / xRatio;
+            mLogger.debug("Adding x axis label {{},{}} for tick #{}", label, val, x);
             xAxisLegendSymbols.put(String.valueOf(label), String.valueOf(val));
             label++;
         }
@@ -166,9 +169,11 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         Map<Integer, String> yAxisLabels = new HashMap<>();
         yAxis.setLabels(yAxisLabels);
         final int yAxisTickCount = yDots / yAxisStepWidth;
-        for (int y = 0; y < yAxisTickCount; y += 1) {
+        for (int y = 0; y < yAxisTickCount; y++) {
             yAxisLabels.put(y, String.valueOf(label));
-            double val = y * yAxisStepWidth * yRatio;
+            int tickPos = y * yAxisStepWidth;
+            double val = tickPos / yRatio;
+            mLogger.debug("Adding y axis label {{},{}} for tick #{}", label, val, y);
             yAxisLegendSymbols.put(String.valueOf(label), String.valueOf(val));
             label++;
         }
