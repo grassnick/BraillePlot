@@ -69,6 +69,22 @@ public class LegendRasterizer implements Rasterizer<Legend> {
                 moveIndentation(referenceCellArea, -1 * EXPLANATION_TEXT_INDENTATION_CELLS); // reset indentation
             }
 
+            // String explanation lists
+            for (Map.Entry<String, Map<String, String>> list : legend.getSymbolExplanationGroups().entrySet()) {
+                String groupName = list.getKey();
+                setLanguage(legend.getLanguage());
+                writeLine("", referenceCellArea); // Leave space of one empty line
+                writeLine(groupName, referenceCellArea);
+                moveIndentation(referenceCellArea, EXPLANATION_TEXT_INDENTATION_CELLS); // set indentation
+                setLanguage(EXPLANATION_LIST_LANGUAGE);
+                for (Map.Entry<String, String> explanation : list.getValue().entrySet()) {
+                    String symbol = explanation.getKey();
+                    String description = explanation.getValue();
+                    writeLine(symbol + "  " + description, referenceCellArea);
+                }
+                moveIndentation(referenceCellArea, -1 * EXPLANATION_TEXT_INDENTATION_CELLS); // reset indentation
+            }
+
             // Columnview
             if (legend.getColumnView().size() > 0) {
                 setLanguage(legend.getLanguage());
@@ -106,22 +122,6 @@ public class LegendRasterizer implements Rasterizer<Legend> {
                     referenceCellArea.removeFromLeft(maxWidth + 1 + EXPLANATION_TEXT_INDENTATION_CELLS);
                     //moveIndentation(columnCellArea, -1 * EXPLANATION_TEXT_INDENTATION_CELLS); // reset indentation
                 }
-            }
-
-            // String explanation lists
-            for (Map.Entry<String, Map<String, String>> list : legend.getSymbolExplanationGroups().entrySet()) {
-                String groupName = list.getKey();
-                setLanguage(legend.getLanguage());
-                writeLine("", referenceCellArea); // Leave space of one empty line
-                writeLine(groupName, referenceCellArea);
-                moveIndentation(referenceCellArea, EXPLANATION_TEXT_INDENTATION_CELLS); // set indentation
-                setLanguage(EXPLANATION_LIST_LANGUAGE);
-                for (Map.Entry<String, String> explanation : list.getValue().entrySet()) {
-                    String symbol = explanation.getKey();
-                    String description = explanation.getValue();
-                    writeLine(symbol + "  " + description, referenceCellArea);
-                }
-                moveIndentation(referenceCellArea, -1 * EXPLANATION_TEXT_INDENTATION_CELLS); // reset indentation
             }
 
         } catch (Rectangle.OutOfSpaceException e) {
