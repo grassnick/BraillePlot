@@ -394,7 +394,8 @@ abstract class AbstractPlotter<T extends Diagram> {
         double width = mCanvas.getCellWidth();
         double stepHor = width + mCanvas.getCellDistHor();
         double stepVer = height + mCanvas.getCellDistVer();
-        char[] title = "Dummykasfjkasuhfksa sdfhsdfbsdhaf".toCharArray();
+        //char[] title = mDiagram.getTitle().toCharArray();
+        char[] title = "dummy".toCharArray();
 
         LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
 

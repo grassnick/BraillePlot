@@ -65,7 +65,8 @@ public class LegendPlotter implements Plotter<Legend> {
         double last = plotLine(legende, mCanvas.getCellDistHor(), 0);
         char[] titel = "Titel:".toCharArray();
         last = plotLine(titel, mCanvas.getCellDistHor(), last + mStepVer + mSpace);
-        char[] titelName = ("dummyjsdfnjkandgkjndf kjsdfnjkahhhhh").toCharArray();
+        char[] titelName = ("dummy").toCharArray();
+        // char[] titleName = mPlotter.mDiagram.getTitle().toCharArray();
         last = plotLine(titelName, mCanvas.getCellDistHor(), last + mStepVer);
         char[] xAxis = "X-Achse:".toCharArray();
         last = plotLine(xAxis, mCanvas.getCellDistHor(), last + mStepVer + mSpace);
@@ -73,8 +74,10 @@ public class LegendPlotter implements Plotter<Legend> {
         char[] xAxisDesc;
         if (mCanvas.getXScaleFactor() == 1) {
             xAxisDesc = ("dummy" + " in " + "dummy").toCharArray();
+            // xAxisDesc = (mPlotter.mDiagram.getXAxisName() + " in " + mPlotter.mDiagram.getXAxisUnit()).toCharArray();
         } else {
             xAxisDesc = ("dummy" + " in " + "dummy" + ", mal 10 hoch " + mCanvas.getXScaleFactor()).toCharArray();
+            // xAxisDesc = (mPlotter.mDiagram.getXAxisName() + " in " + mPlotter.mDiagram.getXAxisUnit() + ", mal 10 hoch " + mCanvas.getXScaleFactor()).toCharArray();
         }
         last = plotLine(xAxisDesc, mCanvas.getCellDistHor(), last + mStepVer);
 
@@ -97,8 +100,10 @@ public class LegendPlotter implements Plotter<Legend> {
         char[] yAxisDesc;
         if (mCanvas.getYScaleFactor() == 1) {
             yAxisDesc = ("dummy" + " in " + "dummy").toCharArray();
+            // yAxisDesc = (mPlotter.mDiagram.getYAxisName() + " in " + mPlotter.mDiagram.getYAxisUnit()).toCharArray();
         } else {
             yAxisDesc = ("dummy" + " in " + "dummy" + ", mal 10 hoch " + mCanvas.getYScaleFactor()).toCharArray();
+            // yAxisDesc = (mPlotter.mDiagram.getYAxisName() + " in " + mPlotter.mDiagram.getYAxisUnit() + ", mal 10 hoch " + mCanvas.getYScaleFactor()).toCharArray();
         }
         last = plotLine(yAxisDesc, mCanvas.getCellDistHor(), last + mStepVer);
 
