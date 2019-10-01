@@ -55,7 +55,7 @@ public class LegendRasterizer implements Rasterizer<Legend> {
                 for (Map.Entry<String, String> explanation : list.getValue().entrySet()) {
                     String symbol = explanation.getKey();
                     String description = explanation.getValue();
-                    writeLine(symbol + " - " + description, referenceCellArea);
+                    writeLine(symbol + "  " + description, referenceCellArea);
                 }
                 moveIndentation(referenceCellArea, -1 * EXPLANATION_TEXT_INDENTATION_CELLS); // reset indentation
             }
@@ -86,7 +86,7 @@ public class LegendRasterizer implements Rasterizer<Legend> {
                     for (Map.Entry<String, String> explanation : list.getValue().entrySet()) {
                         String symbol = explanation.getKey();
                         String description = explanation.getValue();
-                        String textToWrite = symbol + " - " + description;
+                        String textToWrite = symbol + "  " + description;
                         try {
                             int usedWidth = writeLine(textToWrite, columnCellArea);
                             if (usedWidth > maxWidth) {
