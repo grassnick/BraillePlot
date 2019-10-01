@@ -7,13 +7,10 @@ import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaExceptio
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 import de.tudresden.inf.mci.brailleplot.rendering.Legend;
-import tec.units.ri.unit.MetricPrefix;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-
-import static tec.units.ri.unit.Units.METRE;
 
 /**
  * Provides a plotting algorithm for line plot data.
@@ -151,22 +148,22 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
             steps = mStepSize;
         } else if (Math.abs(slope) <= 2) {
             steps = mStepSize / 2;
-        } else if (Math.abs(slope) <= THREE) {
-            steps = mStepSize / THREE;
-        } else if (Math.abs(slope) <= FOUR) {
-            steps = mStepSize / FOUR;
-        } else if (Math.abs(slope) <= FIVE) {
-            steps = mStepSize / FIVE;
-        } else if (Math.abs(slope) <= SIX) {
-            steps = mStepSize / SIX;
-        } else if (Math.abs(slope) <= SEVEN) {
-            steps = mStepSize / SEVEN;
-        } else if (Math.abs(slope) <= EIGHT) {
-            steps = mStepSize / EIGHT;
-        } else if (Math.abs(slope) <= NINE) {
-            steps = mStepSize / NINE;
+        } else if (Math.abs(slope) <= SLOPE3) {
+            steps = mStepSize / SLOPE3;
+        } else if (Math.abs(slope) <= SLOPE4) {
+            steps = mStepSize / SLOPE4;
+        } else if (Math.abs(slope) <= SLOPE5) {
+            steps = mStepSize / SLOPE5;
+        } else if (Math.abs(slope) <= SLOPE6) {
+            steps = mStepSize / SLOPE6;
+        } else if (Math.abs(slope) <= SLOPE7) {
+            steps = mStepSize / SLOPE7;
+        } else if (Math.abs(slope) <= SLOPE8) {
+            steps = mStepSize / SLOPE8;
+        } else if (Math.abs(slope) <= SLOPE9) {
+            steps = mStepSize / SLOPE9;
         } else {
-            steps = mStepSize / TEN;
+            steps = mStepSize / SLOPE10;
         }
 
         // new line styles are added here
@@ -205,7 +202,7 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
      * @param n Y-intercept.
      */
     private void drawDottedLine(final double currentX, final double nextX, final double steps, final double slope, final double n) {
-        for (double j = currentX + steps; j < nextX; j += FOUR * steps) {
+        for (double j = currentX + steps; j < nextX; j += DOTTEDLINESCALE * steps) {
             addPoint(j, j * slope + n);
         }
     }
@@ -219,7 +216,7 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
      * @param n Y-intercept.
      */
     private void drawDashedLine(final double currentX, final double nextX, final double steps, final double slope, final double n) {
-        for (double j = currentX + steps; j < nextX - THREE * steps; j += THREE * steps) {
+        for (double j = currentX + steps; j < nextX - DASHEDLINESCALE * steps; j += DASHEDLINESCALE * steps) {
             addPoint(j, j * slope + n);
             j += steps;
             addPoint(j, j * slope + n);

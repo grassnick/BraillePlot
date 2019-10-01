@@ -103,21 +103,21 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
 
         // plot rectangle
         if (legend) {
-            if (starterY > mCanvas.getPageHeight() - (mCanvas.getCellHeight() + ONE * mCanvas.getCellDistVer())) {
+            if (starterY > mCanvas.getPageHeight() - (mCanvas.getCellHeight() + RECTSCALE * mCanvas.getCellDistVer())) {
                 mCanvas.getNewPage();
                 setData();
-                starterY = THIRTYFIVE;
+                starterY = SCALE2;
                 newPage = true;
             }
 
             for (int i = 0; i < 2; i++) {
-                for (double k = starterY - mStepSize; k > starterY - THIRTY; k -= mStepSize) {
+                for (double k = starterY - mStepSize; k > starterY - BAR; k -= mStepSize) {
                     addPoint(startX + i * (endX - startX), k);
                 }
             }
             for (int i = 0; i < 2; i++) {
-                for (double k = endX - SIXTY; k <= endX; k += mStepSize) {
-                    addPoint(k, starterY - i * THIRTY);
+                for (double k = endX - SCALE1; k <= endX; k += mStepSize) {
+                    addPoint(k, starterY - i * BAR);
                 }
             }
 
@@ -151,17 +151,17 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
             fillVerticalLine(starterY, endX, legend);
         } else if (j == 2) {
             fillDiagonalRight(starterY, endX, legend);
-        } else if (j == THREE) {
+        } else if (j == COMPARE3) {
             fillGridPattern(starterY, endX, legend);
-        } else if (j == FOUR) {
+        } else if (j == COMPARE4) {
             fillDottedPattern(starterY, endX, legend);
-        } else if (j == FIVE) {
+        } else if (j == COMPARE5) {
             if (legend) {
                 fillStairPatternL(starterY, endX);
             } else {
                 fillStairPatternD(starterY, endX);
             }
-        } else if (j == SIX) {
+        } else if (j == COMPARE6) {
             fillDiagonalLeft(starterY, endX, legend);
         } else {
             throw new InsufficientRenderingAreaException("There are more data series than textures.");
@@ -179,8 +179,8 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     private void fillFullPattern(final double startY, final double endX, final boolean legend) {
 
         if (legend) {
-            for (double i = FIVE + mStepSize; i < endX; i += mStepSize) {
-                for (double j = startY - mStepSize; j > startY - THIRTY; j -= mStepSize) {
+            for (double i = FULLSCALE + mStepSize; i < endX; i += mStepSize) {
+                for (double j = startY - mStepSize; j > startY - BAR; j -= mStepSize) {
                     addPoint(i, j);
                 }
             }
@@ -211,21 +211,21 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     private void fillVerticalLine(final double startY, final double endX, final boolean legend) {
 
         if (legend) {
-            for (double i = FIVE + THREE * mStepSize; i < endX - mStepSize; i += THREE * mStepSize) {
-                for (double j = startY - THREE * mStepSize; j > startY - THIRTY + THREE * mStepSize; j -= mStepSize) {
+            for (double i = VERTSCALE + VERTSCALE2 * mStepSize; i < endX - mStepSize; i += VERTSCALE2 * mStepSize) {
+                for (double j = startY - VERTSCALE2 * mStepSize; j > startY - BAR + VERTSCALE2 * mStepSize; j -= mStepSize) {
                     addPoint(i, j);
                 }
             }
         } else {
             if (endX < mLastXValue + mNegative * mXTickStep) {
-                for (double i = mLastXValue + mNegative * mXTickStep - THREE * mStepSize; i > endX + mStepSize; i -= THREE * mStepSize) {
-                    for (double j = startY - THREE * mStepSize; j > startY - mBarWidth + THREE * mStepSize; j -= mStepSize) {
+                for (double i = mLastXValue + mNegative * mXTickStep - VERTSCALE2 * mStepSize; i > endX + mStepSize; i -= VERTSCALE2 * mStepSize) {
+                    for (double j = startY - VERTSCALE2 * mStepSize; j > startY - mBarWidth + VERTSCALE2 * mStepSize; j -= mStepSize) {
                         addPoint(i, j);
                     }
                 }
             } else {
-                for (double i = mLastXValue + THREE * mStepSize + mNegative * mXTickStep; i < endX - mStepSize; i += THREE * mStepSize) {
-                    for (double j = startY - THREE * mStepSize; j > startY - mBarWidth + THREE * mStepSize; j -= mStepSize) {
+                for (double i = mLastXValue + VERTSCALE2 * mStepSize + mNegative * mXTickStep; i < endX - mStepSize; i += VERTSCALE2 * mStepSize) {
+                    for (double j = startY - VERTSCALE2 * mStepSize; j > startY - mBarWidth + VERTSCALE2 * mStepSize; j -= mStepSize) {
                         addPoint(i, j);
                     }
                 }
@@ -242,16 +242,16 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     private void fillDiagonalRight(final double startY, final double endX, final boolean legend) {
 
         if (legend) {
-            for (double j = startY - THIRTY + mStepSize; j < startY; j += FIVE * mStepSize) {
+            for (double j = startY - BAR + mStepSize; j < startY; j += DIAGSCALE * mStepSize) {
                 double y = j;
-                for (double i = FIVE + mStepSize; y < startY && i < endX; i += mStepSize) {
+                for (double i = DIAGSCALE + mStepSize; y < startY && i < endX; i += mStepSize) {
                     addPoint(i, y);
                     y += mStepSize;
                 }
             }
 
-            for (double i = FIVE + SIX * mStepSize; i < endX; i += FIVE * mStepSize) {
-                double y = startY - THIRTY + mStepSize;
+            for (double i = DIAGSCALE + DISTDIAGONALS * mStepSize; i < endX; i += DIAGSCALE * mStepSize) {
+                double y = startY - BAR + mStepSize;
                 for (double k = i; y < startY && k < endX; k += mStepSize) {
                     addPoint(k, y);
                     y += mStepSize;
@@ -259,7 +259,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
             }
         } else {
             if (endX < mLastXValue + mNegative * mXTickStep) {
-                for (double j = startY - mBarWidth + mStepSize; j < startY; j += FIVE * mStepSize) {
+                for (double j = startY - mBarWidth + mStepSize; j < startY; j += DIAGSCALE * mStepSize) {
                     double y = j;
                     for (double i = mLastXValue + mNegative * mXTickStep - mStepSize; y < startY && i > endX; i -= mStepSize) {
                         addPoint(i, y);
@@ -267,7 +267,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
 
-                for (double i = mLastXValue + mNegative * mXTickStep - SIX * mStepSize; i > endX; i -= FIVE * mStepSize) {
+                for (double i = mLastXValue + mNegative * mXTickStep - DISTDIAGONALS * mStepSize; i > endX; i -= DIAGSCALE * mStepSize) {
                     double y = startY - mBarWidth + mStepSize;
                     for (double k = i; y < startY && k > endX; k -= mStepSize) {
                         addPoint(k, y);
@@ -275,7 +275,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
             } else {
-                for (double j = startY - mBarWidth + mStepSize; j < startY; j += FIVE * mStepSize) {
+                for (double j = startY - mBarWidth + mStepSize; j < startY; j += DIAGSCALE * mStepSize) {
                     double y = j;
                     for (double i = mLastXValue + mStepSize + mNegative * mXTickStep; y < startY && i < endX; i += mStepSize) {
                         addPoint(i, y);
@@ -283,7 +283,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
 
-                for (double i = mLastXValue + SIX * mStepSize + mNegative * mXTickStep; i < endX; i += FIVE * mStepSize) {
+                for (double i = mLastXValue + DISTDIAGONALS * mStepSize + mNegative * mXTickStep; i < endX; i += DIAGSCALE * mStepSize) {
                     double y = startY - mBarWidth + mStepSize;
                     for (double k = i; y < startY && k < endX; k += mStepSize) {
                         addPoint(k, y);
@@ -303,38 +303,38 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     private void fillGridPattern(final double startY, final double endX, final boolean legend) {
 
         if (legend) {
-            for (double i = FIVE + THREE * mStepSize; i < endX - 2 * mStepSize; i += THREE * mStepSize) {
-                for (double j = startY - mStepSize; j > startY - THIRTY; j -= mStepSize) {
+            for (double i = GRIDSCALE + GRIDSCALE2 * mStepSize; i < endX - 2 * mStepSize; i += GRIDSCALE2 * mStepSize) {
+                for (double j = startY - mStepSize; j > startY - BAR; j -= mStepSize) {
                     addPoint(i, j);
                 }
             }
 
-            for (double j = startY - THREE * mStepSize; j > startY - THIRTY + mStepSize; j -= THREE * mStepSize) {
-                for (double i = FIVE + mStepSize; i < endX; i += mStepSize) {
+            for (double j = startY - GRIDSCALE2 * mStepSize; j > startY - BAR + mStepSize; j -= GRIDSCALE2 * mStepSize) {
+                for (double i = GRIDSCALE + mStepSize; i < endX; i += mStepSize) {
                     addPoint(i, j);
                 }
             }
         } else {
             if (endX < mLastXValue + mNegative * mXTickStep) {
-                for (double i = mLastXValue + mNegative * mXTickStep - THREE * mStepSize; i > endX + 2 * mStepSize; i -= THREE * mStepSize) {
+                for (double i = mLastXValue + mNegative * mXTickStep - GRIDSCALE2 * mStepSize; i > endX + 2 * mStepSize; i -= GRIDSCALE2 * mStepSize) {
                     for (double j = startY - mStepSize; j > startY - mBarWidth; j -= mStepSize) {
                         addPoint(i, j);
                     }
                 }
 
-                for (double j = startY - THREE * mStepSize; j > startY - mBarWidth + mStepSize; j -= THREE * mStepSize) {
+                for (double j = startY - GRIDSCALE2 * mStepSize; j > startY - mBarWidth + mStepSize; j -= GRIDSCALE2 * mStepSize) {
                     for (double i = mLastXValue - mStepSize + mNegative * mXTickStep; i > endX; i -= mStepSize) {
                         addPoint(i, j);
                     }
                 }
             } else {
-                for (double i = mLastXValue + THREE * mStepSize + mNegative * mXTickStep; i < endX - 2 * mStepSize; i += THREE * mStepSize) {
+                for (double i = mLastXValue + GRIDSCALE2 * mStepSize + mNegative * mXTickStep; i < endX - 2 * mStepSize; i += GRIDSCALE2 * mStepSize) {
                     for (double j = startY - mStepSize; j > startY - mBarWidth; j -= mStepSize) {
                         addPoint(i, j);
                     }
                 }
 
-                for (double j = startY - THREE * mStepSize; j > startY - mBarWidth + mStepSize; j -= THREE * mStepSize) {
+                for (double j = startY - GRIDSCALE2 * mStepSize; j > startY - mBarWidth + mStepSize; j -= GRIDSCALE2 * mStepSize) {
                     for (double i = mLastXValue + mStepSize + mNegative * mXTickStep; i < endX; i += mStepSize) {
                         addPoint(i, j);
                     }
@@ -351,21 +351,21 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
      */
     private void fillDottedPattern(final double startY, final double endX, final boolean legend) {
         if (legend) {
-            for (double i = FIVE + THREE * mStepSize; i < endX - mStepSize; i += THREE * mStepSize) {
-                for (double j = startY - THREE * mStepSize; j > startY - THIRTY + mStepSize; j -= THREE * mStepSize) {
+            for (double i = DOTSCALE + DOTSCALE2 * mStepSize; i < endX - mStepSize; i += DOTSCALE2 * mStepSize) {
+                for (double j = startY - DOTSCALE2 * mStepSize; j > startY - BAR + mStepSize; j -= DOTSCALE2 * mStepSize) {
                     addPoint(i, j);
                 }
             }
         } else {
             if (endX < mLastXValue + mNegative * mXTickStep) {
-                for (double i = mLastXValue - THREE * mStepSize + mNegative * mXTickStep; i > endX + mStepSize; i -= THREE * mStepSize) {
-                    for (double j = startY - THREE * mStepSize; j > startY - mBarWidth + mStepSize; j -= THREE * mStepSize) {
+                for (double i = mLastXValue - DOTSCALE2 * mStepSize + mNegative * mXTickStep; i > endX + mStepSize; i -= DOTSCALE2 * mStepSize) {
+                    for (double j = startY - DOTSCALE2 * mStepSize; j > startY - mBarWidth + mStepSize; j -= DOTSCALE2 * mStepSize) {
                         addPoint(i, j);
                     }
                 }
             } else {
-                for (double i = mLastXValue + THREE * mStepSize + mNegative * mXTickStep; i < endX - mStepSize; i += THREE * mStepSize) {
-                    for (double j = startY - THREE * mStepSize; j > startY - mBarWidth + mStepSize; j -= THREE * mStepSize) {
+                for (double i = mLastXValue + DOTSCALE2 * mStepSize + mNegative * mXTickStep; i < endX - mStepSize; i += DOTSCALE2 * mStepSize) {
+                    for (double j = startY - DOTSCALE2 * mStepSize; j > startY - mBarWidth + mStepSize; j -= DOTSCALE2 * mStepSize) {
                         addPoint(i, j);
                     }
                 }
@@ -383,10 +383,10 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
 
         if (endX < mLastXValue + mNegative * mXTickStep) {
             outerloop:
-            for (double j = startY - STAIRDIST; j > startY - mBarWidth; j -= TWOFIVE * STAIRDIST) {
+            for (double j = startY - STAIRDIST; j > startY - mBarWidth; j -= STAIRSCALE2 * STAIRDIST) {
                 double lastX;
                 double lastY;
-                for (double i = mLastXValue - mStepSize + mNegative * mXTickStep; i >= mLastXValue - THREE * mStepSize + mNegative * mXTickStep; i -= mStepSize) {
+                for (double i = mLastXValue - mStepSize + mNegative * mXTickStep; i >= mLastXValue - STAIRSCALE3 * mStepSize + mNegative * mXTickStep; i -= mStepSize) {
                     if (i > endX) {
                         addPoint(i, j);
                         last = i;
@@ -395,7 +395,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
                 lastX = last;
-                for (double k = j - mStepSize; k >= j - THREE * mStepSize; k -= mStepSize) {
+                for (double k = j - mStepSize; k >= j - STAIRSCALE3 * mStepSize; k -= mStepSize) {
                     if (k > startY - mBarWidth) {
                         addPoint(lastX, k);
                         last = k;
@@ -405,7 +405,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
                 lastY = last;
                 while (true) {
-                    for (double i = lastX - mStepSize; i >= lastX - THREE * mStepSize; i -= mStepSize) {
+                    for (double i = lastX - mStepSize; i >= lastX - STAIRSCALE3 * mStepSize; i -= mStepSize) {
                         if (i > endX) {
                             addPoint(i, lastY);
                             last = i;
@@ -414,7 +414,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                         }
                     }
                     lastX = last;
-                    for (double k = lastY - mStepSize; k >= lastY - THREE * mStepSize; k -= mStepSize) {
+                    for (double k = lastY - mStepSize; k >= lastY - STAIRSCALE3 * mStepSize; k -= mStepSize) {
                         if (k > startY - mBarWidth) {
                             addPoint(lastX, k);
                             last = k;
@@ -426,7 +426,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
             }
             anotherloop:
-            for (double i = mLastXValue - 2 - 2 * STAIRDIST + mNegative * mXTickStep; i > endX; i -= TWOFIVE * STAIRDIST) {
+            for (double i = mLastXValue - 2 - 2 * STAIRDIST + mNegative * mXTickStep; i > endX; i -= STAIRSCALE2 * STAIRDIST) {
                 double lastX;
                 double lastY;
                 for (double j = startY - mStepSize; j >= startY - 2 * mStepSize; j -= mStepSize) {
@@ -438,7 +438,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
                 lastY = last;
-                for (double k = i - mStepSize; k >= i - THREE * mStepSize; k -= mStepSize) {
+                for (double k = i - mStepSize; k >= i - STAIRSCALE3 * mStepSize; k -= mStepSize) {
                     if (k > endX) {
                         addPoint(k, lastY);
                         last = k;
@@ -448,7 +448,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
                 lastX = last;
                 while (true) {
-                    for (double j = lastY - mStepSize; j >= lastY - THREE * mStepSize; j -= mStepSize) {
+                    for (double j = lastY - mStepSize; j >= lastY - STAIRSCALE3 * mStepSize; j -= mStepSize) {
                         if (j > startY - mBarWidth) {
                             addPoint(lastX, j);
                             last = j;
@@ -457,7 +457,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                         }
                     }
                     lastY = last;
-                    for (double k = lastX - mStepSize; k >= lastX - THREE * mStepSize; k -= mStepSize) {
+                    for (double k = lastX - mStepSize; k >= lastX - STAIRSCALE3 * mStepSize; k -= mStepSize) {
                         if (k > endX) {
                             addPoint(k, lastY);
                             last = k;
@@ -470,10 +470,10 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
             }
         } else {
             outerloop:
-            for (double j = startY - STAIRDIST; j > startY - mBarWidth; j -= TWOFIVE * STAIRDIST) {
+            for (double j = startY - STAIRDIST; j > startY - mBarWidth; j -= STAIRSCALE2 * STAIRDIST) {
                 double lastX;
                 double lastY;
-                for (double i = mLastXValue + mStepSize + mNegative * mXTickStep; i <= mLastXValue + THREE * mStepSize + mNegative * mXTickStep; i += mStepSize) {
+                for (double i = mLastXValue + mStepSize + mNegative * mXTickStep; i <= mLastXValue + STAIRSCALE3 * mStepSize + mNegative * mXTickStep; i += mStepSize) {
                     if (i < endX) {
                         addPoint(i, j);
                         last = i;
@@ -482,7 +482,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
                 lastX = last;
-                for (double k = j - mStepSize; k >= j - THREE * mStepSize; k -= mStepSize) {
+                for (double k = j - mStepSize; k >= j - STAIRSCALE3 * mStepSize; k -= mStepSize) {
                     if (k > startY - mBarWidth) {
                         addPoint(lastX, k);
                         last = k;
@@ -492,7 +492,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
                 lastY = last;
                 while (true) {
-                    for (double i = lastX + mStepSize; i <= lastX + THREE * mStepSize; i += mStepSize) {
+                    for (double i = lastX + mStepSize; i <= lastX + STAIRSCALE3 * mStepSize; i += mStepSize) {
                         if (i < endX) {
                             addPoint(i, lastY);
                             last = i;
@@ -501,7 +501,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                         }
                     }
                     lastX = last;
-                    for (double k = lastY - mStepSize; k >= lastY - THREE * mStepSize; k -= mStepSize) {
+                    for (double k = lastY - mStepSize; k >= lastY - STAIRSCALE3 * mStepSize; k -= mStepSize) {
                         if (k > startY - mBarWidth) {
                             addPoint(lastX, k);
                             last = k;
@@ -513,7 +513,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
             }
             anotherloop:
-            for (double i = mLastXValue + 2 + 2 * STAIRDIST + mNegative * mXTickStep; i < endX; i += TWOFIVE * STAIRDIST) {
+            for (double i = mLastXValue + 2 + 2 * STAIRDIST + mNegative * mXTickStep; i < endX; i += STAIRSCALE2 * STAIRDIST) {
                 double lastX;
                 double lastY;
                 for (double j = startY - mStepSize; j >= startY - 2 * mStepSize; j -= mStepSize) {
@@ -525,7 +525,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
                 lastY = last;
-                for (double k = i + mStepSize; k <= i + THREE * mStepSize; k += mStepSize) {
+                for (double k = i + mStepSize; k <= i + STAIRSCALE3 * mStepSize; k += mStepSize) {
                     if (k < endX) {
                         addPoint(k, lastY);
                         last = k;
@@ -535,7 +535,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
                 lastX = last;
                 while (true) {
-                    for (double j = lastY - mStepSize; j >= lastY - THREE * mStepSize; j -= mStepSize) {
+                    for (double j = lastY - mStepSize; j >= lastY - STAIRSCALE3 * mStepSize; j -= mStepSize) {
                         if (j > startY - mBarWidth) {
                             addPoint(lastX, j);
                             last = j;
@@ -544,7 +544,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                         }
                     }
                     lastY = last;
-                    for (double k = lastX + mStepSize; k <= lastX + THREE * mStepSize; k += mStepSize) {
+                    for (double k = lastX + mStepSize; k <= lastX + STAIRSCALE3 * mStepSize; k += mStepSize) {
                         if (k < endX) {
                             addPoint(k, lastY);
                             last = k;
@@ -567,10 +567,10 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     private void fillStairPatternL(final double startY, final double endX) {
         double last = 0;
         outerloop:
-        for (double j = startY - STAIRDIST; j > startY - THIRTY; j -= TWOFIVE * STAIRDIST) {
+        for (double j = startY - STAIRDIST; j > startY - BAR; j -= STAIRSCALE2 * STAIRDIST) {
             double lastX;
             double lastY;
-            for (double i = FIVE + mStepSize; i <= FIVE + THREE * mStepSize; i += mStepSize) {
+            for (double i = STAIRSCALE + mStepSize; i <= STAIRSCALE + STAIRSCALE3 * mStepSize; i += mStepSize) {
                 if (i < endX) {
                     addPoint(i, j);
                     last = i;
@@ -579,8 +579,8 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
             }
             lastX = last;
-            for (double k = j - mStepSize; k >= j - THREE * mStepSize; k -= mStepSize) {
-                if (k > startY - THIRTY) {
+            for (double k = j - mStepSize; k >= j - STAIRSCALE3 * mStepSize; k -= mStepSize) {
+                if (k > startY - BAR) {
                     addPoint(lastX, k);
                     last = k;
                 } else {
@@ -589,7 +589,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
             }
             lastY = last;
             while (true) {
-                for (double i = lastX + mStepSize; i <= lastX + THREE * mStepSize; i += mStepSize) {
+                for (double i = lastX + mStepSize; i <= lastX + STAIRSCALE3 * mStepSize; i += mStepSize) {
                     if (i < endX) {
                         addPoint(i, lastY);
                         last = i;
@@ -598,8 +598,8 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
                 lastX = last;
-                for (double k = lastY - mStepSize; k >= lastY - THREE * mStepSize; k -= mStepSize) {
-                    if (k > startY - THIRTY) {
+                for (double k = lastY - mStepSize; k >= lastY - STAIRSCALE3 * mStepSize; k -= mStepSize) {
+                    if (k > startY - BAR) {
                         addPoint(lastX, k);
                         last = k;
                     } else {
@@ -610,11 +610,11 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
             }
         }
         anotherloop:
-        for (double i = SEVEN + 2 * STAIRDIST; i < endX; i += TWOFIVE * STAIRDIST) {
+        for (double i = SCALESTAIRS + 2 * STAIRDIST; i < endX; i += STAIRSCALE2 * STAIRDIST) {
             double lastX;
             double lastY;
             for (double j = startY - mStepSize; j >= startY - 2 * mStepSize; j -= mStepSize) {
-                if (j > startY - THIRTY) {
+                if (j > startY - BAR) {
                     addPoint(i, j);
                     last = j;
                 } else {
@@ -622,7 +622,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                 }
             }
             lastY = last;
-            for (double k = i + mStepSize; k <= i + THREE * mStepSize; k += mStepSize) {
+            for (double k = i + mStepSize; k <= i + STAIRSCALE3 * mStepSize; k += mStepSize) {
                 if (k < endX) {
                     addPoint(k, lastY);
                     last = k;
@@ -632,8 +632,8 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
             }
             lastX = last;
             while (true) {
-                for (double j = lastY - mStepSize; j >= lastY - THREE * mStepSize; j -= mStepSize) {
-                    if (j > startY - THIRTY) {
+                for (double j = lastY - mStepSize; j >= lastY - STAIRSCALE3 * mStepSize; j -= mStepSize) {
+                    if (j > startY - BAR) {
                         addPoint(lastX, j);
                         last = j;
                     } else {
@@ -641,7 +641,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
                 lastY = last;
-                for (double k = lastX + mStepSize; k <= lastX + THREE * mStepSize; k += mStepSize) {
+                for (double k = lastX + mStepSize; k <= lastX + STAIRSCALE3 * mStepSize; k += mStepSize) {
                     if (k < endX) {
                         addPoint(k, lastY);
                         last = k;
@@ -663,24 +663,24 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
     private void fillDiagonalLeft(final double startY, final double endX, final boolean legend) {
 
         if (legend) {
-            for (double j = startY - mStepSize; j > startY - THIRTY; j -= FIVE * mStepSize) {
+            for (double j = startY - mStepSize; j > startY - BAR; j -= DIAGSCALE * mStepSize) {
                 double y = j;
-                for (double i = FIVE + mStepSize; y > startY - THIRTY && i < endX; i += mStepSize) {
+                for (double i = DIAGSCALE + mStepSize; y > startY - BAR && i < endX; i += mStepSize) {
                     addPoint(i, y);
                     y -= mStepSize;
                 }
             }
 
-            for (double i = FIVE + SIX * mStepSize; i < endX; i += FIVE * mStepSize) {
+            for (double i = DIAGSCALE + DISTDIAGONALS * mStepSize; i < endX; i += DIAGSCALE * mStepSize) {
                 double y = startY - mStepSize;
-                for (double k = i; y > startY - THIRTY && k < endX; k += mStepSize) {
+                for (double k = i; y > startY - BAR && k < endX; k += mStepSize) {
                     addPoint(k, y);
                     y -= mStepSize;
                 }
             }
         } else {
             if (endX < mLastXValue + mNegative * mXTickStep) {
-                for (double j = startY - mStepSize; j > startY - mBarWidth; j -= FIVE * mStepSize) {
+                for (double j = startY - mStepSize; j > startY - mBarWidth; j -= DIAGSCALE * mStepSize) {
                     double y = j;
                     for (double i = mLastXValue - mStepSize + mNegative * mXTickStep; y > startY - mBarWidth && i > endX; i -= mStepSize) {
                         addPoint(i, y);
@@ -688,7 +688,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
 
-                for (double i = mLastXValue - SIX * mStepSize + mNegative * mXTickStep; i > endX; i -= FIVE * mStepSize) {
+                for (double i = mLastXValue - DISTDIAGONALS * mStepSize + mNegative * mXTickStep; i > endX; i -= DIAGSCALE * mStepSize) {
                     double y = startY - mStepSize;
                     for (double k = i; y > startY - mBarWidth && k > endX; k -= mStepSize) {
                         addPoint(k, y);
@@ -696,7 +696,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
             } else {
-                for (double j = startY - mStepSize; j > startY - mBarWidth; j -= FIVE * mStepSize) {
+                for (double j = startY - mStepSize; j > startY - mBarWidth; j -= DIAGSCALE * mStepSize) {
                     double y = j;
                     for (double i = mLastXValue + mStepSize + mNegative * mXTickStep; y > startY - mBarWidth && i < endX; i += mStepSize) {
                         addPoint(i, y);
@@ -704,7 +704,7 @@ abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarCha
                     }
                 }
 
-                for (double i = mLastXValue + SIX * mStepSize + mNegative * mXTickStep; i < endX; i += FIVE * mStepSize) {
+                for (double i = mLastXValue + DISTDIAGONALS * mStepSize + mNegative * mXTickStep; i < endX; i += DIAGSCALE * mStepSize) {
                     double y = startY - mStepSize;
                     for (double k = i; y > startY - mBarWidth && k < endX; k += mStepSize) {
                         addPoint(k, y);

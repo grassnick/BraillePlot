@@ -69,8 +69,8 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         mTitleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
 
         mXTickDistance = mLeftMargin + mCanvas.getCellWidth() / 2;
-        if (mXTickDistance < THIRTY) {
-            mXTickDistance = THIRTY;
+        if (mXTickDistance < MINXTICKDISTANCE) {
+            mXTickDistance = MINXTICKDISTANCE;
         }
 
         // x-axis
@@ -83,14 +83,14 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         mNumberXTicks = (int) Math.floor(mLengthX / mXTickDistance);
         if (mNumberXTicks < 2) {
             mNumberXTicks = 2;
-        } else if (mNumberXTicks <= SIX) {
-            mNumberXTicks = SIX;
-        } else if (mNumberXTicks <= ELEVEN) {
-            mNumberXTicks = ELEVEN;
-        } else if (mNumberXTicks <= SIXTEEN) {
-            mNumberXTicks = SIXTEEN;
+        } else if (mNumberXTicks <= XTICKS1) {
+            mNumberXTicks = XTICKS1;
+        } else if (mNumberXTicks <= XTICKS2) {
+            mNumberXTicks = XTICKS2;
+        } else if (mNumberXTicks <= XTICKS3) {
+            mNumberXTicks = XTICKS3;
         } else {
-            mNumberXTicks = TWENTYONE;
+            mNumberXTicks = XTICKSEND;
         }
 
         mScaleX = new double[mNumberXTicks + 1];
@@ -119,14 +119,14 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         mNumberYTicks = (int) Math.floor(mLengthY / YTICKDISTANCE);
         if (mNumberYTicks < 2) {
             mNumberYTicks = 2;
-        } else if (mNumberYTicks <= SIX) {
-            mNumberYTicks = SIX;
-        } else if (mNumberYTicks <= ELEVEN) {
-            mNumberYTicks = ELEVEN;
-        } else if (mNumberYTicks <= SIXTEEN) {
-            mNumberYTicks = SIXTEEN;
+        } else if (mNumberYTicks <= XTICKS1) {
+            mNumberYTicks = XTICKS1;
+        } else if (mNumberYTicks <= XTICKS2) {
+            mNumberYTicks = XTICKS2;
+        } else if (mNumberYTicks <= XTICKS3) {
+            mNumberYTicks = XTICKSEND;
         } else {
-            mNumberYTicks = TWENTYONE;
+            mNumberYTicks = XTICKSEND;
         }
 
         mScaleY = new double[mNumberYTicks + 1];
@@ -207,8 +207,8 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
 
         double height = mCanvas.getCellHeight();
         double width = mCanvas.getCellWidth();
-        double startX = mLeftMargin - mCanvas.getCellDistHor() - width - FIVE * mStepSize;
-        double secondX = mPageWidth - mSecondAxis + SIX * mStepSize;
+        double startX = mLeftMargin - mCanvas.getCellDistHor() - width - DISTYAXISNAMES * mStepSize;
+        double secondX = mPageWidth - mSecondAxis + DISTSECAXIS * mStepSize;
         double halfCell = height / 2;
 
         LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
@@ -229,7 +229,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
                         rect = new Rectangle(startX - 2 * mCanvas.getCellDistHor(), mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
                     } else {
                         // three digits
-                        rect = new Rectangle(startX - width - THREE * mCanvas.getCellDistHor(), mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
+                        rect = new Rectangle(startX - width - DISTYAXISNAMES2 * mCanvas.getCellDistHor(), mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
                     }
                     BrailleText text = new BrailleText(Integer.toString((int) mScaleY[i]), rect);
                     tplotter.plot(text, mCanvas);
@@ -341,10 +341,10 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             addPoint(xValue + CIRCLEDIA / 2, yValue);
         }
 
-        addPoint(lastX + CIRCLESCALE * mStepSize / THREE, yValue + mStepSize);
-        addPoint(lastX + CIRCLESCALE * mStepSize / THREE, yValue - mStepSize);
-        addPoint(xValue - CIRCLEDIA / 2 + mStepSize / THREE, yValue + mStepSize);
-        addPoint(xValue - CIRCLEDIA / 2 + mStepSize / THREE, yValue - mStepSize);
+        addPoint(lastX + CIRCLESCALE * mStepSize / CIRCLESCALE2, yValue + mStepSize);
+        addPoint(lastX + CIRCLESCALE * mStepSize / CIRCLESCALE2, yValue - mStepSize);
+        addPoint(xValue - CIRCLEDIA / 2 + mStepSize / CIRCLESCALE2, yValue + mStepSize);
+        addPoint(xValue - CIRCLEDIA / 2 + mStepSize / CIRCLESCALE2, yValue - mStepSize);
     }
 
 }

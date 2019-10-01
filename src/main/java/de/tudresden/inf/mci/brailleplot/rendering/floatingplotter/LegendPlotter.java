@@ -26,20 +26,24 @@ public class LegendPlotter implements Plotter<Legend> {
     private double mStepVer;
 
     // constants
-    private static final double TWOFIVE = 2.5;
-    private static final double FOURFIVE = 4.5;
-    private static final int THREE = 3;
-    private static final int FIVE = 5;
-    private static final int TEN = 10;
-    private static final int FIFTEEN = 15;
-    private static final int TWENTY = 20;
-    private static final int TWENTYFIVE = 25;
-    private static final int THIRTY = 30;
-    private static final int THIRTYFIVE = 35;
-    private static final int FIFTY = 50;
-    private static final int FIFTYFIVE = 55;
-    private static final int SIXTYFIVE = 65;
-    private static final int SEVENTYFIVE = 75;
+    private static final double SYMDESCSCALE = 2.5;
+    private static final double NEWPAGESCALE = 4.5;
+    private static final int SYMBOLSCALE = 3;
+    private static final int MARGINSCALE = 3;
+    private static final int COMPARE3 = 3;
+    private static final int STARTLINES = 5;
+    private static final int STARTNEWPAGE = 5;
+    private static final int STARTPOINT = 10;
+    private static final int STARTDOTDESC = 15;
+    private static final int CURRENTPAGESCALE = 15;
+    private static final int NEWPAGESCALE2 = 20;
+    private static final int STARTFRAMESLINES = 25;
+    private static final int STARTLINEDESC = 30;
+    private static final int ENDLINES = 35;
+    private static final int STARTLINESFRAMESDESC = 50;
+    private static final int ENDFRAMESLINES = 55;
+    private static final int ENDNEWPAGE = 65;
+    private static final int STARTTEXTUREDESC = 75;
 
     /**
      * Plots a {@link Legend} instance onto a {@link PlotCanvas}.
@@ -107,7 +111,7 @@ public class LegendPlotter implements Plotter<Legend> {
         }
         last = plotLine(yAxisDesc, mCanvas.getCellDistHor(), last + mStepVer);
 
-        if (mCanvas.getAxesDerivation() || legend.getType() == THREE) {
+        if (mCanvas.getAxesDerivation() || legend.getType() == COMPARE3) {
             char[] yAxisNames = "Y-Achsenbeschriftung:".toCharArray();
             last = plotLine(yAxisNames, mCanvas.getCellDistHor(), last + mStepVer + mSpace);
 
@@ -134,17 +138,17 @@ public class LegendPlotter implements Plotter<Legend> {
                 splotter.setCanvas(mCanvas);
                 splotter.setData();
 
-                splotter.addPoint(TEN, last + mStepVer + THREE * mHeight);
+                splotter.addPoint(STARTPOINT, last + mStepVer + SYMBOLSCALE * mHeight);
                 if (i == 0) {
-                    splotter.drawDot(TEN, last + mStepVer + THREE * mHeight);
+                    splotter.drawDot(STARTPOINT, last + mStepVer + SYMBOLSCALE * mHeight);
                 } else if (i == 1) {
-                    splotter.drawX(TEN, last + mStepVer + THREE * mHeight);
+                    splotter.drawX(STARTPOINT, last + mStepVer + SYMBOLSCALE * mHeight);
                 } else if (i == 2) {
-                    splotter.drawCircle(TEN, last + mStepVer + THREE * mHeight);
+                    splotter.drawCircle(STARTPOINT, last + mStepVer + SYMBOLSCALE * mHeight);
                 }
 
                 char[] rahmen = ("  " + frame).toCharArray();
-                last = plotLine(rahmen, FIFTEEN, last + mStepVer + TWOFIVE * mHeight);
+                last = plotLine(rahmen, STARTDOTDESC, last + mStepVer + SYMDESCSCALE * mHeight);
             }
         } else if (legend.getType() == 1) {
             // line plot without frames
@@ -156,10 +160,10 @@ public class LegendPlotter implements Plotter<Legend> {
                 LinePlotter splotter = (LinePlotter) mPlotter;
                 splotter.setCanvas(mCanvas);
                 splotter.setData();
-                splotter.drawLines(FIVE, THIRTYFIVE, last + mStepVer + THREE * mHeight, last + mStepVer + THREE * mHeight, i);
+                splotter.drawLines(STARTLINES, ENDLINES, last + mStepVer + SYMBOLSCALE * mHeight, last + mStepVer + SYMBOLSCALE * mHeight, i);
 
                 char[] rahmen = ("  " + frame).toCharArray();
-                last = plotLine(rahmen, THIRTY, last + mStepVer + TWOFIVE * mHeight);
+                last = plotLine(rahmen, STARTLINEDESC, last + mStepVer + SYMDESCSCALE * mHeight);
             }
         } else if (legend.getType() == 2) {
             // line plot with frames
@@ -172,21 +176,21 @@ public class LegendPlotter implements Plotter<Legend> {
                 splotter.setCanvas(mCanvas);
                 splotter.setData();
 
-                splotter.addPoint(TEN, last + mStepVer + THREE * mHeight);
+                splotter.addPoint(STARTPOINT, last + mStepVer + SYMBOLSCALE * mHeight);
                 if (i == 0) {
-                    splotter.drawDot(TEN, last + mStepVer + THREE * mHeight);
+                    splotter.drawDot(STARTPOINT, last + mStepVer + SYMBOLSCALE * mHeight);
                 } else if (i == 1) {
-                    splotter.drawX(TEN, last + mStepVer + THREE * mHeight);
+                    splotter.drawX(STARTPOINT, last + mStepVer + SYMBOLSCALE * mHeight);
                 } else if (i == 2) {
-                    splotter.drawCircle(TEN, last + mStepVer + THREE * mHeight);
+                    splotter.drawCircle(STARTPOINT, last + mStepVer + SYMBOLSCALE * mHeight);
                 }
 
-                splotter.drawLines(TWENTYFIVE, FIFTYFIVE, last + mStepVer + THREE * mHeight, last + mStepVer + THREE * mHeight, i);
+                splotter.drawLines(STARTFRAMESLINES, ENDFRAMESLINES, last + mStepVer + SYMBOLSCALE * mHeight, last + mStepVer + SYMBOLSCALE * mHeight, i);
 
                 char[] rahmen = ("  " + frame).toCharArray();
-                last = plotLine(rahmen, FIFTY, last + mStepVer + TWOFIVE * mHeight);
+                last = plotLine(rahmen, STARTLINESFRAMESDESC, last + mStepVer + SYMDESCSCALE * mHeight);
             }
-        } else if (legend.getType() == THREE) {
+        } else if (legend.getType() == COMPARE3) {
             // bar chart
             Map<String, Map<String, String>> map = legend.getSymbolExplanationGroups();
             Map<String, String> map2 = map.get("textures");
@@ -197,7 +201,7 @@ public class LegendPlotter implements Plotter<Legend> {
                 splotter.setCanvas(mCanvas);
                 splotter.setData();
 
-                boolean newPage = splotter.plotAndFillRectangle(last + FOURFIVE * mStepVer, FIVE, SIXTYFIVE, i, true);
+                boolean newPage = splotter.plotAndFillRectangle(last + NEWPAGESCALE * mStepVer, STARTNEWPAGE, ENDNEWPAGE, i, true);
 
                 if (newPage) {
                     last = 0;
@@ -207,14 +211,14 @@ public class LegendPlotter implements Plotter<Legend> {
                 double current;
 
                 if (newPage) {
-                    current = last + TWENTY - mCanvas.getDotDistVer();
+                    current = last + NEWPAGESCALE2 - mCanvas.getDotDistVer();
                 } else {
-                    current = last + FOURFIVE * mStepVer - FIFTEEN - mCanvas.getDotDistVer();
+                    current = last + NEWPAGESCALE * mStepVer - CURRENTPAGESCALE - mCanvas.getDotDistVer();
                 }
 
-                last = plotLine(rahmen, SEVENTYFIVE, current);
-                if (last < current + FIFTEEN + mCanvas.getDotDistVer()) {
-                    last += FIFTEEN + mCanvas.getDotDistVer();
+                last = plotLine(rahmen, STARTTEXTUREDESC, current);
+                if (last < current + CURRENTPAGESCALE + mCanvas.getDotDistVer()) {
+                    last += CURRENTPAGESCALE + mCanvas.getDotDistVer();
                 }
             }
         }
@@ -244,7 +248,7 @@ public class LegendPlotter implements Plotter<Legend> {
         loop:
         while (true) {
             last = i * mStepVer + starterY;
-            for (double j = startX; j < mCanvas.getPageWidth() - THREE * (mCanvas.getCellWidth() + mCanvas.getCellDistHor()) + mCanvas.getCellDistHor(); j += mStepHor) {
+            for (double j = startX; j < mCanvas.getPageWidth() - MARGINSCALE * (mCanvas.getCellWidth() + mCanvas.getCellDistHor()) + mCanvas.getCellDistHor(); j += mStepHor) {
                 if (k < title.length) {
 
                     // check if line break in necessary

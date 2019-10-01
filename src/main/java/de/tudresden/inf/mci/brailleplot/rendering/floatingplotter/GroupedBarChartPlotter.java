@@ -97,8 +97,8 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
         mTitleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
 
         mXTickDistance = mLeftMargin + 2 * mCanvas.getCellWidth();
-        if (mXTickDistance < THIRTY) {
-            mXTickDistance = THIRTY;
+        if (mXTickDistance < MINXTICKDISTANCE) {
+            mXTickDistance = MINXTICKDISTANCE;
         }
 
         // x-axis
@@ -111,14 +111,14 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
         mNumberXTicks = (int) Math.floor(mLengthX / mXTickDistance);
         if (mNumberXTicks < 2) {
             mNumberXTicks = 2;
-        } else if (mNumberXTicks <= FIVE) {
-            mNumberXTicks = FIVE;
-        } else if (mNumberXTicks <= TEN) {
-            mNumberXTicks = TEN;
-        } else if (mNumberXTicks <= FIFTEEN) {
-            mNumberXTicks = FIFTEEN;
+        } else if (mNumberXTicks <= XTICKS4) {
+            mNumberXTicks = XTICKS4;
+        } else if (mNumberXTicks <= XTICKS5) {
+            mNumberXTicks = XTICKS5;
+        } else if (mNumberXTicks <= XTICKS6) {
+            mNumberXTicks = XTICKS6;
         } else {
-            mNumberXTicks = TWENTY;
+            mNumberXTicks = XTICKSEND2;
         }
 
         mScaleX = new double[mNumberXTicks + 1];

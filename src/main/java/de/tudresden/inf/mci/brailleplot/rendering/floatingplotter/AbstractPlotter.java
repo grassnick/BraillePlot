@@ -63,24 +63,57 @@ abstract class AbstractPlotter<T extends Diagram> {
     double[] mScaleY;
 
     // constants
-    static final double ONE = 1.7;
-    static final double TWOFIVE = 2.5;
+    static final double COMPARE3 = 3;
+    static final double COMPARE4 = 4;
+    static final double COMPARE5 = 5;
+    static final double COMPARE6 = 6;
+    static final double SLOPE3 = 3;
+    static final double SLOPE4 = 4;
+    static final double SLOPE5 = 5;
+    static final double SLOPE6 = 6;
+    static final double SLOPE7 = 7;
+    static final double SLOPE8 = 8;
+    static final double SLOPE9 = 9;
+    static final double SLOPE10 = 10;
+    static final double RECTSCALE = 1.7;
+    static final double STAIRSCALE2 = 2.5;
     static final int THREE = 3;
-    static final int FOUR = 4;
-    static final int FIVE = 5;
-    static final int SIX = 6;
-    static final int SEVEN = 7;
-    static final int EIGHT = 8;
-    static final int NINE = 9;
+    static final int DISTYAXISNAMES2 = 3;
+    static final int CIRCLESCALE2 = 3;
+    static final int DASHEDLINESCALE = 3;
+    static final int DOTTEDLINESCALE = 4;
+    static final int UPPEREND = 5;
+    static final int DISTXAXISNAMES = 5;
+    static final int DISTYAXISNAMES = 5;
+    static final int FULLSCALE = 5;
+    static final int VERTSCALE = 5;
+    static final int VERTSCALE2 = 3;
+    static final int DIAGSCALE = 5;
+    static final int GRIDSCALE = 5;
+    static final int GRIDSCALE2 = 3;
+    static final int DOTSCALE = 5;
+    static final int DOTSCALE2 = 3;
+    static final int STAIRSCALE = 5;
+    static final int STAIRSCALE3 = 3;
+    static final int XTICKS1 = 6;
+    static final int DISTSECAXIS = 6;
+    static final int DISTDIAGONALS = 6;
+    static final int SCALESTAIRS = 7;
     static final int TEN = 10;
-    static final int ELEVEN = 11;
+    static final int XTICKS2 = 11;
     static final int FIFTEEN = 15;
-    static final int SIXTEEN = 16;
-    static final int TWENTY = 20;
-    static final int TWENTYONE = 21;
-    static final int THIRTY = 30;
-    static final int THIRTYFIVE = 35;
-    static final int SIXTY = 60;
+    static final int XTICKS3 = 16;
+    static final int XTICKSEND = 21;
+    static final int XTICKS4 = 5;
+    static final int XTICKS5 = 10;
+    static final int XTICKS6 = 15;
+    static final int XTICKSEND2 = 20;
+    // bar thickness on legend
+    static final int BAR = 30;
+    // min tick distance for x-axis
+    static final int MINXTICKDISTANCE = 30;
+    static final int SCALE2 = 35;
+    static final int SCALE1 = 60;
     static final double HMULT = 3;
     static final double TMULT = 2;
     static final double WMULT = 4;
@@ -89,6 +122,7 @@ abstract class AbstractPlotter<T extends Diagram> {
     static final double TICK2 = 5;
     static final double TICK3 = 7.5;
     static final double TICK4 = 10;
+    // tick distance for y-axis
     static final double YTICKDISTANCE = 30;
 
     /**
@@ -266,7 +300,7 @@ abstract class AbstractPlotter<T extends Diagram> {
      * Rounds the range so that the second digit is either 0 or 5 and all following digits are 0.
      */
     private void roundRange() {
-        if ((mStartOrigin && mNumberTicks == FIFTEEN) || (!mStartOrigin && mNumberTicks == SIXTEEN)) {
+        if ((mStartOrigin && mNumberTicks == FIFTEEN) || (!mStartOrigin && mNumberTicks == XTICKS3)) {
             if (mLen == 1) {
                 mNewRange = mDigits[0] * TEN;
                 mSingleDigit = true;
@@ -284,8 +318,8 @@ abstract class AbstractPlotter<T extends Diagram> {
 
             // rounding
             if (mLen == 1) {
-                if (mDigits[0] <= FIVE) {
-                    mNewRange = FIVE;
+                if (mDigits[0] <= UPPEREND) {
+                    mNewRange = UPPEREND;
                     mSingleDigit = true;
                 } else {
                     mNewRange = TEN;
@@ -299,8 +333,8 @@ abstract class AbstractPlotter<T extends Diagram> {
                             mDigits[i] = 0;
                         }
                     }
-                } else if (mDigits[1] < FIVE) {
-                    mDigits[1] = FIVE;
+                } else if (mDigits[1] < UPPEREND) {
+                    mDigits[1] = UPPEREND;
                     if (mLen > 2) {
                         for (int i = 2; i < mLen; i++) {
                             mDigits[i] = 0;
@@ -355,7 +389,7 @@ abstract class AbstractPlotter<T extends Diagram> {
     void nameXAxis() {
 
         mSymbols = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-        double startY = mBottomMargin + mCanvas.getCellDistVer() + FIVE * mStepSize;
+        double startY = mBottomMargin + mCanvas.getCellDistVer() + DISTXAXISNAMES * mStepSize;
         double height = mCanvas.getCellHeight();
         double width = mCanvas.getCellWidth();
 

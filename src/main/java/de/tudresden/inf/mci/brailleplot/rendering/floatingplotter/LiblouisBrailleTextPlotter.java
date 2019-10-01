@@ -36,7 +36,7 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
     private Translator mTranslator;
 
     // constant
-    private static final int THREE = 3;
+    private static final int ITERATORSCALE = 3;
 
     // translator needs whole table directory, therefore it is exported one time at start (static resource).
     private static File mLibLouisTableDirectory = GeneralResource.getOrExportResourceFile("mapping/liblouis/");
@@ -101,8 +101,8 @@ public class LiblouisBrailleTextPlotter implements Plotter<BrailleText> {
             String[] braille = mParser.getCharToBraille(resultAsArray[k]).split("");
 
             for (int i = 0; i < 2; i++) {
-                for (int j = 0; j < THREE; j++) {
-                    if (braille[THREE * i + j].equals("1")) {
+                for (int j = 0; j <= 2; j++) {
+                    if (braille[ITERATORSCALE * i + j].equals("1")) {
                         addPointByValues(startX + i * widthJump + k * cellJump, startY + j * heightJump);
                         last = startX + k * cellJump;
                     }

@@ -24,7 +24,6 @@ import static tec.units.ri.unit.Units.METRE;
  */
 public final class StackedBarChartPlotter extends AbstractBarChartPlotter implements Plotter<CategoricalBarChart> {
 
-
     /**
      * Plots a stacked {@link de.tudresden.inf.mci.brailleplot.diagrams.BarChart} instance onto a {@link PlotCanvas}.
      * @param diagram An instance of {@link  de.tudresden.inf.mci.brailleplot.diagrams.BarChart} representing the bar chart.
@@ -99,8 +98,8 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
         mTitleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
 
         mXTickDistance = mLeftMargin + 2 * mCanvas.getCellWidth();
-        if (mXTickDistance < THIRTY) {
-            mXTickDistance = THIRTY;
+        if (mXTickDistance < MINXTICKDISTANCE) {
+            mXTickDistance = MINXTICKDISTANCE;
         }
 
         // x-axis
@@ -113,14 +112,14 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
         mNumberXTicks = (int) Math.floor(mLengthX / mXTickDistance);
         if (mNumberXTicks < 2) {
             mNumberXTicks = 2;
-        } else if (mNumberXTicks <= FIVE) {
-            mNumberXTicks = FIVE;
-        } else if (mNumberYTicks <= TEN) {
-            mNumberYTicks = TEN;
-        } else if (mNumberYTicks <= FIFTEEN) {
-            mNumberYTicks = FIFTEEN;
+        } else if (mNumberXTicks <= XTICKS4) {
+            mNumberXTicks = XTICKS4;
+        } else if (mNumberYTicks <= XTICKS5) {
+            mNumberYTicks = XTICKS5;
+        } else if (mNumberYTicks <= XTICKS6) {
+            mNumberYTicks = XTICKS6;
         } else {
-            mNumberYTicks = TWENTY;
+            mNumberYTicks = XTICKSEND2;
         }
 
         mScaleX = new double[mNumberXTicks + 1];
