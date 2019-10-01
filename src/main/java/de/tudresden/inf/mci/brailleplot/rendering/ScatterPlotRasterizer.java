@@ -20,7 +20,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
     private static final int X_AXIS_WIDTH = 2; // Minimum width of the x axis [cells]
     private static final int Y_AXIS_WIDTH = 3; // Minimum width of the y axis [cells]
     private static final int TOKEN_AXIS_OFFSET = 1; // Offset of actual plotting area to axis, increased to match cell size [dots]
-    private static final int X_AXIS_STEP_WIDTH = 3; // The distance between two tick marks on the x axis [cells]
+    private static final int X_AXIS_STEP_WIDTH = 2; // The distance between two tick marks on the x axis [cells]
     private static final int Y_AXIS_STEP_WIDTH = 3; // The distance between two tick marks on the y axis [cells]
     private static final int AXIS_TICK_SIZE = 1; // The length of the ticks on the axis [dots]
 
@@ -133,9 +133,9 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
                     throw new RuntimeException("Calculated position not in bounds: (" + x + "," + y + "), (" + xDots + "," + yDots + ")");
                 }
 
-                final int xGlobal = xOrigin + x - 1;
-                final int yGlobal = yOrigin - y + 1;
-                mLogger.debug("Placing token at local: ({},{}), global: ({},{}) for data point: ({},{})", x, y, xGlobal, yGlobal, p.getX(), p.getY());
+                final int xGlobal = xOrigin + x;
+                final int yGlobal = yOrigin - y - 1;
+                mLogger.debug("Placing token at local: ({},{}), global: ({},{}), rational: ({},{}) for data point: ({},{})", x, y, xGlobal, yGlobal, ((double) x) / ((double) xDots), ((double) y) / ((double) yDots), p.getX(), p.getY());
                 mat.setValue(yGlobal, xGlobal, true);
             }
         }
