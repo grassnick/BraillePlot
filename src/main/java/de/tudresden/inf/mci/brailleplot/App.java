@@ -252,7 +252,7 @@ public final class App {
             PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), indexV4Printer);
             printD.print(mat);
             FileOutputStream textDumpOutput = new FileOutputStream("dump.txt");
-            textDumpOutput.write(printD.textDump(mat));
+            textDumpOutput.write(printD.byteDump(mat));
 
 
 

@@ -49,20 +49,20 @@ public class PrintDirector {
         Objects.requireNonNull(printerConfig);
         this.mPrinter = printerCap;
         mPrinterName = printerConfig.getProperty("name").toString();
-        mLogger.trace("using following printercapability {}", printerCap.toString(), " loaded.");
-        mLogger.info("using the following printer: {}.", mPrinterName);
+        mLogger.trace("Using following printercapability {}", printerCap.toString(), " loaded");
+        mLogger.info("Using the following printer: {}", mPrinterName);
         switch (mPrinter) {
             case NORMALPRINTER:
                 mBuilder = new NormalBuilder();
-                mLogger.trace("using NormalBuilder as protocol.");
+                mLogger.trace("Using NormalBuilder as protocol");
                 break;
             case INDEX_EVEREST_D_V4_GRAPHIC_PRINTER:
                 mBuilder = new GraphicPrintBuilder();
-                mLogger.trace("using Index Everest-D V4 graphic print as protocol.");
+                mLogger.trace("Using Index Everest-D V4 graphic print as protocol");
                 break;
             case INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER:
                 mBuilder = new FloatingDotAreaBuilder();
-                mLogger.trace("using Index Everest-D V4 floatingdot as protocol.");
+                mLogger.trace("Using Index Everest-D V4 floatingdot as protocol");
                 break;
             default: throw new IllegalArgumentException();
         }
@@ -79,20 +79,20 @@ public class PrintDirector {
 
     @SuppressWarnings("unchecked")
     public void print(final PrintableData data)  {
-        mLogger.info("starting with print process.");
+        mLogger.info("Starting with print process");
         Objects.requireNonNull(data);
-        mLogger.info("setting up docflavour and service.");
+        mLogger.info("Setting up docflavour and service");
         setUpDoc();
         setUpService();
         byte[] result;
-        mLogger.info("finished setting up doc and service.");
+        mLogger.info("Finished setting up doc and service");
         try {
-            mLogger.trace("assembling the data according to protocol: {}.", mBuilder.getClass().getCanonicalName());
+            mLogger.trace("Assembling the data according to protocol: {}", mBuilder.getClass().getCanonicalName());
             result = mBuilder.assemble(data);
         } catch (ClassCastException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
-        mLogger.info("finished assembling data..");
+        mLogger.info("Finished assembling data");
         print(result);
     }
 
@@ -102,16 +102,16 @@ public class PrintDirector {
      * @return Byte array containing the sequence for the printer.
      */
     @SuppressWarnings("unchecked")
-    public byte[] textDump(final PrintableData data) {
-        mLogger.info("starting with textdump process.");
+    public byte[] byteDump(final PrintableData data) {
+        mLogger.info("Starting with textdump process");
         byte[] result;
         try {
-            mLogger.trace("assembling the data according to protocol: {}.", mBuilder.getClass().getCanonicalName());
+            mLogger.trace("Assembling the data according to protocol: {}", mBuilder.getClass().getCanonicalName());
             result = mBuilder.assemble(data);
         } catch (ClassCastException e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
-        mLogger.info("Finished with creating textdump.");
+        mLogger.info("Finished with creating textdump");
         return result;
     }
     /**
@@ -150,18 +150,18 @@ public class PrintDirector {
         Objects.requireNonNull(data);
         Objects.requireNonNull(mService);
         Objects.requireNonNull(mDocflavor);
-        mLogger.info("setting up doc, asset and job.");
+        mLogger.info("Setting up doc, asset and job");
         Doc doc = new SimpleDoc(data, mDocflavor, null);
         PrintRequestAttributeSet asset = new HashPrintRequestAttributeSet();
         DocPrintJob job = mService.createPrintJob();
-        mLogger.trace("finished setting up doc, asset and job.");
+        mLogger.trace("Finished setting up doc, asset and job");
         PrinterState state;
         asset.add(new JobName("Braille Printing", null));
         try {
-            mLogger.trace("adding job to the PrintJobListener.");
+            mLogger.trace("Adding job to the PrintJobListener");
             PrintJobListener listener = new PrintJobListener();
             job.addPrintJobListener(listener);
-            mLogger.trace("starting printing.");
+            mLogger.trace("Starting printing");
             //PrinterIsAcceptingJobs set = mService.getAttribute(PrinterIsAcceptingJobs.class);
             //PrinterStateReasons reasons = mService.getAttribute(PrinterStateReasons.class);
             job.print(doc, asset);
@@ -196,12 +196,12 @@ public class PrintDirector {
 
         @Override
         public void printDataTransferCompleted(final PrintJobEvent pje) {
-            mLogger.info("data transfer to printer complete.");
+            mLogger.info("Data transfer to printer complete");
         }
 
         @Override
         public void printJobCompleted(final PrintJobEvent pje) {
-            mLogger.info("printjob completed.");
+            mLogger.info("Printjob completed");
             synchronized (PrintJobListener.this) {
                 done = true;
                 PrintJobListener.this.notify();
@@ -210,7 +210,7 @@ public class PrintDirector {
 
         @Override
         public void printJobFailed(final PrintJobEvent pje) {
-            mLogger.info("printjob failed.");
+            mLogger.info("Printjob failed");
             synchronized (PrintJobListener.this) {
                 done = true;
                 PrintJobListener.this.notify();
@@ -219,7 +219,7 @@ public class PrintDirector {
 
         @Override
         public void printJobCanceled(final PrintJobEvent pje) {
-            mLogger.info("printjob was canceled.");
+            mLogger.info("Printjob was canceled");
             synchronized (PrintJobListener.this) {
                 done = true;
                 PrintJobListener.this.notify();
@@ -228,7 +228,7 @@ public class PrintDirector {
 
         @Override
         public void printJobNoMoreEvents(final PrintJobEvent pje) {
-            mLogger.info("printjob has no more events.");
+            mLogger.info("Printjob has no more events");
             synchronized (PrintJobListener.this) {
                 done = true;
             }
@@ -236,7 +236,7 @@ public class PrintDirector {
 
         @Override
         public void printJobRequiresAttention(final PrintJobEvent pje) {
-            mLogger.info("printjob requires attention.");
+            mLogger.info("Printjob requires attention");
             PrintJobListener.this.notify();
         }
         public synchronized void waitForDone() {

@@ -41,9 +41,6 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<SimpleFloatingPointD
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         try {
             stream.write(mStartFloatingMode);
-            // Here goes Origo, Width and Height
-
-            // End of Origo etc.
             stream.write(mSemicolon);
             stream.write(mNewLine);
             // Start iteration over values
