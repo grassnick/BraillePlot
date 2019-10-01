@@ -186,7 +186,7 @@ public class LegendRasterizer implements Rasterizer<Legend> {
             throw new InsufficientRenderingAreaException("Not enough space for legend text.");
         }
         // write text lines
-        int textLength = mTextRasterizer.getBrailleStringLength(text);
+        int textLength = mTextRasterizer.getBrailleStringLength(text, getLanguage());
         int textHeight = max(1, (int) Math.ceil(textLength / cellArea.getWidth()));
         Rectangle textLineDotArea = mCanvas.toDotRectangle(cellArea.removeFromTop(textHeight));
         mTextRasterizer.rasterize(new BrailleText(text, textLineDotArea, getLanguage()), mCanvas);
