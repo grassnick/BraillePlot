@@ -20,7 +20,7 @@ public abstract class Diagram implements Renderable {
     private String mYAxisName;
     private PointListContainer<PointList> mData;
 
-    public Diagram(final PointListContainer data) {
+    public Diagram(final PointListContainer<PointList> data) {
         mData = Objects.requireNonNull(data);
     }
 
