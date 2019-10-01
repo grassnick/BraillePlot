@@ -2,8 +2,8 @@ package de.tudresden.inf.mci.brailleplot.commandline;
 
 /**
  * Represents all possible parsed options parsed from the command line.
- * @author Georg Graßnick
- * @version 2019.09.30
+ * @author Georg Graßnick, Andrey Ruzhanskiy, Leonard Kupper
+ * @version 2019.10.01
  */
 public enum SettingType {
 

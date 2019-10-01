@@ -8,8 +8,8 @@ import org.apache.commons.cli.ParseException;
 
 /**
  * Performs command line parsing and creates a {@link Settings} object.
- * @author Georg Graßnick
- * @version 2019.09.30
+ * @author Georg Graßnick, Andrey Ruzhanskiy, Leonard Kupper
+ * @version 2019.10.01
  */
 public class CommandLineParser {
 
