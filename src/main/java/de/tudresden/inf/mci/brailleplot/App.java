@@ -4,9 +4,6 @@ import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 
-
-
-
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
@@ -18,9 +15,6 @@ import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
 import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
-
-
-
 
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 
@@ -176,7 +170,7 @@ public final class App {
             JavaPropertiesConfigurationParser configParser;
             URL defaultConfig = getClass().getClassLoader().getResource("config/default.properties");
             if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument, until then use default location for test runs
-                URL configUrl = getClass().getResource("/config/index_everest_d_v4.properties");
+                URL configUrl = getClass().getResource("/config/index_basic_d.properties");
                 configParser = new JavaPropertiesConfigurationParser(configUrl, defaultConfig);
                 mLogger.warn("ATTENTION! Using default specific config from resources. Please remove default config behavior before packaging the jar.");
             } else {
@@ -204,12 +198,6 @@ public final class App {
             lineChart.setXAxisName(settingsReader.getSetting(SettingType.X_AXIS_LABEL).orElse(""));
             lineChart.setYAxisName(settingsReader.getSetting(SettingType.Y_AXIS_LABEL).orElse(""));
 
-            /*
-            CategoricalBarChart barChart = new CategoricalBarChart(new SimpleCategoricalPointListContainerImpl(container));
-            barChart.setTitle(settingsReader.getSetting(SettingType.DIAGRAM_TITLE).orElse(""));
-            barChart.setXAxisName(settingsReader.getSetting(SettingType.X_AXIS_LABEL).orElse(""));
-            barChart.setYAxisName(settingsReader.getSetting(SettingType.Y_AXIS_LABEL).orElse(""));
-             */
             LiblouisBrailleTextRasterizer.initModule();
 
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, representationParameters, a4Format);
@@ -222,12 +210,6 @@ public final class App {
             }
 
 
-
-            // Render diagram
-            //MasterRenderer renderer = new MasterRenderer(indexV4Printer, a4Format);
-            //RasterCanvas canvas = renderer.rasterize(barChart);
-            // SVG exporting
-
             SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
             svgExporter.render();
             svgExporter.dump("boolMat");
@@ -239,31 +221,17 @@ public final class App {
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();
             floatSvgExporter.dump("floatingPointData");
-           // LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(indexV4Printer);
-            //renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BrailleText>(BrailleText.class, textRasterizer));
-           // RasterCanvas refCanvas = renderer.rasterize(new BrailleText(" ", new Rectangle(0, 0, 0, 0)));
-           // RasterCanvas m2canvas = renderer.rasterize(new BrailleText(text2, textArea));
-            //SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
-            //mLogger.debug("Render preview:\n" + mat.toBoolString());
-
-
 
             // Check if some SpoolerService/Printservice exists
             if (!PrintDirector.isPrintServiceOn()) {
                 throw new Exception("Can't find any Printservices on this System.");
             }
 
-
-            // Rasterize
-
-
             // Last Step: Printing
-            @SuppressWarnings("checkstyle:MagicNumber")
             PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(indexV4Printer.getProperty("mode").toString().toUpperCase()), indexV4Printer);
-            Iterator<MatrixData<Boolean>> itera = canvas.getPageIterator();
-            itera.next();
-            while (itera.hasNext()) {
-                MatrixData<Boolean> page = itera.next();
+            Iterator<MatrixData<Boolean>> iterC = canvas.getPageIterator();
+            while (iterC.hasNext()) {
+                MatrixData<Boolean> page = iterC.next();
                 printD.print(page);
             }
 

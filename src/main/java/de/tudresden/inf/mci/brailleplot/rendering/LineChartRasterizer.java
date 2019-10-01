@@ -42,7 +42,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     private double mDpiX;
     private double mDpiY;
     private final int  mPaddingBetweenAxisTextAndDiagram = 3;
-    private final int mPaddingXandYText = 1; 
+    private final int mPaddingXandYText = 1;
     private Rectangle mCellLineArea;
     private boolean mPrintOnSamePaper = false; // If you want to print on the same paper, change this variable to true.
 
