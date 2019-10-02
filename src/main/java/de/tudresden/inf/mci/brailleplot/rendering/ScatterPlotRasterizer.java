@@ -48,7 +48,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         final int yAxisStepWidth = cellHeight * Y_AXIS_STEP_WIDTH;
 
         final String title = "Streudiagramm - Gewicht zu Höhe";
-        final String legendTitle = "Legende";
+        final String legendTitle = title;
         final String axisExplanationGroupName = "Achsenbeschriftungen";
         final String xAxisLegendGroupName = "x-Achse Werte";
         final String yAxisLegendGroupName = "y-Achse Werte";
