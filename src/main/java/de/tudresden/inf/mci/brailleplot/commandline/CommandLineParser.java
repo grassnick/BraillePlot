@@ -3,11 +3,11 @@ package de.tudresden.inf.mci.brailleplot.commandline;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
+import java.util.Objects;
 
 
 /**
@@ -19,13 +19,20 @@ public class CommandLineParser {
 
     private Options mOptions;
 
+    public static Option helpOption = Option.builder("h")
+            .longOpt("help")
+            .required(false)
+            .hasArg(false)
+            .desc("Print help and exit")
+            .build();
+
     public CommandLineParser() {
         setupOptions();
     }
 
     private void setupOptions() {
         mOptions = new Options();
-        mOptions.addOption("h", SettingType.DISPLAY_HELP.toString(), false, "Print help and exit")
+        mOptions.addOption(helpOption)
                 .addRequiredOption("c", SettingType.CSV_LOCATION.toString(), true, "Path to CSV")
                 .addRequiredOption("p", SettingType.PRINTER_CONFIG_PATH.toString(), true, "Path to printer configuration file")
                 .addRequiredOption("t", SettingType.DIAGRAM_TITLE.toString(), true, "Title of the diagram")
@@ -55,6 +62,25 @@ public class CommandLineParser {
             throw new ParsingException("Could not parse command line", pe);
         }
         return new Settings(cmdLine);
+    }
+
+    public static boolean checkForHelp(final String[] args)  {
+
+        boolean hasHelp = false;
+        Options options = new Options();
+        options.addOption(helpOption);
+        org.apache.commons.cli.CommandLineParser parser = new DefaultParser();
+        CommandLine cmd = null;
+        try {
+            cmd = parser.parse(options, args);
+        } catch (ParseException e) {
+            // Will occur if any other option than "help" is encountered
+            // For this case we can safely ignore it.
+        }
+        if (Objects.nonNull(cmd) && cmd.hasOption(helpOption.getOpt())) {
+            hasHelp = true;
+        }
+        return hasHelp;
     }
 
     /**

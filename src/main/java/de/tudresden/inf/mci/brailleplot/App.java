@@ -54,7 +54,6 @@ import java.io.Reader;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import static tec.units.ri.unit.Units.METRE;
@@ -62,8 +61,8 @@ import static tec.units.ri.unit.Units.METRE;
 /**
  * Main class.
  * Set up the application and run it.
- * @author Georg Graßnick, Andrey Ruzhanskiy
- * @version 2019.09.30
+ * @author Georg Graßnick, Andrey Ruzhanskiy, Leonard Kupper
+ * @version 2019.10.02
  */
 
 public final class App {
@@ -161,16 +160,13 @@ public final class App {
             mLogger.info("Application started");
             // Parse command line parameters
             CommandLineParser cliParser = new CommandLineParser();
-            SettingsWriter settings = cliParser.parse(args);
-            SettingsReader settingsReader = settings;
-
-
-            // If requested, print help and exit
-            Optional<Boolean> printHelp = settingsReader.isTrue(SettingType.DISPLAY_HELP);
-            if (printHelp.isPresent() && printHelp.get()) {
+            if (CommandLineParser.checkForHelp(args)) {
+                // If requested, print help and exit
                 cliParser.printHelp();
                 return EXIT_SUCCESS;
             }
+            SettingsWriter settings = cliParser.parse(args);
+            SettingsReader settingsReader = settings;
 
             // Config Parsing
             JavaPropertiesConfigurationParser configParser;
