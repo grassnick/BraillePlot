@@ -24,6 +24,10 @@ public abstract class Diagram implements Renderable {
         mData = Objects.requireNonNull(data);
     }
 
+    /**
+     * Returns the underlying data set.
+     * @return The underlying data set.
+     */
     public PointListContainer<PointList> getDataSet() {
         return mData;
     }

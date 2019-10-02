@@ -15,6 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * A rasterizer for Scatterplots.
+ */
 public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
     private static final int X_AXIS_WIDTH = 2; // Minimum width of the x axis [cells]
@@ -24,13 +27,14 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
     private static final int Y_AXIS_STEP_WIDTH = 3; // The distance between two tick marks on the y axis [cells]
     private static final int AXIS_TICK_SIZE = 1; // The length of the ticks on the axis [dots]
 
-    private static final Logger mLogger = LoggerFactory.getLogger(ScatterPlotRasterizer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ScatterPlotRasterizer.class);
 
     public ScatterPlotRasterizer() {
     }
 
     @Override
-    public void rasterize(final ScatterPlot scatterPlot, RasterCanvas canvas) throws InsufficientRenderingAreaException {
+    @SuppressWarnings("checkstyle:MethodLength")
+    public void rasterize(final ScatterPlot scatterPlot, final RasterCanvas canvas) throws InsufficientRenderingAreaException {
         Objects.requireNonNull(scatterPlot);
         Objects.requireNonNull(canvas);
 
@@ -124,11 +128,11 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         int xOrigin = plotArea.intWrapper().getX();
         int yOrigin = plotArea.intWrapper().getY() + plotArea.intWrapper().getHeight();
 
-        mLogger.debug("Complete printable Area: ({},{})", completeArea.intWrapper().getWidth(), completeArea.intWrapper().getHeight());
-        mLogger.debug("Printable Area for actual plot: ({},{}) with global offset: ({},{})", plotArea.intWrapper().getWidth(), plotArea.intWrapper().getHeight(), plotArea.intWrapper().getX(), plotArea.intWrapper().getY());
-        mLogger.debug("xMin; {}, xMax: {}, xRange: {}, xRatio: {}", xMin, xMax, xRange, xRatio);
-        mLogger.debug("yMin; {}, yMax: {}, yRange: {}, yRatio: {}", yMin, yMax, yRange, yRatio);
-        mLogger.debug("PlotOrigin: ({},{})", xOrigin, yOrigin);
+        LOG.debug("Complete printable Area: ({},{})", completeArea.intWrapper().getWidth(), completeArea.intWrapper().getHeight());
+        LOG.debug("Printable Area for actual plot: ({},{}) with global offset: ({},{})", plotArea.intWrapper().getWidth(), plotArea.intWrapper().getHeight(), plotArea.intWrapper().getX(), plotArea.intWrapper().getY());
+        LOG.debug("xMin; {}, xMax: {}, xRange: {}, xRatio: {}", xMin, xMax, xRange, xRatio);
+        LOG.debug("yMin; {}, yMax: {}, yRange: {}, yRatio: {}", yMin, yMax, yRange, yRatio);
+        LOG.debug("PlotOrigin: ({},{})", xOrigin, yOrigin);
 
         for (PointList l : data) {
             for (Point2DDouble p : l) {
@@ -140,7 +144,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
                 final int xGlobal = xOrigin + x;
                 final int yGlobal = yOrigin - y - 1;
-                mLogger.debug("Placing token at local: ({},{}), global: ({},{}), rational: ({},{}) for data point: ({},{})", x, y, xGlobal, yGlobal, ((double) x) / ((double) xDots), ((double) y) / ((double) yDots), p.getX(), p.getY());
+                LOG.debug("Placing token at local: ({},{}), global: ({},{}), rational: ({},{}) for data point: ({},{})", x, y, xGlobal, yGlobal, ((double) x) / ((double) xDots), ((double) y) / ((double) yDots), p.getX(), p.getY());
                 mat.setValue(yGlobal, xGlobal, true);
             }
         }
@@ -168,7 +172,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
             xAxisLabels.put(x, String.valueOf(label));
             int tickPos = x * xAxisStepWidth;
             double val = tickPos / xRatio;
-            mLogger.debug("Adding x axis label {{},{}} for tick #{}", label, val, x);
+            LOG.debug("Adding x axis label {{},{}} for tick #{}", label, val, x);
             xAxisLegendSymbols.put(String.valueOf(label), String.valueOf(val));
             label++;
         }
@@ -184,7 +188,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
             yAxisLabels.put(y, String.valueOf(label));
             int tickPos = y * yAxisStepWidth;
             double val = tickPos / yRatio;
-            mLogger.debug("Adding y axis label {{},{}} for tick #{}", label, val, y);
+            LOG.debug("Adding y axis label {{},{}} for tick #{}", label, val, y);
             yAxisLegendSymbols.put(String.valueOf(label), String.valueOf(val));
             label++;
         }
@@ -213,7 +217,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
             diff = cellDots - diff;
         }
         int result = dots + diff;
-        mLogger.trace("Stretching {} to {}, cellSize: {}", dots, result, cellDots);
+        LOG.trace("Stretching {} to {}, cellSize: {}", dots, result, cellDots);
         return result;
     }
 }
