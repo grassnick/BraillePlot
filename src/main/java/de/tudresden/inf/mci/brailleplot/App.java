@@ -211,7 +211,7 @@ public final class App {
             classloader = Thread.currentThread().getContextClassLoader();
             csvStream = classloader.getResourceAsStream("examples/csv/1_scatter_plot.csv");
             csvReader = new BufferedReader(new InputStreamReader(csvStream));
-            InputStream csvStream2 = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_grouped.csv");
+            InputStream csvStream2 = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_vertical.csv");
             Reader csvReader2 = new BufferedReader(new InputStreamReader(csvStream2));
 
             csvParser = new CsvParser(csvReader, ',', '\"');
@@ -248,20 +248,16 @@ public final class App {
 
             CategoricalBarChart bar = new CategoricalBarChart(container3);
             StackedBarChartPlotter plotter3 = new StackedBarChartPlotter();
-            // plotter3.plot(bar, floatCanvas);
+            plotter3.plot(bar, floatCanvas);
 
             GroupedBarChartPlotter plotter4 = new GroupedBarChartPlotter();
-            plotter4.plot(bar, floatCanvas);
+            // plotter4.plot(bar, floatCanvas);
 
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();
             floatSvgExporter.dump("floatingPointData");
-            LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(indexV4Printer);
-            renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BrailleText>(BrailleText.class, textRasterizer));
-            RasterCanvas refCanvas = renderer.rasterize(new BrailleText(" ", new Rectangle(0, 0, 0, 0)));
             // RasterCanvas m2canvas = renderer.rasterize(new BrailleText(text2, textArea));
-            SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
-            mLogger.debug("Render preview:\n" + mat.toBoolString());
+
 
 
 
@@ -287,27 +283,25 @@ public final class App {
             String printerConfigUpperCase = indexV4Printer.getProperty("mode").toString().toUpperCase();
             PrintDirector printD = new PrintDirector(PrinterCapability.INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER, indexV4Printer);
             ListIterator<FloatingPointData<Boolean>> canvasIt = floatCanvas.getPageIterator();
-            /*while (canvasIt.hasNext()){
-                Thread thread = new Thread(() -> {
-                    System.out.println("Start thread");
-                    printD.print(canvasIt.next());
-                });
-                thread.start();
-                for (int i = 0; i < 20; i++) {
-                    Thread.sleep(100);
-                    i++;
-                }
 
-            }*/
-            for (int i = 0; i < floatCanvas.getPageCount(); i++) {
-                if (i > 0) {
-                    canvasIt.next();
-                    continue;
+            canvasIt.forEachRemaining((page) -> {
+                Thread printingThread = new Thread(() -> {
+                    mLogger.debug("Started printing thread");
+                    printD.print(page);
+                    mLogger.debug("Print call returned");
+                });
+                printingThread.start();
+                while(printingThread.isAlive()) {
+
                 }
-                if (canvasIt.hasNext()) {
-                    // printD.print(canvasIt.next());
+                mLogger.debug(printingThread.getName() + " has finished.");
+                try {
+                    Thread.sleep(100000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            }
+            });
+
 
             /*PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), indexV4Printer);
             printD.print(mat);

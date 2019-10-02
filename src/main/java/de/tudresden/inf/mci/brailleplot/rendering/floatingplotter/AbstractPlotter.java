@@ -82,7 +82,7 @@ abstract class AbstractPlotter<T extends Diagram> {
     static final int DISTYAXISNAMES2 = 3;
     static final int CIRCLESCALE2 = 3;
     static final int DASHEDLINESCALE = 3;
-    static final int DOTTEDLINESCALE = 4;
+    static final int DOTTEDLINESCALE = 3;
     static final int UPPEREND = 5;
     static final int DISTXAXISNAMES = 5;
     static final int DISTYAXISNAMES = 5;
@@ -150,7 +150,7 @@ abstract class AbstractPlotter<T extends Diagram> {
      */
     double calculateXValue(final double x) {
         double ratio = mXTickStep / (mScaleX[1] - mScaleX[0]);
-        return Math.abs(x / Math.pow(TEN, mScaleX[mScaleX.length - 1]) - mScaleX[0]) * ratio + mLeftMargin + mXTickStep;
+        return (x / Math.pow(TEN, mScaleX[mScaleX.length - 1]) - mScaleX[0]) * ratio + mLeftMargin + mXTickStep;
     }
 
     /**
@@ -438,7 +438,7 @@ abstract class AbstractPlotter<T extends Diagram> {
 
         loop:
         for (int i = 0; i < 2; i++) {
-            for (double j = mCanvas.getCellDistHor(); j < mCanvas.getPageWidth() - THREE * (width + mCanvas.getCellDistHor()) + mCanvas.getCellDistHor(); j += stepHor) {
+            for (double j = mCanvas.getCellDistHor(); j < mCanvas.getPrintableWidth() - THREE * (width + mCanvas.getCellDistHor()) + mCanvas.getCellDistHor(); j += stepHor) {
                 if (k < title.length) {
 
                     // check if line break in necessary
@@ -451,12 +451,12 @@ abstract class AbstractPlotter<T extends Diagram> {
                         m++;
                     }
 
-                    if (j > mCanvas.getPageWidth() - (m + 1) * (width + mCanvas.getCellDistHor())) {
+                    if (j > mCanvas.getPrintableWidth() - (m + 1) * (width + mCanvas.getCellDistHor())) {
                         continue loop;
                     }
 
                     Rectangle rect = new Rectangle(j, mCanvas.getDotDistVer() + i * stepVer, width, height);
-                    BrailleText text = new BrailleText(Character.toString(title[k]), rect, BrailleLanguage.Language.DE_KURZSCHRIFT);
+                    BrailleText text = new BrailleText(Character.toString(title[k]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                     k++;
                     j = tplotter.plot(text, mCanvas);
                 } else {

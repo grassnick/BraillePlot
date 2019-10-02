@@ -50,7 +50,7 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<SimpleFloatingPointD
                 Quantity<Length> x = current.getX().to(MetricPrefix.MILLI(METRE));
                 Quantity<Length> y = current.getY().to(MetricPrefix.MILLI(METRE));
                 String xFormated = String.format(Locale.ENGLISH, "%.2f", x.getValue().doubleValue());
-                String yFormated = String.format(Locale.ENGLISH, "%.2f", x.getValue().doubleValue());
+                String yFormated = String.format(Locale.ENGLISH, "%.2f", y.getValue().doubleValue());
                 stream.write(xFormated.getBytes());
                 stream.write(mColon);
                 stream.write(yFormated.getBytes());

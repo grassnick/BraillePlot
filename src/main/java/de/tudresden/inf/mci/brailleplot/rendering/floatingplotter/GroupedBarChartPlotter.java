@@ -90,6 +90,8 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
      */
     @Override
     void drawAxes() {
+        mAxesDerivation = mCanvas.getAxesDerivation();
+
         // margin left of y-axis
         mLeftMargin = 2 * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
         // margin from bottom to x-axis
@@ -190,6 +192,8 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
     void drawGrid() {
         FloatingPointData<Boolean> grid = mCanvas.getNewPage();
 
+        double marginLeft = mCanvas.getFloatConstraintLeft() * 10;
+
         // x-axis
         for (double i = 1; i <= 2 * mNumberXTicks; i++) {
             loop:
@@ -199,8 +203,8 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
                     if (j < mBottomMargin - k * (mBarDist + mBarGroupWidth) && j > mBottomMargin - mBarDist - k * (mBarDist + mBarGroupWidth)) {
                         double x = mLeftMargin + (i / 2) * mXTickStep;
                         // mirroring for grid on the other side of the paper
-                        double newX = mCanvas.getPageWidth() / 2 - x + mCanvas.getPageWidth() / 2;
-                        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                        double newX = mPageWidth - x + marginLeft;
+                        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j + 2, MetricPrefix.MILLI(METRE)), true);
                         Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                         if (!mData.pointExists(checkPoint)) {
                             grid.addPointIfNotExisting(point);
@@ -212,8 +216,8 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
                     if (j < mBottomMargin - mNumBarGroup * (mBarDist + mBarGroupWidth) && j > mTitleMargin) {
                         double x = mLeftMargin + (i / 2) * mXTickStep;
                         // mirroring for grid on the other side of the paper
-                        double newX = mCanvas.getPageWidth() / 2 - x + mCanvas.getPageWidth() / 2;
-                        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                        double newX = mPageWidth - x + marginLeft;
+                        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j + 2, MetricPrefix.MILLI(METRE)), true);
                         Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                         if (!mData.pointExists(checkPoint)) {
                             grid.addPointIfNotExisting(point);
@@ -233,7 +237,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
                                 if ((mLeftMargin + (i / 2) * mXTickStep) > mGridHelp[n]) {
                                     double x = mLeftMargin + (i / 2) * mXTickStep;
                                     // mirroring for grid on the other side of the paper
-                                    double newX = mCanvas.getPageWidth() / 2 - x + mCanvas.getPageWidth() / 2;
+                                    double newX = mPageWidth - x + marginLeft;
                                     Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                                     Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                                     if (!mData.pointExists(checkPoint)) {

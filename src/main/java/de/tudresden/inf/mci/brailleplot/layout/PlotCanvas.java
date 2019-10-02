@@ -52,6 +52,11 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
     // if grid is desired or not
     private boolean mGrid;
 
+    // margins
+    private double mMarginLeft;
+    private double mMarginRight;
+    private double mFloatConstraintLeft;
+
 
     public PlotCanvas(final Printer printer, final Representation representation, final Format format) throws InsufficientRenderingAreaException {
         super(printer, representation, format);
@@ -85,6 +90,10 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         mCellDistVer = mPrinter.getProperty("raster.cellDistance.vertical").toDouble();
         mDotDistHor = mPrinter.getProperty("raster.dotDistance.horizontal").toDouble();
         mDotDistVer = mPrinter.getProperty("raster.dotDistance.vertical").toDouble();
+        mFloatConstraintLeft = mPrinter.getProperty("floatingDot.constraint.left").toDouble();
+
+        mMarginLeft = mFormat.getProperty("margin.left").toDouble();
+        mMarginRight = mFormat.getProperty("margin.right").toDouble();
 
         mMinBarWidth = mRepresentation.getProperty("floatingDot.minBarWidth").toDouble();
         mMaxBarWidth = mRepresentation.getProperty("floatingDot.maxBarWidth").toDouble();
@@ -166,6 +175,18 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
 
     public final boolean getGrid() {
         return mGrid;
+    }
+
+    public final double getMarginLeft() {
+        return mMarginLeft;
+    }
+
+    public final double getMarginRight() {
+        return mMarginRight;
+    }
+
+    public final double getFloatConstraintLeft() {
+        return mFloatConstraintLeft;
     }
 
 }
