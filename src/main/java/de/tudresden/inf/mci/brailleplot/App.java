@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -227,13 +228,30 @@ public final class App {
                 throw new Exception("Can't find any Printservices on this System.");
             }
 
+
+            /*
+             We do not want to actually print on each run.
+            Until CLI parsing is fully integrated, you will have to disable this check by hand if you actually do
+            want to print.
+            Please do not commit changes to this.
+            */
+            if (true) {
+                return EXIT_SUCCESS;
+            }
+
             // Last Step: Printing
-            PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(indexV4Printer.getProperty("mode").toString().toUpperCase()), indexV4Printer);
+            @SuppressWarnings("checkstyle:MagicNumber")
+            String printerConfigUpperCase = indexV4Printer.getProperty("mode").toString().toUpperCase();
+            PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), indexV4Printer);
             Iterator<MatrixData<Boolean>> iterC = canvas.getPageIterator();
             while (iterC.hasNext()) {
                 MatrixData<Boolean> page = iterC.next();
                 printD.print(page);
-            }
+            }            FileOutputStream textDumpOutput = new FileOutputStream("dump.txt");
+            textDumpOutput.write(printD.byteDump(mat));
+
+
+
 
         } catch (final Exception e) {
             terminateWithException(e);

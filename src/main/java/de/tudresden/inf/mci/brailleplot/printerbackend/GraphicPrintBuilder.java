@@ -7,7 +7,7 @@ import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
  * Class representing the graphic mode protocol from braille Index Everest D4.
  * @author Andrey Ruzhanskiy
  */
-class GraphicPrintBuilder extends AbstractIndexV4Builder {
+class GraphicPrintBuilder extends AbstractIndexV4Builder<MatrixData> {
 
     /**
      * Constructor. Does not have any functionality. Should only be used in  {@link PrintDirector}
