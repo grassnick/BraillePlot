@@ -21,7 +21,7 @@ public interface PointList extends PointContainer<Point2DDouble>, Named {
     ListIterator<Point2DDouble> getListIterator();
 
     /**
-     * Returns a sorted list in ascending fashion for the x-values. Does not change the actual elements in itself.
+     * Returns a sorted list copy in ascending fashion for the x-values.
      * @return An {@link PointList} which is sorted by the x-values in ascending fashion.
      */
 
