@@ -15,6 +15,10 @@ public class BrailleText implements Renderable {
     private String mContent;
     private Rectangle mArea;
 
+    /**
+     * Getter for the associated language used in this braille text.
+     * @return String containing the language
+     */
     public String getLanguage() {
         return mLanguage;
     }
@@ -32,7 +36,7 @@ public class BrailleText implements Renderable {
         mLanguage = "de-g0.utb";
     }
 
-    public BrailleText(final String content, final Rectangle area, BrailleLanguage.Language language) {
+    public BrailleText(final String content, final Rectangle area, final BrailleLanguage.Language language) {
         setText(content);
         setArea(area);
         mLanguage = BrailleLanguage.getCorrectLanguage(language);

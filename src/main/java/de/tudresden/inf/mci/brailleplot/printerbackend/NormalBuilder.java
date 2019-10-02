@@ -16,7 +16,7 @@ import java.util.Objects;
  * @version 12.07.2019
  */
 @SuppressWarnings("checkstyle:MagicNumber")
-class NormalBuilder extends AbstractDocumentBuilder<Boolean> {
+class NormalBuilder extends AbstractDocumentBuilder<MatrixData<Boolean>> {
 
 
     /**

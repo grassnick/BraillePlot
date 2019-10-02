@@ -78,6 +78,23 @@ clean {
 
 }
 
+// Copy native liblouis libraries for major platforms to the resource folder
+task copyLibLouisBinary(type: Copy) {
+    from "$projectDir/third_party/liblouis_bin/bin/"
+    into "$rootDir/src/main/resources/native/liblouis"
+}
+processResources.dependsOn copyLibLouisBinary
+// Abort if files are missing
+gradle.taskGraph.afterTask { copyLibLouisBinary ->
+    if(copyLibLouisBinary.state.noSource){
+        throw new GradleException("Could not find liblouis native libraries in \"$projectDir/third_party/liblouis_bin/bin/\". Please make sure you updated all git submodules using \"git submodule update --init --recursive\" ")
+    }
+}
+// Delete libraries on "clean" task
+clean {
+    delete "$rootDir/src/main/resources/native/liblouis"
+}
+
 // Define the main class for the application
 mainClassName = 'de.tudresden.inf.mci.brailleplot.App'
 

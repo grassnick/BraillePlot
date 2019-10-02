@@ -25,3 +25,8 @@ src/test/resources/mapping/liblouis
 
 # Exported SVG files
 *.svg
+
+# Native libraries
+*.so
+*.dylib
+*.dll

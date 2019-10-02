@@ -43,11 +43,12 @@ import tec.units.ri.unit.MetricPrefix;
 import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import java.io.BufferedReader;
-import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -153,8 +154,6 @@ public final class App {
         try {
             // Logging example
             mLogger.info("Application started");
-            // Needed for Windows machines
-            System.setProperty("jna.library.path", System.getProperty("user.dir") + "/third_party");
             // Parse command line parameters
             CommandLineParser cliParser = new CommandLineParser();
             SettingsWriter settings = cliParser.parse(args);
@@ -169,16 +168,17 @@ public final class App {
             }
 
             // Config Parsing
-            URL configPath;
+            JavaPropertiesConfigurationParser configParser;
+            URL defaultConfig = getClass().getClassLoader().getResource("config/default.properties");
             if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument, until then use default location for test runs
-                configPath = getClass().getResource("/config/index_everest_d_v4.properties");
+                URL configUrl = getClass().getResource("/config/index_everest_d_v4.properties");
+                configParser = new JavaPropertiesConfigurationParser(configUrl, defaultConfig);
                 mLogger.warn("ATTENTION! Using default specific config from resources. Please remove default config behavior before packaging the jar.");
             } else {
-                File configFile = new File(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
-                configPath = configFile.toURL();
+                Path configPath = Path.of(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
+                configParser = new JavaPropertiesConfigurationParser(configPath, defaultConfig);
             }
 
-            JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(configPath, getClass().getClassLoader().getResource("config/default.properties"));
             Printer indexV4Printer = configParser.getPrinter();
             Format a4Format = configParser.getFormat("A4");
             Representation representationParameters = configParser.getRepresentation();
@@ -192,11 +192,12 @@ public final class App {
             CategoricalPointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
             mLogger.debug("Internal data representation:\n {}", container.toString());
             CategoricalBarChart barChart = new CategoricalBarChart(container);
-            barChart.setTitle("Beispieldiagramm");
-            barChart.setXAxisName("Gewicht in kg");
-            barChart.setYAxisName("Länge in m");
+            barChart.setTitle(settingsReader.getSetting(SettingType.DIAGRAM_TITLE).orElse(""));
+            barChart.setXAxisName(settingsReader.getSetting(SettingType.X_AXIS_LABEL).orElse(""));
+            barChart.setYAxisName(settingsReader.getSetting(SettingType.Y_AXIS_LABEL).orElse(""));
 
             // Render diagram
+            LiblouisBrailleTextRasterizer.initModule();
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, representationParameters, a4Format);
             RasterCanvas canvas = renderer.rasterize(barChart);
             // SVG exporting
@@ -234,6 +235,7 @@ public final class App {
                 throw new Exception("Can't find any Printservices on this System.");
             }
 
+
             /*
              We do not want to actually print on each run.
             Until CLI parsing is fully integrated, you will have to disable this check by hand if you actually do
@@ -249,6 +251,11 @@ public final class App {
             String printerConfigUpperCase = indexV4Printer.getProperty("mode").toString().toUpperCase();
             PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), indexV4Printer);
             printD.print(mat);
+            FileOutputStream textDumpOutput = new FileOutputStream("dump.txt");
+            textDumpOutput.write(printD.byteDump(mat));
+
+
+
 
         } catch (final Exception e) {
             terminateWithException(e);
