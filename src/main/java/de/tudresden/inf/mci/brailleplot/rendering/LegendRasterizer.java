@@ -21,7 +21,6 @@ public class LegendRasterizer implements Rasterizer<Legend> {
 
     private static final int MIN_TEXT_WIDTH_CELLS = 10; // how much space should be available for an explanation text at least. (To avoid excessive line breaking)
     private static final int EXPLANATION_TEXT_INDENTATION_CELLS = 1; // indentation for explanation texts.
-    private static final String LEGEND_KEYWORD = "Legende:"; // title for the legend
     private BrailleLanguage.Language mLanguage;
     private String mLegendKeyword; // title for the legend
     private static final BrailleLanguage.Language EXPLANATION_LIST_LANGUAGE = BrailleLanguage.Language.DE_BASISSCHRIFT;
