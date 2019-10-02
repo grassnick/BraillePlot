@@ -8,6 +8,7 @@ import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
  * from the Index PrinterCapability Interface Protocol V5_V4 2ß16-05-13. All the variables with the respective values have no
  * particular order (except mStartTemporaryDoc, which must be at the beginning). All the variable names are set to
  * final, these are PrinterCapability specific values that should not be changed.
+ * @param <T>  Type of Data, must extend PrintableData.
  * @author Andrey Ruzhanskiy
  * @version 31.05.2019
  */

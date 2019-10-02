@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -269,6 +270,7 @@ public final class App {
                 throw new Exception("Can't find any Printservices on this System.");
             }
 
+
             /*
              We do not want to actually print on each run.
             Until CLI parsing is fully integrated, you will have to disable this check by hand if you actually do
@@ -306,6 +308,12 @@ public final class App {
                     // printD.print(canvasIt.next());
                 }
             }
+
+            /*PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), indexV4Printer);
+            printD.print(mat);
+            FileOutputStream textDumpOutput = new FileOutputStream("dump.txt");
+            textDumpOutput.write(printD.byteDump(mat));*/
+
 
         } catch (final Exception e) {
             terminateWithException(e);
