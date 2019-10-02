@@ -17,6 +17,7 @@ import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.SixDotBrailleRasterCanvas;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
+import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 import de.tudresden.inf.mci.brailleplot.rendering.BarChartRasterizer;
@@ -211,6 +212,33 @@ public class CsvReaderRasterizerCanvasIntegTest {
             renderer.rasterize(image);
             renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<Image>(Image.class, new ImageRasterizer(true,true,true, 80)));
             renderer.rasterize(image);
+        });
+    }
+
+
+    // Print byte dump test
+
+    @Test
+    public void testByteDump() {
+        Assertions.assertDoesNotThrow(() ->{
+            CategoricalBarChart temp = new CategoricalBarChart(container);
+            temp.setTitle("test");
+            temp.setXAxisName("X");
+            temp.setYAxisName("Y");
+            PrintDirector printD = new PrintDirector(PrinterCapability.NORMALPRINTER, printer);
+            printD.byteDump(renderer.rasterize(temp).getCurrentPage());
+        });
+    }
+
+    @Test
+    public void testFloatingDotBuilder() {
+        Assertions.assertDoesNotThrow(() -> {
+            CategoricalBarChart temp = new CategoricalBarChart(container);
+            temp.setTitle("test");
+            temp.setXAxisName("X");
+            temp.setYAxisName("Y");
+            PrintDirector printD = new PrintDirector(PrinterCapability.NORMALPRINTER, printer);
+            printD.print(renderer.rasterize(temp).getCurrentPage());
         });
     }
 }

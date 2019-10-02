@@ -45,7 +45,7 @@ public class AxisTest {
         Assertions.assertEquals(0, xAxis.getOriginY());
         Assertions.assertEquals(1, xAxis.getStepWidth());
         Assertions.assertEquals(2, xAxis.getTickSize());
-        Map test = new HashMap<Integer, String>();
+        HashMap<Integer, String> test = new HashMap<Integer, String>();
         xAxis.setLabels(test);
         Assertions.assertEquals(test, xAxis.getLabels());
         Rectangle rect = new Rectangle(0,0,0,0);
