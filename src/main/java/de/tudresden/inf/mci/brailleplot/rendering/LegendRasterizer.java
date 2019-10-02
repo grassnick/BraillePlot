@@ -88,11 +88,8 @@ public class LegendRasterizer implements Rasterizer<Legend> {
             if (legend.getColumnView().size() > 0) {
                 setLanguage(legend.getLanguage());
                 writeLine(legend.getColumnViewTitle(), referenceCellArea);
-                // int columnWidthCells = referenceCellArea.intWrapper().getWidth() / legend.getColumnView().size();
                 for (Map.Entry<String, Map<String, String>> list : legend.getColumnView().entrySet()) {
-                    //Rectangle columnCellArea = referenceCellArea.removeFromLeft(columnWidthCells);
                     Rectangle columnCellArea = new Rectangle(referenceCellArea);
-                    //moveIndentation(columnCellArea, EXPLANATION_TEXT_INDENTATION_CELLS);
                     setLanguage(legend.getLanguage());
                     writeLine(list.getKey(), columnCellArea);
                     int maxWidth = 0;
@@ -119,7 +116,6 @@ public class LegendRasterizer implements Rasterizer<Legend> {
 
                     }
                     referenceCellArea.removeFromLeft(maxWidth + 1 + EXPLANATION_TEXT_INDENTATION_CELLS);
-                    //moveIndentation(columnCellArea, -1 * EXPLANATION_TEXT_INDENTATION_CELLS); // reset indentation
                 }
             }
 
