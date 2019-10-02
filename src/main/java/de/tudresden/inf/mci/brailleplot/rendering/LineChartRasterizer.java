@@ -45,7 +45,9 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     private final int mPaddingXandYText = 1;
     private Rectangle mCellLineArea;
     private boolean mPrintOnSamePaper = false; // If you want to print on the same paper, change this variable to true.
-
+    private BrailleLanguage.Language mLanguage;
+    private int mTitleHeight;
+    private int mPaddingToTitle = 1;
 
 
     LineChartRasterizer() {
@@ -69,8 +71,10 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         if (canvas.equals(null)) {
             throw new NullPointerException("The given canvas for the LineChartRasterizer was null!");
         }
+        mLanguage = BrailleLanguage.Language.valueOf(canvas.getRepresentation().getProperty("general.brailleLanguage").toString());
+        mTitleHeight = canvas.getRepresentation().getProperty("general.maxTitleHeight").toInt();
         mTextRasterizer = new LiblouisBrailleTextRasterizer(canvas.getPrinter());
-        mLegend = new Legend(data.getTitle());
+        mLegend = new Legend(data.getTitle(), mLanguage); //
 
         mCanvas = canvas;
         mDiagram = data;
@@ -459,7 +463,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         int widthOfCompleteArea = mCellLineArea.intWrapper().getWidth();
         int titleBarHeight = mTextRasterizer.calculateRequiredHeight(mDiagram.getTitle(), widthOfCompleteArea, mCanvas, BrailleLanguage.Language.GERMAN_BASISSCHRIFT);
         try {
-            return  mCellLineArea.removeFromTop(mCanvas.getCellYFromDotY(titleBarHeight) + 1);
+            return  mCellLineArea.removeFromTop(mCanvas.getCellYFromDotY(mTitleHeight) + mPaddingToTitle);
         } catch (Rectangle.OutOfSpaceException e) {
             throw new InsufficientRenderingAreaException("Not enough space to build the title area for the line chart!");
         }
