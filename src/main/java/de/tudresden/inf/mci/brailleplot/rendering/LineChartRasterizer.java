@@ -129,7 +129,6 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
         mLegend.addSymbolExplanation("Achsenskalierung:", "Y-Achse", "Faktor " + mDpiY);
         mLegend.setColumnViewTitle("Werte der Tickmarks");
         setLabelsXForLegend(xLabelsForLegend);
-        // Currently commented out because the legendrasterizer cant handle that much legend.
         setLabelsYForLegend(yLabelsForLegend);
 
         // Step seven: Iterate through the lines, rasterize the axis for each paper.
