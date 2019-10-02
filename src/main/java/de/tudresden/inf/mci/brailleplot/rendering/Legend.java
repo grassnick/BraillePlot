@@ -17,12 +17,9 @@ public class Legend implements Renderable {
     private BrailleLanguage.Language mLanguage;
     private Map<String, Map<String, String>> mStringExplanationLists = new LinkedHashMap<>();
     private Map<String, Map<Texture<Boolean>, String>> mTextureExplanationLists = new LinkedHashMap<>();
-    private String mColumnViewTitle; //
+    private String mColumnViewTitle;
+
     private Map<String, Map<String, String>> mColumnView = new LinkedHashMap<>();
-    //
-    //          column title (x-axis e.g.)
-    //                       symbol
-    //                               explanation
     private int mTextureExampleWidthCells = 1;
     private int mTextureExampleHeightCells = 1;
 

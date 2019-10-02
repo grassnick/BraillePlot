@@ -5,7 +5,6 @@ import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
-
 import java.util.Map;
 import static java.lang.Integer.max;
 import static java.lang.StrictMath.min;
@@ -19,11 +18,11 @@ public class LegendRasterizer implements Rasterizer<Legend> {
 
     private RasterCanvas mCanvas;
     private Legend mLegend;
-    private BrailleLanguage.Language mLanguage;
-    private String mLegendKeyword; // title for the legend
 
     private static final int MIN_TEXT_WIDTH_CELLS = 10; // how much space should be available for an explanation text at least. (To avoid excessive line breaking)
     private static final int EXPLANATION_TEXT_INDENTATION_CELLS = 1; // indentation for explanation texts.
+    private BrailleLanguage.Language mLanguage;
+    private String mLegendKeyword; // title for the legend
     private static final BrailleLanguage.Language EXPLANATION_LIST_LANGUAGE = BrailleLanguage.Language.DE_BASISSCHRIFT;
 
     // Sub rasterizers
@@ -52,7 +51,6 @@ public class LegendRasterizer implements Rasterizer<Legend> {
             // Write "Legend" keyword + title
             setLanguage(legend.getLanguage());
             writeLine(mLegendKeyword + " " + legend.getTitle(), referenceCellArea);
-
 
             // Texture explanation lists
             for (Map.Entry<String, Map<Texture<Boolean>, String>> list : legend.getTextureExplanationGroups().entrySet()) {
@@ -88,18 +86,19 @@ public class LegendRasterizer implements Rasterizer<Legend> {
 
             // Columnview
             if (legend.getColumnView().size() > 0) {
+                setLanguage(legend.getLanguage());
                 writeLine(legend.getColumnViewTitle(), referenceCellArea);
-                // int columnWidthCells = referenceCellArea.intWrapper().getWidth() / legend.getColumnView().size();
                 for (Map.Entry<String, Map<String, String>> list : legend.getColumnView().entrySet()) {
-                    //Rectangle columnCellArea = referenceCellArea.removeFromLeft(columnWidthCells);
                     Rectangle columnCellArea = new Rectangle(referenceCellArea);
-                    //moveIndentation(columnCellArea, EXPLANATION_TEXT_INDENTATION_CELLS);
+                    setLanguage(legend.getLanguage());
                     writeLine(list.getKey(), columnCellArea);
                     int maxWidth = 0;
                     for (Map.Entry<String, String> explanation : list.getValue().entrySet()) {
                         String symbol = explanation.getKey();
                         String description = explanation.getValue();
                         String textToWrite = symbol + "  " + description;
+
+                        setLanguage(EXPLANATION_LIST_LANGUAGE);
                         try {
                             int usedWidth = writeLine(textToWrite, columnCellArea);
                             if (usedWidth > maxWidth) {
@@ -118,7 +117,6 @@ public class LegendRasterizer implements Rasterizer<Legend> {
 
                     }
                     referenceCellArea.removeFromLeft(maxWidth + 1 + EXPLANATION_TEXT_INDENTATION_CELLS);
-                    //moveIndentation(columnCellArea, -1 * EXPLANATION_TEXT_INDENTATION_CELLS); // reset indentation
                 }
             }
 
