@@ -53,14 +53,14 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             if (mAxesDerivation) {
                 mLeftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
             } else {
-                mLeftMargin = (WMULT + 3) * mCanvas.getCellWidth() + (WMULT + 2) * mCanvas.getCellDistHor();
+                mLeftMargin = (WMULT + MARGINSCALE) * mCanvas.getCellWidth() + (WMULT + 2) * mCanvas.getCellDistHor();
             }
         } else {
             if (mAxesDerivation) {
                 mLeftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
                 mSecondAxis = mLeftMargin;
             } else {
-                mLeftMargin = (WMULT + 3) * mCanvas.getCellWidth() + (WMULT + 2) * mCanvas.getCellDistHor();
+                mLeftMargin = (WMULT + MARGINSCALE) * mCanvas.getCellWidth() + (WMULT + 2) * mCanvas.getCellDistHor();
                 mSecondAxis = 2 * mCanvas.getCellWidth() + mCanvas.getCellDistHor();
             }
         }

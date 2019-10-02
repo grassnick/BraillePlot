@@ -1,9 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 
-import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParser;
-import de.tudresden.inf.mci.brailleplot.configparser.Format;
-import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
-import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.configparser.*;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimplePointListContainerImpl;
 import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
 import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
@@ -25,6 +22,7 @@ class FunctionalPlotterTest {
     private static final URL mBaseConfig = getResource("config/base_format.properties");
     private static Printer mPrinter;
     private static Format mFormat;
+    private static Representation mRepresentation;
 
     static URL getResource(final String location) {
         return ClassLoader.getSystemClassLoader().getResource(location);
@@ -55,9 +53,10 @@ class FunctionalPlotterTest {
         // which decides which plotter to use based on the Renderable type.
         // Directly passing the wrong Renderable type must cause exception:
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            PlotCanvas testCanvas = new PlotCanvas(mPrinter, mFormat);
+            PlotCanvas testCanvas = new PlotCanvas(mPrinter, mRepresentation, mFormat);
             // Pass Image to BrailleText rasterizer.
             plotter.plot(new LinePlot(new SimplePointListContainerImpl()), testCanvas);
         });
+
     }
 }

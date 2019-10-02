@@ -125,6 +125,7 @@ abstract class AbstractPlotter<T extends Diagram> {
     static final double TICK4 = 10;
     // tick distance for y-axis
     static final double YTICKDISTANCE = 30;
+    static final int MARGINSCALE = 3;
 
     /**
      * Checks if mStepSize is smaller than mResolution. In that case, mStepSize is set to mResolution.

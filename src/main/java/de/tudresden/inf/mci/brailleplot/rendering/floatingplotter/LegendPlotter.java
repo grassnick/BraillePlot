@@ -38,6 +38,7 @@ public class LegendPlotter implements Plotter<Legend> {
     private static final int STARTDOTDESC = 15;
     private static final int CURRENTPAGESCALE = 15;
     private static final int NEWPAGESCALE2 = 20;
+    private static final int STARTAXESDESC = 20;
     private static final int STARTFRAMESLINES = 25;
     private static final int STARTLINEDESC = 30;
     private static final int ENDLINES = 35;
@@ -127,7 +128,7 @@ public class LegendPlotter implements Plotter<Legend> {
                     } else {
                         last2 = plotLine(desc, mCanvas.getCellDistHor(), last2 + mStepVer);
                     }
-                    Rectangle rect = new Rectangle(20, last2, mWidth, mHeight);
+                    Rectangle rect = new Rectangle(STARTAXESDESC, last2, mWidth, mHeight);
                     BrailleText text = new BrailleText(map2.get(Integer.toString(i)), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                     mTextPlotter.plot(text, mCanvas);
                 }
@@ -147,7 +148,7 @@ public class LegendPlotter implements Plotter<Legend> {
                 } else {
                     last = plotLine(desc, yDist, last + mStepVer);
                 }
-                Rectangle rect = new Rectangle(yDist + 20, last, mWidth, mHeight);
+                Rectangle rect = new Rectangle(yDist + STARTAXESDESC, last, mWidth, mHeight);
                 BrailleText text = new BrailleText(map2.get(Integer.toString(i)), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                 mTextPlotter.plot(text, mCanvas);
             }
