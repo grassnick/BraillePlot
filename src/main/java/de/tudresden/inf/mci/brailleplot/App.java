@@ -15,6 +15,7 @@ import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
+import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 
@@ -48,6 +49,7 @@ import javax.measure.Quantity;
 import javax.measure.quantity.Length;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -285,6 +287,8 @@ public final class App {
             String printerConfigUpperCase = printer.getProperty("mode").toString().toUpperCase();
             PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), printer);
             printD.print(mat);
+            FileOutputStream textDumpOutput = new FileOutputStream("dump.txt");
+            textDumpOutput.write(printD.byteDump(mat));
 
         } catch (final Exception e) {
             terminateWithException(e);
