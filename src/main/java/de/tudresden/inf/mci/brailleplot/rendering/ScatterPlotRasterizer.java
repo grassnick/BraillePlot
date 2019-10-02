@@ -20,7 +20,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
     private static final int X_AXIS_WIDTH = 2; // Minimum width of the x axis [cells]
     private static final int Y_AXIS_WIDTH = 3; // Minimum width of the y axis [cells]
     private static final int TOKEN_AXIS_OFFSET = 1; // Offset of actual plotting area to axis, increased to match cell size [dots]
-    private static final int X_AXIS_STEP_WIDTH = 2; // The distance between two tick marks on the x axis [cells]
+    private static final int X_AXIS_STEP_WIDTH = 3; // The distance between two tick marks on the x axis [cells]
     private static final int Y_AXIS_STEP_WIDTH = 3; // The distance between two tick marks on the y axis [cells]
     private static final int AXIS_TICK_SIZE = 1; // The length of the ticks on the axis [dots]
 
@@ -41,10 +41,15 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         final int xAxisStepWidth = cellWidth * X_AXIS_STEP_WIDTH;
         final int yAxisStepWidth = cellHeight * Y_AXIS_STEP_WIDTH;
 
-        final String title = "I am a Scatter plot beep beep.";
+        final String title = "Streudiagramm - Gewicht zu Höhe";
         final String legendTitle = "Legende";
-        final String xAxisLegendGroupName = "x-Achse";
-        final String yAxisLegendGroupName = "y-Achse";
+        final String axisExplanationGroupName = "Achsenbeschriftungen";
+        final String xAxisLegendGroupName = "x-Achse Werte";
+        final String yAxisLegendGroupName = "y-Achse Werte";
+        final String xAxisLabel = "x-Achse";
+        final String xAxisLabelValue = "Gewicht in kg";
+        final String yAxisLabel = "y-Achse";
+        final String yAxisLabelValue = "Höhe in m";
 
 
         Rectangle completeArea = canvas.getCellRectangle();
@@ -143,6 +148,12 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         // 4. Add tick mark labels to axis and to legend
         LinearMappingAxisRasterizer axisRasterizer = new LinearMappingAxisRasterizer();
         Legend legend = new Legend(legendTitle);
+
+        Map<String, String> axisLabels = new HashMap<>();
+        axisLabels.put(xAxisLabel, xAxisLabelValue);
+        axisLabels.put(yAxisLabel, yAxisLabelValue);
+        legend.addSymbolExplanationGroup(axisExplanationGroupName, axisLabels);
+
         char label = 'a';
 
         // X axis
