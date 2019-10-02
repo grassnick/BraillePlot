@@ -135,8 +135,8 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
             rasterizeTitle(data.getTitle(), titleArea);
             rasterizeXAxis(originY, originX, mXStepWidth, xAxisBound, xLabels);
             rasterizeYAxis(yOriginY, yOriginX, mYStepWidth, yAxisBound, yLabels);
-            mTextRasterizer.rasterize(new BrailleText(data.getYAxisName(), yAxisText, BrailleLanguage.Language.DE_KURZSCHRIFT), mCanvas);
-            mTextRasterizer.rasterize(new BrailleText(data.getXAxisName(), xAxisText, BrailleLanguage.Language.DE_KURZSCHRIFT), mCanvas);
+            mTextRasterizer.rasterize(new BrailleText(data.getYAxisName(), yAxisText, BrailleLanguage.Language.GERMAN_BASISSCHRIFT), mCanvas);
+            mTextRasterizer.rasterize(new BrailleText(data.getXAxisName(), xAxisText, BrailleLanguage.Language.GERMAN_BASISSCHRIFT), mCanvas);
             rasterizeData(mDiagram.getMinX(), mDiagram.getMinY(), iter.next());
             if (iter.hasNext() && !mPrintOnSamePaper) {
                 mCanvas.getNewPage();
@@ -457,7 +457,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
             throw new IllegalArgumentException("The title in LineChartRasterizer was empty!");
         }
         int widthOfCompleteArea = mCellLineArea.intWrapper().getWidth();
-        int titleBarHeight = mTextRasterizer.calculateRequiredHeight(mDiagram.getTitle(), widthOfCompleteArea, mCanvas, BrailleLanguage.Language.DE_KURZSCHRIFT);
+        int titleBarHeight = mTextRasterizer.calculateRequiredHeight(mDiagram.getTitle(), widthOfCompleteArea, mCanvas, BrailleLanguage.Language.GERMAN_BASISSCHRIFT);
         try {
             return  mCellLineArea.removeFromTop(mCanvas.getCellYFromDotY(titleBarHeight) + 1);
         } catch (Rectangle.OutOfSpaceException e) {
