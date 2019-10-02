@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -26,6 +27,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
     private static final int X_AXIS_STEP_WIDTH = 3; // The distance between two tick marks on the x axis [cells]
     private static final int Y_AXIS_STEP_WIDTH = 3; // The distance between two tick marks on the y axis [cells]
     private static final int AXIS_TICK_SIZE = 1; // The length of the ticks on the axis [dots]
+    private static final Locale NUMBER_LOCALE = new Locale("en", "US");
 
     private static final Logger LOG = LoggerFactory.getLogger(ScatterPlotRasterizer.class);
 
@@ -173,7 +175,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
             int tickPos = x * xAxisStepWidth;
             double val = tickPos / xRatio;
             LOG.debug("Adding x axis label {{},{}} for tick #{}", label, val, x);
-            xAxisLegendSymbols.put(String.valueOf(label), String.valueOf(val));
+            xAxisLegendSymbols.put(String.valueOf(label), formatDouble(val));
             label++;
         }
 
@@ -189,7 +191,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
             int tickPos = y * yAxisStepWidth;
             double val = tickPos / yRatio;
             LOG.debug("Adding y axis label {{},{}} for tick #{}", label, val, y);
-            yAxisLegendSymbols.put(String.valueOf(label), String.valueOf(val));
+            yAxisLegendSymbols.put(String.valueOf(label), formatDouble(val));
             label++;
         }
 
@@ -219,5 +221,9 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         int result = dots + diff;
         LOG.trace("Stretching {} to {}, cellSize: {}", dots, result, cellDots);
         return result;
+    }
+
+    private static String formatDouble(final double d) {
+        return String.format(NUMBER_LOCALE, "%.2f", d);
     }
 }
