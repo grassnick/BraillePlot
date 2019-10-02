@@ -52,6 +52,9 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
     // if grid is desired or not
     private boolean mGrid;
 
+    // only point frames for line plots
+    private boolean mDotFrame;
+
     // margins
     private double mMarginLeft;
     private double mMarginRight;
@@ -102,6 +105,7 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         mFrames = mRepresentation.getProperty("floatingDot.frames").toBool();
         mAxesDerivation = mRepresentation.getProperty("floatingDot.derivation").toBool();
         mGrid = mRepresentation.getProperty("floatingDot.grid").toBool();
+        mDotFrame = mRepresentation.getProperty("floatingDot.dotFrame").toBool();
 
     }
 
@@ -187,6 +191,10 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
 
     public final double getFloatConstraintLeft() {
         return mFloatConstraintLeft;
+    }
+
+    public final boolean getDotFrame() {
+        return mDotFrame;
     }
 
 }

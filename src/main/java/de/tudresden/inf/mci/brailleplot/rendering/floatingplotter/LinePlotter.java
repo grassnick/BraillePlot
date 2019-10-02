@@ -40,6 +40,7 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
         mResolution = mCanvas.getResolution();
         mStepSize = mCanvas.getDotDiameter() + 1;
         mGrid = mCanvas.getGrid();
+        mDotFrame = mCanvas.getDotFrame();
 
         checkResolution();
         calculateRanges();

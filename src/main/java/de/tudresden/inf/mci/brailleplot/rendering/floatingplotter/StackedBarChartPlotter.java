@@ -180,7 +180,7 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
     void drawGrid() {
         FloatingPointData<Boolean> grid = mCanvas.getNewPage();
 
-        double marginLeft = mCanvas.getFloatConstraintLeft() * 10;
+        double marginLeft = mCanvas.getFloatConstraintLeft();
 
         // x-axis
         for (double i = 1; i <= 2 * mNumberXTicks; i++) {

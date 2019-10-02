@@ -24,7 +24,8 @@ import static tec.units.ri.unit.Units.METRE;
 abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T> {
 
     private double mSecondAxis;
-    boolean mFrames = true;
+    boolean mFrames;
+    boolean mDotFrame;
     private boolean mRightAxis;
     private static final double CIRCLEDIA = 12;
     private static final double CIRCLESCALE = 1.5;
@@ -52,15 +53,15 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             if (mAxesDerivation) {
                 mLeftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
             } else {
-                mLeftMargin = (WMULT + 2) * mCanvas.getCellWidth() + (WMULT + 2) * mCanvas.getCellDistHor();
+                mLeftMargin = (WMULT + 3) * mCanvas.getCellWidth() + (WMULT + 2) * mCanvas.getCellDistHor();
             }
         } else {
             if (mAxesDerivation) {
                 mLeftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
                 mSecondAxis = mLeftMargin;
             } else {
-                mLeftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
-                mSecondAxis = (WMULT + 1) * mCanvas.getCellWidth() + (WMULT + 1) * mCanvas.getCellDistHor();
+                mLeftMargin = (WMULT + 3) * mCanvas.getCellWidth() + (WMULT + 2) * mCanvas.getCellDistHor();
+                mSecondAxis = 2 * mCanvas.getCellWidth() + mCanvas.getCellDistHor();
             }
         }
 
@@ -175,7 +176,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             secondAxis = mLeftMargin;
         }
 
-        double marginLeft = mCanvas.getFloatConstraintLeft() * 10;
+        double marginLeft = mCanvas.getFloatConstraintLeft();
 
         // x-axis
         for (double i = 1; i <= 2 * mNumberXTicks; i++) {
@@ -252,7 +253,16 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
                 }
             } else {
                 for (int i = 0; i < mNumberYTicks; i++) {
-                    Rectangle rect = new Rectangle(secondX, mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
+                    Rectangle rect;
+
+                    if (mScaleY[i] < TEN) {
+                        // two digits
+                        rect = new Rectangle(startX - 2 * mCanvas.getCellDistHor(), mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
+                    } else {
+                        // three digits
+                        rect = new Rectangle(startX - width - DISTYAXISNAMES2 * mCanvas.getCellDistHor(), mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
+                    }
+
                     BrailleText text = new BrailleText(Integer.toString((int) mScaleY[i]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                     tplotter.plot(text, mCanvas);
                 }
@@ -271,7 +281,9 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
     void drawPoint(final double xValue, final double yValue, final int i) throws InsufficientRenderingAreaException {
         addPoint(xValue, yValue);
         // new frames are added here
-        if (mFrames) {
+        if (mDotFrame) {
+            drawDot(xValue, yValue);
+        } else if (mFrames) {
             if (i == 0) {
                 drawDot(xValue, yValue);
             } else if (i == 1) {

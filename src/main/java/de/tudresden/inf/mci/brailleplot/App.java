@@ -7,6 +7,7 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
@@ -14,19 +15,14 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListConta
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimpleCategoricalPointListContainerImpl;
-import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
 import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
-import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
-import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
-import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
-import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.LiblouisBrailleTextRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.GroupedBarChartPlotter;
@@ -40,13 +36,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
-import java.util.ListIterator;
 import java.nio.file.Path;
+import java.util.ListIterator;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -211,7 +206,7 @@ public final class App {
             classloader = Thread.currentThread().getContextClassLoader();
             csvStream = classloader.getResourceAsStream("examples/csv/1_scatter_plot.csv");
             csvReader = new BufferedReader(new InputStreamReader(csvStream));
-            InputStream csvStream2 = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_vertical.csv");
+            InputStream csvStream2 = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_max.csv");
             Reader csvReader2 = new BufferedReader(new InputStreamReader(csvStream2));
 
             csvParser = new CsvParser(csvReader, ',', '\"');
@@ -239,7 +234,7 @@ public final class App {
 
             ScatterPlot scatterplot = new ScatterPlot(container2);
             ScatterPlotter plotter = new ScatterPlotter();
-            // plotter.plot(scatterplot, floatCanvas);
+            plotter.plot(scatterplot, floatCanvas);
 
 
             LinePlot lineplot = new LinePlot(container2);
@@ -248,7 +243,7 @@ public final class App {
 
             CategoricalBarChart bar = new CategoricalBarChart(container3);
             StackedBarChartPlotter plotter3 = new StackedBarChartPlotter();
-            plotter3.plot(bar, floatCanvas);
+            // plotter3.plot(bar, floatCanvas);
 
             GroupedBarChartPlotter plotter4 = new GroupedBarChartPlotter();
             // plotter4.plot(bar, floatCanvas);
@@ -284,6 +279,7 @@ public final class App {
             PrintDirector printD = new PrintDirector(PrinterCapability.INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER, indexV4Printer);
             ListIterator<FloatingPointData<Boolean>> canvasIt = floatCanvas.getPageIterator();
 
+            /*
             canvasIt.forEachRemaining((page) -> {
                 Thread printingThread = new Thread(() -> {
                     mLogger.debug("Started printing thread");
@@ -301,6 +297,8 @@ public final class App {
                     e.printStackTrace();
                 }
             });
+
+             */
 
 
             /*PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), indexV4Printer);
