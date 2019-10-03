@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  * Performs command line parsing and creates a {@link Settings} object.
  * @author Georg Graßnick, Andrey Ruzhanskiy, Leonard Kupper
- * @version 2019.10.01
+ * @version 2019.10.03
  */
 public class CommandLineParser {
 
