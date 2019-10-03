@@ -160,7 +160,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
             xAxisLabels.put(x, String.valueOf(label));
             int tickPos = x * xAxisStepWidth;
             double val = tickPos / xRatio;
-            LOG.debug("Adding x axis label {{},{}} for tick #{}", label, val, x);
+            LOG.trace("Adding x axis label {{},{}} for tick #{}", label, val, x);
             xAxisLegendSymbols.put(String.valueOf(label), formatDouble(val));
             label++;
         }
@@ -176,7 +176,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
             yAxisLabels.put(y, String.valueOf(label));
             int tickPos = y * yAxisStepWidth;
             double val = tickPos / yRatio;
-            LOG.debug("Adding y axis label {{},{}} for tick #{}", label, val, y);
+            LOG.trace("Adding y axis label {{},{}} for tick #{}", label, val, y);
             yAxisLegendSymbols.put(String.valueOf(label), formatDouble(val));
             label++;
         }
@@ -203,7 +203,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
                 final int xGlobal = xOrigin + x;
                 final int yGlobal = yOrigin - y - 1;
-                LOG.debug("Placing token at local: ({},{}), global: ({},{}), rational: ({},{}) for data point: ({},{})", x, y, xGlobal, yGlobal, ((double) x) / ((double) xDots), ((double) y) / ((double) yDots), p.getX(), p.getY());
+                LOG.trace("Placing token at local: ({},{}), global: ({},{}), rational: ({},{}) for data point: ({},{})", x, y, xGlobal, yGlobal, ((double) x) / ((double) xDots), ((double) y) / ((double) yDots), p.getX(), p.getY());
                 mat.setValue(yGlobal, xGlobal, true);
             }
 
