@@ -245,10 +245,10 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
     }
 
     private static int calcTitleHeight(final String title, final PointListContainer<PointList> data, final LiblouisBrailleTextRasterizer textRasterizer, final int width, final RasterCanvas canvas, final BrailleLanguage.Language lang) {
-        final int titleLen = title.length();
         int minHeight = Integer.MIN_VALUE;
         for (PointList l : data) {
-            int height = textRasterizer.calculateRequiredHeight(titleLen + l.getName(), width, canvas, lang);
+            final String s = title + l.getName();
+            int height = textRasterizer.calculateRequiredHeight(s, width, canvas, lang);
             minHeight = Math.max(minHeight, height);
         }
         return minHeight;
