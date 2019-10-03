@@ -191,7 +191,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
             MatrixData<Boolean> mat = canvas.getNewPage();
 
             // 1. Set diagram title
-            BrailleText diagramTitle = new BrailleText(title + titleToDataSetSeparator + l.getName(), titleArea.scaledBy(cellWidth, cellHeight));
+            BrailleText diagramTitle = new BrailleText(title + titleToDataSetSeparator + l.getName(), titleArea);
 
             // 2. Render actual tokens
             for (Point2DDouble p : l) {
