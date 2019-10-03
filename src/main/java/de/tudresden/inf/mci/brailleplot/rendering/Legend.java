@@ -207,4 +207,5 @@ public class Legend implements Renderable {
     public final int getType() {
         return mType;
     }
+
 }

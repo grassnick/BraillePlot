@@ -11,18 +11,15 @@ import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
-import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimpleCategoricalPointListContainerImpl;
-import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
-import de.tudresden.inf.mci.brailleplot.diagrams.GroupedBarChart;
-import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
-import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
-import de.tudresden.inf.mci.brailleplot.diagrams.StackedBarChart;
+import de.tudresden.inf.mci.brailleplot.diagrams.*;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
+import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
+import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 import de.tudresden.inf.mci.brailleplot.rendering.LiblouisBrailleTextRasterizer;
@@ -37,15 +34,14 @@ import de.tudresden.inf.mci.brailleplot.svgexporter.SvgExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentLinkedDeque;
+
 
 /**
  * Main class.
@@ -165,11 +161,12 @@ public final class App {
                 return EXIT_SUCCESS;
             }
 
+
             // Config Parsing
             JavaPropertiesConfigurationParser configParser;
             URL defaultConfig = getClass().getClassLoader().getResource("config/default.properties");
             if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument, until then use default location for test runs
-                URL configUrl = getClass().getResource("/config/index_everest_d_v4.properties");
+                URL configUrl = getClass().getResource("/config/index_basic_d.properties");
                 configParser = new JavaPropertiesConfigurationParser(configUrl, defaultConfig);
                 mLogger.warn("ATTENTION! Using default specific config from resources. Please remove default config behavior before packaging the jar.");
             } else {
@@ -181,25 +178,34 @@ public final class App {
             Format a4Format = configParser.getFormat("A4");
             Representation representationParameters = configParser.getRepresentation();
 
+
             // Parse csv data
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-            InputStream csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical_vertical.csv");
+            InputStream csvStream = classloader.getResourceAsStream("examples/csv/2_line_plot.csv");
             Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
 
+
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
-            CategoricalPointListContainer<PointList> container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
+            PointListContainer<PointList> container = csvParser.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
             mLogger.debug("Internal data representation:\n {}", container.toString());
-            CategoricalBarChart barChart = new CategoricalBarChart(container);
-            barChart.setTitle(settingsReader.getSetting(SettingType.DIAGRAM_TITLE).orElse(""));
-            barChart.setXAxisName(settingsReader.getSetting(SettingType.X_AXIS_LABEL).orElse(""));
-            barChart.setYAxisName(settingsReader.getSetting(SettingType.Y_AXIS_LABEL).orElse(""));
 
-            // Render diagram
+            LineChart lineChart = new LineChart(container);
+            lineChart.setTitle(settingsReader.getSetting(SettingType.DIAGRAM_TITLE).orElse(""));
+            lineChart.setXAxisName(settingsReader.getSetting(SettingType.X_AXIS_LABEL).orElse(""));
+            lineChart.setYAxisName(settingsReader.getSetting(SettingType.Y_AXIS_LABEL).orElse(""));
+
             LiblouisBrailleTextRasterizer.initModule();
-            MasterRenderer renderer = new MasterRenderer(indexV4Printer, representationParameters, a4Format);
-            RasterCanvas canvas = renderer.rasterize(barChart);
 
-            // SVG exporting
+            MasterRenderer renderer = new MasterRenderer(indexV4Printer, representationParameters, a4Format);
+            RasterCanvas canvas = renderer.rasterize(lineChart);
+            Iterator<MatrixData<Boolean>> iter = canvas.getPageIterator();
+            SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
+            while (iter.hasNext()) {
+                SimpleMatrixDataImpl<Boolean> temp = (SimpleMatrixDataImpl<Boolean>) iter.next();
+                mLogger.debug("Render preview:\n" + temp.toBoolString());
+            }
+
+
             SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
             svgExporter.render();
             svgExporter.dump("boolMat");
@@ -256,8 +262,9 @@ public final class App {
             floatSvgExporter.dump("floatingPointData");
             // RasterCanvas m2canvas = renderer.rasterize(new BrailleText(text2, textArea));
 
-
-
+            floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
+            floatSvgExporter.render();
+            floatSvgExporter.dump("floatingPointData");
 
             // Check if some SpoolerService/Printservice exists
             if (!PrintDirector.isPrintServiceOn()) {
@@ -279,8 +286,17 @@ public final class App {
             // Last Step: Printing
             @SuppressWarnings("checkstyle:MagicNumber")
             String printerConfigUpperCase = indexV4Printer.getProperty("mode").toString().toUpperCase();
-            PrintDirector printD = new PrintDirector(PrinterCapability.INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER, indexV4Printer);
+
+            //PrintDirector printD = new PrintDirector(PrinterCapability.INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER, indexV4Printer);
             ListIterator<FloatingPointData<Boolean>> canvasIt = floatCanvas.getPageIterator();
+            PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), indexV4Printer);
+            Iterator<MatrixData<Boolean>> iterC = canvas.getPageIterator();
+            while (iterC.hasNext()) {
+                MatrixData<Boolean> page = iterC.next();
+                printD.print(page);
+            }            FileOutputStream textDumpOutput = new FileOutputStream("dump.txt");
+            textDumpOutput.write(printD.byteDump(mat));
+
 
             /*
             canvasIt.forEachRemaining((page) -> {

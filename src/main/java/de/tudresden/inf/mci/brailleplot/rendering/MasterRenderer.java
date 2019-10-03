@@ -18,6 +18,8 @@ import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.LinePlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.Plotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.ScatterPlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.StackedBarChartPlotter;
+import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,10 +54,12 @@ public final class MasterRenderer {
 
         Rasterizer<CategoricalBarChart> barChartRasterizer = new BarChartRasterizer();
         Rasterizer<Image> linearImageMapping = new ImageRasterizer();
+        Rasterizer<LineChart> lineChart = new LineChartRasterizer();
 
         mLogger.trace("Registering default rasterizers");
         renderingBase.registerRasterizer(new FunctionalRasterizer<CategoricalBarChart>(CategoricalBarChart.class, barChartRasterizer));
         renderingBase.registerRasterizer(new FunctionalRasterizer<Image>(Image.class, linearImageMapping));
+        renderingBase.registerRasterizer(new FunctionalRasterizer<LineChart>(LineChart.class, lineChart));
         //renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, ScatterPlotRasterizing::fooRasterizing));
         //...
 

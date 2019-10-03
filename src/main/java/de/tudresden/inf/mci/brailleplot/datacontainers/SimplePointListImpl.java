@@ -7,11 +7,12 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * A low effort implementation of {@link PointList}.
- * @author Georg Graßnick
- * @version 2019.07.29
+ * @author Georg Graßnick, Andrey Ruzhanskiy
+ * @version 2019.09.24
  */
 public class SimplePointListImpl extends AbstractPointContainer<Point2DDouble> implements PointList {
 
@@ -35,6 +36,21 @@ public class SimplePointListImpl extends AbstractPointContainer<Point2DDouble> i
     @Override
     public ListIterator<Point2DDouble> getListIterator() {
         return mElements.listIterator();
+    }
+
+    @Override
+    public PointList sortXAscend() {
+        PointList list = this;
+        List<Point2DDouble> temp = list.stream().sorted((o1, o2) -> {
+            if (o1.getX() < o2.getX()) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }).collect(Collectors.toList());
+        SimplePointListImpl result = new SimplePointListImpl(list.getName(), temp);
+        result.calculateExtrema();
+        return result;
     }
 
     @Override
