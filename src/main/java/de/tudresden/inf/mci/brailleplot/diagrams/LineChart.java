@@ -3,8 +3,6 @@ package de.tudresden.inf.mci.brailleplot.diagrams;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 
-import java.util.Objects;
-
 /**
  * Representation of a line chart with basic data functions. Implements Renderable.
  * @author Andrey Ruzhanskiy
