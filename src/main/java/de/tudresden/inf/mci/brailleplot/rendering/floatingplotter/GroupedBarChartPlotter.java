@@ -229,17 +229,17 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter<Groupe
 
 
                 // check if j is inside bar and i/2 outside bar
-                double barGroupStep = mCatList.getNumberOfCategories() * mBarWidth + mBarDist;
+                double barGroupStep = mBarGroupWidth + mBarDist;
                 for (int l = 0; l < mNumBarGroup; l++) {
-                    if (j <= mBottomMargin - l * barGroupStep && j >= mBottomMargin - (l + 1) * barGroupStep) {
+                    if (j <= mBottomMargin - l * barGroupStep && j >= mBottomMargin - (l + 1) * barGroupStep ) {
                         for (int m = 0; m < mCatList.getNumberOfCategories(); m++) {
-                            if (j <= mBottomMargin - l * barGroupStep - mBarDist - m * mBarWidth && j >= mBottomMargin - l * barGroupStep - mBarDist - (m + 1) * mBarWidth) {
+                            if (j <= mBottomMargin - l * barGroupStep - mBarDist - m * mBarWidth && j > mBottomMargin - l * barGroupStep - mBarDist - (m + 1) * mBarWidth) {
                                 int n = mCatList.getNumberOfCategories() * l + m;
                                 if ((mLeftMargin + (i / 2) * mXTickStep) > mGridHelp[n]) {
                                     double x = mLeftMargin + (i / 2) * mXTickStep;
                                     // mirroring for grid on the other side of the paper
                                     double newX = mPageWidth - x + marginLeft;
-                                    Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                                    Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j + 2, MetricPrefix.MILLI(METRE)), true);
                                     Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                                     if (!mData.pointExists(checkPoint)) {
                                         grid.addPointIfNotExisting(point);
