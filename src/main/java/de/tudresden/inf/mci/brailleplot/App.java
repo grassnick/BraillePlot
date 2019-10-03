@@ -15,9 +15,7 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListConta
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimpleCategoricalPointListContainerImpl;
-import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
-import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
-import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
+import de.tudresden.inf.mci.brailleplot.diagrams.*;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
@@ -234,19 +232,20 @@ public final class App {
 
             ScatterPlot scatterplot = new ScatterPlot(container2);
             ScatterPlotter plotter = new ScatterPlotter();
-            plotter.plot(scatterplot, floatCanvas);
+            // plotter.plot(scatterplot, floatCanvas);
 
 
             LinePlot lineplot = new LinePlot(container2);
             LinePlotter plotter2 = new LinePlotter();
             // plotter2.plot(lineplot, floatCanvas);
 
-            CategoricalBarChart bar = new CategoricalBarChart(container3);
+            StackedBarChart sbar = new StackedBarChart(container3);
             StackedBarChartPlotter plotter3 = new StackedBarChartPlotter();
-            // plotter3.plot(bar, floatCanvas);
+            plotter3.plot(sbar, floatCanvas);
 
+            GroupedBarChart gbar = new GroupedBarChart(container3);
             GroupedBarChartPlotter plotter4 = new GroupedBarChartPlotter();
-            // plotter4.plot(bar, floatCanvas);
+            // plotter4.plot(gbar, floatCanvas);
 
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
             floatSvgExporter.render();

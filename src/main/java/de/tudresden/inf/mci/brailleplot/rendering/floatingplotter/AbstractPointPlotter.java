@@ -297,7 +297,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
     }
 
     /**
-     * Draws a cross with absolute xValue and yValue as center.
+     * Draws a big dot with absolute xValue and yValue as center.
      * @param xValue Absolute x-value of center.
      * @param yValue Absolute y-value of center.
      */
@@ -361,5 +361,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         addPoint(xValue - CIRCLEDIA / 2 + mStepSize / CIRCLESCALE2, yValue + mStepSize);
         addPoint(xValue - CIRCLEDIA / 2 + mStepSize / CIRCLESCALE2, yValue - mStepSize);
     }
+
+    // implement new frame function here
 
 }

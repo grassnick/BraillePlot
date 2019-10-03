@@ -2,6 +2,7 @@ package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
+import de.tudresden.inf.mci.brailleplot.diagrams.StackedBarChart;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
@@ -23,7 +24,7 @@ import static tec.units.ri.unit.Units.METRE;
  * Provides a plotting algorithm for stacked bar chart data.
  * @author Richard Schmidt
  */
-public final class StackedBarChartPlotter extends AbstractBarChartPlotter implements Plotter<CategoricalBarChart> {
+public final class StackedBarChartPlotter extends AbstractBarChartPlotter<StackedBarChart> implements Plotter<StackedBarChart> {
 
     /**
      * Plots a stacked {@link de.tudresden.inf.mci.brailleplot.diagrams.BarChart} instance onto a {@link PlotCanvas}.
@@ -33,7 +34,7 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
      * if there are more data series than textures or if there are negative values in the data.
      */
     @Override
-    public double plot(final CategoricalBarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
+    public double plot(final StackedBarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
         prereq(diagram, canvas);
         if (mDiagram.getMinY() < 0) {

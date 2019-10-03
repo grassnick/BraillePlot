@@ -3,15 +3,12 @@ package de.tudresden.inf.mci.brailleplot.rendering;
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.configparser.Representation;
-import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
-import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
+import de.tudresden.inf.mci.brailleplot.diagrams.*;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.SixDotBrailleRasterCanvas;
-import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.FunctionalPlotter;
-import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.Plotter;
-import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.ScatterPlotter;
+import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,9 +51,15 @@ public final class MasterRenderer {
         //...
 
         Plotter<ScatterPlot> scatterPlotter = new ScatterPlotter();
+        Plotter<LinePlot> linePlotter = new LinePlotter();
+        Plotter<GroupedBarChart> groupedBarChartPlotter = new GroupedBarChartPlotter();
+        Plotter<StackedBarChart> stackedBarChartPlotter = new StackedBarChartPlotter();
 
-        mLogger.trace("Registering default rasterizers");
+        mLogger.trace("Registering default plotters");
         renderingBase.registerPlotter(new FunctionalPlotter<ScatterPlot>(ScatterPlot.class, scatterPlotter));
+        renderingBase.registerPlotter(new FunctionalPlotter<LinePlot>(LinePlot.class, linePlotter));
+        renderingBase.registerPlotter(new FunctionalPlotter<GroupedBarChart>(GroupedBarChart.class, groupedBarChartPlotter));
+        renderingBase.registerPlotter(new FunctionalPlotter<StackedBarChart>(StackedBarChart.class, stackedBarChartPlotter));
 
         setRenderingContext(printer, representation, format, renderingBase);
     }
