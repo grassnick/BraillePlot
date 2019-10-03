@@ -291,7 +291,7 @@ abstract class AbstractPlotter<T extends Diagram> {
         }
 
         for (int i = 0; i < array.length; i++) {
-            mLegend.addSymbolExplanation(name, Integer.toString(i), Integer.toString((int) array[i]));
+            mLegend.addSymbolExplanation(name, Integer.toString(i), Integer.toString((int) Math.round(array[i])));
         }
 
         return array;
@@ -415,7 +415,7 @@ abstract class AbstractPlotter<T extends Diagram> {
                     rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - width - mCanvas.getCellDistHor() - width / 2, startY, width, height);
 
                 }
-                BrailleText text = new BrailleText(Integer.toString((int) mScaleX[i]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
+                BrailleText text = new BrailleText(Integer.toString((int) Math.round(mScaleX[i])), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                 tplotter.plot(text, mCanvas);
             }
         }

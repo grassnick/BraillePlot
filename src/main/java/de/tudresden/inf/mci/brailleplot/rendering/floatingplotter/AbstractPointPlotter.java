@@ -235,7 +235,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
                         // three digits
                         rect = new Rectangle(startX - width - DISTYAXISNAMES2 * mCanvas.getCellDistHor(), mBottomMargin - (i + 1) * mYTickStep - halfCell, width, height);
                     }
-                    BrailleText text = new BrailleText(Integer.toString((int) mScaleY[i]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
+                    BrailleText text = new BrailleText(Integer.toString((int) Math.round(mScaleY[i])), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                     tplotter.plot(text, mCanvas);
 
                 }
