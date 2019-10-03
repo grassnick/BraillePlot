@@ -97,6 +97,7 @@ public class LegendRasterizer implements Rasterizer<Legend> {
                         String symbol = explanation.getKey();
                         String description = explanation.getValue();
                         String textToWrite = symbol + "  " + description;
+
                         setLanguage(EXPLANATION_LIST_LANGUAGE);
                         try {
                             int usedWidth = writeLine(textToWrite, columnCellArea);

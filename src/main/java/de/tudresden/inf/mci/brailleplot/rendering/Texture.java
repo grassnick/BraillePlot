@@ -43,6 +43,7 @@ public class Texture<T> {
      *                       (x, y) is a vector describing the translation.
      *                       | a b |
      *                       | c d | is a linear transformation matrix.
+     * @return Returns a reference to this {@link Texture}.
      */
     public Texture<T> setAffineTransformation(final double[] transformation) {
         if ((transformation.length != TRANSLATION_SIZE) && (transformation.length != TRANSFORMATION_SIZE)) {
@@ -61,6 +62,7 @@ public class Texture<T> {
      *                       (x, y) is a vector describing the translation.
      *                       | a b |
      *                       | c d | is a linear transformation matrix.
+     * @return Returns a reference to this {@link Texture}.
      */
     @SuppressWarnings("checkstyle:MagicNumber")
     public Texture<T> applyAffineTransformation(final double[] transformation) {
