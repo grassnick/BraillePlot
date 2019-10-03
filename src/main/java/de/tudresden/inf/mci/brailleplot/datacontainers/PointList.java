@@ -3,7 +3,6 @@ package de.tudresden.inf.mci.brailleplot.datacontainers;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 
 import java.util.ListIterator;
-import java.util.NoSuchElementException;
 
 
 /**

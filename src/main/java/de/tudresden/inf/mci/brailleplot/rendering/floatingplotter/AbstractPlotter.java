@@ -459,7 +459,7 @@ abstract class AbstractPlotter<T extends Diagram> {
                     }
 
                     Rectangle rect = new Rectangle(j, mCanvas.getDotDistVer() + i * stepVer + mCanvas.getMarginTop(), width, height);
-                    BrailleText text = new BrailleText(Character.toString(title[k]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
+                    BrailleText text = new BrailleText(Character.toString(title[k]), rect, BrailleLanguage.Language.valueOf(mCanvas.getLanguage()));
                     k++;
                     j = tplotter.plot(text, mCanvas);
                 } else {

@@ -35,8 +35,8 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
         mDiagram = Objects.requireNonNull(diagram);
         mLegend = new Legend();
         mFrames = mCanvas.getFrames();
-        mPageHeight = mCanvas.getPrintableHeight();
-        mPageWidth = mCanvas.getPrintableWidth();
+        mPageHeight = mCanvas.getPrintableHeight() + mCanvas.getMarginTop();
+        mPageWidth = mCanvas.getPrintableWidth() + mCanvas.getMarginLeft();
         mResolution = mCanvas.getResolution();
         mStepSize = mCanvas.getDotDiameter() + 1;
         mGrid = mCanvas.getGrid();
@@ -80,11 +80,12 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
                 }
 
                 // draw lines
-                smallList.sortXAscend();
+                smallList = smallList.sortXAscend();
                 Iterator<Point2DDouble> pointIt = smallList.iterator();
+                Point2DDouble currentPoint = pointIt.next();
 
-                double currentX = pointIt.next().getX();
-                double currentY = pointIt.next().getY();
+                double currentX = currentPoint.getX();
+                double currentY = currentPoint.getY();
                 double nextX;
                 double nextY;
                 boolean done = false;
@@ -92,9 +93,9 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
                 while (!done) {
 
                     if (pointIt.hasNext()) {
-                        Point2DDouble point = pointIt.next();
-                        nextX = point.getX();
-                        nextY = point.getY();
+                        Point2DDouble nextPoint = pointIt.next();
+                        nextX = nextPoint.getX();
+                        nextY = nextPoint.getY();
 
                         //drawing
                         drawLines(calculateXValue(currentX), calculateXValue(nextX), calculateYValue(currentY), calculateYValue(nextY), i);

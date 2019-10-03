@@ -5,7 +5,6 @@ import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 

@@ -66,7 +66,6 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         definePrinterProperty("raster.cellDistance.horizontal", requireDouble.and(requirePositive));
         definePrinterProperty("raster.cellDistance.vertical", requireDouble.and(requirePositive));
         definePrinterProperty("raster.dotDiameter", requireDouble.and(requirePositive));
-        //definePrinterProperty("printer.constraint.left", requireDouble.and(requirePositive));
 
         // Definition of valid format properties
         defineFormatProperty("page.width", requireInteger.and(requirePositive));

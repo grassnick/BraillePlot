@@ -32,8 +32,8 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
         setData();
         mDiagram = Objects.requireNonNull(diagram);
         mLegend = new Legend();
-        mPageHeight = mCanvas.getPrintableHeight();
-        mPageWidth = mCanvas.getPrintableWidth();
+        mPageHeight = mCanvas.getPrintableHeight() + mCanvas.getMarginTop();
+        mPageWidth = mCanvas.getPrintableWidth() + mCanvas.getMarginLeft();
         mResolution = mCanvas.getResolution();
         mStepSize = mCanvas.getDotDiameter() + 1;
         mGrid = mCanvas.getGrid();

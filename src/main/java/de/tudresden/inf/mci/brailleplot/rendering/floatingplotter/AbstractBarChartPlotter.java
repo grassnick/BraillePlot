@@ -52,8 +52,8 @@ abstract class AbstractBarChartPlotter<T extends CategoricalBarChart> extends Ab
         mMaxWidth = mCanvas.getMaxBarWidth();
         mMinDist = mCanvas.getMinBarDist();
         mMinWidth = mCanvas.getMinBarWidth();
-        mPageHeight = mCanvas.getPrintableHeight();
-        mPageWidth = mCanvas.getPrintableWidth();
+        mPageHeight = mCanvas.getPrintableHeight() + mCanvas.getMarginTop();
+        mPageWidth = mCanvas.getPrintableWidth() + mCanvas.getMarginLeft();
         mResolution = mCanvas.getResolution();
         mStepSize = mCanvas.getDotDiameter() + 1;
         mGrid = mCanvas.getGrid();
