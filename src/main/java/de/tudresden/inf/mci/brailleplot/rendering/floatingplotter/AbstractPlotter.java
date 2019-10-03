@@ -113,6 +113,8 @@ abstract class AbstractPlotter<T extends Diagram> {
     static final int BAR = 30;
     // min tick distance for x-axis
     static final int MINXTICKDISTANCE = 30;
+    // min tick disrance for x-axis with axis derivation
+    static final int MINXTICKDISTANCEDER = 25;
     static final int SCALE2 = 35;
     static final int SCALE1 = 60;
     static final double HMULT = 3;
@@ -400,7 +402,7 @@ abstract class AbstractPlotter<T extends Diagram> {
 
         if (mAxesDerivation) {
             for (int i = 0; i < mNumberXTicks; i++) {
-                Rectangle rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - mCanvas.getCellDistHor() / 2, startY, width, height);
+                Rectangle rect = new Rectangle(mLeftMargin + (i + 1) * mXTickStep - width / 2, startY, width, height);
                 BrailleText text = new BrailleText(Character.toString(mSymbols[i]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                 tplotter.plot(text, mCanvas);
             }

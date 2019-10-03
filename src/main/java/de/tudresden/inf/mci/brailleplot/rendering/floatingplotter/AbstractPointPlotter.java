@@ -70,9 +70,16 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         // margin from top for title
         mTitleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
 
-        mXTickDistance = mLeftMargin + mCanvas.getCellWidth() / 2;
-        if (mXTickDistance < MINXTICKDISTANCE) {
-            mXTickDistance = MINXTICKDISTANCE;
+        if(mAxesDerivation) {
+            mXTickDistance = mLeftMargin;
+            if (mXTickDistance < MINXTICKDISTANCEDER) {
+                mXTickDistance = MINXTICKDISTANCEDER;
+            }
+        } else {
+            mXTickDistance = mLeftMargin + 2 * mCanvas.getCellWidth();
+            if (mXTickDistance < MINXTICKDISTANCE) {
+                mXTickDistance = MINXTICKDISTANCE;
+            }
         }
 
         // x-axis

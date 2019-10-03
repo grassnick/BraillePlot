@@ -187,13 +187,13 @@ abstract class AbstractBarChartPlotter<T extends CategoricalBarChart> extends Ab
             }
         } else {
             if (endX <  mLeftMargin + mNegative * mXTickStep) {
-                for (double i = mLeftMargin + mNegative * mXTickStep - mStepSize; i > endX + mStepSize / 2; i -= mStepSize) {
+                for (double i = mLeftMargin + mNegative * mXTickStep - mStepSize; i > endX; i -= mStepSize) {
                     for (double j = startY - mStepSize; j > startY - mBarWidth; j -= mStepSize) {
                         addPoint(i, j);
                     }
                 }
             } else {
-                for (double i = mLeftMargin + mNegative * mXTickStep + mStepSize; i < endX - mStepSize / 2; i += mStepSize) {
+                for (double i = mLeftMargin + mNegative * mXTickStep + mStepSize; i < endX; i += mStepSize) {
                     for (double j = startY - mStepSize; j > startY - mBarWidth; j -= mStepSize) {
                         addPoint(i, j);
                     }

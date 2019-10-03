@@ -104,14 +104,21 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter<Stacke
         // margin from top for title
         mTitleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
 
-        mXTickDistance = mLeftMargin + 2 * mCanvas.getCellWidth();
-        if (mXTickDistance < MINXTICKDISTANCE) {
-            mXTickDistance = MINXTICKDISTANCE;
+        if(mAxesDerivation) {
+            mXTickDistance = mLeftMargin;
+            if (mXTickDistance < MINXTICKDISTANCEDER) {
+                mXTickDistance = MINXTICKDISTANCEDER;
+            }
+        } else {
+            mXTickDistance = mLeftMargin + 2 * mCanvas.getCellWidth();
+            if (mXTickDistance < MINXTICKDISTANCE) {
+                mXTickDistance = MINXTICKDISTANCE;
+            }
         }
 
         // x-axis
         double lastValueX = mLeftMargin;
-        for (double i = mLeftMargin; i <= mPageWidth; i += mStepSize) {
+        for (double i = mLeftMargin; i <= mPageWidth - mCanvas.getCellDistHor(); i += mStepSize) {
             addPoint(i, mBottomMargin);
             lastValueX = i;
         }
@@ -134,6 +141,19 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter<Stacke
 
         // tick marks on x-axis
         mXTickStep = (lastValueX - MARGIN - mLeftMargin) / mNumberXTicks;
+
+        // make tick step a multiple of step size for better texture rendering
+        int scale = (int) Math.ceil(mXTickStep / mStepSize);
+        double offset = 2 * mCanvas.getCellWidth();
+        if (mAxesDerivation) {
+            offset = 0;
+        }
+        if (scale * mStepSize * mNumberXTicks > mLengthX - offset) {
+            // if new theoretical length of x-axis is longer than actual length
+            scale = (int) Math.floor(mXTickStep / mStepSize);
+        }
+        mXTickStep = scale * mStepSize;
+
         for (double i = 1; i <= 2 * mNumberXTicks; i++) {
             if (i % 2 == 0) {
                 addPoint(mLeftMargin + (i / 2) * mXTickStep, mBottomMargin + TICK1);
