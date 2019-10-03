@@ -42,7 +42,6 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         Objects.requireNonNull(canvas);
 
         PointListContainer<PointList> data = scatterPlot.getDataSet();
-        MatrixData<Boolean> mat = canvas.getCurrentPage();
 
         final int cellWidth = canvas.getCellWidth();
         final int cellHeight = canvas.getCellHeight();
@@ -187,11 +186,14 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         // Rendering per data set
         // --------------------------------------------------------------------
 
-        // 1. Set diagram title
-        BrailleText diagramTitle = new BrailleText(title, titleArea.scaledBy(cellWidth, cellHeight));
-
-        // 2. Render actual tokens
         for (PointList l : data) {
+
+            MatrixData<Boolean> mat = canvas.getNewPage();
+
+            // 1. Set diagram title
+            BrailleText diagramTitle = new BrailleText(title + titleToDataSetSeparator + l.getName(), titleArea.scaledBy(cellWidth, cellHeight));
+
+            // 2. Render actual tokens
             for (Point2DDouble p : l) {
                 int x = (int) Math.round(Math.abs((p.getX() - xMin) * xRatio));
                 int y = (int) Math.round(Math.abs((p.getY() - yMin) * yRatio));
@@ -204,19 +206,19 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
                 LOG.debug("Placing token at local: ({},{}), global: ({},{}), rational: ({},{}) for data point: ({},{})", x, y, xGlobal, yGlobal, ((double) x) / ((double) xDots), ((double) y) / ((double) yDots), p.getX(), p.getY());
                 mat.setValue(yGlobal, xGlobal, true);
             }
-        }
 
-        // 5. Render title and axis, or draw layout (for debugging purposes)
-        final boolean printLayout = false;
-        if (!printLayout) {
-            textRasterizer.rasterize(diagramTitle, canvas);
-            axisRasterizer.rasterize(xAxis, canvas);
-            axisRasterizer.rasterize(yAxis, canvas);
-        } else {
-            Rasterizer.rectangle(titleArea, mat, true);
-            Rasterizer.rectangle(xAxisArea, mat, true);
-            Rasterizer.rectangle(yAxisArea, mat, true);
-            Rasterizer.rectangle(printableArea, mat, true);
+            // 5. Render title and axis, or draw layout (for debugging purposes)
+            final boolean printLayout = false;
+            if (!printLayout) {
+                textRasterizer.rasterize(diagramTitle, canvas);
+                axisRasterizer.rasterize(xAxis, canvas);
+                axisRasterizer.rasterize(yAxis, canvas);
+            } else {
+                Rasterizer.rectangle(titleArea, mat, true);
+                Rasterizer.rectangle(xAxisArea, mat, true);
+                Rasterizer.rectangle(yAxisArea, mat, true);
+                Rasterizer.rectangle(printableArea, mat, true);
+            }
         }
 
         // --------------------------------------------------------------------
