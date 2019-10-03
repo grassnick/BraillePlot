@@ -67,7 +67,7 @@ public class LegendPlotter implements Plotter<Legend> {
         double mSpace = mCanvas.getCellDistVer();
         char[] symbols = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
-        char[] legende = mCanvas.getRepresentation().getProperty("general.legendKeyword").toString().toCharArray();
+        char[] legende = mCanvas.getLegendKeyWord().toCharArray();
         double last = plotLine(legende, mCanvas.getCellDistHor(), 0);
         char[] titel = "Titel:".toCharArray();
         last = plotLine(titel, mCanvas.getCellDistHor(), last + mStepVer + mSpace);
@@ -273,7 +273,7 @@ public class LegendPlotter implements Plotter<Legend> {
         double starterY = startY;
         double last = starterY;
 
-        if (last > mCanvas.getPageHeight() - mStepVer) {
+        if (last > mCanvas.getPrintableHeight() - mStepVer) {
             mCanvas.getNewPage();
             last = 0;
             starterY = 0;
@@ -302,7 +302,7 @@ public class LegendPlotter implements Plotter<Legend> {
                     }
 
                     // check if new page is necessary
-                    if (last > mCanvas.getPageHeight() - mStepVer) {
+                    if (last > mCanvas.getPrintableHeight() - mStepVer) {
                         mCanvas.getNewPage();
                         last = 0;
                         starterY = 0;

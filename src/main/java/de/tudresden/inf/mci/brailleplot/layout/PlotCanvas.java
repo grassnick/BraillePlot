@@ -5,7 +5,6 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleFloatingPointDataImpl;
-import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +57,7 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
 
     // margins
     private double mMarginLeft;
+    private double mMarginTop;
     private double mMarginRight;
     private double mFloatConstraintLeft;
 
@@ -103,6 +103,7 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         mFloatConstraintLeft = mPrinter.getProperty("floatingDot.constraint.left").toDouble();
 
         mMarginLeft = mFormat.getProperty("margin.left").toDouble();
+        mMarginTop = mFormat.getProperty("margin.top").toDouble();
         mMarginRight = mFormat.getProperty("margin.right").toDouble();
 
         mMinBarWidth = mRepresentation.getProperty("floatingDot.minBarWidth").toDouble();
@@ -195,6 +196,10 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         return mMarginLeft;
     }
 
+    public final double getMarginTop() {
+        return mMarginTop;
+    }
+
     public final double getMarginRight() {
         return mMarginRight;
     }
@@ -207,15 +212,15 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         return mDotFrame;
     }
 
-    public String getLanguage() {
+    public final String getLanguage() {
         return mLang;
     }
 
-    public String getLegendKeyWord() {
+    public final String getLegendKeyWord() {
         return mLegendKeyWord;
     }
 
-    public int getMaxTitleLines() {
+    public final int getMaxTitleLines() {
         return mMaxTitleLines;
     }
 

@@ -12,6 +12,8 @@ import java.util.Objects;
 
 /**
  * Abstract class to provide methods for bar chart plotting.
+ * @param <T> Type of diagram the plotter can plot. Needs to extend {@link CategoricalBarChart}.
+ * Can be {@link de.tudresden.inf.mci.brailleplot.diagrams.StackedBarChart} or {@link de.tudresden.inf.mci.brailleplot.diagrams.GroupedBarChart}.
  * @author Richard Schmidt
  */
 abstract class AbstractBarChartPlotter<T extends CategoricalBarChart> extends AbstractPlotter<T> {
@@ -104,7 +106,7 @@ abstract class AbstractBarChartPlotter<T extends CategoricalBarChart> extends Ab
 
         // plot rectangle
         if (legend) {
-            if (starterY > mCanvas.getPageHeight() - (mCanvas.getCellHeight() + RECTSCALE * mCanvas.getCellDistVer())) {
+            if (starterY > mPageHeight - (mCanvas.getCellHeight() + RECTSCALE * mCanvas.getCellDistVer())) {
                 mCanvas.getNewPage();
                 setData();
                 starterY = SCALE2;

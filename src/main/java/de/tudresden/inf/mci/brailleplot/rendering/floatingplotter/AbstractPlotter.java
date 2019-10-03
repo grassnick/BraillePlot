@@ -439,10 +439,9 @@ abstract class AbstractPlotter<T extends Diagram> {
 
         LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
 
-        int maxLines = mCanvas.getRepresentation().getProperty("general.maxTitleHeight").toInt();
         loop:
-        for (int i = 0; i < maxLines; i++) {
-            for (double j = mCanvas.getCellDistHor(); j < mCanvas.getPrintableWidth() - THREE * (width + mCanvas.getCellDistHor()) + mCanvas.getCellDistHor(); j += stepHor) {
+        for (int i = 0; i < mCanvas.getMaxTitleLines(); i++) {
+            for (double j = mCanvas.getCellDistHor() + mCanvas.getMarginLeft(); j < mCanvas.getPrintableWidth() - THREE * (width + mCanvas.getCellDistHor()) + mCanvas.getCellDistHor(); j += stepHor) {
                 if (k < title.length) {
 
                     // check if line break in necessary
@@ -459,7 +458,7 @@ abstract class AbstractPlotter<T extends Diagram> {
                         continue loop;
                     }
 
-                    Rectangle rect = new Rectangle(j, mCanvas.getDotDistVer() + i * stepVer, width, height);
+                    Rectangle rect = new Rectangle(j, mCanvas.getDotDistVer() + i * stepVer + mCanvas.getMarginTop(), width, height);
                     BrailleText text = new BrailleText(Character.toString(title[k]), rect, BrailleLanguage.Language.DE_BASISSCHRIFT);
                     k++;
                     j = tplotter.plot(text, mCanvas);
