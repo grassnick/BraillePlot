@@ -127,6 +127,7 @@ public class LinearMappingAxisRasterizer implements Rasterizer<Axis> {
                 labelCellX = mCanvas.getCellXFromDotX(dotX + (mTickSize + labelOffset)) + labelOffset;
                 labelCellY = mCanvas.getCellYFromDotY(dotY);
                 if (mTickSize < 0) {
+                    // Calculate x position of first character in right aligned text
                     labelCellArea = new Rectangle(labelCellX - (stringLength - 1), labelCellY, stringLength, 1);
                 } else {
                     labelCellArea = new Rectangle(labelCellX, labelCellY, stringLength, 1);
