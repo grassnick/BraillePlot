@@ -28,12 +28,12 @@ public class LegendPlotter implements Plotter<Legend> {
 
     // constants
     private static final double SYMDESCSCALE = 2.5;
-    private static final double NEWPAGESCALE = 4.5;
+    private static final double PAGESCALE = 4.5;
     private static final int SYMBOLSCALE = 3;
     private static final int MARGINSCALE = 3;
     private static final int COMPARE3 = 3;
     private static final int STARTLINES = 5;
-    private static final int STARTNEWPAGE = 5;
+    private static final int STARTBAR = 5;
     private static final int STARTPOINT = 10;
     private static final int STARTDOTDESC = 15;
     private static final int CURRENTPAGESCALE = 15;
@@ -44,7 +44,7 @@ public class LegendPlotter implements Plotter<Legend> {
     private static final int ENDLINES = 35;
     private static final int STARTLINESFRAMESDESC = 50;
     private static final int ENDFRAMESLINES = 55;
-    private static final int ENDNEWPAGE = 65;
+    private static final int ENDBAR = 65;
     private static final int STARTTEXTUREDESC = 75;
 
     /**
@@ -235,7 +235,7 @@ public class LegendPlotter implements Plotter<Legend> {
                 splotter.setCanvas(mCanvas);
                 splotter.setData();
 
-                boolean newPage = splotter.plotAndFillRectangle(last + NEWPAGESCALE * mStepVer, STARTNEWPAGE, ENDNEWPAGE, i, true);
+                boolean newPage = splotter.plotAndFillRectangle(last + PAGESCALE * mStepVer, STARTBAR, ENDBAR, i, true);
 
                 if (newPage) {
                     last = 0;
@@ -247,7 +247,7 @@ public class LegendPlotter implements Plotter<Legend> {
                 if (newPage) {
                     current = last + NEWPAGESCALE2 - mCanvas.getDotDistVer();
                 } else {
-                    current = last + NEWPAGESCALE * mStepVer - CURRENTPAGESCALE - mCanvas.getDotDistVer();
+                    current = last + PAGESCALE * mStepVer - CURRENTPAGESCALE - mCanvas.getDotDistVer();
                 }
 
                 last = plotLine(rahmen, STARTTEXTUREDESC, current);

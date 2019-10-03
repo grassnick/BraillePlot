@@ -94,6 +94,8 @@ public final class StackedBarChartPlotter extends AbstractBarChartPlotter implem
      */
     @Override
     void drawAxes() {
+        mAxesDerivation = mCanvas.getAxesDerivation();
+
         // margin left of y-axis
         mLeftMargin = 2 * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor();
         // margin from bottom to x-axis

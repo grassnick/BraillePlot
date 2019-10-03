@@ -56,19 +56,25 @@ public class CategoricalBarChart extends BarChart {
      * @return double maximum y-value
      */
     public double getCumulatedMaxY() {
-        double current = 0;
+        double maxY = 0;
 
         for (PointList list : mData) {
             Iterator<Point2DDouble> smallIt = list.getListIterator();
-            current = 0;
+            double current = 0;
             while (smallIt.hasNext()) {
                 Point2DDouble point = smallIt.next();
                 if (point.getY() >= 0) {
                     current += point.getY();
                 }
             }
+
+            if (current > maxY) {
+                maxY = current;
+            }
         }
 
-        return current;
+        return maxY;
+
     }
+    
 }
