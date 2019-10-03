@@ -8,6 +8,7 @@ import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
+import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,12 +43,15 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
         PointListContainer<PointList> data = scatterPlot.getDataSet();
         MatrixData<Boolean> mat = canvas.getCurrentPage();
+
         final int cellWidth = canvas.getCellWidth();
         final int cellHeight = canvas.getCellHeight();
         final int xAxisStepWidth = cellWidth * X_AXIS_STEP_WIDTH;
         final int yAxisStepWidth = cellHeight * Y_AXIS_STEP_WIDTH;
+        final BrailleLanguage.Language language = BrailleLanguage.Language.DE_BASISSCHRIFT;
 
         final String title = "Streudiagramm - Gewicht zu Höhe";
+        final String titleToDataSetSeparator = " - ";
         final String legendTitle = title;
         final String axisExplanationGroupName = "Achsenbeschriftungen";
         final String xAxisLegendGroupName = "x-Achse Werte";
@@ -62,15 +66,17 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         completeArea = completeArea.scaledBy(cellWidth, cellHeight);
         Rectangle printableArea = new Rectangle(completeArea);
 
-        Rectangle titleArea;
-        BrailleText diagramTitle;
+        // --------------------------------------------------------------------
+        // Layout shared for all data sets
+        // --------------------------------------------------------------------
 
         // 1.a Reserve space for diagram title
         LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(canvas.getPrinter());
 
+        Rectangle titleArea;
         try {
-            //printableArea.removeFromRight(cellWidth);
-            int titleBarHeight = textRasterizer.calculateRequiredHeight(title, printableArea.intWrapper().getWidth(), canvas);
+            // Calculate the minimum Height for the title out of all data sets
+            int titleBarHeight = calcTitleHeight(title.concat(titleToDataSetSeparator), data, textRasterizer, printableArea.intWrapper().getWidth(), canvas, language);
             titleArea = printableArea.removeFromTop(titleBarHeight * cellHeight);
 
             // Spacing
@@ -78,10 +84,6 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         } catch (final Rectangle.OutOfSpaceException e) {
             throw new InsufficientRenderingAreaException("Not enough space to construct title layout", e);
         }
-
-        // 1.b Initialize diagram title
-        diagramTitle = new BrailleText(title, titleArea.scaledBy(cellWidth, cellHeight));
-
 
         // 2.a Reserve space for axis
         Rectangle xAxisArea, yAxisArea;
@@ -110,7 +112,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         xAxis.setBoundary(xAxisArea);
         yAxis.setBoundary(yAxisArea);
 
-        // 3. Actual scatter plot
+        // 3. Calculate scaling
         Rectangle plotArea = printableArea;
 
         int xDots = plotArea.intWrapper().getWidth();
@@ -135,21 +137,6 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         LOG.debug("xMin; {}, xMax: {}, xRange: {}, xRatio: {}", xMin, xMax, xRange, xRatio);
         LOG.debug("yMin; {}, yMax: {}, yRange: {}, yRatio: {}", yMin, yMax, yRange, yRatio);
         LOG.debug("PlotOrigin: ({},{})", xOrigin, yOrigin);
-
-        for (PointList l : data) {
-            for (Point2DDouble p : l) {
-                int x = (int) Math.round(Math.abs((p.getX() - xMin) * xRatio));
-                int y = (int) Math.round(Math.abs((p.getY() - yMin) * yRatio));
-                if (x < 0 || x > xDots || y < 0 || y > yDots) {
-                    throw new RuntimeException("Calculated position not in bounds: (" + x + "," + y + "), (" + xDots + "," + yDots + ")");
-                }
-
-                final int xGlobal = xOrigin + x;
-                final int yGlobal = yOrigin - y - 1;
-                LOG.debug("Placing token at local: ({},{}), global: ({},{}), rational: ({},{}) for data point: ({},{})", x, y, xGlobal, yGlobal, ((double) x) / ((double) xDots), ((double) y) / ((double) yDots), p.getX(), p.getY());
-                mat.setValue(yGlobal, xGlobal, true);
-            }
-        }
 
         // 4. Add tick mark labels to axis and to legend
         LinearMappingAxisRasterizer axisRasterizer = new LinearMappingAxisRasterizer();
@@ -195,7 +182,31 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
             label++;
         }
 
-        // 5. Print layout if needed, else render title and axis
+
+        // --------------------------------------------------------------------
+        // Rendering per data set
+        // --------------------------------------------------------------------
+
+        // 1. Set diagram title
+        BrailleText diagramTitle = new BrailleText(title, titleArea.scaledBy(cellWidth, cellHeight));
+
+        // 2. Render actual tokens
+        for (PointList l : data) {
+            for (Point2DDouble p : l) {
+                int x = (int) Math.round(Math.abs((p.getX() - xMin) * xRatio));
+                int y = (int) Math.round(Math.abs((p.getY() - yMin) * yRatio));
+                if (x < 0 || x > xDots || y < 0 || y > yDots) {
+                    throw new RuntimeException("Calculated position not in bounds: (" + x + "," + y + "), (" + xDots + "," + yDots + ")");
+                }
+
+                final int xGlobal = xOrigin + x;
+                final int yGlobal = yOrigin - y - 1;
+                LOG.debug("Placing token at local: ({},{}), global: ({},{}), rational: ({},{}) for data point: ({},{})", x, y, xGlobal, yGlobal, ((double) x) / ((double) xDots), ((double) y) / ((double) yDots), p.getX(), p.getY());
+                mat.setValue(yGlobal, xGlobal, true);
+            }
+        }
+
+        // 5. Render title and axis, or draw layout (for debugging purposes)
         final boolean printLayout = false;
         if (!printLayout) {
             textRasterizer.rasterize(diagramTitle, canvas);
@@ -207,6 +218,10 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
             Rasterizer.rectangle(yAxisArea, mat, true);
             Rasterizer.rectangle(printableArea, mat, true);
         }
+
+        // --------------------------------------------------------------------
+        // Render Legend once
+        // --------------------------------------------------------------------
 
         // 6. Render the legend
         LegendRasterizer legendRasterizer = new LegendRasterizer();
@@ -225,5 +240,15 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
     private static String formatDouble(final double d) {
         return String.format(NUMBER_LOCALE, "%.2f", d);
+    }
+
+    private static int calcTitleHeight(final String title, final PointListContainer<PointList> data, final LiblouisBrailleTextRasterizer textRasterizer, final int width, final RasterCanvas canvas, final BrailleLanguage.Language lang) {
+        final int titleLen = title.length();
+        int minHeight = Integer.MIN_VALUE;
+        for (PointList l : data) {
+            int height = textRasterizer.calculateRequiredHeight(titleLen + l.getName(), width, canvas, lang);
+            minHeight = Math.max(minHeight, height);
+        }
+        return minHeight;
     }
 }
