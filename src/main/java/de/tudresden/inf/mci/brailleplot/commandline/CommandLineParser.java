@@ -94,7 +94,7 @@ public class CommandLineParser {
     public final void printHelp() {
         HelpFormatter formatter = new HelpFormatter();
         String headerForOptions = "Convert csv into braille";
-        String footerForOptions = "Report Issues to Leonard Kupper";
+        String footerForOptions = ""; // TODO: Add footer with version and official contact.
 
         formatter.printHelp("braillegraphics", headerForOptions, mOptions, footerForOptions, true);
     }
