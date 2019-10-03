@@ -185,4 +185,5 @@ public class Legend implements Renderable {
     final int getTextureExampleHeightCells() {
         return mTextureExampleHeightCells;
     }
+
 }
