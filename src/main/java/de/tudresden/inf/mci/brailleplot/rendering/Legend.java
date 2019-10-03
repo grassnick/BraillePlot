@@ -1,29 +1,45 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
+import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
 /**
  * Simple representation of a legend.
- * @author Leonard Kupper
- * @version 2019.08.29
+ * @author Leonard Kupper, Andrey Ruzhanskiy
+ * @version 2019.09.25
  */
 public class Legend implements Renderable {
 
     private String mTitle;
+    private BrailleLanguage.Language mLanguage;
     private Map<String, Map<String, String>> mStringExplanationLists = new LinkedHashMap<>();
     private Map<String, Map<Texture<Boolean>, String>> mTextureExplanationLists = new LinkedHashMap<>();
+    private String mColumnViewTitle;
 
+    private Map<String, Map<String, String>> mColumnView = new LinkedHashMap<>();
     private int mTextureExampleWidthCells = 1;
     private int mTextureExampleHeightCells = 1;
 
     /**
-     * Constructor. Creates a legend.
+     * Constructor. Creates a legend with default language (DE_BASISSCHRIFT).
      * @param title The title of the legend.
      */
     public Legend(final String title) {
         setTitle(title);
+        setLanguage(BrailleLanguage.Language.DE_BASISSCHRIFT);
+    }
+
+    /**
+     * Constructor. Creates a legend with a defined language.
+     * @param title The title of the legend.
+     * @param language A {@link BrailleLanguage.Language}.
+     */
+    public Legend(final String title, final BrailleLanguage.Language language) {
+        setTitle(title);
+        setLanguage(language);
     }
 
     /**
@@ -35,11 +51,27 @@ public class Legend implements Renderable {
     }
 
     /**
+     * Sets the braille language and level.
+     * @param language The new language.
+     */
+    public void setLanguage(final BrailleLanguage.Language language) {
+        mLanguage = Objects.requireNonNull(language);
+    }
+
+    /**
      * Gets the current title of the legend.
      * @return A {@link String} containing the title.
      */
     public String getTitle() {
         return mTitle;
+    }
+
+    /**
+     * Gets the current braille language and level.
+     * @return A {@link BrailleLanguage.Language} determining the language and braille level.
+     */
+    public BrailleLanguage.Language getLanguage() {
+        return mLanguage;
     }
 
     /**
@@ -54,6 +86,40 @@ public class Legend implements Renderable {
         }
         mStringExplanationLists.get(groupName).put(symbol, descriptionText);
     }
+
+    /**
+     * Add a column to the columnview.
+     * @param columnName Name of column.
+     * @param explanations {@link Map} of symbols and descriptions inside the column.
+     */
+    public void addColumn(final String columnName, final Map<String, String> explanations) {
+            mColumnView.put(columnName, explanations);
+    }
+
+    /**
+     * Set the columnview title.
+     * @param columnViewTitle The title for the columnview.
+     */
+    public void setColumnViewTitle(final String columnViewTitle) {
+        this.mColumnViewTitle = columnViewTitle;
+    }
+
+    /**
+     * Getter for the column-view.
+     * @return {@link Map} representing the columnview.
+     */
+    public Map<String, Map<String, String>> getColumnView() {
+        return mColumnView;
+    }
+
+    /**
+     * Getter for the columnview-title.
+     * @return {@link String} representing the columnview-title.
+     */
+    public String getColumnViewTitle() {
+        return mColumnViewTitle;
+    }
+
 
     /**
      * Add a texture and the associated description text to the legend.
@@ -119,4 +185,5 @@ public class Legend implements Renderable {
     final int getTextureExampleHeightCells() {
         return mTextureExampleHeightCells;
     }
+
 }

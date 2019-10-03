@@ -11,7 +11,6 @@ import de.tudresden.inf.mci.brailleplot.printerbackend.NotSupportedFileExtension
 
 /**
  * A rasterizer for text on braille grids. This class is still a stub and must be implemented!
-<<<<<<< HEAD
  * @version 2019.08.17
  * @author Leonard Kupper, Andrey Ruzhanskiy
  */
