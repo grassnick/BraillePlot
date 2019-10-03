@@ -7,6 +7,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 
@@ -43,7 +44,8 @@ public class CommandLineParser {
                 .addOption("v", SettingType.VERTICAL_CSV.toString(), false, "Parse CSV in vertical instead of horizontal orientation (Only applicable for BarChart)")
                 .addOption("i", SettingType.INHIBIT_PRINT.toString(), false, "Inhibit the printing process")
                 .addOption("s", SettingType.SVG_EXPORT.toString(), true, "Base file path for export of svg file(s) (Omit '.svg' suffix)")
-                .addOption("b", SettingType.BYTE_DUMP.toString(), true, "Base file path for print data byte dump file(s) (Omit '.bin' suffix)");
+                .addOption("b", SettingType.BYTE_DUMP.toString(), true, "Base file path for print data byte dump file(s) (Omit '.bin' suffix)")
+                .addOption("l", SettingType.LOG_LEVEL.toString(), true, "Logging output level. Possible Values: [All, Trace, Debug, Info, Warn, Error, Off] Defaults to 'Info'");
     }
 
     /**
@@ -77,7 +79,10 @@ public class CommandLineParser {
             // Will occur if any other option than "help" is encountered
             // For this case we can safely ignore it.
         }
-        if (Objects.nonNull(cmd) && cmd.hasOption(helpOption.getOpt())) {
+        if ((Objects.nonNull(cmd) && cmd.hasOption(helpOption.getOpt()))
+                || (args.length == 0)
+                || (Arrays.asList(args).contains("-" + helpOption.getOpt())
+                || (Arrays.asList(args).contains("--" + helpOption.getLongOpt())))) {
             hasHelp = true;
         }
         return hasHelp;

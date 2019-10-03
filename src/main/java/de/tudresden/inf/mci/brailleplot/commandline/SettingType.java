@@ -18,7 +18,8 @@ public enum SettingType {
     VERTICAL_CSV("vertical-csv"),
     INHIBIT_PRINT("inhibit-print"),
     SVG_EXPORT("svg-export"),
-    BYTE_DUMP("byte-dump");
+    BYTE_DUMP("byte-dump"),
+    LOG_LEVEL("log-level");
 
 
     private final String mName;
@@ -53,6 +54,8 @@ public enum SettingType {
                 return SVG_EXPORT;
             case "byte-dump":
                 return BYTE_DUMP;
+            case "log-level":
+                return LOG_LEVEL;
             default:
                 throw new IllegalArgumentException("Setting not available");
         }

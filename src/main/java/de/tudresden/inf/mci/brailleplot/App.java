@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot;
 
+import ch.qos.logback.classic.Level;
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
@@ -154,12 +155,13 @@ public final class App {
             // Parse command line parameters
             CommandLineParser cliParser = new CommandLineParser();
             if (CommandLineParser.checkForHelp(args)) {
-                // If requested, print help and exit
-                cliParser.printHelp();
+                cliParser.printHelp(); // If requested, print help and exit
                 return EXIT_SUCCESS;
             }
             SettingsWriter settings = cliParser.parse(args);
             SettingsReader settingsReader = settings;
+
+            setLoggingLevel(Level.valueOf(settingsReader.getSetting(SettingType.LOG_LEVEL).orElse("Info")));
 
             // Config Parsing
             JavaPropertiesConfigurationParser configParser;
@@ -288,5 +290,10 @@ public final class App {
         runFinalizers();
 
         return EXIT_SUCCESS;
+    }
+
+    public static void setLoggingLevel(final Level level) {
+        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) org.slf4j.LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        root.setLevel(level);
     }
 }
