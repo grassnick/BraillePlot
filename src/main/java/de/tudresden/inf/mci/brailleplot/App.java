@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot;
 
+import ch.qos.logback.classic.Level;
 import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
@@ -11,31 +12,9 @@ import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
 import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
-import de.tudresden.inf.mci.brailleplot.datacontainers.SimpleCategoricalPointListContainerImpl;
-import de.tudresden.inf.mci.brailleplot.diagrams.GroupedBarChart;
-import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
-import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
-import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
-import de.tudresden.inf.mci.brailleplot.diagrams.StackedBarChart;
-import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
-import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
-import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
-import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
-import de.tudresden.inf.mci.brailleplot.rendering.LiblouisBrailleTextRasterizer;
-import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
-import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.GroupedBarChartPlotter;
-import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.LinePlotter;
-import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.ScatterPlotter;
-import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.StackedBarChartPlotter;
-import ch.qos.logback.classic.Level;
-import de.tudresden.inf.mci.brailleplot.configparser.Format;
-import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
-import de.tudresden.inf.mci.brailleplot.configparser.Printer;
-
-import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.csvparser.MalformedCsvException;
+import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimpleCategoricalPointListContainerImpl;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
@@ -46,19 +25,6 @@ import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
-
-
-import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
-import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
-import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
-import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
-
-import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
-import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
-import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
-import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
-
 import de.tudresden.inf.mci.brailleplot.rendering.LiblouisBrailleTextRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolFloatingPointDataSvgExporter;
@@ -77,8 +43,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.ListIterator;
-import java.util.Optional;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedDeque;
