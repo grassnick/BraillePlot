@@ -76,5 +76,5 @@ public class CategoricalBarChart extends BarChart {
         return maxY;
 
     }
-    
+
 }

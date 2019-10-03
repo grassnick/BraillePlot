@@ -171,9 +171,9 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
         if (i == 0) {
             drawFullLine(currentX, nextX, steps, slope, n);
         } else if (i == 1) {
-            drawDottedLine(currentX, nextX, steps, slope, n);
-        } else if (i == 2) {
             drawDashedLine(currentX, nextX, steps, slope, n);
+        } else if (i == 2) {
+            drawDottedLine(currentX, nextX, steps, slope, n);
         } else {
             throw new InsufficientRenderingAreaException("There are more data series than line types.");
         }
@@ -194,22 +194,9 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
         }
     }
 
-    /**
-     * Draws a dotted line. The starting and end points are not included.
-     * @param currentX Absolute x-coordinate of the starting point.
-     * @param nextX Absolute x-coordinate of the end point.
-     * @param steps Distance with which the x-coordinate is incremented.
-     * @param slope Slope of the line.
-     * @param n Y-intercept.
-     */
-    private void drawDottedLine(final double currentX, final double nextX, final double steps, final double slope, final double n) {
-        for (double j = currentX + steps; j < nextX; j += DOTTEDLINESCALE * steps) {
-            addPoint(j, j * slope + n);
-        }
-    }
 
     /**
-     * Draws a line consisting of single dashes and spaces. The starting and end points are not included.
+     * Draws a line consisting of dashes and spaces. The starting and end points are not included.
      * @param currentX Absolute x-coordinate of the starting point.
      * @param nextX Absolute x-coordinate of the end point.
      * @param steps Distance with which the x-coordinate is incremented.
@@ -224,6 +211,35 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
             j += steps;
             addPoint(j, j * slope + n);
             j += steps;
+            addPoint(j, j * slope + n);
+        }
+    }
+
+    /**
+     * Draws a dotted line. The starting and end points are not included.
+     * @param currentX Absolute x-coordinate of the starting point.
+     * @param nextX Absolute x-coordinate of the end point.
+     * @param steps Distance with which the x-coordinate is incremented.
+     * @param slope Slope of the line.
+     * @param n Y-intercept.
+     */
+    private void drawDottedLine(final double currentX, final double nextX, final double steps, final double slope, final double n) {
+        double currentY = currentX * slope + n;
+        double nextY = nextX * slope + n;
+
+        for (double j = currentX + steps; j < nextX; j += DOTTEDLINESCALE * steps) {
+            if (mFrames) {
+                // avoid dots inside circle (dotted line is linked to circle frame)
+                double diffXCurrent = Math.abs(currentX - j);
+                double diffYCurrent = Math.abs(currentY - (j * slope + n));
+                double diffXNext = Math.abs(nextX - j);
+                double diffYNext = Math.abs(nextY - (j * slope + n));
+                double distanceCurrent = Math.sqrt(diffXCurrent * diffXCurrent + diffYCurrent * diffYCurrent);
+                double distanceNext = Math.sqrt(diffXNext * diffXNext + diffYNext * diffYNext);
+                if ((distanceCurrent <= CIRCLEDIA / 2) || (distanceNext <= CIRCLEDIA / 2)) {
+                    continue;
+                }
+            }
             addPoint(j, j * slope + n);
         }
     }

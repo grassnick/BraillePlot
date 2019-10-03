@@ -27,7 +27,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
     boolean mFrames;
     boolean mDotFrame;
     private boolean mRightAxis;
-    private static final double CIRCLEDIA = 12;
+    static final double CIRCLEDIA = 12;
     private static final double CIRCLESCALE = 1.5;
 
     /**
