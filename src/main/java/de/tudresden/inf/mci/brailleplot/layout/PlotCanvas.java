@@ -5,6 +5,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.printabledata.SimpleFloatingPointDataImpl;
+import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +61,12 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
     private double mMarginRight;
     private double mFloatConstraintLeft;
 
+    // Braille language
+    private String mLang;
+
+    private String mLegendKeyWord;
+    private int mMaxTitleLines;
+
 
     public PlotCanvas(final Printer printer, final Representation representation, final Format format) throws InsufficientRenderingAreaException {
         super(printer, representation, format);
@@ -106,6 +113,9 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         mAxesDerivation = mRepresentation.getProperty("floatingDot.derivation").toBool();
         mGrid = mRepresentation.getProperty("floatingDot.grid").toBool();
         mDotFrame = mRepresentation.getProperty("floatingDot.dotFrame").toBool();
+        mLang = mRepresentation.getProperty("general.brailleLanguage").toString();
+        mLegendKeyWord = mRepresentation.getProperty("general.legendKeyword").toString();
+        mMaxTitleLines = mRepresentation.getProperty("general.maxTitleHeight").toInt();
 
     }
 
@@ -195,6 +205,18 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
 
     public final boolean getDotFrame() {
         return mDotFrame;
+    }
+
+    public String getLanguage() {
+        return mLang;
+    }
+
+    public String getLegendKeyWord() {
+        return mLegendKeyWord;
+    }
+
+    public int getMaxTitleLines() {
+        return mMaxTitleLines;
     }
 
 }

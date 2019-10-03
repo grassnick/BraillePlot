@@ -98,7 +98,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter<Groupe
         // margin from bottom to x-axis
         mBottomMargin = mPageHeight - (HMULT * mCanvas.getCellHeight() + HMULT * mCanvas.getCellDistVer());
         // margin from top for title
-        mTitleMargin = TMULT * mCanvas.getCellHeight() + TMULT * mCanvas.getCellDistVer();
+        mTitleMargin = TMULT * mCanvas.getCellHeight() + (TMULT + 1) * mCanvas.getCellDistVer();
 
         if(mAxesDerivation) {
             mXTickDistance = mLeftMargin;

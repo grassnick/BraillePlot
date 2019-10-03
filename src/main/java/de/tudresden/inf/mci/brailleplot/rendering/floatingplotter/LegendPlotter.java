@@ -67,7 +67,7 @@ public class LegendPlotter implements Plotter<Legend> {
         double mSpace = mCanvas.getCellDistVer();
         char[] symbols = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
-        char[] legende = "Legende:".toCharArray();
+        char[] legende = mCanvas.getRepresentation().getProperty("general.legendKeyword").toString().toCharArray();
         double last = plotLine(legende, mCanvas.getCellDistHor(), 0);
         char[] titel = "Titel:".toCharArray();
         last = plotLine(titel, mCanvas.getCellDistHor(), last + mStepVer + mSpace);

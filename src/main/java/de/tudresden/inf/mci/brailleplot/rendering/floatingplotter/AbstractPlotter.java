@@ -439,8 +439,9 @@ abstract class AbstractPlotter<T extends Diagram> {
 
         LiblouisBrailleTextPlotter tplotter = new LiblouisBrailleTextPlotter(mCanvas.getPrinter());
 
+        int maxLines = mCanvas.getRepresentation().getProperty("general.maxTitleHeight").toInt();
         loop:
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < maxLines; i++) {
             for (double j = mCanvas.getCellDistHor(); j < mCanvas.getPrintableWidth() - THREE * (width + mCanvas.getCellDistHor()) + mCanvas.getCellDistHor(); j += stepHor) {
                 if (k < title.length) {
 
