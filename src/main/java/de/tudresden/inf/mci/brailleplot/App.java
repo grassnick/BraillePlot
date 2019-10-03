@@ -10,16 +10,13 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimpleCategoricalPointListContainerImpl;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.Diagram;
+import de.tudresden.inf.mci.brailleplot.layout.AbstractCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
-import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
-import de.tudresden.inf.mci.brailleplot.point.Point2DValued;
-import de.tudresden.inf.mci.brailleplot.printabledata.FloatingPointData;
 import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 
-import de.tudresden.inf.mci.brailleplot.printabledata.SimpleMatrixDataImpl;
 
 import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
 import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
@@ -32,33 +29,27 @@ import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
 import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 
-import de.tudresden.inf.mci.brailleplot.rendering.BrailleText;
-import de.tudresden.inf.mci.brailleplot.rendering.FunctionalRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.LiblouisBrailleTextRasterizer;
-
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolFloatingPointDataSvgExporter;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolMatrixDataSvgExporter;
 import de.tudresden.inf.mci.brailleplot.svgexporter.SvgExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tec.units.ri.quantity.Quantities;
-import tec.units.ri.unit.MetricPrefix;
 
-import javax.measure.Quantity;
-import javax.measure.quantity.Length;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedDeque;
-
-import static tec.units.ri.unit.Units.METRE;
 
 /**
  * Main class.
@@ -187,7 +178,7 @@ public final class App {
             Representation representationParameters = configParser.getRepresentation();
             Format format;
             if (!settingsReader.isPresent(SettingType.FORMAT)) {
-                format = configParser.getFormat("A4"); // Default behaviour is A4 portrait
+                format = configParser.getFormat("default"); // Default behaviour from default config (A4 portrait)
             } else {
                 format = configParser.getFormat(settingsReader.getSetting(SettingType.FORMAT).get());
             }
@@ -213,10 +204,10 @@ public final class App {
             switch (settingsReader.getSetting(SettingType.DIAGRAM_TYPE).orElse("")) {
                 case "ScatterPlot":
                     PointListContainer<PointList> scatterPlotContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
-                    throw new UnsupportedOperationException("Scatter Plots coming soon.");
+                    throw new UnsupportedOperationException("Scatter Plots coming soon."); // TODO: integrate scatter plots
                 case "LineChart":
                     PointListContainer<PointList> lineChartContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
-                    throw new UnsupportedOperationException("Line Charts coming soon.");
+                    throw new UnsupportedOperationException("Line Charts coming soon."); // TODO: integrate line charts
                 case "BarChart":
                     CategoricalPointListContainer<PointList> barChartContainer;
                     try { // first try to parse as regular bar chart and convert to single category bar cart.
@@ -235,61 +226,61 @@ public final class App {
             // Render diagram
             LiblouisBrailleTextRasterizer.initModule();
             MasterRenderer renderer = new MasterRenderer(printer, representationParameters, format);
-            RasterCanvas canvas = renderer.rasterize(diagram);
+            PrinterCapability mode = PrinterCapability.valueOf(printer.getProperty("mode").toString().toUpperCase());
+            Iterator<? extends PrintableData> outputPages;
+            SvgExporter<? extends AbstractCanvas> svgExporter;
+            switch (mode) { // Decide on correct rendering mode to apply
+                case NORMALPRINTER:
+                    RasterCanvas rasterCanvas = renderer.rasterize(diagram);
+                    svgExporter = new BoolMatrixDataSvgExporter(rasterCanvas);
+                    outputPages = rasterCanvas.getPageIterator();
+                    break;
+                case INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER:
+                    PlotCanvas plotCanvas = new PlotCanvas(printer, representationParameters, format); // TODO: call renderer.plot()
+                    svgExporter = new BoolFloatingPointDataSvgExporter(plotCanvas);
+                    outputPages = plotCanvas.getPageIterator();
+                    break;
+                default: throw new UnsupportedOperationException("Mode not supported: " + mode);
+            }
+
+            // Action switches
+            boolean doPrint = !settingsReader.isTrue(SettingType.INHIBIT_PRINT).orElse(false);
+            boolean doSvgExport = settingsReader.isPresent(SettingType.SVG_EXPORT);
+            boolean doByteDump = settingsReader.isPresent(SettingType.BYTE_DUMP);
 
             // SVG exporting
-            SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
-            svgExporter.render();
-            svgExporter.dump("boolMat");
+            if (doSvgExport) {
+                File svgBaseFile = new File(settingsReader.getSetting(SettingType.SVG_EXPORT).get());
+                svgExporter.render();
+                svgExporter.dump(svgBaseFile.getAbsolutePath());
+            }
 
-            // FloatingPointData SVG exporting example
-            PlotCanvas floatCanvas = new PlotCanvas(printer, representationParameters, format);
-            FloatingPointData<Boolean> points = floatCanvas.getNewPage();
-
-            final int blockX = 230;
-            final int blockY = 400;
-            for (int y = 0; y < blockY; y += 2) {
-                for (int x = 0; x < blockX; x += 2) {
-                    Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<>(Quantities.getQuantity(x, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(y, MetricPrefix.MILLI(METRE)), true);
-                    points.addPoint(point);
+            // Printing and Byte Dumping
+            PrintDirector printD = new PrintDirector(mode, printer);
+            if (doPrint && !PrintDirector.isPrintServiceOn()) { // Check for running spooler or print service
+                throw new Exception("Can't find any running print services on this system.");
+            }
+            File dumpBaseFile = null; // Setup dump base file if required
+            if (doByteDump) {
+                dumpBaseFile = new File(settingsReader.getSetting(SettingType.BYTE_DUMP).get());
+            }
+            int pageNumber = 0;
+            while (outputPages.hasNext()) { // Iterate pages
+                PrintableData page = outputPages.next();
+                if (doByteDump) { // Byte dump
+                    try (FileOutputStream outputStream = new FileOutputStream(dumpBaseFile.getAbsolutePath() + String.format("_%03d.bin", pageNumber))) {
+                        outputStream.write(printD.byteDump(page));
+                    } catch (IOException ex) {
+                        // Inform user, but do not stop execution
+                        mLogger.error("An error occured while creating byte dump", ex);
+                        throw new RuntimeException();
+                    }
                 }
+                if (doPrint) { // Print page
+                    printD.print(page);
+                }
+                pageNumber++;
             }
-
-            SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
-            floatSvgExporter.render();
-            floatSvgExporter.dump("floatingPointData");
-            LiblouisBrailleTextRasterizer textRasterizer = new LiblouisBrailleTextRasterizer(printer);
-            renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<BrailleText>(BrailleText.class, textRasterizer));
-            RasterCanvas refCanvas = renderer.rasterize(new BrailleText(" ", new Rectangle(0, 0, 0, 0)));
-           // RasterCanvas m2canvas = renderer.rasterize(new BrailleText(text2, textArea));
-            SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
-            mLogger.debug("Render preview:\n" + mat.toBoolString());
-
-
-
-            // Check if some SpoolerService/Printservice exists
-            if (!PrintDirector.isPrintServiceOn()) {
-                throw new Exception("Can't find any Printservices on this System.");
-            }
-
-            /*
-             We do not want to actually print on each run.
-            Until CLI parsing is fully integrated, you will have to disable this check by hand if you actually do
-            want to print.
-            Please do not commit changes to this.
-            */
-            if (true) {
-                return EXIT_SUCCESS;
-            }
-
-            // Last Step: Printing
-            @SuppressWarnings("checkstyle:MagicNumber")
-            String printerConfigUpperCase = printer.getProperty("mode").toString().toUpperCase();
-            PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), printer);
-            printD.print(mat);
-            FileOutputStream textDumpOutput = new FileOutputStream("dump.txt");
-            textDumpOutput.write(printD.byteDump(mat));
-
         } catch (final Exception e) {
             terminateWithException(e);
         }

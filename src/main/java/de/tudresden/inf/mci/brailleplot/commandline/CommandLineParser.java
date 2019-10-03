@@ -36,14 +36,14 @@ public class CommandLineParser {
                 .addRequiredOption("c", SettingType.CSV_LOCATION.toString(), true, "Path to CSV")
                 .addRequiredOption("p", SettingType.PRINTER_CONFIG_PATH.toString(), true, "Path to printer configuration file")
                 .addRequiredOption("t", SettingType.DIAGRAM_TITLE.toString(), true, "Title of the diagram")
-                .addRequiredOption("x", SettingType.X_AXIS_LABEL.toString(), true, "Label of X-axis including unit")
-                .addRequiredOption("y", SettingType.Y_AXIS_LABEL.toString(), true, "Label of Y-axis including unit")
                 .addRequiredOption("d", SettingType.DIAGRAM_TYPE.toString(), true, "Type of the diagram. Possible Values: [ScatterPlot, LineChart, BarChart]")
-                .addOption("f", SettingType.FORMAT.toString(), true, "Name of predefined format from configuration")
+                .addOption("x", SettingType.X_AXIS_LABEL.toString(), true, "Label of X-axis including unit")
+                .addOption("y", SettingType.Y_AXIS_LABEL.toString(), true, "Label of Y-axis including unit")
+                .addOption("f", SettingType.FORMAT.toString(), true, "Name of predefined format from configuration (A4 portrait if not specified)")
                 .addOption("v", SettingType.VERTICAL_CSV.toString(), false, "Parse CSV in vertical instead of horizontal orientation (Only applicable for BarChart)")
                 .addOption("i", SettingType.INHIBIT_PRINT.toString(), false, "Inhibit the printing process")
-                .addOption("s", SettingType.SVG_EXPORT.toString(), true, "File path for the generated svg")
-                .addOption("b", SettingType.BYTE_DUMP.toString(), true, "File path for the generated printing byte dump file");
+                .addOption("s", SettingType.SVG_EXPORT.toString(), true, "Base file path for export of svg file(s) (Omit '.svg' suffix)")
+                .addOption("b", SettingType.BYTE_DUMP.toString(), true, "Base file path for print data byte dump file(s) (Omit '.bin' suffix)");
     }
 
     /**

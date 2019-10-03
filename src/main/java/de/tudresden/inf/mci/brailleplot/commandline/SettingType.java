@@ -51,6 +51,8 @@ public enum SettingType {
                 return INHIBIT_PRINT;
             case "svg-export":
                 return SVG_EXPORT;
+            case "byte-dump":
+                return BYTE_DUMP;
             default:
                 throw new IllegalArgumentException("Setting not available");
         }
