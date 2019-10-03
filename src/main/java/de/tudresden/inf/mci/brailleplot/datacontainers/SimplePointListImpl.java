@@ -69,15 +69,4 @@ public class SimplePointListImpl extends AbstractPointContainer<Point2DDouble> i
         return getName() + super.toRecursiveString(depth);
     }
 
-    @Override
-    public Point2DDouble getFirstXOccurence(final double xValue) throws NoSuchElementException {
-
-        for (Point2DDouble newPoint : mElements) {
-            if (newPoint.getX().equals(xValue)) {
-                return newPoint;
-            }
-        }
-
-        throw new NoSuchElementException();
-    }
 }

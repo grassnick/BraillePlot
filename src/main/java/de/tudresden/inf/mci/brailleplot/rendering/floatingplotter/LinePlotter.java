@@ -80,34 +80,21 @@ public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements
                 }
 
                 // draw lines
-                double currentX = smallList.getMinX();
-                double currentY = smallList.getFirstXOccurence(currentX).getY();
-                smallList.removeFirstOccurrence(new Point2DDouble(currentX, currentY));
+                smallList.sortXAscend();
+                Iterator<Point2DDouble> pointIt = smallList.iterator();
+
+                double currentX = pointIt.next().getX();
+                double currentY = pointIt.next().getY();
                 double nextX;
                 double nextY;
                 boolean done = false;
 
                 while (!done) {
 
-                    smallList.removeFirstOccurrence(new Point2DDouble(currentX, currentY));
-
-                    // find next point
-                    Iterator<Point2DDouble> pointIt = smallList.iterator();
                     if (pointIt.hasNext()) {
                         Point2DDouble point = pointIt.next();
                         nextX = point.getX();
-
-
-                        for (int j = 0; j < smallList.getSize(); j++) {
-                            if (pointIt.hasNext()) {
-                                point = pointIt.next();
-                                if (point.getX() < nextX) {
-                                    nextX = point.getX();
-                                }
-                            }
-                        }
-
-                        nextY = smallList.getFirstXOccurence(nextX).getY();
+                        nextY = point.getY();
 
                         //drawing
                         drawLines(calculateXValue(currentX), calculateXValue(nextX), calculateYValue(currentY), calculateYValue(nextY), i);

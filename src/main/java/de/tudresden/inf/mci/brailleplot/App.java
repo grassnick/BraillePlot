@@ -197,7 +197,7 @@ public final class App {
             LiblouisBrailleTextRasterizer.initModule();
 
             MasterRenderer renderer = new MasterRenderer(indexV4Printer, representationParameters, a4Format);
-            RasterCanvas canvas = renderer.rasterize(lineChart);
+            /*RasterCanvas canvas = renderer.rasterize(lineChart);
             Iterator<MatrixData<Boolean>> iter = canvas.getPageIterator();
             SimpleMatrixDataImpl<Boolean> mat = (SimpleMatrixDataImpl<Boolean>) canvas.getCurrentPage();
             while (iter.hasNext()) {
@@ -209,6 +209,8 @@ public final class App {
             SvgExporter<RasterCanvas> svgExporter = new BoolMatrixDataSvgExporter(canvas);
             svgExporter.render();
             svgExporter.dump("boolMat");
+
+             */
 
             // Plotting
             classloader = Thread.currentThread().getContextClassLoader();
@@ -247,11 +249,11 @@ public final class App {
 
             LinePlot lineplot = new LinePlot(container2);
             LinePlotter plotter2 = new LinePlotter();
-            // plotter2.plot(lineplot, floatCanvas);
+            plotter2.plot(lineplot, floatCanvas);
 
             StackedBarChart sbar = new StackedBarChart(container3);
             StackedBarChartPlotter plotter3 = new StackedBarChartPlotter();
-            plotter3.plot(sbar, floatCanvas);
+            // plotter3.plot(sbar, floatCanvas);
 
             GroupedBarChart gbar = new GroupedBarChart(container3);
             GroupedBarChartPlotter plotter4 = new GroupedBarChartPlotter();
@@ -290,12 +292,14 @@ public final class App {
             //PrintDirector printD = new PrintDirector(PrinterCapability.INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER, indexV4Printer);
             ListIterator<FloatingPointData<Boolean>> canvasIt = floatCanvas.getPageIterator();
             PrintDirector printD = new PrintDirector(PrinterCapability.valueOf(printerConfigUpperCase), indexV4Printer);
-            Iterator<MatrixData<Boolean>> iterC = canvas.getPageIterator();
+            /*Iterator<MatrixData<Boolean>> iterC = canvas.getPageIterator();
             while (iterC.hasNext()) {
                 MatrixData<Boolean> page = iterC.next();
                 printD.print(page);
             }            FileOutputStream textDumpOutput = new FileOutputStream("dump.txt");
             textDumpOutput.write(printD.byteDump(mat));
+
+             */
 
 
             /*

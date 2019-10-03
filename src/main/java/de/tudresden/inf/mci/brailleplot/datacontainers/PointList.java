@@ -22,15 +22,6 @@ public interface PointList extends PointContainer<Point2DDouble>, Named {
     ListIterator<Point2DDouble> getListIterator();
 
     /**
-
-     * This function is to find the next point in the csv data for line plotting in order to calculate the slope.
-     * @param xValue Given x-value of the next point.
-     * @return The next point.
-     * @throws NoSuchElementException If no corresponding y-value was found.
-     */
-    Point2DDouble getFirstXOccurence(double xValue) throws NoSuchElementException;
-
-    /**
      * Returns a sorted list copy in ascending fashion for the x-values.
      * @return An {@link PointList} which is sorted by the x-values in ascending fashion.
      */

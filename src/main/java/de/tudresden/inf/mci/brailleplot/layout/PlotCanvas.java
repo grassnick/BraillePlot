@@ -100,7 +100,7 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         mCellDistVer = mPrinter.getProperty("raster.cellDistance.vertical").toDouble();
         mDotDistHor = mPrinter.getProperty("raster.dotDistance.horizontal").toDouble();
         mDotDistVer = mPrinter.getProperty("raster.dotDistance.vertical").toDouble();
-        mFloatConstraintLeft = mPrinter.getProperty("floatingDot.constraint.left").toDouble();
+        mFloatConstraintLeft = mPrinter.getProperty("constraint.left").toDouble();
 
         mMarginLeft = mFormat.getProperty("margin.left").toDouble();
         mMarginTop = mFormat.getProperty("margin.top").toDouble();

@@ -19,6 +19,7 @@ public class LineChart extends Diagram {
      * @param data The container, which holds the information about the datapoints.
      */
     public LineChart(final PointListContainer<PointList> data) {
+        super(data);
         Objects.requireNonNull(data);
         mData = data;
     }
