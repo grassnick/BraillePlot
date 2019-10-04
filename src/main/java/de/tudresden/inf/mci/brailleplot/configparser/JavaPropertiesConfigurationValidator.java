@@ -94,6 +94,7 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         defineRepresentationProperty("floatingDot.derivation", requireBoolean, false);
         defineRepresentationProperty("floatingDot.grid", requireBoolean, false);
         defineRepresentationProperty("floatingDot.dotFrame", requireBoolean, false);
+        defineRepresentationProperty("floatingDot.barAccumulation", requireBoolean, false);
     }
 
     /**

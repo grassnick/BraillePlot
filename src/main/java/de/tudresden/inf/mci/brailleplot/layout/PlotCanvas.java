@@ -67,6 +67,9 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
     private String mLegendKeyWord;
     private int mMaxTitleLines;
 
+    // true if stacked bar chart
+    private boolean mBarAcc;
+
 
     public PlotCanvas(final Printer printer, final Representation representation, final Format format) throws InsufficientRenderingAreaException {
         super(printer, representation, format);
@@ -117,6 +120,7 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
         mLang = mRepresentation.getProperty("general.brailleLanguage").toString();
         mLegendKeyWord = mRepresentation.getProperty("general.legendKeyword").toString();
         mMaxTitleLines = mRepresentation.getProperty("general.maxTitleHeight").toInt();
+        mBarAcc = mRepresentation.getProperty("floatingDot.barAccumulation").toBool();
 
     }
 
@@ -222,6 +226,10 @@ public class PlotCanvas extends AbstractCanvas<FloatingPointData<Boolean>> {
 
     public final int getMaxTitleLines() {
         return mMaxTitleLines;
+    }
+
+    public final boolean getBarAcc() {
+        return mBarAcc;
     }
 
 }
