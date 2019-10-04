@@ -1,7 +1,7 @@
 package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
-import de.tudresden.inf.mci.brailleplot.diagrams.GroupedBarChart;
+import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
@@ -23,7 +23,7 @@ import static tec.units.ri.unit.Units.METRE;
  * Provides a plotting algorithm for grouped bar chart data.
  * @author Richard Schmidt
  */
-public final class GroupedBarChartPlotter extends AbstractBarChartPlotter<GroupedBarChart> implements Plotter<GroupedBarChart> {
+public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implements Plotter<CategoricalBarChart> {
 
     private double mBarGroupWidth;
     private double mNumBarGroup;
@@ -36,7 +36,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter<Groupe
      * if there are more data series than textures.
      */
     @Override
-    public double plot(final GroupedBarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
+    public double plot(final CategoricalBarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
         prereq(diagram, canvas);
         drawYAxis();

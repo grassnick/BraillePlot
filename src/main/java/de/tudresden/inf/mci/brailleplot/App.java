@@ -11,7 +11,6 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimpleCategoricalPointListContainerImpl;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.Diagram;
-import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
 import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
 import de.tudresden.inf.mci.brailleplot.layout.AbstractCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
@@ -37,7 +36,6 @@ import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolFloatingPointDataSvgExporter;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolMatrixDataSvgExporter;
 import de.tudresden.inf.mci.brailleplot.svgexporter.SvgExporter;
-import de.tudresden.inf.mci.brailleplot.util.NativeLibraryHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -283,30 +281,7 @@ public final class App {
                     }
                 }
                 if (doPrint) { // Print page
-                    switch (NativeLibraryHelper.getOs()) {
-                        case "win32":
-                            printD.print(page);
-                            break;
-                        default:
-                            mLogger.warn("Currently a workaround is applied for printer communication. Expect a waiting time of up to 100 seconds between document pages.");
-                            Thread printingThread = new Thread(() -> {
-                                mLogger.debug("Started printing thread");
-                                printD.print(page);
-                                mLogger.debug("Print call returned");
-                            });
-                            printingThread.start();
-                            while (printingThread.isAlive()) {
-                                final int reduceBusinessWaitingTime = 100;
-                                Thread.sleep(reduceBusinessWaitingTime);
-                            }
-                            mLogger.debug(printingThread.getName() + " has finished.");
-                            try {
-                                final int waitBetweenJobs = 10000;
-                                Thread.sleep(waitBetweenJobs);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                    }
+                    printD.print(page);
                 }
                 pageNumber++;
             }

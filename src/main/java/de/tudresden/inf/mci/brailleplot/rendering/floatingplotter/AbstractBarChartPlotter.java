@@ -12,11 +12,9 @@ import java.util.Objects;
 
 /**
  * Abstract class to provide methods for bar chart plotting.
- * @param <T> Type of diagram the plotter can plot. Needs to extend {@link CategoricalBarChart}.
- * Can be {@link de.tudresden.inf.mci.brailleplot.diagrams.StackedBarChart} or {@link de.tudresden.inf.mci.brailleplot.diagrams.GroupedBarChart}.
  * @author Richard Schmidt
  */
-abstract class AbstractBarChartPlotter<T extends CategoricalBarChart> extends AbstractPlotter<T> {
+abstract class AbstractBarChartPlotter extends AbstractPlotter<CategoricalBarChart> {
 
     CategoricalPointListContainer<PointList> mCatList;
 
@@ -41,7 +39,7 @@ abstract class AbstractBarChartPlotter<T extends CategoricalBarChart> extends Ab
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
      * @throws InsufficientRenderingAreaException If a translation error occurs.
      */
-    void prereq(final T diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
+    void prereq(final CategoricalBarChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException {
 
         setCanvas(canvas);
         mCanvas.readConfig();
