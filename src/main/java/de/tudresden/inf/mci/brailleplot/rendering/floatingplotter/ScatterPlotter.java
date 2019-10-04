@@ -75,7 +75,7 @@ public final class ScatterPlotter extends AbstractPointPlotter<ScatterPlot> impl
         if (mGrid) {
             drawGrid();
         }
-        plotLegend();
+        //plotLegend();
 
         return 0;
 

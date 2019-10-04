@@ -58,7 +58,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
         } else {
             if (mAxesDerivation) {
                 mLeftMargin = WMULT * mCanvas.getCellWidth() + WMULT * mCanvas.getCellDistHor() + mCanvas.getMarginLeft();
-                mSecondAxis = mLeftMargin;
+                mSecondAxis = mLeftMargin - mCanvas.getMarginLeft();
             } else {
                 mLeftMargin = (WMULT + MARGINSCALE) * mCanvas.getCellWidth() + (WMULT + 2) * mCanvas.getCellDistHor() + mCanvas.getMarginLeft();
                 mSecondAxis = 2 * mCanvas.getCellWidth() + mCanvas.getCellDistHor();
@@ -178,12 +178,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
     void drawGrid() {
         FloatingPointData<Boolean> grid = mCanvas.getNewPage();
 
-        double secondAxis = 0;
-        if (mRightAxis) {
-            secondAxis = mLeftMargin;
-        }
-
-        double marginLeft = mCanvas.getFloatConstraintLeft() + mCanvas.getMarginLeft();
+        double marginLeft = mCanvas.getFloatConstraintLeft();
         double marginRight = mCanvas.getMarginRight();
 
         // x-axis
@@ -191,7 +186,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
             for (double j = mBottomMargin - mStepSize; j > mTitleMargin; j -= mStepSize) {
                 double x = mLeftMargin + (i / 2) * mXTickStep;
                 // mirroring for grid on the other side of the paper
-                double newX = mPageWidth - x + marginLeft - marginRight;
+                double newX = mPageWidth - x - marginLeft + marginRight;
                 Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j + 2, MetricPrefix.MILLI(METRE)), true);
                 Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                 if (!mData.pointExists(checkPoint)) {
@@ -202,9 +197,9 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
 
         // y-axis
         for (double i = 1; i <= 2 * mNumberYTicks; i++) {
-            for (double j = mLeftMargin + mStepSize; j <= mPageWidth - secondAxis; j += mStepSize) {
+            for (double j = mLeftMargin + mStepSize; j <= mPageWidth - mSecondAxis; j += mStepSize) {
                 // mirroring for grid on the other side of the paper
-                double newX = mPageWidth - j + marginLeft - marginRight;
+                double newX = mPageWidth - j - marginLeft + marginRight;
                 Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(mBottomMargin - (i / 2) * mYTickStep + 2, MetricPrefix.MILLI(METRE)), true);
                 Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(mBottomMargin - (i / 2) * mYTickStep, MetricPrefix.MILLI(METRE)), true);
                 if (!mData.pointExists(checkPoint)) {

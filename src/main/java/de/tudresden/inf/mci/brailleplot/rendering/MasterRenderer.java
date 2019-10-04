@@ -63,6 +63,7 @@ public final class MasterRenderer {
         //renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, ScatterPlotRasterizing::fooRasterizing));
         //...
 
+        mLogger.trace("Instantiating default rasterizers");
         Plotter<ScatterPlot> scatterPlotter = new ScatterPlotter();
         Plotter<LinePlot> linePlotter = new LinePlotter();
         Plotter<GroupedBarChart> groupedBarChartPlotter = new GroupedBarChartPlotter();

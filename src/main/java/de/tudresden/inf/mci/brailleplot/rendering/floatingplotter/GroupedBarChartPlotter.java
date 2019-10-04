@@ -212,7 +212,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter<Groupe
     void drawGrid() {
         FloatingPointData<Boolean> grid = mCanvas.getNewPage();
 
-        double marginLeft = mCanvas.getFloatConstraintLeft() + mCanvas.getMarginLeft();
+        double marginLeft = mCanvas.getFloatConstraintLeft();
         double marginRight = mCanvas.getMarginRight();
 
         // x-axis
@@ -224,7 +224,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter<Groupe
                     if (j < mBottomMargin - k * (mBarDist + mBarGroupWidth) && j > mBottomMargin - mBarDist - k * (mBarDist + mBarGroupWidth)) {
                         double x = mLeftMargin + (i / 2) * mXTickStep;
                         // mirroring for grid on the other side of the paper
-                        double newX = mPageWidth - x + marginLeft - marginRight;
+                        double newX = mPageWidth - x - marginLeft + marginRight;
                         Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j + 2, MetricPrefix.MILLI(METRE)), true);
                         Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                         if (!mData.pointExists(checkPoint)) {
@@ -237,7 +237,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter<Groupe
                     if (j < mBottomMargin - mNumBarGroup * (mBarDist + mBarGroupWidth) && j > mTitleMargin) {
                         double x = mLeftMargin + (i / 2) * mXTickStep;
                         // mirroring for grid on the other side of the paper
-                        double newX = mPageWidth - x + marginLeft - marginRight;
+                        double newX = mPageWidth - x - marginLeft + marginRight;
                         Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j + 2, MetricPrefix.MILLI(METRE)), true);
                         Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                         if (!mData.pointExists(checkPoint)) {
@@ -258,7 +258,7 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter<Groupe
                                 if ((mLeftMargin + (i / 2) * mXTickStep) > mGridHelp[n]) {
                                     double x = mLeftMargin + (i / 2) * mXTickStep;
                                     // mirroring for grid on the other side of the paper
-                                    double newX = mPageWidth - x + marginLeft - marginRight;
+                                    double newX = mPageWidth - x - marginLeft + marginRight;
                                     Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j + 2, MetricPrefix.MILLI(METRE)), true);
                                     Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
                                     if (!mData.pointExists(checkPoint)) {
