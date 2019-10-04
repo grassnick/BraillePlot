@@ -46,6 +46,10 @@ public class BarChart extends Diagram {
 
     }
 
+    /**
+     * Getter for category names.
+     * @return List with category names.
+     */
     public List<String> getCategoryNames() {
         return getDataSet().stream()
                 .map(Named::getName)
