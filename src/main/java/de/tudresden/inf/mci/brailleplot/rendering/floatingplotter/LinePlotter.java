@@ -2,7 +2,7 @@ package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
-import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
+import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
@@ -16,18 +16,18 @@ import java.util.Objects;
  * Provides a plotting algorithm for line plot data.
  * @author Richard Schmidt
  */
-public final class LinePlotter extends AbstractPointPlotter<LinePlot> implements Plotter<LinePlot> {
+public final class LinePlotter extends AbstractPointPlotter<LineChart> implements Plotter<LineChart> {
 
     /**
-     * Plots a {@link LinePlot} instance onto a {@link PlotCanvas}. Add new line styles in if statement.
-     * @param diagram An instance of {@link LinePlot} representing the line plot.
+     * Plots a {@link LineChart} instance onto a {@link PlotCanvas}. Add new line styles in if statement.
+     * @param diagram An instance of {@link LineChart} representing the line plot.
      * @param canvas An instance of {@link PlotCanvas} representing the target for the plotter output.
      * @throws InsufficientRenderingAreaException If too little space is available on the {@link PlotCanvas} or
      * if there are more data series than frames or line styles.
      * @throws NoSuchElementException If the data is corrupt.
      */
     @Override
-    public double plot(final LinePlot diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException, NoSuchElementException {
+    public double plot(final LineChart diagram, final PlotCanvas canvas) throws InsufficientRenderingAreaException, NoSuchElementException {
 
         setCanvas(canvas);
         mCanvas.readConfig();

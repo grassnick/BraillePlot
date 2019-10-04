@@ -2,16 +2,14 @@ package de.tudresden.inf.mci.brailleplot.rendering.floatingplotter;
 
 import de.tudresden.inf.mci.brailleplot.configparser.*;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimplePointListContainerImpl;
-import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
+import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.net.URL;
-import java.util.Objects;
 
 /**
  * @author Leonard Kupper and Richard Schmidt
@@ -55,7 +53,7 @@ class FunctionalPlotterTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             PlotCanvas testCanvas = new PlotCanvas(mPrinter, mRepresentation, mFormat);
             // Pass Image to BrailleText rasterizer.
-            plotter.plot(new LinePlot(new SimplePointListContainerImpl()), testCanvas);
+            plotter.plot(new LineChart(new SimplePointListContainerImpl()), testCanvas);
         });
 
     }

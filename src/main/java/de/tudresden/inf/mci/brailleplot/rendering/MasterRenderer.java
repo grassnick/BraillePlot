@@ -5,7 +5,7 @@ import de.tudresden.inf.mci.brailleplot.configparser.Printer;
 import de.tudresden.inf.mci.brailleplot.configparser.Representation;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.GroupedBarChart;
-import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
+import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
 import de.tudresden.inf.mci.brailleplot.diagrams.StackedBarChart;
 import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
@@ -18,7 +18,6 @@ import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.LinePlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.Plotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.ScatterPlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.StackedBarChartPlotter;
-import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,13 +64,13 @@ public final class MasterRenderer {
 
         mLogger.trace("Instantiating default rasterizers");
         Plotter<ScatterPlot> scatterPlotter = new ScatterPlotter();
-        Plotter<LinePlot> linePlotter = new LinePlotter();
+        Plotter<LineChart> linePlotter = new LinePlotter();
         Plotter<GroupedBarChart> groupedBarChartPlotter = new GroupedBarChartPlotter();
         Plotter<StackedBarChart> stackedBarChartPlotter = new StackedBarChartPlotter();
 
         mLogger.trace("Registering default plotters");
         renderingBase.registerPlotter(new FunctionalPlotter<ScatterPlot>(ScatterPlot.class, scatterPlotter));
-        renderingBase.registerPlotter(new FunctionalPlotter<LinePlot>(LinePlot.class, linePlotter));
+        renderingBase.registerPlotter(new FunctionalPlotter<LineChart>(LineChart.class, linePlotter));
         renderingBase.registerPlotter(new FunctionalPlotter<GroupedBarChart>(GroupedBarChart.class, groupedBarChartPlotter));
         renderingBase.registerPlotter(new FunctionalPlotter<StackedBarChart>(StackedBarChart.class, stackedBarChartPlotter));
 
