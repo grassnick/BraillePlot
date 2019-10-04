@@ -7,7 +7,7 @@ import de.tudresden.inf.mci.brailleplot.rendering.Renderable;
 import java.util.Objects;
 
 /**
- * General representation of a diagram with basic data functions. {@link BarChart}, {@link LinePlot} and {@link ScatterPlot} extend this class.
+ * General representation of a diagram with basic data functions. {@link BarChart}, {@link LineChart} and {@link ScatterPlot} extend this class.
  * Implements {@link Renderable}.
  * @author Leonard Kupper, Richard Schmidt
  */

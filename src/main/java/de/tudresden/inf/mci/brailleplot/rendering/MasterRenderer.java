@@ -10,8 +10,8 @@ import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaExceptio
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.SixDotBrailleRasterCanvas;
+import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.BarChartPlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.FunctionalPlotter;
-import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.GroupedBarChartPlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.LinePlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.Plotter;
 import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.ScatterPlotter;
@@ -61,7 +61,7 @@ public final class MasterRenderer {
         mLogger.trace("Instantiating default rasterizers");
         Plotter<ScatterPlot> scatterPlotter = new ScatterPlotter();
         Plotter<LineChart> linePlotter = new LinePlotter();
-        Plotter<CategoricalBarChart> barChartPlotter = new GroupedBarChartPlotter();
+        Plotter<CategoricalBarChart> barChartPlotter = new BarChartPlotter();
 
         mLogger.trace("Registering default plotters");
         renderingBase.registerPlotter(new FunctionalPlotter<ScatterPlot>(ScatterPlot.class, scatterPlotter));
