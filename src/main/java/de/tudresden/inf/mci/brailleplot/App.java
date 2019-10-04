@@ -205,16 +205,16 @@ public final class App {
             } else {
                 csvOrientation = CsvOrientation.HORIZONTAL;
             }
-            switch (settingsReader.getSetting(SettingType.DIAGRAM_TYPE).orElse("")) {
-                case "ScatterPlot":
+            switch (settingsReader.getSetting(SettingType.DIAGRAM_TYPE).orElse("").toLowerCase()) {
+                case "scatterplot":
                     PointListContainer<PointList> scatterPlotContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
                     diagram = new ScatterPlot(scatterPlotContainer);
                     break;
-                case "LineChart":
+                case "linechart":
                     PointListContainer<PointList> lineChartContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
                     diagram = new LineChart(lineChartContainer);
                     break;
-                case "BarChart":
+                case "barchart":
                     CategoricalPointListContainer<PointList> barChartContainer;
                     try { // first try to parse as regular bar chart and convert to single category bar cart.
                         barChartContainer = new SimpleCategoricalPointListContainerImpl(csvParser.parse(CsvType.X_ALIGNED, csvOrientation));
