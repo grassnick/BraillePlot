@@ -49,16 +49,16 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         final int yAxisStepWidth = cellHeight * Y_AXIS_STEP_WIDTH;
         final BrailleLanguage.Language language = BrailleLanguage.Language.DE_BASISSCHRIFT;
 
-        final String title = "Streudiagramm - Gewicht zu Höhe";
+        final String title = scatterPlot.getTitle();
         final String titleToDataSetSeparator = " - ";
         final String legendTitle = title;
         final String axisExplanationGroupName = "Achsenbeschriftungen";
         final String xAxisLegendGroupName = "x-Achse Werte";
         final String yAxisLegendGroupName = "y-Achse Werte";
         final String xAxisLabel = "x-Achse";
-        final String xAxisLabelValue = "Gewicht in kg";
+        final String xAxisLabelValue = scatterPlot.getXAxisName();
         final String yAxisLabel = "y-Achse";
-        final String yAxisLabelValue = "Höhe in m";
+        final String yAxisLabelValue = scatterPlot.getYAxisName();
 
 
         Rectangle completeArea = canvas.getCellRectangle();
