@@ -11,6 +11,7 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimpleCategoricalPointListContainerImpl;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.Diagram;
+import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
 import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
 import de.tudresden.inf.mci.brailleplot.layout.AbstractCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
@@ -207,7 +208,8 @@ public final class App {
             switch (settingsReader.getSetting(SettingType.DIAGRAM_TYPE).orElse("")) {
                 case "ScatterPlot":
                     PointListContainer<PointList> scatterPlotContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
-                    throw new UnsupportedOperationException("Scatter Plots coming soon."); // TODO: integrate scatter plots
+                    diagram = new ScatterPlot(scatterPlotContainer);
+                    break;
                 case "LineChart":
                     PointListContainer<PointList> lineChartContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
                     diagram = new LineChart(lineChartContainer);
