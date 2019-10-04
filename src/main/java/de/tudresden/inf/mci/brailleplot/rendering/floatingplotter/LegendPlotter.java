@@ -134,6 +134,11 @@ public class LegendPlotter implements Plotter<Legend> {
                     mTextPlotter.plot(text, mCanvas);
                 }
                 yDist = (mCanvas.getPrintableWidth() + mCanvas.getMarginLeft()) / 2;
+
+                if (legend.getType() == COMPARE3) {
+                    yDist = mCanvas.getCellDistHor();
+                    last = last2;
+                }
             }
 
             char[] yAxisNames = "Y-Achse:".toCharArray();
@@ -142,7 +147,12 @@ public class LegendPlotter implements Plotter<Legend> {
             Map<String, Map<String, String>> map = legend.getSymbolExplanationGroups();
             Map<String, String> map2 = map.get("y-axis");
 
-            for (int i = 0; i < map2.size() - 1; i++) {
+            double offset = 1;
+            if (legend.getType() == COMPARE3) {
+                offset = 0;
+            }
+
+            for (int i = 0; i < map2.size() - offset; i++) {
                 char[] desc = (symbols[i] + ": ").toCharArray();
                 if (i == 0) {
                     last = plotLine(desc, yDist, last + mStepVer + mSpace, true);
