@@ -29,6 +29,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
     private static final int Y_AXIS_STEP_WIDTH = 3; // The distance between two tick marks on the y axis [cells]
     private static final int AXIS_TICK_SIZE = 1; // The length of the ticks on the axis [dots]
     private static final Locale NUMBER_LOCALE = new Locale("en", "US");
+    private static final char LEGEND_TICK_START_CHAR = 'a';
 
     private static final Logger LOG = LoggerFactory.getLogger(ScatterPlotRasterizer.class);
 
@@ -155,7 +156,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         Map<Integer, String> xAxisLabels = new HashMap<>();
         xAxis.setLabels(xAxisLabels);
         final int xAxisTickCount = xDots / xAxisStepWidth;
-        char label = 'a';
+        char label = LEGEND_TICK_START_CHAR;
         for (int x = 0; x < xAxisTickCount; x++) {
             xAxisLabels.put(x, String.valueOf(label));
             int tickPos = x * xAxisStepWidth;
@@ -261,6 +262,6 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
     @SuppressWarnings("checkstyle:MagicNumber")
     // char 'a' = 97 -> set to 96 so the lowest element is set to 'a' itself
     private static char getStartChar(final int elemCount) {
-        return (char) (96 + elemCount);
+        return (char) (LEGEND_TICK_START_CHAR - 1 + elemCount);
     }
 }
