@@ -21,6 +21,7 @@ import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.Diagram;
 import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
 import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
+import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
 import de.tudresden.inf.mci.brailleplot.layout.AbstractCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
@@ -212,7 +213,7 @@ public final class App {
                     break;
                 case "LineChart":
                     PointListContainer<PointList> lineChartContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
-                    diagram = new LinePlot(lineChartContainer);
+                    diagram = new LineChart(lineChartContainer);
                     break;
                 case "BarChart":
                     CategoricalPointListContainer<PointList> barChartContainer;
