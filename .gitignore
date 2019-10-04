@@ -24,6 +24,9 @@ src/main/resources/liblouis.dylib
 # Exported SVG files
 *.svg
 
+# Exported binary dumps
+*.bin
+
 # Native libraries
 *.so
 *.dylib
