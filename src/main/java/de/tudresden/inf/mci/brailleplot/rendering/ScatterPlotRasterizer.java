@@ -147,7 +147,6 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         axisLabels.put(yAxisLabel, yAxisLabelValue);
         legend.addSymbolExplanationGroup(axisExplanationGroupName, axisLabels);
 
-        char label = 'a';
 
         // X axis
         Map<String, String> xAxisLegendSymbols = new HashMap<>();
@@ -156,6 +155,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         Map<Integer, String> xAxisLabels = new HashMap<>();
         xAxis.setLabels(xAxisLabels);
         final int xAxisTickCount = xDots / xAxisStepWidth;
+        char label = 'a';
         for (int x = 0; x < xAxisTickCount; x++) {
             xAxisLabels.put(x, String.valueOf(label));
             int tickPos = x * xAxisStepWidth;
@@ -171,13 +171,14 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         Map<Integer, String> yAxisLabels = new HashMap<>();
         yAxis.setLabels(yAxisLabels);
         final int yAxisTickCount = yDots / yAxisStepWidth;
+        label = getStartChar(yAxisTickCount);
         for (int y = 0; y < yAxisTickCount; y++) {
             yAxisLabels.put(y, String.valueOf(label));
             int tickPos = y * yAxisStepWidth;
             double val = tickPos / yRatio;
             LOG.trace("Adding y axis label {{},{}} for tick #{}", label, val, y);
             yAxisLegendSymbols.put(String.valueOf(label), formatDouble(val));
-            label++;
+            label--;
         }
 
         legend.addColumn(xAxisLegendGroupName, xAxisLegendSymbols);
@@ -255,5 +256,11 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
             minHeight = Math.max(minHeight, height);
         }
         return minHeight;
+    }
+
+    @SuppressWarnings("checkstyle:MagicNumber")
+    // char 'a' = 97 -> set to 96 so the lowest element is set to 'a' itself
+    private static char getStartChar(final int elemCount) {
+        return (char) (96 + elemCount);
     }
 }
