@@ -53,17 +53,17 @@ public abstract class AbstractCanvas<T extends PrintableData> {
         // New approach using a box model:
 
         // Create a page box
-        double pageWidth = mFormat.getProperty("page.width").toDouble();
-        double pageHeight = mFormat.getProperty("page.height").toDouble();
+        double pageWidth = mFormat.getProperty("page.width").toInt();
+        double pageHeight = mFormat.getProperty("page.height").toInt();
         Rectangle pageBox = new Rectangle(0, 0, pageWidth, pageHeight);
         mLogger.trace("Determined page box: {}", pageBox);
 
         // Create a margin box
         mLogger.trace("Cropping edges by defined margins:");
-        double marginTop = mFormat.getProperty("margin.top").toDouble();
-        double marginLeft = mFormat.getProperty("margin.left").toDouble();
-        double marginBottom = mFormat.getProperty("margin.bottom").toDouble();
-        double marginRight = mFormat.getProperty("margin.right").toDouble();
+        double marginTop = mFormat.getProperty("margin.top").toInt();
+        double marginLeft = mFormat.getProperty("margin.left").toInt();
+        double marginBottom = mFormat.getProperty("margin.bottom").toInt();
+        double marginRight = mFormat.getProperty("margin.right").toInt();
         Rectangle marginBox = new Rectangle(pageBox);
         try {
             marginBox.removeFromTop(marginTop);
