@@ -19,6 +19,7 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimpleCategoricalPointListContainerImpl;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.Diagram;
+import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
 import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
 import de.tudresden.inf.mci.brailleplot.layout.AbstractCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
@@ -199,15 +200,16 @@ public final class App {
             } else {
                 csvOrientation = CsvOrientation.HORIZONTAL;
             }
-            switch (settingsReader.getSetting(SettingType.DIAGRAM_TYPE).orElse("")) {
-                case "ScatterPlot":
+            switch (settingsReader.getSetting(SettingType.DIAGRAM_TYPE).orElse("").toLowerCase()) {
+                case "scatterplot":
                     PointListContainer<PointList> scatterPlotContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
-                    throw new UnsupportedOperationException("Scatter Plots coming soon."); // TODO: integrate scatter plots
-                case "LineChart":
+                    diagram = new ScatterPlot(scatterPlotContainer);
+                    break;
+                case "linechart":
                     PointListContainer<PointList> lineChartContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
                     diagram = new LineChart(lineChartContainer);
                     break;
-                case "BarChart":
+                case "barchart":
                     CategoricalPointListContainer<PointList> barChartContainer;
                     try { // first try to parse as regular bar chart and convert to single category bar cart.
                         barChartContainer = new SimpleCategoricalPointListContainerImpl(csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, csvOrientation));

@@ -18,10 +18,18 @@ public abstract class Diagram implements Renderable {
     private String mXAxisName;
     private String mYAxisName;
 
-    Diagram(final PointListContainer<PointList> data) {
-        Objects.requireNonNull(data);
-        mData = data;
+    public Diagram(final PointListContainer<PointList> data) {
+        mData = Objects.requireNonNull(data);
     }
+
+    /**
+     * Returns the underlying data set.
+     * @return The underlying data set.
+     */
+    public PointListContainer<PointList> getDataSet() {
+        return mData;
+    }
+
     /**
      * Getter for the minimum x-value.
      * @return double minimum x-value.
@@ -52,14 +60,6 @@ public abstract class Diagram implements Renderable {
      */
     public double getMaxY() {
         return mData.getMaxY();
-    }
-
-    /**
-     * Getter for a list with x-y-Pairs: x is the index (always just counts from 0 up), y is the value.
-     * @return PointList with the corresponding data set.
-     */
-    public PointListContainer<PointList> getDataSet() {
-        return mData;
     }
 
     public final String getTitle() {
