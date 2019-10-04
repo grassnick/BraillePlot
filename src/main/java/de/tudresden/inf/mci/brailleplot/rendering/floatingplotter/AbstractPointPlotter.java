@@ -84,7 +84,7 @@ abstract class AbstractPointPlotter<T extends Diagram> extends AbstractPlotter<T
 
         // x-axis
         double lastValueX = mLeftMargin;
-        for (double i = mLeftMargin; i <= mPageWidth - mSecondAxis; i += mStepSize) {
+        for (double i = mLeftMargin; i <= mPageWidth - mCanvas.getCellDistHor() - mSecondAxis; i += mStepSize) {
             addPoint(i, mBottomMargin);
             lastValueX = i;
         }

@@ -82,7 +82,7 @@ abstract class AbstractPlotter<T extends Diagram> {
     static final int DISTYAXISNAMES2 = 3;
     static final int CIRCLESCALE2 = 3;
     static final int DASHEDLINESCALE = 3;
-    static final int DOTTEDLINESCALE = 3;
+    static final int DOTTEDLINESCALE = 2;
     static final int UPPEREND = 5;
     static final int DISTXAXISNAMES = 5;
     static final int DISTYAXISNAMES = 5;

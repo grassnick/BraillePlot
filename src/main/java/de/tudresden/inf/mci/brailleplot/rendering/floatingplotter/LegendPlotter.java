@@ -41,6 +41,7 @@ public class LegendPlotter implements Plotter<Legend> {
     private static final int STARTAXESDESC = 20;
     private static final int STARTFRAMESLINES = 25;
     private static final int STARTLINEDESC = 30;
+    private static final int MINLEGENDDIST = 50;
     private static final int ENDLINES = 35;
     private static final int STARTLINESFRAMESDESC = 50;
     private static final int ENDFRAMESLINES = 55;
@@ -68,7 +69,7 @@ public class LegendPlotter implements Plotter<Legend> {
         char[] symbols = "abcdefghijklmnopqrstuvwxyz".toCharArray();
 
         char[] legende = mCanvas.getLegendKeyWord().toCharArray();
-        double last = plotLine(legende, mCanvas.getCellDistHor(), 0, false);
+        double last = plotLine(legende, mCanvas.getCellDistHor(), mCanvas.getMarginTop(), false);
         char[] titel = "Titel:".toCharArray();
         last = plotLine(titel, mCanvas.getCellDistHor(), last + mStepVer + mSpace, false);
         char[] titelName = ("dummy").toCharArray();
@@ -158,8 +159,15 @@ public class LegendPlotter implements Plotter<Legend> {
             }
         }
 
+        double space = mSpace;
+        if (last > mCanvas.getPageHeight() + mCanvas.getMarginTop() - MINLEGENDDIST) {
+            last = mCanvas.getMarginTop();
+            mCanvas.getNewPage();
+            space = 0;
+        }
+
         char[] daten = "Messreihen:".toCharArray();
-        last = plotLine(daten, mCanvas.getCellDistHor(), last + mStepVer + mSpace, false);
+        last = plotLine(daten, mCanvas.getCellDistHor(), last + mStepVer + space, false);
 
         if (legend.getType() == 0) {
             // scatter plot

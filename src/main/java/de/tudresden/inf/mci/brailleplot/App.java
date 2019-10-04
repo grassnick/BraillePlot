@@ -19,6 +19,7 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimpleCategoricalPointListContainerImpl;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.Diagram;
+import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
 import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
 import de.tudresden.inf.mci.brailleplot.layout.AbstractCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
@@ -211,7 +212,8 @@ public final class App {
                     break;
                 case "LineChart":
                     PointListContainer<PointList> lineChartContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
-                    throw new UnsupportedOperationException("Line Charts coming soon."); // TODO: integrate line charts
+                    diagram = new LinePlot(lineChartContainer);
+                    break;
                 case "BarChart":
                     CategoricalPointListContainer<PointList> barChartContainer;
                     try { // first try to parse as regular bar chart and convert to single category bar cart.
@@ -252,27 +254,6 @@ public final class App {
             boolean doSvgExport = settingsReader.isPresent(SettingType.SVG_EXPORT);
             boolean doByteDump = settingsReader.isPresent(SettingType.BYTE_DUMP);
 
-            /* printing floating dot on Mac
-            canvasIt.forEachRemaining((page) -> {
-                Thread printingThread = new Thread(() -> {
-                    mLogger.debug("Started printing thread");
-                    printD.print(page);
-                    mLogger.debug("Print call returned");
-                });
-                printingThread.start();
-                while(printingThread.isAlive()) {
-
-                }
-                mLogger.debug(printingThread.getName() + " has finished.");
-                try {
-                    Thread.sleep(100000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
-
-             */
-
             // SVG exporting
             if (doSvgExport) {
                 File svgBaseFile = new File(settingsReader.getSetting(SettingType.SVG_EXPORT).get());
@@ -306,6 +287,27 @@ public final class App {
                 }
                 pageNumber++;
             }
+
+            /* printing floating dot on Mac
+            canvasIt.forEachRemaining((page) -> {
+                Thread printingThread = new Thread(() -> {
+                    mLogger.debug("Started printing thread");
+                    printD.print(page);
+                    mLogger.debug("Print call returned");
+                });
+                printingThread.start();
+                while(printingThread.isAlive()) {
+
+                }
+                mLogger.debug(printingThread.getName() + " has finished.");
+                try {
+                    Thread.sleep(100000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+
+             */
         } catch (final Exception e) {
             terminateWithException(e);
         }

@@ -247,13 +247,12 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter<Groupe
                     }
                 }
 
-
                 // check if j is inside bar and i/2 outside bar
                 double barGroupStep = mBarGroupWidth + mBarDist;
                 for (int l = 0; l < mNumBarGroup; l++) {
                     if (j <= mBottomMargin - l * barGroupStep && j >= mBottomMargin - (l + 1) * barGroupStep) {
                         for (int m = 0; m < mCatList.getNumberOfCategories(); m++) {
-                            if (j <= mBottomMargin - l * barGroupStep - mBarDist - m * mBarWidth && j > mBottomMargin - l * barGroupStep - mBarDist - (m + 1) * mBarWidth) {
+                            if (j <= mBottomMargin - l * barGroupStep - mBarDist - m * mBarWidth && j >= mBottomMargin - l * barGroupStep - mBarDist - (m + 1) * mBarWidth) {
                                 int n = mCatList.getNumberOfCategories() * l + m;
                                 if ((mLeftMargin + (i / 2) * mXTickStep) > mGridHelp[n]) {
                                     double x = mLeftMargin + (i / 2) * mXTickStep;
