@@ -1,26 +1,16 @@
 package de.tudresden.inf.mci.brailleplot;
 
 import ch.qos.logback.classic.Level;
-import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
-import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
-import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
-import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+
 import de.tudresden.inf.mci.brailleplot.configparser.Representation;
-import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
-import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
-import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
 import de.tudresden.inf.mci.brailleplot.csvparser.MalformedCsvException;
-import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimpleCategoricalPointListContainerImpl;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.Diagram;
-import de.tudresden.inf.mci.brailleplot.diagrams.LinePlot;
-import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
 import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
 import de.tudresden.inf.mci.brailleplot.layout.AbstractCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
@@ -28,6 +18,19 @@ import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
+
+
+import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
+import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
+import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
+import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
+
+import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
+import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
+import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
+import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
+
 import de.tudresden.inf.mci.brailleplot.rendering.LiblouisBrailleTextRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolFloatingPointDataSvgExporter;
@@ -76,10 +79,6 @@ public final class App {
     private final Logger mLogger;
 
     private ConcurrentLinkedDeque<Runnable> mFinalizers;
-
-    private static final int THREE = 3;
-    private static final int FOUR = 4;
-    private static final int FIVE = 5;
 
     private App() {
         sInstance = this;
@@ -139,7 +138,6 @@ public final class App {
         System.exit(EXIT_ERROR);
     }
 
-    @SuppressWarnings("MethodLength")
     /**
      * Main loop of the application.
      * @param args Command line parameters.
@@ -209,8 +207,7 @@ public final class App {
             switch (settingsReader.getSetting(SettingType.DIAGRAM_TYPE).orElse("")) {
                 case "ScatterPlot":
                     PointListContainer<PointList> scatterPlotContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
-                    diagram = new ScatterPlot(scatterPlotContainer);
-                    break;
+                    throw new UnsupportedOperationException("Scatter Plots coming soon."); // TODO: integrate scatter plots
                 case "LineChart":
                     PointListContainer<PointList> lineChartContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
                     diagram = new LineChart(lineChartContainer);
@@ -243,7 +240,7 @@ public final class App {
                     outputPages = rasterCanvas.getPageIterator();
                     break;
                 case INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER:
-                    PlotCanvas plotCanvas = renderer.plot(diagram); // TODO: call renderer.plot()
+                    PlotCanvas plotCanvas = new PlotCanvas(printer, representationParameters, format); // TODO: call renderer.plot()
                     svgExporter = new BoolFloatingPointDataSvgExporter(plotCanvas);
                     outputPages = plotCanvas.getPageIterator();
                     break;
@@ -288,27 +285,6 @@ public final class App {
                 }
                 pageNumber++;
             }
-
-            /* printing floating dot on Mac
-            canvasIt.forEachRemaining((page) -> {
-                Thread printingThread = new Thread(() -> {
-                    mLogger.debug("Started printing thread");
-                    printD.print(page);
-                    mLogger.debug("Print call returned");
-                });
-                printingThread.start();
-                while(printingThread.isAlive()) {
-
-                }
-                mLogger.debug(printingThread.getName() + " has finished.");
-                try {
-                    Thread.sleep(100000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
-
-             */
         } catch (final Exception e) {
             terminateWithException(e);
         }
