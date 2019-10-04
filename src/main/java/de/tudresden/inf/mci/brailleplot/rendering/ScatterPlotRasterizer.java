@@ -53,8 +53,9 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         final String titleToDataSetSeparator = " - ";
         final String legendTitle = title;
         final String axisExplanationGroupName = "Achsenbeschriftungen";
-        final String xAxisLegendGroupName = "x-Achse Werte";
-        final String yAxisLegendGroupName = "y-Achse Werte";
+        final String axisColumnGroupTitle = "Achsenwerte";
+        final String xAxisLegendGroupName = "x-Achse";
+        final String yAxisLegendGroupName = "y-Achse";
         final String xAxisLabel = "x-Achse";
         final String xAxisLabelValue = scatterPlot.getXAxisName();
         final String yAxisLabel = "y-Achse";
@@ -150,7 +151,6 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
         // X axis
         Map<String, String> xAxisLegendSymbols = new HashMap<>();
-        legend.addSymbolExplanationGroup(xAxisLegendGroupName, xAxisLegendSymbols);
 
         // TODO Transfer to separate method
         Map<Integer, String> xAxisLabels = new HashMap<>();
@@ -167,7 +167,6 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
         // Y axis
         Map<String, String> yAxisLegendSymbols = new HashMap<>();
-        legend.addSymbolExplanationGroup(yAxisLegendGroupName, yAxisLegendSymbols);
 
         Map<Integer, String> yAxisLabels = new HashMap<>();
         yAxis.setLabels(yAxisLabels);
@@ -180,6 +179,10 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
             yAxisLegendSymbols.put(String.valueOf(label), formatDouble(val));
             label++;
         }
+
+        legend.addColumn(xAxisLegendGroupName, xAxisLegendSymbols);
+        legend.addColumn(yAxisLegendGroupName, yAxisLegendSymbols);
+        legend.setColumnViewTitle(axisColumnGroupTitle);
 
 
         // --------------------------------------------------------------------
