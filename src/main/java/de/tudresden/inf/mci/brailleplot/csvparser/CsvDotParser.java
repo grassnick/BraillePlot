@@ -53,9 +53,13 @@ public class CsvDotParser extends CsvParseAlgorithm<PointListContainer<PointList
                 Number yValue;
                 try {
                     xValue = Constants.NUMBER_FORMAT.parse(xRowIterator.next());
+                } catch (ParseException pe) {
+                    throw new MalformedCsvException("Line: " + (row - 1) + ": Could not parse value", pe);
+                }
+                try {
                     yValue = Constants.NUMBER_FORMAT.parse(yRowIterator.next());
-                } catch (ParseException e) {
-                    continue;
+                } catch (ParseException pe) {
+                    throw new MalformedCsvException("Line: " + row + ": Could not parse value", pe);
                 }
                 Point2DDouble newPoint = new Point2DDouble(xValue.doubleValue(), yValue.doubleValue());
                 rowPoints.pushBack(newPoint);
