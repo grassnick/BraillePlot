@@ -45,7 +45,8 @@ public class CommandLineParser {
                 .addOption("i", SettingType.INHIBIT_PRINT.toString(), false, "Inhibit the printing process")
                 .addOption("s", SettingType.SVG_EXPORT.toString(), true, "Base file path for export of svg file(s) (Omit '.svg' suffix)")
                 .addOption("b", SettingType.BYTE_DUMP.toString(), true, "Base file path for print data byte dump file(s) (Omit '.bin' suffix)")
-                .addOption("l", SettingType.LOG_LEVEL.toString(), true, "Logging output level. Possible Values: [All, Trace, Debug, Info, Warn, Error, Off] Defaults to 'Info'");
+                .addOption("l", SettingType.LOG_LEVEL.toString(), true, "Logging output level. Possible Values: [All, Trace, Debug, Info, Warn, Error, Off] Defaults to 'Info'")
+                .addOption("npw", SettingType.NO_PRINT_WORKAROUND.toString(), false, "Do not apply sleeptime workaround for printer communication. Only has effect on non-windows machines.");
     }
 
     /**

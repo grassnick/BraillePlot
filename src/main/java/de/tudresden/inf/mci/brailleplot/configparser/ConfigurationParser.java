@@ -211,6 +211,7 @@ public abstract class ConfigurationParser {
             throws ConfigurationParsingException, ConfigurationValidationException {
         // reset internal property buffer
         mPrinterProperties.clear();
+        mRepresentationProperties.clear();
         mFormatProperties.clear();
         mValidator.setSearchPath(getPathNoFilePrefix(path));
         // load and parse file

@@ -239,7 +239,7 @@ public final class App {
                     outputPages = rasterCanvas.getPageIterator();
                     break;
                 case INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER:
-                    PlotCanvas plotCanvas = renderer.plot(diagram); // TODO: call renderer.plot()
+                    PlotCanvas plotCanvas = renderer.plot(diagram);
                     svgExporter = new BoolFloatingPointDataSvgExporter(plotCanvas);
                     outputPages = plotCanvas.getPageIterator();
                     break;
@@ -276,35 +276,46 @@ public final class App {
                     } catch (IOException ex) {
                         // Inform user, but do not stop execution
                         mLogger.error("An error occured while creating byte dump", ex);
-                        throw new RuntimeException();
                     }
                 }
                 if (doPrint) { // Print page
+                    boolean applyWorkaround;
                     switch (NativeLibraryHelper.getOs()) {
                         case "win32":
-                            printD.print(page);
+                            applyWorkaround = false;
                             break;
+                        case "osx":
+                        case "linux":
                         default:
-                            mLogger.warn("Currently a workaround is applied for printer communication. Expect a waiting time of up to 100 seconds between document pages.");
-                            Thread printingThread = new Thread(() -> {
-                                mLogger.debug("Started printing thread");
-                                printD.print(page);
-                                mLogger.debug("Print call returned");
-                            });
-                            printingThread.start();
-                            while (printingThread.isAlive()) {
-                                final int reduceBusinessWaitingTime = 100;
-                                Thread.sleep(reduceBusinessWaitingTime);
-                            }
-                            mLogger.debug(printingThread.getName() + " has finished.");
-                            try {
-                                final int waitBetweenJobs = 10000;
-                                Thread.sleep(waitBetweenJobs);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                            applyWorkaround = true;
+                    }
+                    if (settingsReader.isTrue(SettingType.NO_PRINT_WORKAROUND).orElse(false)) {
+                        applyWorkaround = false;
+                    }
+                    if (!applyWorkaround) {
+                        printD.print(page);
+                    } else {
+                        mLogger.warn("Currently a workaround is applied for printer communication. Expect a waiting time of up to 100 seconds between document pages. Disable with option -npw");
+                        Thread printingThread = new Thread(() -> {
+                            mLogger.debug("Started printing thread");
+                            printD.print(page);
+                            mLogger.debug("Print call returned");
+                        });
+                        printingThread.start();
+                        while (printingThread.isAlive()) {
+                            final int reduceBusinessWaitingTime = 100;
+                            Thread.sleep(reduceBusinessWaitingTime);
+                        }
+                        mLogger.debug(printingThread.getName() + " has finished.");
+                        try {
+                            final int waitBetweenJobs = 100000;
+                            Thread.sleep(waitBetweenJobs);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
+
                 pageNumber++;
             }
         } catch (final Exception e) {
