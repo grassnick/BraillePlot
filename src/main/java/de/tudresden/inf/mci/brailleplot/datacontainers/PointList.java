@@ -26,5 +26,4 @@ public interface PointList extends PointContainer<Point2DDouble>, Named {
      */
 
     PointList sortXAscend();
-
 }

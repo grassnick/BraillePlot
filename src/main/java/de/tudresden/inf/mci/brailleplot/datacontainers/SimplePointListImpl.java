@@ -67,5 +67,4 @@ public class SimplePointListImpl extends AbstractPointContainer<Point2DDouble> i
     protected String toRecursiveString(final int depth) {
         return getName() + super.toRecursiveString(depth);
     }
-
 }
