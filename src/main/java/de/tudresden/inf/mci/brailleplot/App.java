@@ -76,6 +76,10 @@ public final class App {
 
     private ConcurrentLinkedDeque<Runnable> mFinalizers;
 
+    private static final int THREE = 3;
+    private static final int FOUR = 4;
+    private static final int FIVE = 5;
+
     private App() {
         sInstance = this;
         mFinalizers = new ConcurrentLinkedDeque<>();
@@ -134,6 +138,7 @@ public final class App {
         System.exit(EXIT_ERROR);
     }
 
+    @SuppressWarnings("MethodLength")
     /**
      * Main loop of the application.
      * @param args Command line parameters.
@@ -200,19 +205,19 @@ public final class App {
             } else {
                 csvOrientation = CsvOrientation.HORIZONTAL;
             }
-            switch (settingsReader.getSetting(SettingType.DIAGRAM_TYPE).orElse("").toLowerCase()) {
-                case "scatterplot":
+            switch (settingsReader.getSetting(SettingType.DIAGRAM_TYPE).orElse("")) {
+                case "ScatterPlot":
                     PointListContainer<PointList> scatterPlotContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
                     diagram = new ScatterPlot(scatterPlotContainer);
                     break;
-                case "linechart":
+                case "LineChart":
                     PointListContainer<PointList> lineChartContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
                     diagram = new LineChart(lineChartContainer);
                     break;
-                case "barchart":
+                case "BarChart":
                     CategoricalPointListContainer<PointList> barChartContainer;
                     try { // first try to parse as regular bar chart and convert to single category bar cart.
-                        barChartContainer = new SimpleCategoricalPointListContainerImpl(csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, csvOrientation));
+                        barChartContainer = new SimpleCategoricalPointListContainerImpl(csvParser.parse(CsvType.X_ALIGNED, csvOrientation));
                     } catch (MalformedCsvException e) { // else parse as categorical bar chart
                         barChartContainer = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, csvOrientation);
                     }
@@ -237,7 +242,7 @@ public final class App {
                     outputPages = rasterCanvas.getPageIterator();
                     break;
                 case INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER:
-                    PlotCanvas plotCanvas = renderer.plot(diagram);
+                    PlotCanvas plotCanvas = renderer.plot(diagram); // TODO: call renderer.plot()
                     svgExporter = new BoolFloatingPointDataSvgExporter(plotCanvas);
                     outputPages = plotCanvas.getPageIterator();
                     break;
@@ -282,6 +287,27 @@ public final class App {
                 }
                 pageNumber++;
             }
+
+            /* printing floating dot on Mac
+            canvasIt.forEachRemaining((page) -> {
+                Thread printingThread = new Thread(() -> {
+                    mLogger.debug("Started printing thread");
+                    printD.print(page);
+                    mLogger.debug("Print call returned");
+                });
+                printingThread.start();
+                while(printingThread.isAlive()) {
+
+                }
+                mLogger.debug(printingThread.getName() + " has finished.");
+                try {
+                    Thread.sleep(100000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+
+             */
         } catch (final Exception e) {
             terminateWithException(e);
         }
