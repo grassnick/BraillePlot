@@ -16,21 +16,22 @@ import java.util.Iterator;
 /**
  * @author Richard Schmidt
  */
-public class CsvXAlignedCategoriesParserTest {
+class CsvXAlignedCategoriesParserTest {
 
-    public static CsvParser parser;
+    private static CsvParser parser;
 
     @BeforeAll
-    public static void initialize() throws Exception {
+    static void initialize() throws Exception {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         InputStream csvStream = classloader.getResourceAsStream("examples.csv/0_bar_chart_categorical.csv");
+        assert csvStream != null;
         Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
         parser = new CsvParser(csvReader, ',', '\"');
 
     }
 
     @Test
-    public void testVerticalParsing() {
+    void testVerticalParsing() {
         CategoricalPointListContainer<PointList> container = parser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
         Assertions.assertEquals(container.getCategory(0), " Reihe a ");
         Assertions.assertEquals(container.getCategory(1), " Reihe b ");

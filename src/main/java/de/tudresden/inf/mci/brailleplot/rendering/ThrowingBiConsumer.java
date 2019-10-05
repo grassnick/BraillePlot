@@ -10,6 +10,6 @@ package de.tudresden.inf.mci.brailleplot.rendering;
  * @version 2019.07.09
  */
 @FunctionalInterface
-interface ThrowingBiConsumer<T, U, E extends Exception> {
+public interface ThrowingBiConsumer<T, U, E extends Exception> {
     void accept(T t, U u) throws E;
 }

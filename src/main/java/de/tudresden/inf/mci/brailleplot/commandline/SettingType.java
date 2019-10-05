@@ -19,7 +19,8 @@ public enum SettingType {
     INHIBIT_PRINT("inhibit-print"),
     SVG_EXPORT("svg-export"),
     BYTE_DUMP("byte-dump"),
-    LOG_LEVEL("log-level");
+    LOG_LEVEL("log-level"),
+    NO_PRINT_WORKAROUND("no-print-workaround");
 
 
     private final String mName;
@@ -56,6 +57,8 @@ public enum SettingType {
                 return BYTE_DUMP;
             case "log-level":
                 return LOG_LEVEL;
+            case "no-print-workaround":
+                return NO_PRINT_WORKAROUND;
             default:
                 throw new IllegalArgumentException("Setting not available");
         }

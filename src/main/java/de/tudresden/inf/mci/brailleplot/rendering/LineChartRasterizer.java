@@ -133,7 +133,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
 
         // Step seven: Iterate through the lines, rasterize the axis for each paper.
         LegendRasterizer mLegendRasterizer = new LegendRasterizer();
-        Iterator<PointList> iter  = mDiagram.getData().iterator();
+        Iterator<PointList> iter  = mDiagram.getDataSet().iterator();
         while (iter.hasNext()) {
             rasterizeTitle(data.getTitle(), titleArea);
             rasterizeXAxis(originY, originX, mXStepWidth, xAxisBound, xLabels);
@@ -280,7 +280,7 @@ public class LineChartRasterizer implements Rasterizer<LineChart> {
     @SuppressWarnings({"finalparameters", "magicnumber"})
     private Map<Integer, String> setCorrectLabelsforY(final double rangeOfYValues, final int numberOfTicks, double dpi, Map<String, String> yLabelsForLegend) {
         Objects.requireNonNull(yLabelsForLegend, "The given map for setting the correct labels for the y-axis was null!");
-        double min = mDiagram.getData().getMinY();
+        double min = mDiagram.getDataSet().getMinY();
         Map<Integer, String> result = new HashMap<>();
         double tmpDpi = dpi;
 

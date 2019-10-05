@@ -1,12 +1,20 @@
 package de.tudresden.inf.mci.brailleplot;
 
 import ch.qos.logback.classic.Level;
+import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
+import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
+import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
+import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
-
 import de.tudresden.inf.mci.brailleplot.configparser.Representation;
+import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
+import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
+import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
 import de.tudresden.inf.mci.brailleplot.csvparser.MalformedCsvException;
+import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
+import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.SimpleCategoricalPointListContainerImpl;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
@@ -19,24 +27,12 @@ import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
-
-
-import de.tudresden.inf.mci.brailleplot.commandline.CommandLineParser;
-import de.tudresden.inf.mci.brailleplot.commandline.SettingType;
-import de.tudresden.inf.mci.brailleplot.commandline.SettingsReader;
-import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
-
-import de.tudresden.inf.mci.brailleplot.csvparser.CsvOrientation;
-import de.tudresden.inf.mci.brailleplot.csvparser.CsvParser;
-import de.tudresden.inf.mci.brailleplot.csvparser.CsvType;
-import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
-import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
-
 import de.tudresden.inf.mci.brailleplot.rendering.LiblouisBrailleTextRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolFloatingPointDataSvgExporter;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolMatrixDataSvgExporter;
 import de.tudresden.inf.mci.brailleplot.svgexporter.SvgExporter;
+import de.tudresden.inf.mci.brailleplot.util.NativeLibraryHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,6 +135,7 @@ public final class App {
         System.exit(EXIT_ERROR);
     }
 
+    @SuppressWarnings("MethodLength")
     /**
      * Main loop of the application.
      * @param args Command line parameters.
@@ -205,16 +202,16 @@ public final class App {
             } else {
                 csvOrientation = CsvOrientation.HORIZONTAL;
             }
-            switch (settingsReader.getSetting(SettingType.DIAGRAM_TYPE).orElse("").toLowerCase()) {
-                case "scatterplot":
+            switch (settingsReader.getSetting(SettingType.DIAGRAM_TYPE).orElse("")) {
+                case "ScatterPlot":
                     PointListContainer<PointList> scatterPlotContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
                     diagram = new ScatterPlot(scatterPlotContainer);
                     break;
-                case "linechart":
+                case "LineChart":
                     PointListContainer<PointList> lineChartContainer = csvParser.parse(CsvType.DOTS, csvOrientation);
                     diagram = new LineChart(lineChartContainer);
                     break;
-                case "barchart":
+                case "BarChart":
                     CategoricalPointListContainer<PointList> barChartContainer;
                     try { // first try to parse as regular bar chart and convert to single category bar cart.
                         barChartContainer = new SimpleCategoricalPointListContainerImpl(csvParser.parse(CsvType.X_ALIGNED, csvOrientation));
@@ -242,7 +239,7 @@ public final class App {
                     outputPages = rasterCanvas.getPageIterator();
                     break;
                 case INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER:
-                    PlotCanvas plotCanvas = new PlotCanvas(printer, representationParameters, format); // TODO: call renderer.plot()
+                    PlotCanvas plotCanvas = renderer.plot(diagram);
                     svgExporter = new BoolFloatingPointDataSvgExporter(plotCanvas);
                     outputPages = plotCanvas.getPageIterator();
                     break;
@@ -279,12 +276,46 @@ public final class App {
                     } catch (IOException ex) {
                         // Inform user, but do not stop execution
                         mLogger.error("An error occured while creating byte dump", ex);
-                        throw new RuntimeException();
                     }
                 }
                 if (doPrint) { // Print page
-                    printD.print(page);
+                    boolean applyWorkaround;
+                    switch (NativeLibraryHelper.getOs()) {
+                        case "win32":
+                            applyWorkaround = false;
+                            break;
+                        case "osx":
+                        case "linux":
+                        default:
+                            applyWorkaround = true;
+                    }
+                    if (settingsReader.isTrue(SettingType.NO_PRINT_WORKAROUND).orElse(false)) {
+                        applyWorkaround = false;
+                    }
+                    if (!applyWorkaround) {
+                        printD.print(page);
+                    } else {
+                        mLogger.warn("Currently a workaround is applied for printer communication. Expect a waiting time of up to 100 seconds between document pages. Disable with option -npw");
+                        Thread printingThread = new Thread(() -> {
+                            mLogger.debug("Started printing thread");
+                            printD.print(page);
+                            mLogger.debug("Print call returned");
+                        });
+                        printingThread.start();
+                        while (printingThread.isAlive()) {
+                            final int reduceBusinessWaitingTime = 100;
+                            Thread.sleep(reduceBusinessWaitingTime);
+                        }
+                        mLogger.debug(printingThread.getName() + " has finished.");
+                        try {
+                            final int waitBetweenJobs = 100000;
+                            Thread.sleep(waitBetweenJobs);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
+
                 pageNumber++;
             }
         } catch (final Exception e) {

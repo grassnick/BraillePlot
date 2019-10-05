@@ -86,6 +86,15 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         defineRepresentationProperty("rasterize.barChart.padding.caption", requireInteger);
         defineRepresentationProperty("rasterize.barChart.padding.groups", requireInteger);
         defineRepresentationProperty("rasterize.barChart.padding.bars", requireInteger);
+        defineRepresentationProperty("floatingDot.minBarWidth", requireDouble.and(requirePositive), false);
+        defineRepresentationProperty("floatingDot.maxBarWidth", requireDouble.and(requirePositive), false);
+        defineRepresentationProperty("floatingDot.minBarDist", requireDouble.and(requirePositive), false);
+        defineRepresentationProperty("floatingDot.secondAxis", requireBoolean, false);
+        defineRepresentationProperty("floatingDot.frames", requireBoolean, false);
+        defineRepresentationProperty("floatingDot.derivation", requireBoolean, false);
+        defineRepresentationProperty("floatingDot.grid", requireBoolean, false);
+        defineRepresentationProperty("floatingDot.dotFrame", requireBoolean, false);
+        defineRepresentationProperty("floatingDot.barAccumulation", requireBoolean, false);
     }
 
     /**

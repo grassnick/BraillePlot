@@ -17,6 +17,8 @@ import java.util.Iterator;
  */
 public interface FloatingPointData<T> extends PrintableData {
 
+    double RANGE = 1.5;
+
     /**
      * Returns an iterator over all {@link Point2DValued}.
      * @return An iterator over all points.
@@ -24,8 +26,22 @@ public interface FloatingPointData<T> extends PrintableData {
     Iterator<Point2DValued<Quantity<Length>, T>> getIterator();
 
     /**
-     * Add a point to the data structure.
+     * Adds a point to the data structure if it is not already in there. This is necessary so that the printer
+     * will not emboss the same coordinate twice.
      * @param point The point to be inserted.
+     */
+    void addPointIfNotExisting(Point2DValued<Quantity<Length>, T> point);
+
+    /**
+     * Checks if a point is already in the data. Takes an additional area of RANGE mm * RANGE mm around the point into account.
+     * @param point The point to be checked.
+     * @return true, if the point is already in the data and false, if not.
+     */
+    boolean pointExists(Point2DValued<Quantity<Length>, T> point);
+
+    /**
+     * Adds a point to the data.
+     * @param point The point to be added.
      */
     void addPoint(Point2DValued<Quantity<Length>, T> point);
 }

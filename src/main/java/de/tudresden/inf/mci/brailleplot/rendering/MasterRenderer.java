@@ -1,19 +1,22 @@
 package de.tudresden.inf.mci.brailleplot.rendering;
 
-import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
-import de.tudresden.inf.mci.brailleplot.configparser.Representation;
-import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
-import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
-import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
-import de.tudresden.inf.mci.brailleplot.layout.SixDotBrailleRasterCanvas;
-
-import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.configparser.Representation;
+import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
+import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
+import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
+import de.tudresden.inf.mci.brailleplot.layout.InsufficientRenderingAreaException;
+import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
+import de.tudresden.inf.mci.brailleplot.layout.SixDotBrailleRasterCanvas;
+import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.BarChartPlotter;
+import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.FunctionalPlotter;
+import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.LinePlotter;
+import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.Plotter;
+import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.ScatterPlotter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
@@ -57,6 +60,16 @@ public final class MasterRenderer {
         //renderingBase.registerRasterizer(new FunctionalRasterizer<ScatterPlot>(ScatterPlot.class, ScatterPlotRasterizing::fooRasterizing));
         //...
 
+        mLogger.trace("Instantiating default rasterizers");
+        Plotter<ScatterPlot> scatterPlotter = new ScatterPlotter();
+        Plotter<LineChart> linePlotter = new LinePlotter();
+        Plotter<CategoricalBarChart> barChartPlotter = new BarChartPlotter();
+
+        mLogger.trace("Registering default plotters");
+        renderingBase.registerPlotter(new FunctionalPlotter<ScatterPlot>(ScatterPlot.class, scatterPlotter));
+        renderingBase.registerPlotter(new FunctionalPlotter<LineChart>(LineChart.class, linePlotter));
+        renderingBase.registerPlotter(new FunctionalPlotter<CategoricalBarChart>(CategoricalBarChart.class, barChartPlotter));
+
         setRenderingContext(printer, representation, format, renderingBase);
     }
 
@@ -72,6 +85,17 @@ public final class MasterRenderer {
         mRenderingBase.setRasterCanvas(canvas);
         mRenderingBase.rasterize(data);
         mLogger.info("Rasterizing of {} on RenderingBase {} has finished, result containing {} pages",
+                data.getClass().getSimpleName(), mRenderingBase, canvas.getPageCount());
+        return canvas;
+    }
+
+    public PlotCanvas plot(final Renderable data) throws InsufficientRenderingAreaException {
+        mLogger.info("Preparing a new {} plotting on RenderingBase {}",
+                data.getClass().getSimpleName(), mRenderingBase);
+        PlotCanvas canvas = new PlotCanvas(mPrinter, mRepresentation, mFormat);
+        mRenderingBase.setPlotCanvas(canvas);
+        mRenderingBase.plot(data);
+        mLogger.info("Plotting of {} on RenderingBase {} has finished, result containing {} pages",
                 data.getClass().getSimpleName(), mRenderingBase, canvas.getPageCount());
         return canvas;
     }

@@ -23,6 +23,18 @@ public class Legend implements Renderable {
     private int mTextureExampleWidthCells = 1;
     private int mTextureExampleHeightCells = 1;
 
+    // diagram type
+    // Indicates which type of diagram a legend is plotted for.
+    // TODO: Make legend semantically independent from diagrams
+    private int mType;
+
+    /**
+     * Constructor. Creates a legend.
+     */
+    public Legend() {
+
+    }
+
     /**
      * Constructor. Creates a legend with default language (DE_BASISSCHRIFT).
      * @param title The title of the legend.
@@ -166,7 +178,7 @@ public class Legend implements Renderable {
      * Get all text symbol explanation groups from the legend.
      * @return A map associating every group name with a map listing the text symbols and their associated description texts.
      */
-    final Map<String, Map<String, String>> getSymbolExplanationGroups() {
+    public final Map<String, Map<String, String>> getSymbolExplanationGroups() {
         return mStringExplanationLists;
     }
 
@@ -184,6 +196,22 @@ public class Legend implements Renderable {
 
     final int getTextureExampleHeightCells() {
         return mTextureExampleHeightCells;
+    }
+
+    /**
+     * See source code comment to mType.
+     * @param type The type to set.
+     */
+    public final void setType(final int type) {
+        mType = type;
+    }
+
+    /**
+     * See source code comment to mType.
+     * @return The type of the legend.
+     */
+    public final int getType() {
+        return mType;
     }
 
 }

@@ -28,7 +28,7 @@ class SimpleFloatingPointDataImplTest {
     void testAddPointNull() {
         FloatingPointData<Integer> data = emptyIntFloatingPointData();
         Assertions.assertThrows(NullPointerException.class, () -> {
-            data.addPoint(null);
+            data.addPointIfNotExisting(null);
         });
     }
 
@@ -36,7 +36,7 @@ class SimpleFloatingPointDataImplTest {
     void testAddPointAndIterator() {
         FloatingPointData<Integer> data = emptyIntFloatingPointData();
         for (int i = 0; i < 5; i++) {
-            data.addPoint(point2dInt(i, i, i));
+            data.addPointIfNotExisting(point2dInt(i, i, i));
         }
         Iterator<Point2DValued<Quantity<Length>, Integer>> it = data.getIterator();
         int i = 0;
