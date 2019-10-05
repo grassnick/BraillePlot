@@ -24,11 +24,9 @@ public class Legend implements Renderable {
     private int mTextureExampleHeightCells = 1;
 
     // diagram type
+    // Indicates which type of diagram a legend is plotted for.
+    // TODO: Make legend semantically independent from diagrams
     private int mType;
-
-    // constants
-    private static final int THREE = 3;
-    private static final int FOUR = 4;
 
     /**
      * Constructor. Creates a legend.
@@ -200,10 +198,18 @@ public class Legend implements Renderable {
         return mTextureExampleHeightCells;
     }
 
+    /**
+     * See source code comment to mType.
+     * @param type The type to set.
+     */
     public final void setType(final int type) {
         mType = type;
     }
 
+    /**
+     * See source code comment to mType.
+     * @return The type of the legend.
+     */
     public final int getType() {
         return mType;
     }
