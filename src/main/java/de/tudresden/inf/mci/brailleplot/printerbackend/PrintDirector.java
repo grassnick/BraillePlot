@@ -6,6 +6,7 @@ import de.tudresden.inf.mci.brailleplot.printabledata.PrintableData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import javax.print.Doc;
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
