@@ -1,7 +1,5 @@
 package de.tudresden.inf.mci.brailleplot.util;
 
-import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParsingException;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -36,7 +34,7 @@ public final class UrlHelper {
      * @return The URL to the parent directory of the specified URL.
      * @throws RuntimeException if the generated URL is not a valid URL.
      */
-    public static URL getParentUrl(final URL resourcePath) throws ConfigurationParsingException {
+    public static URL getParentUrl(final URL resourcePath) throws RuntimeException {
         String fileString = getPathString(resourcePath);
         String parentString = fileString.substring(0, fileString.lastIndexOf("/"));
         try {
