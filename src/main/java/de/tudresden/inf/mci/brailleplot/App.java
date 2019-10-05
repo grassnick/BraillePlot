@@ -75,11 +75,7 @@ public final class App {
     private final Logger mLogger;
 
     private ConcurrentLinkedDeque<Runnable> mFinalizers;
-
-    private static final int THREE = 3;
-    private static final int FOUR = 4;
-    private static final int FIVE = 5;
-
+    
     private App() {
         sInstance = this;
         mFinalizers = new ConcurrentLinkedDeque<>();
