@@ -330,8 +330,7 @@ abstract class AbstractPlotter<T extends Diagram> {
                     mLen = 2;
                 }
             } else {
-                if (mDigits[1] < 2) {
-                    mDigits[1] = 0;
+                if (mDigits[1] == 0) {
                     if (mLen > 2) {
                         for (int i = 2; i < mLen; i++) {
                             mDigits[i] = 0;

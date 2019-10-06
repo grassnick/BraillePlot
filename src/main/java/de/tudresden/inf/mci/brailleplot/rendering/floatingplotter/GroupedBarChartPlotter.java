@@ -254,23 +254,37 @@ public final class GroupedBarChartPlotter extends AbstractBarChartPlotter implem
                         for (int m = 0; m < mCatList.getNumberOfCategories(); m++) {
                             if (j <= mBottomMargin - l * barGroupStep - mBarDist - m * mBarWidth && j >= mBottomMargin - l * barGroupStep - mBarDist - (m + 1) * mBarWidth) {
                                 int n = mCatList.getNumberOfCategories() * l + m;
-                                if ((mLeftMargin + (i / 2) * mXTickStep) > mGridHelp[n]) {
-                                    double x = mLeftMargin + (i / 2) * mXTickStep;
-                                    // mirroring for grid on the other side of the paper
-                                    double newX = mPageWidth - x - marginLeft + marginRight;
-                                    Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j + 2, MetricPrefix.MILLI(METRE)), true);
-                                    Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
-                                    if (!mData.pointExists(checkPoint)) {
-                                        grid.addPointIfNotExisting(point);
+                                if (mGridHelp[n] >= mLeftMargin + mNegative * mXTickStep) {
+                                    if ((mLeftMargin + (i / 2) * mXTickStep) > mGridHelp[n] || (i / 2) < mNegative) {
+                                        double x = mLeftMargin + (i / 2) * mXTickStep;
+                                        // mirroring for grid on the other side of the paper
+                                        double newX = mPageWidth - x - marginLeft + marginRight;
+                                        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j + 2, MetricPrefix.MILLI(METRE)), true);
+                                        Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                                        if (!mData.pointExists(checkPoint)) {
+                                            grid.addPointIfNotExisting(point);
+                                        }
+                                    }
+                                } else {
+                                    if ((mLeftMargin + (i / 2) * mXTickStep) < mGridHelp[n] || (i / 2) > mNegative) {
+                                        double x = mLeftMargin + (i / 2) * mXTickStep;
+                                        // mirroring for grid on the other side of the paper
+                                        double newX = mPageWidth - x - marginLeft + marginRight;
+                                        Point2DValued<Quantity<Length>, Boolean> point = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(newX, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j + 2, MetricPrefix.MILLI(METRE)), true);
+                                        Point2DValued<Quantity<Length>, Boolean> checkPoint = new Point2DValued<Quantity<Length>, Boolean>(Quantities.getQuantity(mLeftMargin + (i / 2) * mXTickStep, MetricPrefix.MILLI(METRE)), Quantities.getQuantity(j, MetricPrefix.MILLI(METRE)), true);
+                                        if (!mData.pointExists(checkPoint)) {
+                                            grid.addPointIfNotExisting(point);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+
                 }
             }
-        }
 
+        }
     }
 
     @Override
