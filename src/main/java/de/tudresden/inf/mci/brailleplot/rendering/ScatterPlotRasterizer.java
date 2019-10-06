@@ -164,7 +164,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         for (int x = 0; x < xAxisTickCount; x++) {
             xAxisLabels.put(x, String.valueOf(label));
             int tickPos = x * xAxisStepWidth;
-            double val = tickPos / xRatio;
+            double val = xMin + tickPos / xRatio;
             LOG.trace("Adding x axis label {{},{}} for tick #{}", label, val, x);
             xAxisLegendSymbols.put(String.valueOf(label), formatDouble(val));
             label++;
@@ -180,7 +180,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         for (int y = 0; y < yAxisTickCount; y++) {
             yAxisLabels.put(y, String.valueOf(label));
             int tickPos = y * yAxisStepWidth;
-            double val = tickPos / yRatio;
+            double val = yMin + tickPos / yRatio;
             LOG.trace("Adding y axis label {{},{}} for tick #{}", label, val, y);
             yAxisLegendSymbols.put(String.valueOf(label), formatDouble(val));
             label--;
