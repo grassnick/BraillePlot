@@ -214,7 +214,9 @@ abstract class AbstractPlotter<T extends Diagram> {
         if (calcRange > 1) {
             range = (int) Math.ceil(calcRange);
         } else {
-            mDecimalPlaces = (int) Math.floor(Math.log10(calcRange));
+            if (calcRange != 0) {
+                mDecimalPlaces = (int) Math.floor(Math.log10(calcRange));
+            }
             range = (int) (calcRange * Math.pow(TEN, -mDecimalPlaces));
             scaled = true;
         }
