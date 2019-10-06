@@ -54,12 +54,17 @@ public class CsvDotParser extends CsvParseAlgorithm<PointListContainer<PointList
                 try {
                     xValue = Constants.NUMBER_FORMAT.parse(xRowIterator.next());
                 } catch (ParseException pe) {
-                    throw new MalformedCsvException("Line: " + (row - 1) + ": Could not parse value", pe);
+                    // TODO: actually throw exceptions
+                    // Currently this does not work because some of the csv data examples from SVGPlott include empty cells,
+                    // and their correct layout is not documented.
+                    mLogger.warn("Line: " + (row - 1) + ": Could not parse value", pe);
+                    continue;
                 }
                 try {
                     yValue = Constants.NUMBER_FORMAT.parse(yRowIterator.next());
                 } catch (ParseException pe) {
-                    throw new MalformedCsvException("Line: " + row + ": Could not parse value", pe);
+                    mLogger.warn("Line: " + row + ": Could not parse value", pe);
+                    continue;
                 }
                 Point2DDouble newPoint = new Point2DDouble(xValue.doubleValue(), yValue.doubleValue());
                 rowPoints.pushBack(newPoint);
