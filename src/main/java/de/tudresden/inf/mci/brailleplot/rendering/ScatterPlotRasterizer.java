@@ -159,7 +159,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         // TODO Transfer to separate method
         Map<Integer, String> xAxisLabels = new HashMap<>();
         xAxis.setLabels(xAxisLabels);
-        final int xAxisTickCount = xDots / xAxisStepWidth;
+        final int xAxisTickCount = xDots / xAxisStepWidth + 1;
         char label = LEGEND_TICK_START_CHAR;
         for (int x = 0; x < xAxisTickCount; x++) {
             xAxisLabels.put(x, String.valueOf(label));
@@ -175,7 +175,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
         Map<Integer, String> yAxisLabels = new HashMap<>();
         yAxis.setLabels(yAxisLabels);
-        final int yAxisTickCount = yDots / yAxisStepWidth;
+        final int yAxisTickCount = yDots / yAxisStepWidth + 1;
         label = getStartChar(yAxisTickCount);
         for (int y = 0; y < yAxisTickCount; y++) {
             yAxisLabels.put(y, String.valueOf(label));
