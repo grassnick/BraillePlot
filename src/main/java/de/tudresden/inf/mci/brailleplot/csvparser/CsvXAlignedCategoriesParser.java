@@ -18,83 +18,6 @@ import java.util.Objects;
  */
 public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm<CategoricalPointListContainer<PointList>> {
 
-    /*
-    @Override
-    public CategoricalPointListContainer<PointList> parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
-        Objects.requireNonNull(csvData);
-
-        if (true) {
-            throw new UnsupportedOperationException("Horizontal parsing is currently not supported");
-        }
-
-        CategoricalPointListContainer<PointList> container = new SimpleCategoricalPointListContainerImpl();
-
-        Iterator<? extends List<String>> rowIterator = csvData.iterator();
-
-        if (!rowIterator.hasNext()) {
-            return container;
-        }
-
-        Iterator<String> lineIterator = rowIterator.next().iterator();
-
-        // Move the iterator to the first category name
-        if (!lineIterator.hasNext()) {
-            return container;
-        }
-
-        lineIterator.next();
-
-        if (!lineIterator.hasNext()) {
-            return container;
-        }
-
-        // Store all categories
-        List<String> categories = new LinkedList<>();
-        while (lineIterator.hasNext()) {
-            categories.add(lineIterator.next());
-        }
-
-        Iterator<String> categoriesIt = categories.iterator();
-        // Store each row's data set
-        while (rowIterator.hasNext()) {
-            lineIterator = rowIterator.next().iterator();
-
-            // Create a PointList with the title of the data set
-            if (!lineIterator.hasNext()) {
-                continue;
-            }
-            String category = categoriesIt.next();
-            PointList pointList = new SimplePointListImpl(category);
-            container.pushBack(pointList);
-
-            // Add all the points
-            int colPosition = 0;
-            while (lineIterator.hasNext()) {
-                if (colPosition >= container.getSize()) {
-                    break;
-                }
-
-                // Find out the mY value
-                Number yValue;
-                try {
-                    yValue = Constants.NUMBER_FORMAT.parse(lineIterator.next());
-                } catch (ParseException e) {
-                    colPosition++;
-                    continue;
-                }
-
-                // Add the new point
-                Point2DDouble newPoint = new Point2DDouble(colPosition, yValue.doubleValue());
-                pointList.pushBack(newPoint);
-                colPosition++;
-            }
-        }
-        // TODO First add points to PointList, then add PointList to PointListContainer, so that there is no need for a calculateExtrema call
-        container.calculateExtrema();
-        return container;
-    }
-    */
-
     @Override
     public CategoricalPointListContainer<PointList> parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
         Objects.requireNonNull(csvData);
@@ -154,5 +77,4 @@ public class CsvXAlignedCategoriesParser extends CsvParseAlgorithm<CategoricalPo
         }
         return container;
     }
-
 }

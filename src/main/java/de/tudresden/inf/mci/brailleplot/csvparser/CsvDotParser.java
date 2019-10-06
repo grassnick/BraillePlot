@@ -53,8 +53,17 @@ public class CsvDotParser extends CsvParseAlgorithm<PointListContainer<PointList
                 Number yValue;
                 try {
                     xValue = Constants.NUMBER_FORMAT.parse(xRowIterator.next());
+                } catch (ParseException pe) {
+                    // TODO: actually throw exceptions
+                    // Currently this does not work because some of the csv data examples from SVGPlott include empty cells,
+                    // and their correct layout is not documented.
+                    mLogger.warn("Line: " + (row - 1) + ": Could not parse value", pe);
+                    continue;
+                }
+                try {
                     yValue = Constants.NUMBER_FORMAT.parse(yRowIterator.next());
-                } catch (ParseException e) {
+                } catch (ParseException pe) {
+                    mLogger.warn("Line: " + row + ": Could not parse value", pe);
                     continue;
                 }
                 Point2DDouble newPoint = new Point2DDouble(xValue.doubleValue(), yValue.doubleValue());
@@ -82,73 +91,6 @@ public class CsvDotParser extends CsvParseAlgorithm<PointListContainer<PointList
     public PointListContainer<PointList> parseAsVerticalDataSets(final List<? extends List<String>> csvData) {
         Objects.requireNonNull(csvData);
 
-        if (true) {
             throw new UnsupportedOperationException("Vertical parsing is currently not supported");
-        }
-
-        int row = 0;
-
-        PointListContainer<PointList> container = new SimplePointListContainerImpl();
-
-        if (csvData.isEmpty()) {
-            return container;
-        }
-
-        // Iterate over the first row in order to get the headers
-        int col = 0;
-        for (String header : csvData.get(0)) {
-            if (col % 2 == 0) {
-                PointList pointList = new SimplePointListImpl();
-                pointList.setName(header);
-                container.pushBack(pointList);
-            }
-            col++;
-        }
-
-        row++;
-
-        // Continue as long as there is at least one further rows left
-        while (csvData.size() >= row + 1) {
-            List<String> fields = csvData.get(row);
-            Iterator<String> fieldIterator = fields.iterator();
-
-            col = -1;
-
-            while (fieldIterator.hasNext()) {
-                String xRaw = fieldIterator.next();
-                String yRaw;
-
-                col++;
-
-                if (!fieldIterator.hasNext()) {
-                    break;
-                }
-
-                yRaw = fieldIterator.next();
-
-                Number xValue;
-                Number yValue;
-
-                try {
-                    xValue = Constants.NUMBER_FORMAT.parse(xRaw);
-                    yValue = Constants.NUMBER_FORMAT.parse(yRaw);
-                } catch (ParseException e) {
-                    col++;
-                    continue;
-                }
-
-                Point2DDouble point = new Point2DDouble(xValue.doubleValue(), yValue.doubleValue());
-
-                addPointToPointListList(container, col / 2, point);
-
-                col++;
-            }
-
-            row++;
-        }
-
-        // TODO First add points to PointList, then add PointList to PointListContainer, so that there is no need for a calculateExtrema call
-        container.calculateExtrema();
-        return container;
     }
 }
