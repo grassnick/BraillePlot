@@ -5,24 +5,24 @@ import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.Rectangle;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
 import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
-
 import java.util.Map;
 import static java.lang.Integer.max;
+import static java.lang.StrictMath.min;
 
 /**
  * A rasterizer that is able to draw a legend on a new page.
- * @author Leonard Kupper
- * @version 2019.08.28
+ * @author Leonard Kupper, Andrey Ruzhanskiy
+ * @version 2019.09.25
  */
 public class LegendRasterizer implements Rasterizer<Legend> {
 
     private RasterCanvas mCanvas;
     private Legend mLegend;
-    private BrailleLanguage.Language mLanguage;
-    private String mLegendKeyword; // title for the legend
 
     private static final int MIN_TEXT_WIDTH_CELLS = 10; // how much space should be available for an explanation text at least. (To avoid excessive line breaking)
     private static final int EXPLANATION_TEXT_INDENTATION_CELLS = 1; // indentation for explanation texts.
+    private BrailleLanguage.Language mLanguage;
+    private String mLegendKeyword; // title for the legend
     private static final BrailleLanguage.Language EXPLANATION_LIST_LANGUAGE = BrailleLanguage.Language.DE_BASISSCHRIFT;
 
     // Sub rasterizers
@@ -43,7 +43,7 @@ public class LegendRasterizer implements Rasterizer<Legend> {
         mLegendKeyword = mCanvas.getRepresentation().getProperty("general.legendKeyword").toString();
 
         // Create a fresh page on the canvas.
-        MatrixData<Boolean> page = canvas.getNewPage();
+        canvas.getNewPage();
         Rectangle referenceCellArea = canvas.getCellRectangle();
 
         try {
@@ -51,7 +51,6 @@ public class LegendRasterizer implements Rasterizer<Legend> {
             // Write "Legend" keyword + title
             setLanguage(legend.getLanguage());
             writeLine(mLegendKeyword + " " + legend.getTitle(), referenceCellArea);
-
 
             // Texture explanation lists
             for (Map.Entry<String, Map<Texture<Boolean>, String>> list : legend.getTextureExplanationGroups().entrySet()) {
@@ -83,6 +82,42 @@ public class LegendRasterizer implements Rasterizer<Legend> {
                     writeLine(symbol + "  " + description, referenceCellArea);
                 }
                 moveIndentation(referenceCellArea, -1 * EXPLANATION_TEXT_INDENTATION_CELLS); // reset indentation
+            }
+
+            // Columnview
+            if (legend.getColumnView().size() > 0) {
+                setLanguage(legend.getLanguage());
+                writeLine(legend.getColumnViewTitle(), referenceCellArea);
+                for (Map.Entry<String, Map<String, String>> list : legend.getColumnView().entrySet()) {
+                    Rectangle columnCellArea = new Rectangle(referenceCellArea);
+                    setLanguage(legend.getLanguage());
+                    writeLine(list.getKey(), columnCellArea);
+                    int maxWidth = 0;
+                    for (Map.Entry<String, String> explanation : list.getValue().entrySet()) {
+                        String symbol = explanation.getKey();
+                        String description = explanation.getValue();
+                        String textToWrite = symbol + "  " + description;
+
+                        setLanguage(EXPLANATION_LIST_LANGUAGE);
+                        try {
+                            int usedWidth = writeLine(textToWrite, columnCellArea);
+                            if (usedWidth > maxWidth) {
+                                maxWidth = usedWidth;
+                            }
+                        } catch (Rectangle.OutOfSpaceException e) {
+                            referenceCellArea.removeFromLeft(maxWidth + 1);
+                            maxWidth = 0;
+                            columnCellArea = new Rectangle(referenceCellArea);
+                            columnCellArea.removeFromTop(1);
+                            int usedWidth = writeLine(textToWrite, columnCellArea);
+                            if (usedWidth > maxWidth) {
+                                maxWidth = usedWidth;
+                            }
+                        }
+
+                    }
+                    referenceCellArea.removeFromLeft(maxWidth + 1 + EXPLANATION_TEXT_INDENTATION_CELLS);
+                }
             }
 
         } catch (Rectangle.OutOfSpaceException e) {
@@ -142,7 +177,7 @@ public class LegendRasterizer implements Rasterizer<Legend> {
         cellArea.setWidth(cellArea.getWidth() - indent);
     }
 
-    private void writeLine(final String text, final Rectangle cellArea) throws InsufficientRenderingAreaException, Rectangle.OutOfSpaceException {
+    private int writeLine(final String text, final Rectangle cellArea) throws InsufficientRenderingAreaException, Rectangle.OutOfSpaceException {
         if (cellArea.getWidth() < MIN_TEXT_WIDTH_CELLS) {
             throw new InsufficientRenderingAreaException("Not enough space for legend text.");
         }
@@ -151,6 +186,7 @@ public class LegendRasterizer implements Rasterizer<Legend> {
         int textHeight = max(1, (int) Math.ceil(textLength / cellArea.getWidth()));
         Rectangle textLineDotArea = mCanvas.toDotRectangle(cellArea.removeFromTop(textHeight));
         mTextRasterizer.rasterize(new BrailleText(text, textLineDotArea, getLanguage()), mCanvas);
+        return min(textLength, cellArea.intWrapper().getWidth());
     }
 
     private void setLanguage(final BrailleLanguage.Language language) {
@@ -160,5 +196,4 @@ public class LegendRasterizer implements Rasterizer<Legend> {
     private BrailleLanguage.Language getLanguage() {
         return mLanguage;
     }
-
 }

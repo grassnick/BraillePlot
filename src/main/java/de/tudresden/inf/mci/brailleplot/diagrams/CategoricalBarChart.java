@@ -2,9 +2,12 @@ package de.tudresden.inf.mci.brailleplot.diagrams;
 
 import de.tudresden.inf.mci.brailleplot.datacontainers.CategoricalPointListContainer;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
+import de.tudresden.inf.mci.brailleplot.point.Point2DDouble;
+
+import java.util.Iterator;
 
 /**
- * Representation of a bar chart composed from categories of multiple bars each. Implements Renderable.
+ * Representation of a bar chart composed from categories of multiple bars each. Implements {@link de.tudresden.inf.mci.brailleplot.rendering.Renderable}.
  * @author Leonard Kupper
  * @version 2019.09.02
  */
@@ -39,4 +42,39 @@ public class CategoricalBarChart extends BarChart {
     public int getNumberOfCategories() {
         return mData.getNumberOfCategories();
     }
+
+    /**
+     * Getter for a list with x-y-Pairs: x is the index (always just counts from 0 up), y is the value.
+     * @return PointList with the corresponding data set.
+     */
+    public CategoricalPointListContainer<PointList> getDataSet() {
+        return mData;
+    }
+
+    /**
+     * Adds all y-values of on data series.
+     * @return double maximum y-value
+     */
+    public double getCumulatedMaxY() {
+        double maxY = 0;
+
+        for (PointList list : mData) {
+            Iterator<Point2DDouble> smallIt = list.getListIterator();
+            double current = 0;
+            while (smallIt.hasNext()) {
+                Point2DDouble point = smallIt.next();
+                if (point.getY() >= 0) {
+                    current += point.getY();
+                }
+            }
+
+            if (current > maxY) {
+                maxY = current;
+            }
+        }
+
+        return maxY;
+
+    }
+
 }

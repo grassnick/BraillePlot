@@ -89,7 +89,7 @@ public final class NativeLibraryHelper {
         }
     }
 
-    private static String getOs() {
+    public static String getOs() {
         String name = System.getProperty("os.name");
         String nameLow = name.toLowerCase();
         if (nameLow.contains("linux")) {

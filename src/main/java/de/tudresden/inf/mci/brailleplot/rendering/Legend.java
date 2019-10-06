@@ -8,8 +8,8 @@ import java.util.Objects;
 
 /**
  * Simple representation of a legend.
- * @author Leonard Kupper
- * @version 2019.08.29
+ * @author Leonard Kupper, Andrey Ruzhanskiy
+ * @version 2019.09.25
  */
 public class Legend implements Renderable {
 
@@ -17,9 +17,23 @@ public class Legend implements Renderable {
     private BrailleLanguage.Language mLanguage;
     private Map<String, Map<String, String>> mStringExplanationLists = new LinkedHashMap<>();
     private Map<String, Map<Texture<Boolean>, String>> mTextureExplanationLists = new LinkedHashMap<>();
+    private String mColumnViewTitle;
 
+    private Map<String, Map<String, String>> mColumnView = new LinkedHashMap<>();
     private int mTextureExampleWidthCells = 1;
     private int mTextureExampleHeightCells = 1;
+
+    // diagram type
+    // Indicates which type of diagram a legend is plotted for.
+    // TODO: Make legend semantically independent from diagrams
+    private int mType;
+
+    /**
+     * Constructor. Creates a legend.
+     */
+    public Legend() {
+
+    }
 
     /**
      * Constructor. Creates a legend with default language (DE_BASISSCHRIFT).
@@ -86,6 +100,40 @@ public class Legend implements Renderable {
     }
 
     /**
+     * Add a column to the columnview.
+     * @param columnName Name of column.
+     * @param explanations {@link Map} of symbols and descriptions inside the column.
+     */
+    public void addColumn(final String columnName, final Map<String, String> explanations) {
+            mColumnView.put(columnName, explanations);
+    }
+
+    /**
+     * Set the columnview title.
+     * @param columnViewTitle The title for the columnview.
+     */
+    public void setColumnViewTitle(final String columnViewTitle) {
+        this.mColumnViewTitle = columnViewTitle;
+    }
+
+    /**
+     * Getter for the column-view.
+     * @return {@link Map} representing the columnview.
+     */
+    public Map<String, Map<String, String>> getColumnView() {
+        return mColumnView;
+    }
+
+    /**
+     * Getter for the columnview-title.
+     * @return {@link String} representing the columnview-title.
+     */
+    public String getColumnViewTitle() {
+        return mColumnViewTitle;
+    }
+
+
+    /**
      * Add a texture and the associated description text to the legend.
      * @param groupName The name of the header under which explanations of this group will be placed. (e.g. "Series")
      * @param texture The actual texture to be explained, which is used in the diagram.
@@ -130,7 +178,7 @@ public class Legend implements Renderable {
      * Get all text symbol explanation groups from the legend.
      * @return A map associating every group name with a map listing the text symbols and their associated description texts.
      */
-    final Map<String, Map<String, String>> getSymbolExplanationGroups() {
+    public final Map<String, Map<String, String>> getSymbolExplanationGroups() {
         return mStringExplanationLists;
     }
 
@@ -149,4 +197,21 @@ public class Legend implements Renderable {
     final int getTextureExampleHeightCells() {
         return mTextureExampleHeightCells;
     }
+
+    /**
+     * See source code comment to mType.
+     * @param type The type to set.
+     */
+    public final void setType(final int type) {
+        mType = type;
+    }
+
+    /**
+     * See source code comment to mType.
+     * @return The type of the legend.
+     */
+    public final int getType() {
+        return mType;
+    }
+
 }

@@ -5,6 +5,7 @@ package de.tudresden.inf.mci.brailleplot.rendering.language;
  * @author Andrey Ruzhanskiy
  * @version 27.09.2019
  */
+
 @SuppressWarnings("HideUtilityClassConstructor")
 public class BrailleLanguage {
 

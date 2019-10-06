@@ -16,21 +16,22 @@ import java.util.Iterator;
 /**
  * @author Richard Schmidt
  */
-public class CsvDotParserTest {
+class CsvDotParserTest {
 
-    public static CsvParser parser;
+    private static CsvParser parser;
 
     @BeforeAll
-    public static void initialize() throws Exception {
+    static void initialize() throws Exception {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         InputStream csvStream = classloader.getResourceAsStream("examples.csv/1_scatter_plot.csv");
+        assert csvStream != null;
         Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
         parser = new CsvParser(csvReader, ',', '\"');
 
     }
 
     @Test
-    public void testHorizontalParsing() {
+    void testHorizontalParsing() {
         PointListContainer<PointList> container = parser.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
         Iterator<PointList> containerIt = container.iterator();
         PointList list_1 = containerIt.next();
