@@ -120,8 +120,8 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         // 3. Calculate scaling
         Rectangle plotArea = printableArea;
 
-        int xDots = plotArea.intWrapper().getWidth();
-        int yDots = plotArea.intWrapper().getHeight();
+        int xDots = plotArea.intWrapper().getWidth() - 1;
+        int yDots = plotArea.intWrapper().getHeight() - 1;
 
         int xMin = ((int) Math.ceil(data.getMinX()));
         int yMin = ((int) Math.ceil(data.getMinY()));
@@ -131,8 +131,8 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         int xRange = Math.abs(xMax - xMin);
         int yRange = Math.abs(yMax - yMin);
 
-        double xRatio = Math.floor((double) xDots / (double) xRange);
-        double yRatio = Math.floor((double) yDots / (double) yRange);
+        double xRatio = ((double) xDots / (double) xRange);
+        double yRatio = ((double) yDots / (double) yRange);
 
         int xOrigin = plotArea.intWrapper().getX();
         int yOrigin = plotArea.intWrapper().getY() + plotArea.intWrapper().getHeight();
