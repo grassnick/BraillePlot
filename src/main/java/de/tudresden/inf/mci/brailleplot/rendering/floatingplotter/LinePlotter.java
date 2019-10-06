@@ -154,7 +154,7 @@ public final class LinePlotter extends AbstractPointPlotter<LineChart> implement
         } else if (Math.abs(slope) <= SLOPE9) {
             steps = mStepSize / SLOPE9;
         } else {
-            steps = mStepSize / SLOPE10;
+            steps = mStepSize / Math.abs(slope);
         }
 
         // new line styles are added here
