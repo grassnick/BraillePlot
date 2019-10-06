@@ -133,8 +133,10 @@ public final class LinePlotter extends AbstractPointPlotter<LineChart> implement
         double slope = (nextY - currentY) / (nextX - currentX);
         double n = currentY - currentX * slope;
         double steps;
-        if (Math.abs(slope) <= 1) {
+        if (Math.abs(slope) == 0) {
             steps = mStepSize;
+        } else if (Math.abs(slope) <= 1) {
+            steps = mStepSize * SLOPESCALE;
         } else if (Math.abs(slope) <= 2) {
             steps = mStepSize / 2;
         } else if (Math.abs(slope) <= SLOPE3) {
