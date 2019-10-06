@@ -44,7 +44,7 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
         PointListContainer<PointList> data = scatterPlot.getDataSet();
 
-        if (data.getSize() < 1 ) {
+        if (data.getSize() < 1) {
             throw new RuntimeException("Supplied data was empty");
         }
 
