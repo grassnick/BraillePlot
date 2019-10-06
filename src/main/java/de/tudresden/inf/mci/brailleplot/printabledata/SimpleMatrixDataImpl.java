@@ -102,7 +102,6 @@ public class SimpleMatrixDataImpl<T> extends AbstractPrintableData implements Ma
         return sb.toString();
     }
 
-    // TODO: Remove, once svgexporter is implemented
     public final String toBoolString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < getRowCount(); i++) {

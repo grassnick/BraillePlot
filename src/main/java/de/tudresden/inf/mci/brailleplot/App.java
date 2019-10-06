@@ -149,14 +149,15 @@ public final class App {
         });
 
         try {
-            // Logging example
-            mLogger.info("Application started");
             // Parse command line parameters
             CommandLineParser cliParser = new CommandLineParser();
             if (CommandLineParser.checkForHelp(args)) {
                 cliParser.printHelp(); // If requested, print help and exit
                 return EXIT_SUCCESS;
             }
+
+            mLogger.info("Application started");
+
             SettingsWriter settings = cliParser.parse(args);
             SettingsReader settingsReader = settings;
 
