@@ -166,14 +166,8 @@ public final class App {
             // Config Parsing
             JavaPropertiesConfigurationParser configParser;
             URL defaultConfig = getClass().getClassLoader().getResource("config/default.properties");
-            if (!settingsReader.isPresent(SettingType.PRINTER_CONFIG_PATH)) { // TODO: exception if missing this argument, until then use default location for test runs
-                URL configUrl = getClass().getResource("/config/index_everest_d_v4.properties");
-                configParser = new JavaPropertiesConfigurationParser(configUrl, defaultConfig);
-                mLogger.warn("ATTENTION! Using default specific config from resources. Please remove default config behavior before packaging the jar.");
-            } else {
-                Path configPath = Path.of(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
-                configParser = new JavaPropertiesConfigurationParser(configPath, defaultConfig);
-            }
+            Path configPath = Path.of(settingsReader.getSetting(SettingType.PRINTER_CONFIG_PATH).get());
+            configParser = new JavaPropertiesConfigurationParser(configPath, defaultConfig);
 
             // Set up Printer, Representation & Format Configurables
             Printer printer = configParser.getPrinter();
@@ -187,13 +181,7 @@ public final class App {
 
             // Parse csv data and create diagram
             InputStream csvStream;
-            if (!settingsReader.isPresent(SettingType.CSV_LOCATION)) {
-                ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-                csvStream = classloader.getResourceAsStream("examples/csv/0_bar_chart_categorical.csv");
-                mLogger.warn("ATTENTION! Using example csv. Please remove this behavior before packaging the jar.");
-            } else {
-                csvStream = new FileInputStream(settingsReader.getSetting(SettingType.CSV_LOCATION).get());
-            }
+            csvStream = new FileInputStream(settingsReader.getSetting(SettingType.CSV_LOCATION).get());
             Reader csvReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(csvStream)));
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
             Diagram diagram;

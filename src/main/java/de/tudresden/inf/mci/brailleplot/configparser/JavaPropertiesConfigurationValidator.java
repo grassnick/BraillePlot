@@ -50,7 +50,6 @@ public final class JavaPropertiesConfigurationValidator implements Configuration
         definePrinterProperty("mode", requireNotEmpty);
         definePrinterProperty("brailletable", requireNotEmpty, false);  // checked in interpretation
         definePrinterProperty("semantictable", requireNotEmpty, false); // before predicate validation
-        definePrinterProperty("floatingDot.support", requireBoolean);
         definePrinterProperty("floatingDot.resolution", requireDouble.and(requirePositive), false);
         definePrinterProperty("constraint.top", requireDouble.and(requirePositive));
         definePrinterProperty("constraint.left", requireDouble.and(requirePositive));
