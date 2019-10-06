@@ -109,6 +109,7 @@ abstract class AbstractPlotter<T extends Diagram> {
     static final int XTICKS5 = 10;
     static final int XTICKS6 = 15;
     static final int XTICKSEND2 = 20;
+    static final double SLOPESCALE = 0.75;
     // bar thickness on legend
     static final int BAR = 30;
     // min tick distance for x-axis
@@ -213,7 +214,9 @@ abstract class AbstractPlotter<T extends Diagram> {
         if (calcRange > 1) {
             range = (int) Math.ceil(calcRange);
         } else {
-            mDecimalPlaces = (int) Math.floor(Math.log10(calcRange));
+            if (calcRange != 0) {
+                mDecimalPlaces = (int) Math.floor(Math.log10(calcRange));
+            }
             range = (int) (calcRange * Math.pow(TEN, -mDecimalPlaces));
             scaled = true;
         }
@@ -279,7 +282,11 @@ abstract class AbstractPlotter<T extends Diagram> {
 
         // power of 10 which is used to scale; for legend
         if (scaled) {
-            array[mNumberTicks] = mDecimalPlaces;
+            if (distance != Math.round(distance)) {
+                array[mNumberTicks] = mDecimalPlaces - 1;
+            } else {
+                array[mNumberTicks] = mDecimalPlaces;
+            }
         } else if (mSingleDigit) {
             if (distance != Math.round(distance)) {
                 array[mNumberTicks] = -1;
@@ -330,8 +337,7 @@ abstract class AbstractPlotter<T extends Diagram> {
                     mLen = 2;
                 }
             } else {
-                if (mDigits[1] < 2) {
-                    mDigits[1] = 0;
+                if (mDigits[1] == 0) {
                     if (mLen > 2) {
                         for (int i = 2; i < mLen; i++) {
                             mDigits[i] = 0;
