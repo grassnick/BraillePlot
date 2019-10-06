@@ -123,16 +123,16 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         int xDots = plotArea.intWrapper().getWidth() - 1;
         int yDots = plotArea.intWrapper().getHeight() - 1;
 
-        int xMin = ((int) Math.ceil(data.getMinX()));
-        int yMin = ((int) Math.ceil(data.getMinY()));
-        int xMax = ((int) Math.ceil(data.getMaxX()));
-        int yMax = ((int) Math.ceil(data.getMaxY()));
+        double xMin = data.getMinX();
+        double yMin = data.getMinY();
+        double xMax = data.getMaxX();
+        double yMax = data.getMaxY();
 
-        int xRange = Math.abs(xMax - xMin);
-        int yRange = Math.abs(yMax - yMin);
+        double xRange = Math.abs(xMax - xMin);
+        double yRange = Math.abs(yMax - yMin);
 
-        double xRatio = ((double) xDots / (double) xRange);
-        double yRatio = ((double) yDots / (double) yRange);
+        double xRatio = ((double) xDots / xRange);
+        double yRatio = ((double) yDots / yRange);
 
         int xOrigin = plotArea.intWrapper().getX();
         int yOrigin = plotArea.intWrapper().getY() + plotArea.intWrapper().getHeight();
