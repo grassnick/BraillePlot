@@ -44,6 +44,10 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
         PointListContainer<PointList> data = scatterPlot.getDataSet();
 
+        if (data.getSize() < 1 ) {
+            throw new RuntimeException("Supplied data was empty");
+        }
+
         final int cellWidth = canvas.getCellWidth();
         final int cellHeight = canvas.getCellHeight();
         final int xAxisStepWidth = cellWidth * X_AXIS_STEP_WIDTH;
