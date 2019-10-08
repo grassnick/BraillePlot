@@ -18,92 +18,6 @@ import java.util.Objects;
  */
 public class CsvXAlignedParser extends CsvParseAlgorithm<PointListContainer<PointList>> {
 
-    /*
-    @Override
-    public PointListContainer<PointList> parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
-        Objects.requireNonNull(csvData);
-
-        if (true) {
-            throw new UnsupportedOperationException("Horizontal parsing is currently not supported");
-        }
-
-        PointListContainer<PointList> container = new SimplePointListContainerImpl();
-        List<Number> xValues = new ArrayList<>();
-        Iterator<? extends List<String>> rowIterator = csvData.iterator();
-
-        if (!rowIterator.hasNext()) {
-            return container;
-        }
-
-        Iterator<String> lineIterator = rowIterator.next().iterator();
-
-        // Move the iterator to the mX value
-        if (!lineIterator.hasNext()) {
-            return container;
-        }
-        lineIterator.next();
-        if (!lineIterator.hasNext()) {
-            return container;
-        }
-
-        // Store all mX values, if one is not specified store NaN
-        while (lineIterator.hasNext()) {
-            Number xValue;
-            try {
-                xValue = Constants.NUMBER_FORMAT.parse(lineIterator.next());
-            } catch (ParseException e) {
-                xValue = Double.NaN;
-            }
-            xValues.add(xValue);
-        }
-
-        // Store each row's data set
-        while (rowIterator.hasNext()) {
-            lineIterator = rowIterator.next().iterator();
-
-            // Create a PointList with the title of the data set
-            if (!lineIterator.hasNext()) {
-                continue;
-            }
-            PointList pointList = new SimplePointListImpl();
-            pointList.setName(lineIterator.next());
-            container.pushBack(pointList);
-
-            // Add all the points
-            int colPosition = 0;
-            while (lineIterator.hasNext()) {
-                if (colPosition >= xValues.size()) {
-                    break;
-                }
-                Number xValue = xValues.get(colPosition);
-                if (xValue.equals(Double.NaN)) {
-                    lineIterator.next();
-                    colPosition++;
-                    continue;
-                }
-
-                // Find out the mY value
-                Number yValue;
-                try {
-                    yValue = Constants.NUMBER_FORMAT.parse(lineIterator.next());
-                } catch (ParseException e) {
-                    colPosition++;
-                    continue;
-                }
-
-                // Add the new point
-                Point2DDouble newPoint = new Point2DDouble(xValue.doubleValue(), yValue.doubleValue());
-                pointList.pushBack(newPoint);
-                colPosition++;
-            }
-        }
-
-        // TODO First add points to PointList, then add PointList to PointListContainer, so that there is no need for a calculateExtrema call
-        container.calculateExtrema();
-        return container;
-    }
-     */
-
     @Override
     public PointListContainer<PointList> parseAsHorizontalDataSets(final List<? extends List<String>> csvData) {
         Objects.requireNonNull(csvData);
@@ -114,9 +28,7 @@ public class CsvXAlignedParser extends CsvParseAlgorithm<PointListContainer<Poin
     }
 
     @Override
-    /**
-     * This method has been implemented from scratch, as there is no documentation about the structure of the CSV files whatsoever.
-     */
+    // This method has been implemented from scratch, as there is no documentation about the structure of the CSV files whatsoever.
     public PointListContainer<PointList> parseAsVerticalDataSets(final List<? extends List<String>> csvData) {
         Objects.requireNonNull(csvData);
 
@@ -153,5 +65,4 @@ public class CsvXAlignedParser extends CsvParseAlgorithm<PointListContainer<Poin
         }
         return container;
     }
-
 }

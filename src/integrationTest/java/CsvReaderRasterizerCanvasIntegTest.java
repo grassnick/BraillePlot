@@ -90,7 +90,6 @@ public class CsvReaderRasterizerCanvasIntegTest {
     public void testGettersSmokeTestCatBarChart() {
         Assertions.assertDoesNotThrow(() -> {
             //BarChart tempBarchart = new BarChart(new PointListContainer<PointList>);
-            catBarChart.getCategoryNames();
             catBarChart.getDataSet();
             catBarChart.getMaxY();
             catBarChart.getMinY();

@@ -44,6 +44,10 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
         PointListContainer<PointList> data = scatterPlot.getDataSet();
 
+        if (data.getSize() < 1) {
+            throw new RuntimeException("Supplied data was empty");
+        }
+
         final int cellWidth = canvas.getCellWidth();
         final int cellHeight = canvas.getCellHeight();
         final int xAxisStepWidth = cellWidth * X_AXIS_STEP_WIDTH;
@@ -116,19 +120,19 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         // 3. Calculate scaling
         Rectangle plotArea = printableArea;
 
-        int xDots = plotArea.intWrapper().getWidth();
-        int yDots = plotArea.intWrapper().getHeight();
+        int xDots = plotArea.intWrapper().getWidth() - 1;
+        int yDots = plotArea.intWrapper().getHeight() - 1;
 
-        int xMin = ((int) Math.ceil(data.getMinX()));
-        int yMin = ((int) Math.ceil(data.getMinY()));
-        int xMax = ((int) Math.ceil(data.getMaxX()));
-        int yMax = ((int) Math.ceil(data.getMaxY()));
+        double xMin = data.getMinX();
+        double yMin = data.getMinY();
+        double xMax = data.getMaxX();
+        double yMax = data.getMaxY();
 
-        int xRange = Math.abs(xMax - xMin);
-        int yRange = Math.abs(yMax - yMin);
+        double xRange = Math.abs(xMax - xMin);
+        double yRange = Math.abs(yMax - yMin);
 
-        double xRatio = Math.floor((double) xDots / (double) xRange);
-        double yRatio = Math.floor((double) yDots / (double) yRange);
+        double xRatio = ((double) xDots / xRange);
+        double yRatio = ((double) yDots / yRange);
 
         int xOrigin = plotArea.intWrapper().getX();
         int yOrigin = plotArea.intWrapper().getY() + plotArea.intWrapper().getHeight();
@@ -155,12 +159,12 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
         // TODO Transfer to separate method
         Map<Integer, String> xAxisLabels = new HashMap<>();
         xAxis.setLabels(xAxisLabels);
-        final int xAxisTickCount = xDots / xAxisStepWidth;
+        final int xAxisTickCount = xDots / xAxisStepWidth + 1;
         char label = LEGEND_TICK_START_CHAR;
         for (int x = 0; x < xAxisTickCount; x++) {
             xAxisLabels.put(x, String.valueOf(label));
             int tickPos = x * xAxisStepWidth;
-            double val = tickPos / xRatio;
+            double val = xMin + tickPos / xRatio;
             LOG.trace("Adding x axis label {{},{}} for tick #{}", label, val, x);
             xAxisLegendSymbols.put(String.valueOf(label), formatDouble(val));
             label++;
@@ -171,12 +175,12 @@ public class ScatterPlotRasterizer implements Rasterizer<ScatterPlot> {
 
         Map<Integer, String> yAxisLabels = new HashMap<>();
         yAxis.setLabels(yAxisLabels);
-        final int yAxisTickCount = yDots / yAxisStepWidth;
+        final int yAxisTickCount = yDots / yAxisStepWidth + 1;
         label = getStartChar(yAxisTickCount);
         for (int y = 0; y < yAxisTickCount; y++) {
             yAxisLabels.put(y, String.valueOf(label));
             int tickPos = y * yAxisStepWidth;
-            double val = tickPos / yRatio;
+            double val = yMin + tickPos / yRatio;
             LOG.trace("Adding y axis label {{},{}} for tick #{}", label, val, y);
             yAxisLegendSymbols.put(String.valueOf(label), formatDouble(val));
             label--;

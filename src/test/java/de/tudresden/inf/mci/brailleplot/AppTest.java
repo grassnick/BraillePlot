@@ -5,6 +5,8 @@ import de.tudresden.inf.mci.brailleplot.configparser.ConfigurationParsingExcepti
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -19,7 +21,12 @@ public class AppTest {
 
     @Test
     public void smokeTest() {
-        Assertions.assertEquals(0, mApp.run(new String[]{"-p", "src/main/resources/config/index_everest_d_v4.properties"}));
+        Assertions.assertEquals(0, mApp.run(new String[]{"-p", "src/test/resources/config/correct.properties",
+        "-c", "src/test/resources/examples_csv/2_line_chart.csv",
+        "-d", "LineChart",
+        "-t", "title",
+        "-x", "X Axis",
+        "-y", "Y Axis"}));
     }
     // TODO Add system tests
 }
