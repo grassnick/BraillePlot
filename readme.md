@@ -85,7 +85,9 @@ In alphabetical order:
 
 ## License
 
-No information yet.
+Licensed under the GPL-3.0.
+
+See [LICENSE](LICENSE).
 
 ## Acknowledgments
 
