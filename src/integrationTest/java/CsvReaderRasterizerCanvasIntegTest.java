@@ -13,6 +13,8 @@ import de.tudresden.inf.mci.brailleplot.datacontainers.PointList;
 import de.tudresden.inf.mci.brailleplot.datacontainers.PointListContainer;
 import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 import de.tudresden.inf.mci.brailleplot.diagrams.CategoricalBarChart;
+import de.tudresden.inf.mci.brailleplot.diagrams.LineChart;
+import de.tudresden.inf.mci.brailleplot.diagrams.ScatterPlot;
 import de.tudresden.inf.mci.brailleplot.layout.PlotCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.RasterCanvas;
 import de.tudresden.inf.mci.brailleplot.layout.SixDotBrailleRasterCanvas;
@@ -61,7 +63,11 @@ public class CsvReaderRasterizerCanvasIntegTest {
     private static Format format;
     private static MatrixData<Boolean> data;
     private static CategoricalPointListContainer<PointList> container;
+    private static PointListContainer<PointList> containerLinePlot;
+    private static PointListContainer<PointList> containerScatter;
     private static CategoricalBarChart catBarChart;
+    private static ScatterPlot scatterPlot;
+    private static LineChart lineChart;
     private static MasterRenderer renderer;
     private static Representation representationParameters;
 
@@ -74,14 +80,31 @@ public class CsvReaderRasterizerCanvasIntegTest {
             printer = configParser.getPrinter();
             format = configParser.getFormat("A4");
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+
             InputStream csvStream = classloader.getResourceAsStream("examples/0_bar_chart_categorical_vertical_test.csv");
+            InputStream csvStreamScatter = classloader.getResourceAsStream("examples/1_scatter_plot_dense_test.csv");
+            InputStream csvStreamLinePlot = classloader.getResourceAsStream("examples/2_line_chart_test.csv");
+
             Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
+            Reader csvReaderScatter = new BufferedReader(new InputStreamReader(csvStreamScatter));
+            Reader csvReaderLinePlot = new BufferedReader(new InputStreamReader(csvStreamLinePlot));
+
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
+            CsvParser csvParserScatter = new CsvParser(csvReaderScatter, ',', '\"');
+            CsvParser csvParserLinePlot = new CsvParser(csvReaderLinePlot, ',', '\"');
+
             container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
+            containerScatter = csvParserScatter.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
+            containerLinePlot = csvParserLinePlot.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
+
+
             catBarChart = new CategoricalBarChart(container);
+            scatterPlot = new ScatterPlot(containerScatter);
+            lineChart = new LineChart(containerLinePlot);
             representationParameters = configParser.getRepresentation();
             renderer = new MasterRenderer(printer, representationParameters, format);
             System.setProperty("jna.library.path", System.getProperty("user.dir") + "/third_party");
+            LiblouisBrailleTextRasterizer.initModule();
         });
     }
 
@@ -181,7 +204,7 @@ public class CsvReaderRasterizerCanvasIntegTest {
     }
 
     @Test
-    public void testConstructorScgExporterBoolFloat() {
+    public void testConstructorSvgExporterBoolFloat() {
         Assertions.assertDoesNotThrow(() -> {
             PlotCanvas floatCanvas = new PlotCanvas(printer, representationParameters, format);
             SvgExporter<PlotCanvas> floatSvgExporter = new BoolFloatingPointDataSvgExporter(floatCanvas);
@@ -211,6 +234,15 @@ public class CsvReaderRasterizerCanvasIntegTest {
             renderer.rasterize(image);
             renderer.getRenderingBase().registerRasterizer(new FunctionalRasterizer<Image>(Image.class, new ImageRasterizer(true,true,true, 80)));
             renderer.rasterize(image);
+        });
+    }
+    @Test
+    public void testScatterPlotRasterize() {
+        Assertions.assertDoesNotThrow(() -> {
+            scatterPlot.setTitle("Title");
+            scatterPlot.setXAxisName("Y-Axis");
+            scatterPlot.setXAxisName("X-Axis");
+            renderer.rasterize(scatterPlot);
         });
     }
 
