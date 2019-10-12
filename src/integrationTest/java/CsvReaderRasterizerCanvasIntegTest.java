@@ -324,7 +324,6 @@ public class CsvReaderRasterizerCanvasIntegTest {
             PlotCanvas plotCanvas = rendererBarAcc.plot(catBarPlot);
         });
     }
-
     // Print byte dump test
 
     @Test
@@ -346,8 +345,8 @@ public class CsvReaderRasterizerCanvasIntegTest {
             temp.setTitle("test");
             temp.setXAxisName("X");
             temp.setYAxisName("Y");
-            PrintDirector printD = new PrintDirector(PrinterCapability.NORMALPRINTER, printer);
-            printD.print(renderer.rasterize(temp).getCurrentPage());
+            PrintDirector printD = new PrintDirector(PrinterCapability.INDEX_EVEREST_D_V4_FLOATINGDOT_PRINTER, printer);
+            printD.print(rendererBarAcc.plot(temp).getCurrentPage());
         });
     }
 }
