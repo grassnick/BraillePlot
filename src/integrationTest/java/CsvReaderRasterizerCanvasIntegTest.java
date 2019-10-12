@@ -29,6 +29,8 @@ import de.tudresden.inf.mci.brailleplot.rendering.ImageRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.LiblouisBrailleTextRasterizer;
 import de.tudresden.inf.mci.brailleplot.rendering.MasterRenderer;
 import de.tudresden.inf.mci.brailleplot.rendering.UniformTextureBarChartRasterizer;
+import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.BarChartPlotter;
+import de.tudresden.inf.mci.brailleplot.rendering.floatingplotter.GroupedBarChartPlotter;
 import de.tudresden.inf.mci.brailleplot.rendering.language.BrailleLanguage;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolFloatingPointDataSvgExporter;
 import de.tudresden.inf.mci.brailleplot.svgexporter.BoolMatrixDataSvgExporter;
@@ -63,20 +65,48 @@ public class CsvReaderRasterizerCanvasIntegTest {
     private static Format format;
     private static MatrixData<Boolean> data;
     private static CategoricalPointListContainer<PointList> container;
+    private static CategoricalPointListContainer<PointList> containerCatBarPlot;
     private static PointListContainer<PointList> containerLinePlot;
     private static PointListContainer<PointList> containerScatter;
+    private static CategoricalBarChart catBarPlot;
     private static CategoricalBarChart catBarChart;
     private static ScatterPlot scatterPlot;
     private static LineChart lineChart;
     private static MasterRenderer renderer;
+    private static  MasterRenderer rendererBarAcc;
+
+    private static MasterRenderer rendererFloating;
+    private static Printer printerFloating;
+    private static Printer printerFloatingBarAcc;
+    private static Format formatFloating;
+    private static Format formatFloatingBarAcc;
+
     private static Representation representationParameters;
+    private static Representation representationParametersFloating;
+    private static Representation representationParametersFloatingBarAcc;
+
 
     @BeforeAll
     public static void setUp() {
         Assertions.assertDoesNotThrow(()-> {
             URL correct = ClassLoader.getSystemClassLoader().getResource("config/correct.properties");
             URL standard = ClassLoader.getSystemClassLoader().getResource("config/default.properties");
+
+            URL correctFloating = ClassLoader.getSystemClassLoader().getResource("config/correct_floatingdot.properties");
+            URL defaultFloating = ClassLoader.getSystemClassLoader().getResource("config/default_floatingdot.properties");
+            URL defaultFloatingBarAcc = ClassLoader.getSystemClassLoader().getResource("config/default_floatingdot_bar_accumulation.properties");
+
             JavaPropertiesConfigurationParser configParser = new JavaPropertiesConfigurationParser(correct, standard);
+            JavaPropertiesConfigurationParser configParserFloating = new JavaPropertiesConfigurationParser(correctFloating, defaultFloating);
+            JavaPropertiesConfigurationParser configParserFloatingBarAcc = new JavaPropertiesConfigurationParser(correctFloating, defaultFloatingBarAcc);
+
+            printerFloating = configParserFloating.getPrinter();
+            formatFloating = configParserFloating.getFormat("A3");
+
+            printerFloatingBarAcc = configParserFloatingBarAcc.getPrinter();
+            formatFloatingBarAcc = configParserFloatingBarAcc.getFormat("A4");
+
+
             printer = configParser.getPrinter();
             format = configParser.getFormat("A4");
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
@@ -84,25 +114,37 @@ public class CsvReaderRasterizerCanvasIntegTest {
             InputStream csvStream = classloader.getResourceAsStream("examples/0_bar_chart_categorical_vertical_test.csv");
             InputStream csvStreamScatter = classloader.getResourceAsStream("examples/1_scatter_plot_dense_test.csv");
             InputStream csvStreamLinePlot = classloader.getResourceAsStream("examples/2_line_chart_test.csv");
+            InputStream csvStreamBarCatPlot = classloader.getResourceAsStream("examples/0_bar_chart_categorical_max_test.csv");
 
             Reader csvReader = new BufferedReader(new InputStreamReader(csvStream));
             Reader csvReaderScatter = new BufferedReader(new InputStreamReader(csvStreamScatter));
             Reader csvReaderLinePlot = new BufferedReader(new InputStreamReader(csvStreamLinePlot));
+            Reader csvReaderBarCatPlot = new BufferedReader(new InputStreamReader(csvStreamBarCatPlot));
+
 
             CsvParser csvParser = new CsvParser(csvReader, ',', '\"');
             CsvParser csvParserScatter = new CsvParser(csvReaderScatter, ',', '\"');
             CsvParser csvParserLinePlot = new CsvParser(csvReaderLinePlot, ',', '\"');
+            CsvParser csvParserBarCatPlot = new CsvParser(csvReaderBarCatPlot, ',', '\"');
 
             container = csvParser.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
             containerScatter = csvParserScatter.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
             containerLinePlot = csvParserLinePlot.parse(CsvType.DOTS, CsvOrientation.HORIZONTAL);
+            containerCatBarPlot = csvParserBarCatPlot.parse(CsvType.X_ALIGNED_CATEGORIES, CsvOrientation.VERTICAL);
 
 
+            catBarPlot = new CategoricalBarChart(containerCatBarPlot);
             catBarChart = new CategoricalBarChart(container);
             scatterPlot = new ScatterPlot(containerScatter);
             lineChart = new LineChart(containerLinePlot);
+
             representationParameters = configParser.getRepresentation();
+            representationParametersFloating = configParserFloating.getRepresentation();
+            representationParametersFloatingBarAcc = configParserFloatingBarAcc.getRepresentation();
+
+            rendererFloating = new MasterRenderer(printerFloating, representationParametersFloating, formatFloating);
             renderer = new MasterRenderer(printer, representationParameters, format);
+            rendererBarAcc = new MasterRenderer(printerFloatingBarAcc, representationParametersFloatingBarAcc, formatFloatingBarAcc);
             System.setProperty("jna.library.path", System.getProperty("user.dir") + "/third_party");
             LiblouisBrailleTextRasterizer.initModule();
         });
@@ -125,7 +167,7 @@ public class CsvReaderRasterizerCanvasIntegTest {
     @Test
     public void testGettersOutputCatBarChart() {
         Assertions.assertEquals(catBarChart.getMaxY(), 4.5);
-        Assertions.assertEquals(catBarChart.getMinY(), 1);
+        Assertions.assertEquals(catBarChart.getMinY(), 1.0);
         Assertions.assertEquals(catBarChart.getDataSet(), container);
         Assertions.assertDoesNotThrow(() -> {
             catBarChart.setTitle("Test");
@@ -185,6 +227,9 @@ public class CsvReaderRasterizerCanvasIntegTest {
     @Test
     public void testRasterizerDoesNotThrowCatBarChart() {
         Assertions.assertDoesNotThrow(() -> {
+            catBarChart.setTitle("Title");
+            catBarChart.setXAxisName("X-axis");
+            catBarChart.setYAxisName("Y-axis");
             renderer.rasterize(catBarChart);
         });
     }
@@ -246,6 +291,39 @@ public class CsvReaderRasterizerCanvasIntegTest {
         });
     }
 
+    @Test
+    public void testPlotLineChart() {
+        Assertions.assertDoesNotThrow(() -> {
+            // GroupedBarChartPlotter groupedBarChartPlotter = new GroupedBarChartPlotter();
+            PlotCanvas plotCanvas = rendererFloating.plot(lineChart);
+            //groupedBarChartPlotter.plot();
+        });
+    }
+
+    @Test
+    public void testPlotScatter() {
+        Assertions.assertDoesNotThrow(() -> {
+            // GroupedBarChartPlotter groupedBarChartPlotter = new GroupedBarChartPlotter();
+            PlotCanvas plotCanvas = rendererFloating.plot(scatterPlot);
+            //groupedBarChartPlotter.plot();
+        });
+    }
+
+    @Test
+    public void testPlotCategoricalBarPlot() {
+        Assertions.assertDoesNotThrow(() -> {
+            // GroupedBarChartPlotter groupedBarChartPlotter = new GroupedBarChartPlotter();
+            PlotCanvas plotCanvas = rendererFloating.plot(catBarPlot);
+            //groupedBarChartPlotter.plot();
+        });
+    }
+
+    @Test
+    public void testPlotAccBarChart() {
+        Assertions.assertDoesNotThrow(() -> {
+            PlotCanvas plotCanvas = rendererBarAcc.plot(catBarPlot);
+        });
+    }
 
     // Print byte dump test
 
