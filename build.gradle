@@ -52,11 +52,25 @@ tasks.withType(Test) {
 }
 
 // Copy Braille tables from submodule to working dir
-task copyBrailleTables(type: Copy) {
+def brailleTablesCopySpec = copySpec {
     from "$projectDir/third_party/liblouis/tables/"
-    into "$rootDir/src/main/resources/mapping/liblouis"
+}
+
+task copyBrailleTables(type: Copy) {
+    with brailleTablesCopySpec
+    into "$projectDir/src/main/resources/mapping/liblouis"
+}
+task copyBrailleTablesTest(type: Copy) {
+    with brailleTablesCopySpec
+    into "$projectDir/src/test/resources/mapping/liblouis"
+}
+task copyBrailleTablesIntegrationTest(type: Copy) {
+    with brailleTablesCopySpec
+    into "$projectDir/src/integrationTest/resources/mapping/liblouis"
 }
 processResources.dependsOn copyBrailleTables
+processResources.dependsOn copyBrailleTablesTest
+processResources.dependsOn copyBrailleTablesIntegrationTest
 // Abort if files are missing
 gradle.taskGraph.afterTask { copyBrailleTables ->
     if(copyBrailleTables.state.noSource){
@@ -65,15 +79,30 @@ gradle.taskGraph.afterTask { copyBrailleTables ->
 }
 // Delete tables on "clean" task
 clean {
-    delete "$rootDir/src/main/resources/mapping/liblouis"
+    delete "$projectDir/src/main/resources/mapping/liblouis"
+    delete "$projectDir/src/test/resources/mapping/liblouis"
+    delete "$projectDir/src/integrationTest/resources/mapping/liblouis"
 }
 
 // Copy native liblouis libraries for major platforms to the resource folder
-task copyLibLouisBinary(type: Copy) {
+def liblouisBinaryCopySpec = copySpec {
     from "$projectDir/third_party/liblouis_bin/bin/"
-    into "$rootDir/src/main/resources/native/liblouis"
+}
+task copyLibLouisBinary(type: Copy) {
+    with liblouisBinaryCopySpec
+    into "$projectDir/src/main/resources/native/liblouis"
+}
+task copyLibLouisBinaryTest(type: Copy) {
+    with liblouisBinaryCopySpec
+    into "$projectDir/src/test/resources/native/liblouis"
+}
+task copyLibLouisBinaryIntegrationTest(type: Copy) {
+    with liblouisBinaryCopySpec
+    into "$projectDir/src/integrationTest/resources/native/liblouis"
 }
 processResources.dependsOn copyLibLouisBinary
+processResources.dependsOn copyLibLouisBinaryTest
+processResources.dependsOn copyLibLouisBinaryIntegrationTest
 // Abort if files are missing
 gradle.taskGraph.afterTask { copyLibLouisBinary ->
     if(copyLibLouisBinary.state.noSource){
@@ -82,7 +111,9 @@ gradle.taskGraph.afterTask { copyLibLouisBinary ->
 }
 // Delete libraries on "clean" task
 clean {
-    delete "$rootDir/src/main/resources/native/liblouis"
+    delete "$projectDir/src/main/resources/native/liblouis"
+    delete "$projectDir/src/test/resources/native/liblouis"
+    delete "$projectDir/src/integrationTest/resources/native/liblouis"
 }
 
 // Define the main class for the application
@@ -104,6 +135,5 @@ checkstyleTest {
 }
 
 
-    // Needed for Integrationtests
-
+// Needed for integration tests
 apply from: "$rootDir/integrationTest.gradle"

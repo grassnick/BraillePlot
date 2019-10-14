@@ -37,7 +37,7 @@ public class JavaPropertiesConfigurationParserTest {
     @Test
     public void testCorrectValues() {
         // default values - not overwritten
-        Assertions.assertEquals(200, mPrinterConfig.getProperty("raster.constraint.width").toDouble());
+        Assertions.assertEquals(30, mPrinterConfig.getProperty("raster.constraint.width").toDouble());
         Assertions.assertEquals("6-dot", mPrinterConfig.getProperty("raster.type").toString());
         Assertions.assertEquals(10, mFormatConfig.getProperty("margin.bottom").toInt());
 
@@ -47,7 +47,6 @@ public class JavaPropertiesConfigurationParserTest {
 
         // values without default
         Assertions.assertEquals("Dummy Printer", mPrinterConfig.getProperty("name").toString());
-        Assertions.assertEquals(0.05, mPrinterConfig.getProperty("floatingDot.resolution").toDouble());
 
     }
     @Test
@@ -60,7 +59,7 @@ public class JavaPropertiesConfigurationParserTest {
     @Test
     public void testFallbackProperties() {
 
-        String specifiedByConfig[] = {"name", "mode", "floatingDot.resolution", "constraint.top", "constraint.left", "raster.dotDistance.horizontal", "raster.dotDistance.vertical", "raster.cellDistance.horizontal", "raster.cellDistance.vertical", "raster.dotDiameter"};
+        String specifiedByConfig[] = {"name", "mode", "constraint.top", "constraint.left", "raster.dotDistance.horizontal", "raster.dotDistance.vertical", "raster.cellDistance.horizontal", "raster.cellDistance.vertical", "raster.dotDiameter", "brailletable"};
         String specifiedByFallback[] = {"mode", "semantictable", "constraint.top", "constraint.left", "raster.constraint.top", "raster.constraint.left", "raster.constraint.width", "raster.constraint.height", "raster.type", "raster.dotDistance.horizontal", "raster.dotDistance.vertical", "raster.cellDistance.horizontal", "raster.cellDistance.vertical", "raster.dotDiameter"};
 
         // config shall extend the fallback

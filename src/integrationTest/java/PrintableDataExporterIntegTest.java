@@ -4,6 +4,7 @@ import de.tudresden.inf.mci.brailleplot.commandline.SettingsWriter;
 import de.tudresden.inf.mci.brailleplot.configparser.Format;
 import de.tudresden.inf.mci.brailleplot.configparser.JavaPropertiesConfigurationParser;
 import de.tudresden.inf.mci.brailleplot.configparser.Printer;
+import de.tudresden.inf.mci.brailleplot.diagrams.BarChart;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrintDirector;
 import de.tudresden.inf.mci.brailleplot.printerbackend.PrinterCapability;
 import de.tudresden.inf.mci.brailleplot.printabledata.MatrixData;
@@ -198,4 +199,6 @@ public class PrintableDataExporterIntegTest {
     public void testIsPrintServiceOn() {
         Assertions.assertTrue(PrintDirector.isPrintServiceOn());
     }
+
+
 }
