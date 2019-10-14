@@ -23,7 +23,9 @@ public class AppTest {
     @Test
     public void smokeTest() {
         LiblouisBrailleTextRasterizer.initModule();
-        Assertions.assertEquals(0, mApp.run(new String[]{"-p", "src/test/resources/config/dummyprinter.properties",
+        Assertions.assertEquals(0, mApp.run(new String[]{
+        "-i",
+        "-p", "src/test/resources/config/dummyprinter.properties",
         "-c", "src/test/resources/examples_csv/2_line_chart.csv",
         "-d", "LineChart",
         "-t", "title",

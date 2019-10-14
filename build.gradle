@@ -135,6 +135,5 @@ checkstyleTest {
 }
 
 
-    // Needed for Integrationtests
-
+// Needed for integration tests
 apply from: "$rootDir/integrationTest.gradle"
