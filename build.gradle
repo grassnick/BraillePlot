@@ -53,22 +53,10 @@ tasks.withType(Test) {
 
 // Copy Braille tables from submodule to working dir
 task copyBrailleTables(type: Copy) {
-
-
     from "$projectDir/third_party/liblouis/tables/"
     into "$rootDir/src/main/resources/mapping/liblouis"
-
-    //from "$projectDir/third_party/liblouis/tables/"
-    //into "$rootDir/src/test/resources/mapping/liblouis"
-
 }
-
-// Same for integrationtests
-task copyBrailleTablesIntegrationTest(type: Copy) {
-
-    from "$projectDir/third_party/liblouis/tables/"
-    into "$rootDir/src/integrationTest/resources/mapping/liblouis"
-}
+processResources.dependsOn copyBrailleTables
 // Abort if files are missing
 gradle.taskGraph.afterTask { copyBrailleTables ->
     if(copyBrailleTables.state.noSource){
@@ -78,9 +66,6 @@ gradle.taskGraph.afterTask { copyBrailleTables ->
 // Delete tables on "clean" task
 clean {
     delete "$rootDir/src/main/resources/mapping/liblouis"
-    delete "$rootDir/src/integrationTest/resources/mapping/liblouis"
-    delete "$rootDir/src/test/resources/mapping/liblouis"
-
 }
 
 // Copy native liblouis libraries for major platforms to the resource folder
@@ -99,8 +84,6 @@ gradle.taskGraph.afterTask { copyLibLouisBinary ->
 clean {
     delete "$rootDir/src/main/resources/native/liblouis"
 }
-
-//processResources.dependsOn copyBrailleTables
 
 // Define the main class for the application
 mainClassName = 'de.tudresden.inf.mci.brailleplot.App'
@@ -124,4 +107,3 @@ checkstyleTest {
     // Needed for Integrationtests
 
 apply from: "$rootDir/integrationTest.gradle"
-integrationTest.dependsOn copyBrailleTablesIntegrationTest
