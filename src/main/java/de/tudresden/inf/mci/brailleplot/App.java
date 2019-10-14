@@ -59,6 +59,8 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 public final class App {
 
+    public static final String APP_NAME = "BraillePlot";
+
     /**
      * Main method.
      * Instantiate application and execute it.

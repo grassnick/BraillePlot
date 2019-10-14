@@ -1,5 +1,6 @@
 package de.tudresden.inf.mci.brailleplot.commandline;
 
+import de.tudresden.inf.mci.brailleplot.App;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -97,6 +98,6 @@ public class CommandLineParser {
         String headerForOptions = "Convert csv into braille";
         String footerForOptions = ""; // TODO: Add footer with version and official contact.
 
-        formatter.printHelp("braillegraphics", headerForOptions, mOptions, footerForOptions, true);
+        formatter.printHelp(App.APP_NAME, headerForOptions, mOptions, footerForOptions, true);
     }
 }
