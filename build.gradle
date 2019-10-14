@@ -51,7 +51,7 @@ tasks.withType(Test) {
     useJUnitPlatform()
 }
 
-// Copy Braille tables from submodule to working dir/integration test dir
+// Copy Braille tables from submodule to working dir
 task copyBrailleTables(type: Copy) {
 
 
@@ -63,6 +63,7 @@ task copyBrailleTables(type: Copy) {
 
 }
 
+// Same for integrationtests
 task copyBrailleTablesIntegrationTest(type: Copy) {
 
     from "$projectDir/third_party/liblouis/tables/"
