@@ -28,7 +28,6 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<FloatingPointData<Bo
      * Constructor. Does not have any functionality. Should only be used in  {@link PrintDirector}
      */
     FloatingDotAreaBuilder() { }
-    //private  int l;
 
     /**
      * Currently not implemented.
@@ -64,6 +63,5 @@ class FloatingDotAreaBuilder extends AbstractIndexV4Builder<FloatingPointData<Bo
             e.printStackTrace();
         }
         return stream.toByteArray();
-        //return null;
     }
 }
