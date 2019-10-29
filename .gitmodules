@@ -3,4 +3,4 @@
 	url = https://github.com/liblouis/liblouis
 [submodule "third_party/liblouis_bin"]
 	path = third_party/liblouis_bin
-	url = ../LibLouisBin.git
+	url = https://github.com/TUD-INF-IAI-MCI/LibLouisBin
