@@ -3,4 +3,4 @@
 	url = https://github.com/liblouis/liblouis
 [submodule "third_party/liblouis_bin"]
 	path = third_party/liblouis_bin
-	url = ../../brailleplot/liblouis_bin.git
+	url = ../LibLouisBin.git
