@@ -33,3 +33,9 @@ src/test/resources/mapping/liblouis
 *.so
 *.dylib
 *.dll
+
+# Compiled Javadoc
+*.html
+*.htm
+*.css
+*.js
