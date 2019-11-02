@@ -28,3 +28,18 @@ jobs:
       run: ./gradlew assemble
     - name: build
       run: ./gradlew build
+
+    javadoc:
+      runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        submodules: recursive
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+
+    - name: Build JavaDoc
+      run: ./gradlew javadoc
