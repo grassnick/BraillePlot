@@ -6,6 +6,8 @@ A tool to create Braille embosser ready text files for generic diagram represent
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
+For usage information, please take a look into the [wiki](https://github.com/TUD-INF-IAI-MCI/BraillePlot/wiki/EndUserDocumentation).
+
 ### Prerequisites
 
 You will need the following tools to build the project:
