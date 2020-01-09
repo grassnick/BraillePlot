@@ -2,6 +2,9 @@
 
 A tool to create Braille embosser ready text files for generic diagram representations.
 
+## Build status
+![](https://github.com/grassnick/BraillePlot/workflows/Continuos%20Integration/badge.svg)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
